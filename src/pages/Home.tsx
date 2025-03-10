@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -150,10 +149,9 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container pb-6">
-        <div style={{ backgroundColor: '#61CBF4' }} className="rounded-xl py-3 px-4 mb-4 -mx-4 -mt-5">
+        <div style={{ backgroundColor: '#61CBF4' }} className="rounded-xl py-3 px-4 mb-4 -mx-4 -mt-5 overflow-hidden">
           <LocationBar />
           <SearchBar />
-          
           <PromotionSlider banners={banners} />
         </div>
         
