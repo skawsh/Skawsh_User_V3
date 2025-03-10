@@ -16,12 +16,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, ima
       <div className="flex flex-col items-center text-center">
         <div className="rounded-full bg-gray-100 p-2 mb-2 w-16 h-16 flex items-center justify-center overflow-hidden">
           {image ? (
-            <img src={image} alt={title} className="w-full h-full object-cover" />
+            <img src={image} alt={title} className="w-full h-full object-cover rounded-full" />
           ) : (
             <div className="text-primary-500">{icon}</div>
           )}
         </div>
-        <h3 className="text-xs font-medium text-gray-800">{title}</h3>
+        <h3 className="text-xs font-medium text-gray-800 mt-1">{title}</h3>
       </div>
     </Link>
   );

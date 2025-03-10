@@ -12,7 +12,9 @@ const LocationBar: React.FC = () => {
           <span className="text-gray-800">Room No: 306, Vathsalya Men's PG</span>
           <ChevronDown size={16} className="text-gray-500 group-hover:text-primary-500 transition-colors" />
         </div>
-        <User size={20} className="text-gray-700 cursor-pointer" />
+        <div className="h-10 w-10 rounded-full bg-primary-50 flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors">
+          <User size={20} className="text-primary-500" />
+        </div>
       </div>
     </div>
   );

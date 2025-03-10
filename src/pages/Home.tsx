@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -6,7 +5,7 @@ import SearchBar from '../components/home/SearchBar';
 import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, Sparkles, MapPin, Clock, Tag } from 'lucide-react';
+import { Shirt, Wind, Droplets, Shoe, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [
@@ -27,8 +26,33 @@ const Home: React.FC = () => {
     },
     {
       id: '4',
-      title: 'Premium',
-      icon: <Sparkles size={24} />
+      title: 'Shoe Laundry',
+      icon: <Shoe size={24} />
+    },
+    {
+      id: '5',
+      title: 'Stain Removal',
+      icon: <Palette size={24} />
+    },
+    {
+      id: '6',
+      title: 'Express Service',
+      icon: <Clock size={24} />
+    },
+    {
+      id: '7',
+      title: 'Premium Care',
+      icon: <Medal size={24} />
+    },
+    {
+      id: '8',
+      title: 'Home Textiles',
+      icon: <HomeIcon size={24} />
+    },
+    {
+      id: '9',
+      title: 'Business Attire',
+      icon: <Briefcase size={24} />
     }
   ];
   
@@ -131,16 +155,18 @@ const Home: React.FC = () => {
         
         <div className="mb-6">
           <h2 className="section-title text-base mb-4">Explore Services</h2>
-          <div className="grid grid-cols-4 gap-2">
-            {services.map((service, index) => (
-              <ServiceCard 
-                key={service.id} 
-                icon={service.icon} 
-                title={service.title}
-                image={service.image}
-                index={index}
-              />
-            ))}
+          <div className="overflow-x-auto overflow-y-hidden">
+            <div className="flex gap-4 pb-2 min-w-max">
+              {services.map((service, index) => (
+                <ServiceCard 
+                  key={service.id} 
+                  icon={service.icon} 
+                  title={service.title}
+                  image={service.image}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
         </div>
         

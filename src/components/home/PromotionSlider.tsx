@@ -37,12 +37,12 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
   return (
     <div className="mb-8 animate-fade-in animate-stagger-2 relative">
       <div className="relative overflow-hidden rounded-xl shadow-md">
-        <div className="flex transition-transform duration-500 ease-in-out" 
-             style={{ transform: `translateX(-${currentIndex * 92}%)` }}>
+        <div className="flex transition-transform duration-700 ease-in-out" 
+             style={{ transform: `translateX(-${currentIndex * 85}%)` }}>
           {banners.map((banner, index) => (
             <div 
               key={banner.id}
-              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[2%] shrink-0 shadow-md overflow-hidden relative`}
+              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[85%] mr-[2%] shrink-0 shadow-md overflow-hidden relative`}
             >
               <div className="relative z-10">
                 <h3 className="font-semibold text-xl mb-1">{banner.title}</h3>

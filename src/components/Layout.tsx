@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
 
@@ -60,6 +60,8 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
+  const [isPressed, setIsPressed] = useState(false);
+  
   return (
     <Link 
       to={to} 
@@ -68,11 +70,22 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
           ? 'text-primary-500' 
           : 'text-gray-500 hover:text-primary-400'
       }`}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
+      onMouseLeave={() => setIsPressed(false)}
+      onTouchStart={() => setIsPressed(true)}
+      onTouchEnd={() => setIsPressed(false)}
     >
-      <div className={`${isActive ? 'scale-110 mb-1' : 'mb-1'} transition-transform duration-200`}>
+      <div 
+        className={`${isActive ? 'scale-110 mb-1' : 'mb-1'} transition-transform duration-200 ${
+          isPressed ? 'scale-75' : ''
+        }`}
+      >
         {icon}
       </div>
-      <span className={`text-xs font-medium transition-all ${isActive ? 'opacity-100' : 'opacity-80'}`}>
+      <span className={`text-xs font-medium transition-all ${
+        isActive ? 'opacity-100' : 'opacity-80'
+      } ${isPressed ? 'scale-95' : ''}`}>
         {label}
       </span>
     </Link>
