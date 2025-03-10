@@ -149,25 +149,26 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container pb-6">
-        <div style={{ backgroundColor: '#61CBF4' }} className="rounded-xl py-3 px-4 mb-4 -mx-4 -mt-5 overflow-hidden">
+        <div className="bg-primary-50 rounded-xl py-3 px-4 mb-4">
           <LocationBar />
           <SearchBar />
+          
           <PromotionSlider banners={banners} />
-        </div>
-        
-        <div className="mb-6">
-          <h2 className="section-title text-base mb-4">Explore Services</h2>
-          <div className="overflow-x-auto overflow-y-hidden">
-            <div className="flex gap-4 pb-2 min-w-max">
-              {services.map((service, index) => (
-                <ServiceCard 
-                  key={service.id} 
-                  icon={service.icon} 
-                  title={service.title}
-                  image={service.image}
-                  index={index}
-                />
-              ))}
+          
+          <div className="mb-6">
+            <h2 className="section-title text-base mb-4">Explore Services</h2>
+            <div className="overflow-x-auto overflow-y-hidden">
+              <div className="flex gap-4 pb-2 min-w-max">
+                {services.map((service, index) => (
+                  <ServiceCard 
+                    key={service.id} 
+                    icon={service.icon} 
+                    title={service.title}
+                    image={service.image}
+                    index={index}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

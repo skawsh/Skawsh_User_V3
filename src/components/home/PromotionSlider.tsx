@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 
@@ -37,19 +36,12 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
       <div className="relative overflow-hidden rounded-xl">
         <div 
           className="flex transition-transform duration-700 ease-in-out" 
-          style={{ 
-            transform: `translateX(-${currentIndex * 100}%)`,
-            width: `${banners.length * 100}%`
-          }}
+          style={{ transform: `translateX(-${currentIndex * 92}%)` }}
         >
           {banners.map((banner, index) => (
             <div 
               key={banner.id}
-              className={`${banner.bgColor} text-white p-5 rounded-xl relative overflow-hidden`}
-              style={{ 
-                width: `calc(100% / ${banners.length})`,
-                paddingRight: '25%'
-              }}
+              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[1%] shrink-0 relative overflow-hidden`}
             >
               <div className="relative z-10">
                 <h3 className="font-semibold text-xl mb-1">{banner.title}</h3>
