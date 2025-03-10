@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -148,8 +149,8 @@ const Home: React.FC = () => {
   
   return (
     <Layout>
-      <div className="section-container">
-        <div className="bg-primary-50 rounded-xl px-4 pt-3 pb-6 -mx-4">
+      <div className="section-container p-0">
+        <div className="bg-primary-50 rounded-b-xl px-4 pt-6 pb-6 -mx-4">
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
@@ -172,7 +173,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        <div className="mb-10">
+        <div className="mb-10 px-4">
           <h2 className="section-title text-base mb-4">Explore Studios</h2>
           
           <div className="flex gap-3 mb-4 pb-2">
