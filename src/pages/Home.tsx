@@ -150,7 +150,7 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container pb-6">
-        <div className="bg-primary-100 rounded-xl py-3 px-4 mb-4">
+        <div style={{ backgroundColor: '#61CBF4' }} className="rounded-xl py-3 px-4 mb-4 -mx-4 -mt-5">
           <LocationBar />
           <SearchBar />
           
