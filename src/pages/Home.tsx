@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -6,7 +5,7 @@ import SearchBar from '../components/home/SearchBar';
 import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, Boot, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText } from 'lucide-react';
+import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [
@@ -28,7 +27,7 @@ const Home: React.FC = () => {
     {
       id: '4',
       title: 'Shoe Laundry',
-      icon: <Boot size={24} />
+      icon: <Footprints size={24} />
     },
     {
       id: '5',
