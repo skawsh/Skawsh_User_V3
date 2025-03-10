@@ -1,35 +1,24 @@
 
 import React from 'react';
-import GlassCard from '../ui-elements/GlassCard';
-import Button from '../ui-elements/Button';
-import { Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const PremiumBanner: React.FC = () => {
   return (
     <div className="mb-8 animate-fade-in animate-stagger-2">
-      <GlassCard 
-        className="bg-gradient-to-r from-primary-500 to-primary-600 text-white p-5 border-none shadow-xl"
-        interactive={false}
-      >
-        <div className="flex items-start gap-4">
-          <div className="rounded-full bg-white/20 p-2.5">
-            <Sparkles size={24} className="text-white animate-pulse-subtle" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg mb-1">Premium Services</h3>
-            <p className="text-white/90 text-sm mb-3">
-              Express delivery, premium fabric care, and more.
-            </p>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 active:bg-white/30"
-            >
-              Explore Premium
-            </Button>
-          </div>
+      <div className="bg-blue-700 text-white p-5 rounded-xl shadow-md overflow-hidden relative">
+        <div className="relative z-10">
+          <h3 className="font-semibold text-xl mb-1">Premium Care</h3>
+          <p className="text-white/90 text-sm mb-4">
+            For Your Delicate Fabrics
+          </p>
+          <button className="bg-yellow-400 text-gray-800 font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2">
+            EXPLORE <ArrowRight size={16} />
+          </button>
         </div>
-      </GlassCard>
+        <div className="absolute top-0 right-0 w-full h-full bg-no-repeat bg-right bg-contain opacity-20"
+             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')" }}>
+        </div>
+      </div>
     </div>
   );
 };

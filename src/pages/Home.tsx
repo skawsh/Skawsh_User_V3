@@ -6,34 +6,29 @@ import SearchBar from '../components/home/SearchBar';
 import PremiumBanner from '../components/home/PremiumBanner';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, TimerReset, Filter } from 'lucide-react';
-import Button from '../components/ui-elements/Button';
+import { Shirt, Wind, Droplets, Sparkles, MapPin, Clock, Tag } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [
     {
       id: '1',
-      icon: <Shirt size={24} />,
-      title: 'Dry Cleaning',
-      description: 'Professional cleaning for delicate fabrics'
+      title: 'Wash & Fold',
+      image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
       id: '2',
-      icon: <Wind size={24} />,
-      title: 'Wash & Fold',
-      description: 'Basic laundry services for everyday items'
+      title: 'Dry Clean',
+      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
       id: '3',
-      icon: <Droplets size={24} />,
-      title: 'Ironing',
-      description: 'Wrinkle removal and professional pressing'
+      title: 'Iron Only',
+      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
       id: '4',
-      icon: <TimerReset size={24} />,
-      title: 'Express',
-      description: 'Same-day or next-day laundry services'
+      title: 'Premium',
+      icon: <Sparkles size={24} />
     }
   ];
   
@@ -43,21 +38,8 @@ const Home: React.FC = () => {
       name: 'Pristine Laundry',
       image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
       rating: 4.8,
-      deliveryTime: '1-2 days'
-    },
-    {
-      id: '2',
-      name: 'Fresh & Clean Co.',
-      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.6,
-      deliveryTime: 'Same day'
-    },
-    {
-      id: '3',
-      name: 'Urban Laundromat',
-      image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.5,
-      deliveryTime: '1 day'
+      deliveryTime: '1-2 days',
+      promoted: true
     }
   ];
   
@@ -69,19 +51,14 @@ const Home: React.FC = () => {
         <PremiumBanner />
         
         <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="section-title">Services</h2>
-            <Button variant="ghost" size="sm">
-              View All
-            </Button>
-          </div>
-          <div className="grid grid-cols-4 gap-3">
+          <h2 className="section-title text-base mb-4">Explore Services</h2>
+          <div className="grid grid-cols-4 gap-2">
             {services.map((service, index) => (
               <ServiceCard 
                 key={service.id} 
                 icon={service.icon} 
-                title={service.title} 
-                description={service.description}
+                title={service.title}
+                image={service.image}
                 index={index}
               />
             ))}
@@ -89,19 +66,15 @@ const Home: React.FC = () => {
         </div>
         
         <div className="mb-10">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="section-title">Nearby Studios</h2>
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              icon={<Filter size={14} />} 
-              className="rounded-full"
-            >
-              Filter
-            </Button>
+          <h2 className="section-title text-base mb-4">Explore Studios</h2>
+          
+          <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
+            <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
+            <FilterButton icon={<Tag size={14} />} label="Offers" />
+            <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
           </div>
           
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-2">
             {studios.map((studio, index) => (
               <StudioCard 
                 key={studio.id}
@@ -111,12 +84,34 @@ const Home: React.FC = () => {
                 rating={studio.rating}
                 deliveryTime={studio.deliveryTime}
                 index={index}
+                promoted={studio.promoted}
               />
             ))}
           </div>
         </div>
       </div>
     </Layout>
+  );
+};
+
+interface FilterButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}
+
+const FilterButton: React.FC<FilterButtonProps> = ({ icon, label, active = false }) => {
+  return (
+    <button
+      className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs whitespace-nowrap ${
+        active 
+          ? 'bg-primary-500 text-white' 
+          : 'bg-gray-100 text-gray-700'
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 };
 
