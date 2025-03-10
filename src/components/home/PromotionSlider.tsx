@@ -37,15 +37,18 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
       <div className="relative overflow-hidden rounded-xl">
         <div 
           className="flex transition-transform duration-700 ease-in-out" 
-          style={{ transform: `translateX(-${currentIndex * (100 / banners.length)}%)` }}
+          style={{ 
+            transform: `translateX(-${currentIndex * 100}%)`,
+            width: `${banners.length * 100}%`
+          }}
         >
           {banners.map((banner, index) => (
             <div 
               key={banner.id}
-              className={`${banner.bgColor} text-white p-5 rounded-xl relative overflow-hidden flex-shrink-0`}
+              className={`${banner.bgColor} text-white p-5 rounded-xl relative overflow-hidden`}
               style={{ 
-                width: `calc(90% / ${banners.length})`,
-                marginRight: '10px'
+                width: `calc(100% / ${banners.length})`,
+                paddingRight: '25%'
               }}
             >
               <div className="relative z-10">
