@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Layers, Heart, ShoppingBag, User } from 'lucide-react';
+import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -45,12 +45,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             icon={<ShoppingBag size={20} />} 
             label="Sack" 
             isActive={isActive("/cart")}
-          />
-          <NavItem 
-            to="/profile" 
-            icon={<User size={20} />} 
-            label="Profile" 
-            isActive={isActive("/profile")}
           />
         </div>
       </nav>
