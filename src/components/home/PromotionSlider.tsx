@@ -32,20 +32,32 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
     setCurrentIndex(index);
   };
 
+  const nextIndex = (currentIndex + 1) % banners.length;
+
   return (
     <div className="mb-8 animate-fade-in animate-stagger-2 relative">
-      <div className={`${banners[currentIndex].bgColor} text-white p-5 rounded-xl shadow-md overflow-hidden relative`}>
-        <div className="relative z-10">
-          <h3 className="font-semibold text-xl mb-1">{banners[currentIndex].title}</h3>
-          <p className="text-white/90 text-sm mb-4">
-            {banners[currentIndex].description}
-          </p>
-          <button className={`${banners[currentIndex].buttonColor} ${banners[currentIndex].textColor} font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2`}>
-            EXPLORE <ArrowRight size={16} />
-          </button>
-        </div>
-        <div className="absolute top-0 right-0 w-full h-full bg-no-repeat bg-right bg-contain opacity-20"
-             style={{ backgroundImage: `url('${banners[currentIndex].image}')` }}>
+      <div className="relative overflow-hidden rounded-xl shadow-md">
+        <div className="flex transition-transform duration-500 ease-in-out" 
+             style={{ transform: `translateX(-${currentIndex * 92}%)` }}>
+          {banners.map((banner, index) => (
+            <div 
+              key={banner.id}
+              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[2%] shrink-0 shadow-md overflow-hidden relative`}
+            >
+              <div className="relative z-10">
+                <h3 className="font-semibold text-xl mb-1">{banner.title}</h3>
+                <p className="text-white/90 text-sm mb-4">
+                  {banner.description}
+                </p>
+                <button className={`${banner.buttonColor} ${banner.textColor} font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2`}>
+                  EXPLORE <ArrowRight size={16} />
+                </button>
+              </div>
+              <div className="absolute top-0 right-0 w-full h-full bg-no-repeat bg-right bg-contain opacity-20"
+                   style={{ backgroundImage: `url('${banner.image}')` }}>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       
