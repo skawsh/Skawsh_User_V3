@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
 import SearchBar from '../components/home/SearchBar';
-import PremiumBanner from '../components/home/PremiumBanner';
+import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Shirt, Wind, Droplets, Sparkles, MapPin, Clock, Tag } from 'lucide-react';
@@ -40,6 +40,85 @@ const Home: React.FC = () => {
       rating: 4.8,
       deliveryTime: '1-2 days',
       promoted: true
+    },
+    {
+      id: '2',
+      name: 'Fresh Fabrics',
+      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.6,
+      deliveryTime: 'Same Day',
+      promoted: false
+    },
+    {
+      id: '3',
+      name: 'Luxury Laundromat',
+      image: 'https://images.unsplash.com/photo-1521656693074-0ef32e80a5d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.9,
+      deliveryTime: '1 day',
+      promoted: true
+    },
+    {
+      id: '4',
+      name: 'Quick Wash',
+      image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.3,
+      deliveryTime: '3-4 hours',
+      promoted: false
+    },
+    {
+      id: '5',
+      name: 'Eco Clean',
+      image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.7,
+      deliveryTime: '2 days',
+      promoted: false
+    },
+    {
+      id: '6',
+      name: 'Premium Wash',
+      image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 5.0,
+      deliveryTime: '1-2 days',
+      promoted: true
+    }
+  ];
+  
+  const banners = [
+    {
+      id: '1',
+      title: 'Premium Care',
+      description: 'For Your Delicate Fabrics',
+      bgColor: 'bg-blue-700',
+      buttonColor: 'bg-yellow-400',
+      textColor: 'text-gray-800',
+      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    },
+    {
+      id: '2',
+      title: 'Express Service',
+      description: 'Ready in Just 3 Hours',
+      bgColor: 'bg-purple-600',
+      buttonColor: 'bg-green-400',
+      textColor: 'text-gray-800',
+      image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    },
+    {
+      id: '3',
+      title: 'Eco Friendly',
+      description: 'Sustainable Cleaning Solutions',
+      bgColor: 'bg-teal-600',
+      buttonColor: 'bg-amber-400',
+      textColor: 'text-gray-800',
+      image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    },
+    {
+      id: '4',
+      title: 'First Order Discount',
+      description: '25% Off on Your First Order',
+      bgColor: 'bg-pink-600',
+      buttonColor: 'bg-blue-400',
+      textColor: 'text-gray-800',
+      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     }
   ];
   
@@ -48,7 +127,7 @@ const Home: React.FC = () => {
       <div className="section-container pb-6">
         <LocationBar />
         <SearchBar />
-        <PremiumBanner />
+        <PromotionSlider banners={banners} />
         
         <div className="mb-6">
           <h2 className="section-title text-base mb-4">Explore Services</h2>
@@ -68,13 +147,13 @@ const Home: React.FC = () => {
         <div className="mb-10">
           <h2 className="section-title text-base mb-4">Explore Studios</h2>
           
-          <div className="flex gap-3 mb-4 overflow-x-auto pb-2">
+          <div className="flex gap-3 mb-4 pb-2">
             <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
             <FilterButton icon={<Tag size={14} />} label="Offers" />
             <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
           </div>
           
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-4">
             {studios.map((studio, index) => (
               <StudioCard 
                 key={studio.id}

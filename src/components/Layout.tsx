@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
 
@@ -9,13 +9,26 @@ type LayoutProps = {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const [headerColor, setHeaderColor] = useState<string>('');
+  
+  // Generate random color on page load/refresh
+  useEffect(() => {
+    const colors = [
+      'bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 
+      'bg-pink-500', 'bg-teal-500', 'bg-emerald-500',
+      'bg-cyan-500', 'bg-sky-500', 'bg-violet-500'
+    ];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    setHeaderColor(randomColor);
+  }, [location.pathname]);
   
   const isActive = (path: string) => {
     return location.pathname === path;
   };
   
   return (
-    <div className="min-h-screen flex flex-col pb-16">
+    <div className="min-h-screen flex flex-col pb-16 overflow-hidden">
+      <div className={`w-full h-16 ${headerColor} transition-colors duration-300`}></div>
       <main className="flex-1 page-transition-enter">
         {children}
       </main>
@@ -25,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <NavItem 
             to="/" 
             icon={<Home size={20} />} 
-            label="Home" 
+            label="Skawsh" 
             isActive={isActive("/")}
           />
           <NavItem 
