@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -153,23 +152,23 @@ const Home: React.FC = () => {
         <div className="bg-primary-50 rounded-xl py-3 px-4 mb-4">
           <LocationBar />
           <SearchBar />
-        </div>
-        
-        <PromotionSlider banners={banners} />
-        
-        <div className="mb-6">
-          <h2 className="section-title text-base mb-4">Explore Services</h2>
-          <div className="overflow-x-auto overflow-y-hidden">
-            <div className="flex gap-4 pb-2 min-w-max">
-              {services.map((service, index) => (
-                <ServiceCard 
-                  key={service.id} 
-                  icon={service.icon} 
-                  title={service.title}
-                  image={service.image}
-                  index={index}
-                />
-              ))}
+          
+          <PromotionSlider banners={banners} />
+          
+          <div className="mb-6">
+            <h2 className="section-title text-base mb-4">Explore Services</h2>
+            <div className="overflow-x-auto overflow-y-hidden">
+              <div className="flex gap-4 pb-2 min-w-max">
+                {services.map((service, index) => (
+                  <ServiceCard 
+                    key={service.id} 
+                    icon={service.icon} 
+                    title={service.title}
+                    image={service.image}
+                    index={index}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
