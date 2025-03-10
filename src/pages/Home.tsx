@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -149,8 +150,11 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container pb-6">
-        <LocationBar />
-        <SearchBar />
+        <div className="bg-primary-50 rounded-xl py-3 px-4 mb-4">
+          <LocationBar />
+          <SearchBar />
+        </div>
+        
         <PromotionSlider banners={banners} />
         
         <div className="mb-6">
