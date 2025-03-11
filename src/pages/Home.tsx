@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -5,7 +6,7 @@ import SearchBar from '../components/home/SearchBar';
 import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText } from 'lucide-react';
+import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText, Star, TrendingUp } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [
@@ -177,10 +178,12 @@ const Home: React.FC = () => {
         <div className="mb-10 px-4">
           <h2 className="section-title text-base mb-4">Explore Studios</h2>
           
-          <div className="flex gap-3 mb-4 pb-2">
+          <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
             <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
             <FilterButton icon={<Tag size={14} />} label="Offers" />
             <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
+            <FilterButton icon={<Star size={14} />} label="Top Rated" />
+            <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
           </div>
           
           <div className="grid grid-cols-1 gap-4">
