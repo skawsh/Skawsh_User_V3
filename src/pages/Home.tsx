@@ -150,13 +150,15 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container p-0">
-        <div className="bg-primary-50 px-4 pb-1 -mx-4 -mt-10 pt-4">
+        <div className="bg-white px-4 -mx-4 -mt-10 pt-4">
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
-          
+        </div>
+        
+        <div className="bg-primary-50 px-4 pb-1 -mx-4">
           <div className="mb-6">
-            <h2 className="section-title text-base mb-4">Explore Services</h2>
+            <h2 className="section-title text-base mb-4 pt-4">Explore Services</h2>
             <div className="overflow-x-auto overflow-y-hidden">
               <div className="flex gap-4 pb-2 min-w-max">
                 {services.map((service, index) => (
