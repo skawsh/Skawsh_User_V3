@@ -7,19 +7,19 @@ const LocationBar: React.FC = () => {
     <div className="animate-fade-in pt-4">
       <div className="flex items-center justify-between mb-0 mt-2">
         <div className="flex items-center">
-          <MapPin size={38} className="text-green-500 mr-3" />
+          <MapPin size={34} className="text-green-500 mr-2" />
           <div>
-            <div className="text-2xl font-bold text-white flex items-center">
+            <div className="text-xl font-bold text-white flex items-center">
               <span className="mr-1">Home</span>
-              <ChevronDown size={20} className="text-gray-200" />
+              <ChevronDown size={18} className="text-gray-200" />
             </div>
-            <div className="text-base font-normal text-white opacity-90">
+            <div className="text-sm font-normal text-white opacity-90">
               <span className="truncate">Room No: 306, Vathsalya Men's PG</span>
             </div>
           </div>
         </div>
-        <div className="h-14 w-14 rounded-full bg-primary-500 flex items-center justify-center cursor-pointer hover:bg-primary-400 transition-colors">
-          <span className="text-3xl font-bold text-white">C</span>
+        <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors">
+          <User size={22} className="text-primary-500" />
         </div>
       </div>
     </div>
