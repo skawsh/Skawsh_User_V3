@@ -5,7 +5,7 @@ import SearchBar from '../components/home/SearchBar';
 import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText, Star, TrendingUp } from 'lucide-react';
+import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText, Star, TrendingUp, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [
@@ -153,6 +153,10 @@ const Home: React.FC = () => {
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
+          <div className="flex items-center justify-center text-white text-sm mt-2 pb-1">
+            <span>Welcome to Skawsh</span>
+            <Heart size={14} className="ml-1 text-white" fill="white" />
+          </div>
         </div>
         
         <div className="px-4 pb-1 -mx-4">
