@@ -15,8 +15,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col pb-16 overflow-hidden">
-      <main className="flex-1 page-transition-enter">
+    <div className="min-h-screen flex flex-col pb-16 overflow-hidden bg-primary-50">
+      <main className="flex-1 page-transition-enter bg-white">
         {children}
       </main>
       

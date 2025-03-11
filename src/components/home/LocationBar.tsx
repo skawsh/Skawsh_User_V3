@@ -4,7 +4,7 @@ import { MapPin, ChevronDown, User } from 'lucide-react';
 
 const LocationBar: React.FC = () => {
   return (
-    <div className="animate-fade-in pt-0">
+    <div className="animate-fade-in pt-4">
       <div className="flex items-center justify-between mb-3 pl-1 mt-2">
         <div className="text-xl font-semibold text-primary-500 flex items-center">
           <span className="mr-1">Home</span>
