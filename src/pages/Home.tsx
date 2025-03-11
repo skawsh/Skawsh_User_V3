@@ -150,7 +150,7 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container p-0">
-        <div className="bg-blue-50 px-4 -mx-4 -mt-10 pt-4">
+        <div className="bg-[#156082] px-4 -mx-4 -mt-10 pt-4 rounded-b-3xl">
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
