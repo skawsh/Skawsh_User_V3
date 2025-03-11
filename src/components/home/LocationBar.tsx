@@ -5,18 +5,21 @@ import { MapPin, ChevronDown, User } from 'lucide-react';
 const LocationBar: React.FC = () => {
   return (
     <div className="animate-fade-in pt-4">
-      <div className="flex items-center justify-between mb-0 pl-1 mt-2">
-        <div className="text-xl font-semibold text-white flex items-center">
-          <span className="mr-1">Home</span>
-          <ChevronDown size={18} className="text-gray-200" />
+      <div className="flex items-center justify-between mb-0 mt-2">
+        <div className="flex items-center">
+          <MapPin size={38} className="text-green-500 mr-3" />
+          <div>
+            <div className="text-2xl font-bold text-white flex items-center">
+              <span className="mr-1">Home</span>
+              <ChevronDown size={20} className="text-gray-200" />
+            </div>
+            <div className="text-base font-normal text-white opacity-90">
+              <span className="truncate">Room No: 306, Vathsalya Men's PG</span>
+            </div>
+          </div>
         </div>
-        <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors mt-3">
-          <User size={20} className="text-primary-500" />
-        </div>
-      </div>
-      <div className="mb-4">
-        <div className="flex items-center gap-1.5 text-sm font-medium text-white pl-1">
-          <span className="truncate">Room No: 306, Vathsalya Men's PG</span>
+        <div className="h-14 w-14 rounded-full bg-primary-500 flex items-center justify-center cursor-pointer hover:bg-primary-400 transition-colors">
+          <span className="text-3xl font-bold text-white">C</span>
         </div>
       </div>
     </div>
