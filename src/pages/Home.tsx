@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -150,9 +149,7 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <div className="section-container p-0">
-        <div style={{
-          background: 'linear-gradient(90deg, rgba(253,29,29,1) 0%, rgba(252,205,69,1) 100%)'
-        }} className="px-4 -mx-4 -mt-10 pt-4 pb-1 rounded-b-3xl">
+        <div className="bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl">
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
