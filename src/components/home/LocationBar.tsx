@@ -18,8 +18,8 @@ const LocationBar: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors">
-          <User size={22} className="text-primary-500" />
+        <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors">
+          <User size={20} className="text-primary-500" />
         </div>
       </div>
     </div>
