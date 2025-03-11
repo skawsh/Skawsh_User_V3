@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -126,7 +127,7 @@ const Home: React.FC = () => {
           <LocationBar />
           <SearchBar />
           <PromotionSlider banners={banners} />
-          <div className="flex items-center justify-center text-white text-sm mt-2 pb-1">
+          <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
             <span className="font-normal text-xs">Welcome to Skawsh</span>
             <Heart size={14} className="ml-1 text-white" fill="white" />
           </div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 
@@ -32,7 +33,7 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
   };
 
   return (
-    <div className="mb-8 animate-fade-in animate-stagger-2">
+    <div className="mb-6 animate-fade-in animate-stagger-2">
       <div className="relative overflow-hidden rounded-xl">
         <div 
           className="flex transition-transform duration-700 ease-in-out" 
