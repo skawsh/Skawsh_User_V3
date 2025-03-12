@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -177,7 +178,7 @@ const Home: React.FC = () => {
             isSticky 
               ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
               : ''
-          } transition-transform duration-300 ease-in-out`}
+          } transition-all duration-300 ease-in-out`}
         >
           <div className="overflow-x-auto overflow-y-hidden">
             <div className="flex gap-3 pb-1.5 min-w-max">
@@ -194,14 +195,25 @@ const Home: React.FC = () => {
           </div>
         </div>
         
+        {/* Modified placeholder div to ensure smoother transition */}
         <div 
-          style={{ height: isSticky ? `${stickyHeight + 16}px` : '0px' }}
-          className="transition-all duration-300 ease-in-out"
+          style={{ 
+            height: isSticky ? `${stickyHeight}px` : '0px',
+            transition: 'height 0.2s ease-in-out',
+            overflow: 'hidden'
+          }}
           aria-hidden="true"
         ></div>
       </div>
       
-      <div className="mb-10 px-4 pt-4">
+      {/* Added transform transition to studios section to prevent jumping */}
+      <div 
+        className="mb-10 px-4"
+        style={{
+          transform: isSticky ? 'translateY(0)' : 'translateY(0)',
+          transition: 'transform 0.2s ease-in-out'
+        }}
+      >
         <h2 className="section-title text-base mb-4">Explore Studios</h2>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
