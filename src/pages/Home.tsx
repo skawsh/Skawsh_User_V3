@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
 import SearchBar from '../components/home/SearchBar';
@@ -7,7 +6,23 @@ import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText, Star, TrendingUp, Heart } from 'lucide-react';
+
 const Home: React.FC = () => {
+  const [isSticky, setIsSticky] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const servicesSection = document.getElementById('services-section');
+      if (servicesSection) {
+        const rect = servicesSection.getBoundingClientRect();
+        setIsSticky(rect.top <= 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const services = [{
     id: '1',
     title: 'Wash & Fold',
@@ -45,6 +60,7 @@ const Home: React.FC = () => {
     title: 'Business Attire',
     icon: <Briefcase size={24} />
   }];
+
   const studios = [{
     id: '1',
     name: 'Pristine Laundry',
@@ -88,6 +104,7 @@ const Home: React.FC = () => {
     deliveryTime: '1-2 days',
     promoted: true
   }];
+
   const banners = [{
     id: '1',
     title: 'Premium Care',
@@ -121,52 +138,70 @@ const Home: React.FC = () => {
     textColor: 'text-gray-800',
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
   }];
+
   return <Layout>
-      <div className="section-container p-0">
-        <div className="bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl">
-          <LocationBar />
-          <SearchBar />
-          <PromotionSlider banners={banners} />
-          <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
-            <span className="font-normal text-xs">Welcome to Skawsh</span>
-            <Heart size={14} className="ml-1 text-white" fill="white" />
-          </div>
+    <div className="section-container p-0">
+      <div className="bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl">
+        <LocationBar />
+        <SearchBar />
+        <PromotionSlider banners={banners} />
+        <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
+          <span className="font-normal text-xs">Welcome to Skawsh</span>
+          <Heart size={14} className="ml-1 text-white" fill="white" />
         </div>
-        
-        <div className="px-4 pb-1 -mx-4">
-          <div className="mb-6">
-            <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
-            <div className="overflow-x-auto overflow-y-hidden">
-              <div className="flex gap-4 pb-2 min-w-max">
-                {services.map((service, index) => <ServiceCard key={service.id} icon={service.icon} title={service.title} image={service.image} index={index} />)}
-              </div>
+      </div>
+      
+      <div className="px-4 pb-1 -mx-4">
+        <div 
+          id="services-section"
+          className={`${
+            isSticky 
+              ? 'sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 py-2' 
+              : ''
+          } transition-all duration-300 ease-in-out`}
+        >
+          <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
+          <div className="overflow-x-auto overflow-y-hidden">
+            <div className="flex gap-4 pb-2 min-w-max">
+              {services.map((service, index) => (
+                <ServiceCard 
+                  key={service.id} 
+                  icon={service.icon} 
+                  title={service.title} 
+                  image={service.image} 
+                  index={index} 
+                />
+              ))}
             </div>
           </div>
         </div>
+      </div>
+      
+      <div className="mb-10 px-4">
+        <h2 className="section-title text-base mb-4">Explore Studios</h2>
         
-        <div className="mb-10 px-4">
-          <h2 className="section-title text-base mb-4">Explore Studios</h2>
-          
-          <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
-            <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
-            <FilterButton icon={<Tag size={14} />} label="Offers" />
-            <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
-            <FilterButton icon={<Star size={14} />} label="Top Rated" />
-            <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} index={index} promoted={studio.promoted} />)}
-          </div>
+        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
+          <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
+          <FilterButton icon={<Tag size={14} />} label="Offers" />
+          <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
+          <FilterButton icon={<Star size={14} />} label="Top Rated" />
+          <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
+        </div>
+        
+        <div className="grid grid-cols-1 gap-4">
+          {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} index={index} promoted={studio.promoted} />)}
         </div>
       </div>
-    </Layout>;
+    </div>
+  </Layout>;
 };
+
 interface FilterButtonProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
 }
+
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   label,
@@ -177,4 +212,5 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       {label}
     </button>;
 };
+
 export default Home;
