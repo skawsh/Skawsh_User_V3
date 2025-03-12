@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -11,18 +10,16 @@ import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const handleScroll = () => {
-      const servicesSection = document.getElementById('services-section');
       const servicesRow = document.getElementById('services-row');
-      const titleElement = titleRef.current;
+      const servicesSection = servicesRef.current;
       
-      if (servicesSection && servicesRow && titleElement) {
-        // Check if the title has scrolled past the top of the viewport
-        const titleRect = titleElement.getBoundingClientRect();
-        const shouldStick = titleRect.bottom <= 0;
+      if (servicesSection && servicesRow) {
+        const rect = servicesSection.getBoundingClientRect();
+        const shouldStick = rect.top <= 0;
         
         if (!isSticky && shouldStick) {
           setStickyHeight(servicesRow.offsetHeight);
@@ -164,8 +161,8 @@ const Home: React.FC = () => {
         </div>
       </div>
       
-      <div className="px-4 pb-1 -mx-4" id="services-section">
-        <h2 className="section-title text-base mb-2 pt-2" ref={titleRef}>Explore Services</h2>
+      <div className="px-4 pb-1 -mx-4" ref={servicesRef}>
+        <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
         
         <div 
           id="services-row"
@@ -175,13 +172,12 @@ const Home: React.FC = () => {
               : ''
           } transition-all duration-500 ease-in-out`}
           style={{ 
-            transform: isSticky ? 'translateY(0)' : 'translateY(0)',
             willChange: 'transform',
             opacity: isSticky ? 1 : 1
           }}
         >
           <div className="overflow-x-auto overflow-y-hidden">
-            <div className={`flex gap-3 pb-1.5 min-w-max ${isSticky ? 'transform scale-[0.85] origin-left' : ''} transition-transform duration-500 ease-in-out`}>
+            <div className="flex gap-3 pb-1.5 min-w-max transition-all duration-500 ease-in-out">
               {services.map((service, index) => (
                 <ServiceCard 
                   key={service.id} 
