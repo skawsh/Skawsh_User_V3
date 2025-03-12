@@ -156,7 +156,7 @@ const Home: React.FC = () => {
           id="services-section"
           className={`${
             isSticky 
-              ? 'sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 py-2' 
+              ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 px-4 py-2' 
               : ''
           } transition-all duration-300 ease-in-out`}
         >
@@ -175,6 +175,10 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {isSticky && (
+          <div className="h-[120px]"></div>
+        )}
       </div>
       
       <div className="mb-10 px-4">
