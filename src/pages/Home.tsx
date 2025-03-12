@@ -9,19 +9,29 @@ import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, 
 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
+  const [stickyHeight, setStickyHeight] = useState(0);
   
   useEffect(() => {
     const handleScroll = () => {
       const servicesSection = document.getElementById('services-section');
-      if (servicesSection) {
+      const servicesRow = document.getElementById('services-row');
+      
+      if (servicesSection && servicesRow) {
         const rect = servicesSection.getBoundingClientRect();
-        setIsSticky(rect.top <= 0);
+        const shouldStick = rect.top <= 0;
+        
+        if (shouldStick !== isSticky) {
+          setIsSticky(shouldStick);
+          if (shouldStick) {
+            setStickyHeight(servicesRow.offsetHeight + 16); // Add padding
+          }
+        }
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isSticky]);
 
   const services = [{
     id: '1',
@@ -151,16 +161,17 @@ const Home: React.FC = () => {
         </div>
       </div>
       
-      <div className="px-4 pb-1 -mx-4">
+      <div className="px-4 pb-1 -mx-4" id="services-section">
+        <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
+        
         <div 
-          id="services-section"
+          id="services-row"
           className={`${
             isSticky 
-              ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 px-4 py-2' 
+              ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 px-4 py-3' 
               : ''
           } transition-all duration-300 ease-in-out`}
         >
-          <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
           <div className="overflow-x-auto overflow-y-hidden">
             <div className="flex gap-4 pb-2 min-w-max">
               {services.map((service, index) => (
@@ -177,7 +188,7 @@ const Home: React.FC = () => {
         </div>
         
         {isSticky && (
-          <div className="h-[120px]"></div>
+          <div style={{ height: `${stickyHeight}px` }} className="transition-all duration-300 ease-in-out"></div>
         )}
       </div>
       
