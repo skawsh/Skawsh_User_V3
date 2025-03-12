@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
 
@@ -9,7 +9,31 @@ type LayoutProps = {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < lastScrollY) {
+        // Scrolling up
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // Scrolling down and not at the top
+        setIsVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -20,7 +44,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       
-      <nav className="fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50">
+      <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-300 transform ${
+        isVisible ? 'translate-y-0' : 'translate-y-full'
+      }`}>
         <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">
           <NavItem 
             to="/" 
