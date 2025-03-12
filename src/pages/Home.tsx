@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -23,7 +24,7 @@ const Home: React.FC = () => {
         if (shouldStick !== isSticky) {
           setIsSticky(shouldStick);
           if (shouldStick) {
-            setStickyHeight(servicesRow.offsetHeight + 16); // Add padding
+            setStickyHeight(servicesRow.offsetHeight); // Store the normal height
           }
         }
       }
@@ -168,12 +169,12 @@ const Home: React.FC = () => {
           id="services-row"
           className={`${
             isSticky 
-              ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-40 px-4 py-3' 
+              ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
               : ''
-          } transition-all duration-300 ease-in-out`}
+          } transition-all duration-500 ease-in-out`}
         >
           <div className="overflow-x-auto overflow-y-hidden">
-            <div className="flex gap-4 pb-2 min-w-max">
+            <div className={`flex gap-3 pb-1.5 min-w-max ${isSticky ? 'transform scale-[0.85] origin-left' : ''} transition-transform duration-500 ease-in-out`}>
               {services.map((service, index) => (
                 <ServiceCard 
                   key={service.id} 
@@ -188,7 +189,10 @@ const Home: React.FC = () => {
         </div>
         
         {isSticky && (
-          <div style={{ height: `${stickyHeight}px` }} className="transition-all duration-300 ease-in-out"></div>
+          <div 
+            style={{ height: `${stickyHeight}px` }} 
+            className="transition-all duration-500 ease-in-out"
+          ></div>
         )}
       </div>
       

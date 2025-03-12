@@ -12,9 +12,9 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, image, index }) => {
   return (
-    <Link to="/services" className="animate-fade-in" style={{ animationDelay: `${150 + index * 75}ms` }}>
+    <Link to="/services" className="animate-fade-in transition-all duration-500 ease-in-out" style={{ animationDelay: `${150 + index * 75}ms` }}>
       <div className="flex flex-col items-center text-center">
-        <div className="rounded-full bg-gray-100 p-2 mb-2 w-16 h-16 flex items-center justify-center overflow-hidden">
+        <div className="rounded-full bg-gray-100 p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out">
           {image ? (
             <img src={image} alt={title} className="w-full h-full object-cover rounded-full" />
           ) : (
