@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -21,12 +20,11 @@ const Home: React.FC = () => {
         const rect = servicesSection.getBoundingClientRect();
         const shouldStick = rect.top <= 0;
         
-        if (shouldStick !== isSticky) {
-          setIsSticky(shouldStick);
-          if (shouldStick) {
-            setStickyHeight(servicesRow.offsetHeight); // Store the normal height
-          }
+        if (!isSticky && shouldStick) {
+          setStickyHeight(servicesRow.offsetHeight);
         }
+        
+        setIsSticky(shouldStick);
       }
     };
 
@@ -172,6 +170,10 @@ const Home: React.FC = () => {
               ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
               : ''
           } transition-all duration-500 ease-in-out`}
+          style={{ 
+            transform: isSticky ? 'translateY(0)' : 'translateY(0)',
+            willChange: 'transform'
+          }}
         >
           <div className="overflow-x-auto overflow-y-hidden">
             <div className={`flex gap-3 pb-1.5 min-w-max ${isSticky ? 'transform scale-[0.85] origin-left' : ''} transition-transform duration-500 ease-in-out`}>
@@ -188,12 +190,10 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        {isSticky && (
-          <div 
-            style={{ height: `${stickyHeight}px` }} 
-            className="transition-all duration-500 ease-in-out"
-          ></div>
-        )}
+        <div 
+          style={{ height: isSticky ? `${stickyHeight}px` : '0px' }}
+          className="transition-all duration-500 ease-in-out"
+        ></div>
       </div>
       
       <div className="mb-10 px-4">
