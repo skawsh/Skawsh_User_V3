@@ -11,14 +11,15 @@ const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
   const servicesRef = useRef<HTMLDivElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const handleScroll = () => {
       const servicesRow = document.getElementById('services-row');
-      const servicesSection = servicesRef.current;
+      const invisibleDivider = dividerRef.current;
       
-      if (servicesSection && servicesRow) {
-        const rect = servicesSection.getBoundingClientRect();
+      if (invisibleDivider && servicesRow) {
+        const rect = invisibleDivider.getBoundingClientRect();
         const shouldStick = rect.top <= 0;
         
         if (!isSticky && shouldStick) {
@@ -163,6 +164,12 @@ const Home: React.FC = () => {
       
       <div className="px-4 pb-1 -mx-4" ref={servicesRef}>
         <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
+        
+        <div 
+          ref={dividerRef} 
+          className="h-[1px] -mt-[1px] w-full invisible" 
+          aria-hidden="true"
+        ></div>
         
         <div 
           id="services-row"
