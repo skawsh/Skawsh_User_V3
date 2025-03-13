@@ -91,6 +91,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.8,
     deliveryTime: '1-2 days',
+    distance: '1.2 km',
+    workingHours: '9 AM - 8 PM',
     promoted: true
   }, {
     id: '2',
@@ -98,6 +100,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.6,
     deliveryTime: 'Same Day',
+    distance: '0.8 km',
+    workingHours: '8 AM - 9 PM',
     promoted: false
   }, {
     id: '3',
@@ -105,6 +109,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1521656693074-0ef32e80a5d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.9,
     deliveryTime: '1 day',
+    distance: '2.5 km',
+    workingHours: '10 AM - 7 PM',
     promoted: true
   }, {
     id: '4',
@@ -112,6 +118,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.3,
     deliveryTime: '3-4 hours',
+    distance: '3.1 km',
+    workingHours: '24 hours',
     promoted: false
   }, {
     id: '5',
@@ -119,6 +127,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.7,
     deliveryTime: '2 days',
+    distance: '1.5 km',
+    workingHours: '8 AM - 6 PM',
     promoted: false
   }, {
     id: '6',
@@ -126,6 +136,8 @@ const Home: React.FC = () => {
     image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 5.0,
     deliveryTime: '1-2 days',
+    distance: '0.5 km',
+    workingHours: '7 AM - 10 PM',
     promoted: true
   }];
 
@@ -241,8 +253,21 @@ const Home: React.FC = () => {
           <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
         </div>
         
-        <div className="grid grid-cols-1 gap-4">
-          {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} index={index} promoted={studio.promoted} />)}
+        <div className="grid grid-cols-2 gap-4">
+          {studios.map((studio, index) => (
+            <StudioCard 
+              key={studio.id} 
+              id={studio.id} 
+              name={studio.name} 
+              image={studio.image} 
+              rating={studio.rating} 
+              deliveryTime={studio.deliveryTime}
+              distance={studio.distance}
+              workingHours={studio.workingHours}
+              index={index} 
+              promoted={studio.promoted} 
+            />
+          ))}
         </div>
       </div>
     </div>
