@@ -195,23 +195,25 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        {/* Modified placeholder div to ensure smoother transition */}
+        {/* Placeholder div with adjusted height to prevent content jump */}
         <div 
           style={{ 
-            height: isSticky ? `${stickyHeight}px` : '0px',
-            transition: 'height 0.2s ease-in-out',
+            height: isSticky ? `${stickyHeight + 8}px` : '0px',
+            transition: 'height 0.3s ease-in-out',
             overflow: 'hidden'
           }}
           aria-hidden="true"
         ></div>
       </div>
       
-      {/* Added transform transition to studios section to prevent jumping */}
+      {/* Studios section with transform transition */}
       <div 
         className="mb-10 px-4"
         style={{
           transform: isSticky ? 'translateY(0)' : 'translateY(0)',
-          transition: 'transform 0.2s ease-in-out'
+          transition: 'transform 0.3s ease-in-out',
+          position: 'relative',
+          zIndex: 0
         }}
       >
         <h2 className="section-title text-base mb-4">Explore Studios</h2>
