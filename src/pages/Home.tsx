@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -10,7 +11,6 @@ import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
-  const [placeholderVisible, setPlaceholderVisible] = useState(false);
   const servicesRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
@@ -26,9 +26,6 @@ const Home: React.FC = () => {
         
         if (!isSticky && shouldStick) {
           setStickyHeight(servicesRow.offsetHeight);
-          setTimeout(() => setPlaceholderVisible(true), 50);
-        } else if (isSticky && !shouldStick) {
-          setTimeout(() => setPlaceholderVisible(false), 100);
         }
         
         setIsSticky(shouldStick);
@@ -199,20 +196,22 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        <div 
-          style={{ 
-            height: placeholderVisible ? `${stickyHeight}px` : '0px',
-            opacity: placeholderVisible ? 1 : 0,
-            transition: 'height 0.3s ease-out, opacity 0.3s ease-out',
-            pointerEvents: 'none'
-          }}
-          aria-hidden="true"
-        ></div>
+        {/* Placeholder div with precisely calculated height to prevent content jump */}
+        {isSticky && (
+          <div 
+            style={{ 
+              height: `${stickyHeight}px`,
+              transition: 'none'
+            }}
+            aria-hidden="true"
+          ></div>
+        )}
       </div>
       
+      {/* Studios section with no transform to prevent glitching */}
       <div 
         ref={studiosRef}
-        className="mb-10 px-4 transition-all duration-300 ease-out"
+        className="mb-10 px-4"
         style={{
           position: 'relative',
           zIndex: 0
