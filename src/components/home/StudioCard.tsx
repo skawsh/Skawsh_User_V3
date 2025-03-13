@@ -4,6 +4,7 @@ import { Heart, Star, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface StudioCardProps {
   id: string;
@@ -35,31 +36,40 @@ const StudioCard: React.FC<StudioCardProps> = ({
       style={{ animationDelay: `${200 + index * 100}ms` }}
     >
       <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-        <div className="flex">
-          <div 
-            className="h-28 w-28 bg-cover bg-center relative flex-shrink-0" 
-            style={{ backgroundImage: `url(${image})` }} 
-          >
+        <div className="flex flex-row">
+          {/* Image section - 50% */}
+          <div className="w-1/2 relative">
+            <AspectRatio ratio={1} className="h-full">
+              <div 
+                className="h-full w-full bg-cover bg-center" 
+                style={{ backgroundImage: `url(${image})` }} 
+              />
+            </AspectRatio>
+            
             {promoted && (
               <Badge variant="default" className="absolute top-2 left-2 bg-primary shadow-sm">
                 Promoted
               </Badge>
             )}
           </div>
-          <div className="p-3 flex-grow">
-            <div className="flex justify-between items-start">
-              <h3 className="font-semibold text-gray-800 mb-1 truncate">{name}</h3>
-              <button className="bg-white/80 p-1.5 rounded-full hover:bg-white transition-colors duration-200">
-                <Heart size={18} className="text-gray-600" />
-              </button>
-            </div>
-            
-            <div className="flex flex-col gap-1 mt-1">
-              <div className="flex items-center gap-1.5">
+          
+          {/* Content section - 50% */}
+          <div className="w-1/2 p-3 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-semibold text-gray-800 truncate pr-2">{name}</h3>
+                <button className="bg-white/80 p-1 rounded-full hover:bg-white transition-colors duration-200 flex-shrink-0">
+                  <Heart size={16} className="text-gray-600" />
+                </button>
+              </div>
+              
+              <div className="flex items-center gap-1.5 mb-1.5">
                 <Star size={14} className={cn("text-gray-400", rating && "fill-yellow-400 text-yellow-400")} />
                 <span className="text-sm text-gray-700">{rating || "New"}</span>
               </div>
-              
+            </div>
+            
+            <div className="space-y-1.5">
               {distance && (
                 <div className="flex items-center gap-1.5 text-gray-500">
                   <MapPin size={14} />
