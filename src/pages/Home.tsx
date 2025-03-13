@@ -201,7 +201,7 @@ const Home: React.FC = () => {
           ref={servicesRowRef}
           className={`${
             isSticky 
-              ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
+              ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5 border-b' 
               : ''
           } will-change-transform`}
           style={{
@@ -237,7 +237,7 @@ const Home: React.FC = () => {
       
       <div 
         ref={studiosRef}
-        className="mb-10 px-4"
+        className="mb-10 px-4 mt-3"
         style={{
           position: 'relative',
           zIndex: 0
@@ -246,7 +246,7 @@ const Home: React.FC = () => {
         <h2 className="section-title text-base mb-4">Explore Studios</h2>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
-          <FilterButton icon={<MapPin size={14} />} label="Nearby" active />
+          <FilterButton icon={<MapPin size={14} />} label="Nearby" />
           <FilterButton icon={<Tag size={14} />} label="Offers" />
           <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
           <FilterButton icon={<Star size={14} />} label="Top Rated" />
