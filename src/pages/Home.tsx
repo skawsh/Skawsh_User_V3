@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -201,7 +202,7 @@ const Home: React.FC = () => {
           ref={servicesRowRef}
           className={`${
             isSticky 
-              ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
+              ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-md z-40 px-4 py-1.5 border-b border-gray-100' 
               : ''
           } will-change-transform`}
           style={{
