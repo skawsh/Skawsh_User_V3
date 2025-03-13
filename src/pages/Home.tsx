@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -14,27 +13,39 @@ const Home: React.FC = () => {
   const servicesRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
+  const servicesRowRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const handleScroll = () => {
-      const servicesRow = document.getElementById('services-row');
+      const servicesRow = servicesRowRef.current;
       const invisibleDivider = dividerRef.current;
       
       if (invisibleDivider && servicesRow) {
         const dividerPosition = invisibleDivider.getBoundingClientRect().top;
         const shouldStick = dividerPosition <= 0;
         
-        if (!isSticky && shouldStick) {
+        if (shouldStick && !isSticky) {
           setStickyHeight(servicesRow.offsetHeight);
+          requestAnimationFrame(() => {
+            setIsSticky(true);
+          });
+        } else if (!shouldStick && isSticky) {
+          requestAnimationFrame(() => {
+            setIsSticky(false);
+          });
         }
-        
-        setIsSticky(shouldStick);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isSticky]);
+
+  useEffect(() => {
+    if (servicesRowRef.current && stickyHeight === 0) {
+      setStickyHeight(servicesRowRef.current.offsetHeight);
+    }
+  }, []);
 
   const services = [{
     id: '1',
@@ -175,11 +186,15 @@ const Home: React.FC = () => {
         
         <div 
           id="services-row"
+          ref={servicesRowRef}
           className={`${
             isSticky 
               ? 'fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-40 px-4 py-1.5' 
               : ''
-          } transition-all duration-300 ease-in-out`}
+          } will-change-transform`}
+          style={{
+            transition: 'transform 0.2s ease, opacity 0.2s ease',
+          }}
         >
           <div className="overflow-x-auto overflow-y-hidden">
             <div className="flex gap-3 pb-1.5 min-w-max">
@@ -196,19 +211,18 @@ const Home: React.FC = () => {
           </div>
         </div>
         
-        {/* Placeholder div with precisely calculated height to prevent content jump */}
         {isSticky && (
           <div 
             style={{ 
               height: `${stickyHeight}px`,
-              transition: 'none'
+              opacity: 1
             }}
+            className="pointer-events-none"
             aria-hidden="true"
           ></div>
         )}
       </div>
       
-      {/* Studios section with no transform to prevent glitching */}
       <div 
         ref={studiosRef}
         className="mb-10 px-4"
