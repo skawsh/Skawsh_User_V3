@@ -253,7 +253,7 @@ const Home: React.FC = () => {
           <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-4">
           {studios.map((studio, index) => (
             <StudioCard 
               key={studio.id} 
