@@ -5,7 +5,7 @@ import SearchBar from '../components/home/SearchBar';
 import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
-import { Shirt, Wind, Droplets, Footprints, MapPin, Clock, Tag, Palette, Medal, Home as HomeIcon, Briefcase, Bed, FileText, Star, TrendingUp, Heart } from 'lucide-react';
+import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
@@ -202,7 +202,8 @@ const Home: React.FC = () => {
                   icon={service.icon} 
                   title={service.title} 
                   image={service.image} 
-                  index={index} 
+                  index={index}
+                  isSticky={isSticky}
                 />
               ))}
             </div>
