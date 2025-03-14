@@ -202,8 +202,7 @@ const Home: React.FC = () => {
                   icon={service.icon} 
                   title={service.title} 
                   image={service.image} 
-                  index={index}
-                  isSticky={isSticky}
+                  index={index} 
                 />
               ))}
             </div>
