@@ -191,7 +191,9 @@ const Home: React.FC = () => {
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
-        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-white'} will-change-transform transition-all duration-300 ease-in-out`}>
+        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-white'} will-change-transform`} style={{
+          transition: 'transform 0.2s ease, opacity 0.2s ease'
+        }}>
           <div className="overflow-x-auto overflow-y-hidden">
             <div className="flex gap-3 pb-1.5 min-w-max">
               {services.map((service, index) => (
@@ -200,8 +202,7 @@ const Home: React.FC = () => {
                   icon={service.icon} 
                   title={service.title} 
                   image={service.image} 
-                  index={index}
-                  isSticky={isSticky}
+                  index={index} 
                 />
               ))}
             </div>
