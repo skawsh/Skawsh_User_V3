@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
+
 interface ServiceCardProps {
   icon: React.ReactNode;
   title: string;
@@ -7,6 +9,7 @@ interface ServiceCardProps {
   image?: string;
   index: number;
 }
+
 const ServiceCard: React.FC<ServiceCardProps> = ({
   icon,
   title,
@@ -25,4 +28,5 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       </div>
     </Link>;
 };
+
 export default ServiceCard;
