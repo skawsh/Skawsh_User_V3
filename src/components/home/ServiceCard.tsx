@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 interface ServiceCardProps {
   icon: React.ReactNode;
   title: string;
@@ -9,22 +7,22 @@ interface ServiceCardProps {
   image?: string;
   index: number;
 }
-
-const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description, image, index }) => {
-  return (
-    <Link to="/services" className="animate-fade-in transition-all duration-500 ease-in-out" style={{ animationDelay: `${150 + index * 75}ms` }}>
+const ServiceCard: React.FC<ServiceCardProps> = ({
+  icon,
+  title,
+  description,
+  image,
+  index
+}) => {
+  return <Link to="/services" className="animate-fade-in transition-all duration-500 ease-in-out" style={{
+    animationDelay: `${150 + index * 75}ms`
+  }}>
       <div className="flex flex-col items-center text-center">
-        <div className="rounded-full bg-gray-100 p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out">
-          {image ? (
-            <img src={image} alt={title} className="w-full h-full object-cover rounded-full" />
-          ) : (
-            <div className="text-primary-500">{icon}</div>
-          )}
+        <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
+          {image ? <img src={image} alt={title} className="w-full h-full object-cover rounded-full" /> : <div className="text-primary-500">{icon}</div>}
         </div>
         <h3 className="text-xs font-medium text-gray-800 mt-1">{title}</h3>
       </div>
-    </Link>
-  );
+    </Link>;
 };
-
 export default ServiceCard;
