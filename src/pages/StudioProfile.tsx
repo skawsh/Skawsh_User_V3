@@ -90,7 +90,7 @@ const StudioProfile: React.FC = () => {
               <div className="flex items-center">
                 <button 
                   onClick={() => navigate(-1)} 
-                  className="mr-3 p-1 rounded-full text-gray-700"
+                  className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70"
                 >
                   <ChevronLeft size={24} />
                 </button>
@@ -99,7 +99,7 @@ const StudioProfile: React.FC = () => {
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded-full hover:bg-gray-100">
+                  <button className="p-1 rounded-full hover:bg-gray-100 bg-gray-100/70">
                     <MoreVertical size={20} />
                   </button>
                 </DropdownMenuTrigger>
@@ -129,6 +129,7 @@ const StudioProfile: React.FC = () => {
           reviewCount={studio.reviewCount} 
           deliveryTime={studio.deliveryTime}
           backButtonRef={backButtonRef}
+          description={studio.description}
         />
         
         <div className="section-container relative">
