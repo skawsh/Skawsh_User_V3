@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
