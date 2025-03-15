@@ -1,26 +1,28 @@
+
 import React from 'react';
 import { Heart, Star, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+
 interface StudioCardProps {
   id: string;
   name: string;
   image: string;
   rating?: number;
-  deliveryTime?: string;
+  deliveryTime?: string; // Keeping the prop in the interface for backward compatibility
   distance?: string;
   workingHours?: string;
   index: number;
   promoted?: boolean;
 }
+
 const StudioCard: React.FC<StudioCardProps> = ({
   id,
   name,
   image,
   rating,
-  deliveryTime,
   distance,
   workingHours,
   index,
@@ -71,11 +73,10 @@ const StudioCard: React.FC<StudioCardProps> = ({
                   <span className="text-xs">{workingHours}</span>
                 </div>}
             </div>
-            
-            {deliveryTime}
           </div>
         </div>
       </div>
     </Link>;
 };
+
 export default StudioCard;
