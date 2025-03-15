@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +15,14 @@ import {
 
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Reset scroll position when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +35,11 @@ const StudioProfile: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Navigate to home page when back button is clicked
+  const handleBackClick = () => {
+    navigate('/');
+  };
 
   const handleShareStudio = () => {
     if (navigator.share) {
@@ -89,7 +101,7 @@ const StudioProfile: React.FC = () => {
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
                 <button 
-                  onClick={() => navigate(-1)} 
+                  onClick={handleBackClick} 
                   className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70"
                 >
                   <ChevronLeft size={24} />
@@ -130,6 +142,7 @@ const StudioProfile: React.FC = () => {
           deliveryTime={studio.deliveryTime}
           backButtonRef={backButtonRef}
           description={studio.description}
+          onBackClick={handleBackClick}
         />
         
         <div className="section-container relative">

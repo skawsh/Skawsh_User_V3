@@ -17,6 +17,7 @@ interface StudioHeaderProps {
   deliveryTime: string;
   backButtonRef?: React.RefObject<HTMLButtonElement>;
   description?: string;
+  onBackClick?: () => void;
 }
 
 const StudioHeader: React.FC<StudioHeaderProps> = ({ 
@@ -26,9 +27,18 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   reviewCount, 
   deliveryTime,
   backButtonRef,
-  description
+  description,
+  onBackClick
 }) => {
   const navigate = useNavigate();
+  
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      navigate(-1);
+    }
+  };
   
   const handleShareStudio = () => {
     if (navigator.share) {
@@ -56,7 +66,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       <div className="relative h-56 bg-cover bg-center w-full" style={{ backgroundImage: `url(${image})` }}>
         <button 
           ref={backButtonRef}
-          onClick={() => navigate(-1)} 
+          onClick={handleBackClick} 
           className="absolute top-4 left-4 bg-white/70 backdrop-blur-md p-2 rounded-full text-gray-700"
         >
           <ChevronLeft size={24} />
