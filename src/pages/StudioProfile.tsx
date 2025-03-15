@@ -1,11 +1,16 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
-import { ShoppingBag, ChevronLeft } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +28,27 @@ const StudioProfile: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleShareStudio = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: studio.name,
+        text: `Check out ${studio.name}`,
+        url: window.location.href,
+      }).catch(err => console.error('Error sharing:', err));
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
+    }
+  };
+
+  const handleAboutStudio = () => {
+    alert(`About ${studio.name}: ${studio.description}`);
+  };
+
+  const handleReportStudio = () => {
+    alert(`Thank you for your feedback. ${studio.name} has been reported.`);
+  };
 
   const studio = {
     id: '1',
@@ -60,14 +86,38 @@ const StudioProfile: React.FC = () => {
       <div>
         {isScrolled && (
           <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
-            <div className="flex items-center px-4 py-3">
-              <button 
-                onClick={() => navigate(-1)} 
-                className="mr-3 p-1 rounded-full text-gray-700"
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center">
+                <button 
+                  onClick={() => navigate(-1)} 
+                  className="mr-3 p-1 rounded-full text-gray-700"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
+              </div>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-1 rounded-full hover:bg-gray-100">
+                    <MoreVertical size={20} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
+                    <Share size={16} />
+                    <span>Share Studio</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
+                    <Info size={16} />
+                    <span>About Studio</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
+                    <Flag size={16} />
+                    <span>Report this Studio</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         )}
