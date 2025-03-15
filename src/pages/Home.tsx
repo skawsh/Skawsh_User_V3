@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -10,23 +9,16 @@ import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, St
 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
-  const [isFilterSticky, setIsFilterSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
-  const [filterStickyHeight, setFilterStickyHeight] = useState(0);
   const servicesRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
-  const filtersRowRef = useRef<HTMLDivElement>(null);
-  const filtersDividerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const servicesRow = servicesRowRef.current;
       const invisibleDivider = dividerRef.current;
-      const filtersRow = filtersRowRef.current;
-      const filtersDivider = filtersDividerRef.current;
-
       if (invisibleDivider && servicesRow) {
         const dividerPosition = invisibleDivider.getBoundingClientRect().top;
         const shouldStick = dividerPosition <= 0;
@@ -41,34 +33,16 @@ const Home: React.FC = () => {
           });
         }
       }
-
-      if (filtersDivider && filtersRow) {
-        const filtersDividerPosition = filtersDivider.getBoundingClientRect().top;
-        const shouldStickFilters = filtersDividerPosition <= stickyHeight;
-        if (shouldStickFilters && !isFilterSticky) {
-          setFilterStickyHeight(filtersRow.offsetHeight);
-          requestAnimationFrame(() => {
-            setIsFilterSticky(true);
-          });
-        } else if (!shouldStickFilters && isFilterSticky) {
-          requestAnimationFrame(() => {
-            setIsFilterSticky(false);
-          });
-        }
-      }
     };
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isSticky, isFilterSticky, stickyHeight]);
+  }, [isSticky]);
 
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {
       setStickyHeight(servicesRowRef.current.offsetHeight);
-    }
-    if (filtersRowRef.current && filterStickyHeight === 0) {
-      setFilterStickyHeight(filtersRowRef.current.offsetHeight);
     }
   }, []);
 
@@ -249,27 +223,15 @@ const Home: React.FC = () => {
       }} className="mb-10 px-0 my-[14px]">
         <h2 className="section-title text-base mb-4">Explore Studios</h2>
         
-        <div ref={filtersDividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
-        
-        <div ref={filtersRowRef} className={`${isFilterSticky ? 'fixed left-0 right-0 backdrop-blur-sm shadow-md z-30 px-4 py-2 bg-white/95 border-b' : ''} ${isSticky ? `top-[${stickyHeight}px]` : 'top-0'} will-change-transform`} style={{
-          transition: 'transform 0.2s ease, opacity 0.2s ease',
-          top: isSticky ? `${stickyHeight}px` : '0'
-        }}>
-          <div className="flex gap-3 pb-2 overflow-x-auto">
-            <FilterButton icon={<MapPin size={14} />} label="Nearby" />
-            <FilterButton icon={<Tag size={14} />} label="Offers" />
-            <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
-            <FilterButton icon={<Star size={14} />} label="Top Rated" />
-            <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
-          </div>
+        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
+          <FilterButton icon={<MapPin size={14} />} label="Nearby" />
+          <FilterButton icon={<Tag size={14} />} label="Offers" />
+          <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
+          <FilterButton icon={<Star size={14} />} label="Top Rated" />
+          <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
         </div>
         
-        {isFilterSticky && <div style={{
-          height: `${filterStickyHeight}px`,
-          opacity: 1
-        }} className="pointer-events-none" aria-hidden="true"></div>}
-        
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4">
           {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} distance={studio.distance} workingHours={studio.workingHours} index={index} promoted={studio.promoted} />)}
         </div>
       </div>
