@@ -12,6 +12,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   
+  // Check if current path is a studio profile page
+  const isStudioProfilePage = location.pathname.includes('/studio/');
+  
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -44,36 +47,38 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       
-      <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-500 ease-in-out transform ${
-        isVisible ? 'translate-y-0' : 'translate-y-full'
-      }`}>
-        <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">
-          <NavItem 
-            to="/" 
-            icon={<Home size={20} />} 
-            label="Skawsh" 
-            isActive={isActive("/")}
-          />
-          <NavItem 
-            to="/services" 
-            icon={<Layers size={20} />} 
-            label="Services" 
-            isActive={isActive("/services")}
-          />
-          <NavItem 
-            to="/favorites" 
-            icon={<Heart size={20} />} 
-            label="Washlist" 
-            isActive={isActive("/favorites")}
-          />
-          <NavItem 
-            to="/cart" 
-            icon={<ShoppingBag size={20} />} 
-            label="Sack" 
-            isActive={isActive("/cart")}
-          />
-        </div>
-      </nav>
+      {!isStudioProfilePage && (
+        <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-500 ease-in-out transform ${
+          isVisible ? 'translate-y-0' : 'translate-y-full'
+        }`}>
+          <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">
+            <NavItem 
+              to="/" 
+              icon={<Home size={20} />} 
+              label="Skawsh" 
+              isActive={isActive("/")}
+            />
+            <NavItem 
+              to="/services" 
+              icon={<Layers size={20} />} 
+              label="Services" 
+              isActive={isActive("/services")}
+            />
+            <NavItem 
+              to="/favorites" 
+              icon={<Heart size={20} />} 
+              label="Washlist" 
+              isActive={isActive("/favorites")}
+            />
+            <NavItem 
+              to="/cart" 
+              icon={<ShoppingBag size={20} />} 
+              label="Sack" 
+              isActive={isActive("/cart")}
+            />
+          </div>
+        </nav>
+      )}
     </div>
   );
 };

@@ -1,12 +1,26 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const StudioProfile: React.FC = () => {
+  const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const headerHeight = 150; // Approximate height of the main header
+      setIsScrolled(window.scrollY > headerHeight);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const studio = {
     id: '1',
     name: 'Pristine Laundry',
@@ -41,6 +55,20 @@ const StudioProfile: React.FC = () => {
   
   return <Layout>
       <div>
+        {isScrolled && (
+          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+            <div className="flex items-center px-4 py-3">
+              <button 
+                onClick={() => navigate(-1)} 
+                className="mr-3 p-1 rounded-full text-gray-700"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
+            </div>
+          </div>
+        )}
+        
         <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} />
         
         <div className="section-container relative">
