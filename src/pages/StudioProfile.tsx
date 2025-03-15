@@ -1,10 +1,11 @@
+
 import React from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
-import ReviewSection from '../components/studio/ReviewSection';
 import Button from '../components/ui-elements/Button';
 import { ShoppingBag } from 'lucide-react';
+
 const StudioProfile: React.FC = () => {
   const studio = {
     id: '1',
@@ -15,6 +16,7 @@ const StudioProfile: React.FC = () => {
     deliveryTime: '1-2 days',
     description: 'Premium laundry services with eco-friendly cleaning options.'
   };
+  
   const services = [{
     id: '1',
     name: 'Dry Cleaning',
@@ -36,39 +38,16 @@ const StudioProfile: React.FC = () => {
     description: 'Same-day service when ordered before 10 AM.',
     price: 12.99
   }];
-  const reviews = [{
-    id: '1',
-    userName: 'Alex Johnson',
-    rating: 5,
-    comment: 'Great service! My clothes came back perfectly clean and neatly folded.',
-    date: 'May 15, 2023'
-  }, {
-    id: '2',
-    userName: 'Sarah Williams',
-    rating: 4,
-    comment: 'Very professional service, though delivery was a bit delayed.',
-    date: 'Apr 30, 2023'
-  }, {
-    id: '3',
-    userName: 'Michael Brown',
-    rating: 5,
-    comment: 'Outstanding quality every time. Will continue using their services.',
-    date: 'Apr 22, 2023'
-  }];
+  
   return <Layout>
       <div>
         <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} />
         
         <div className="section-container relative">
-          
-          
           <ServiceList services={services} />
-          
-          <ReviewSection reviews={reviews} />
-          
-          
         </div>
       </div>
     </Layout>;
 };
+
 export default StudioProfile;
