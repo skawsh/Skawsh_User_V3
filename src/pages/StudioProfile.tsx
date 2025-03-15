@@ -1,10 +1,9 @@
-
 import React from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import ReviewSection from '../components/studio/ReviewSection';
-import Button from '../components/ui-elements/Button';
+import { Button } from "@/components/ui/button";
 import { ShoppingBag } from 'lucide-react';
 
 const StudioProfile: React.FC = () => {
@@ -21,27 +20,27 @@ const StudioProfile: React.FC = () => {
   const services = [
     {
       id: '1',
-      name: 'Dry Cleaning',
+      name: 'Wash & Care',
       description: 'Professional cleaning for delicate fabrics and special care items.',
-      price: 8.99
+      price: 100
     },
     {
       id: '2',
       name: 'Wash & Fold',
       description: 'Complete laundry service charged by weight.',
-      price: 2.49
+      price: 100
     },
     {
       id: '3',
-      name: 'Ironing',
+      name: 'Wash & Iron',
       description: 'Professional pressing and wrinkle removal.',
-      price: 4.99
+      price: 150
     },
     {
       id: '4',
-      name: 'Express Service',
-      description: 'Same-day service when ordered before 10 AM.',
-      price: 12.99
+      name: 'Upper Wear',
+      description: 'Cleaning services for upper body garments.',
+      price: 120
     }
   ];
   
@@ -91,10 +90,9 @@ const StudioProfile: React.FC = () => {
           
           <div className="fixed bottom-20 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 animate-slide-in">
             <Button 
-              fullWidth 
-              icon={<ShoppingBag size={18} />}
-              className="shadow-lg"
+              className="w-full shadow-lg rounded-full"
             >
+              <ShoppingBag size={18} className="mr-2" />
               View Sack (3 items)
             </Button>
           </div>
