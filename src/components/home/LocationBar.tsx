@@ -7,7 +7,7 @@ const LocationBar: React.FC = () => {
     <div className="animate-fade-in pt-4">
       <div className="flex items-center justify-between mb-0 mt-2">
         <div className="flex items-center">
-          <MapPin size={34} className="text-green-500 mr-2" />
+          <MapPin size={34} className="text-white mr-2" />
           <div>
             <div className="text-xl font-bold text-white flex items-center">
               <span className="mr-1">Home</span>
