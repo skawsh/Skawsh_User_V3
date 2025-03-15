@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Star } from 'lucide-react';
@@ -25,6 +25,8 @@ interface ServiceListProps {
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
+  const [selectedTab, setSelectedTab] = useState<string>("standard");
+  
   // Group services into categories
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash'));
@@ -42,16 +44,20 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
     }
   ];
 
+  // Delivery time messages based on selected tab
+  const deliveryMessages = {
+    standard: "Delivery in just 36 sunlight hours after pickup",
+    express: "Delivery in just 12 sunlight hours after pickup"
+  };
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
+
   return (
     <div className="mt-8 animate-fade-in">
-      {/* Service delivery time indicator */}
-      <div className="flex items-center gap-2 mb-4 text-sm text-orange-500">
-        <Clock size={16} />
-        <span>Delivery in just 12 sunlight hours after pickup</span>
-      </div>
-
       {/* Service type selector tabs */}
-      <Tabs defaultValue="standard">
+      <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="standard" className="rounded-full">
             <Clock size={16} className="mr-2" />
@@ -62,61 +68,125 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
             Express Wash
           </TabsTrigger>
         </TabsList>
-      </Tabs>
 
-      {/* Service Categories */}
-      <div className="space-y-8">
-        {categories.map((category, idx) => (
-          <div key={idx}>
-            <div className="flex items-center gap-2 mb-4">
-              {category.icon}
-              <h2 className="text-lg font-bold">{category.title}</h2>
-            </div>
+        {/* Service delivery time indicator - changes based on selected tab */}
+        <div className="flex items-center gap-2 mb-4 text-sm text-orange-500">
+          <Clock size={16} />
+          <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+        </div>
 
-            <div className="space-y-4">
-              {category.services.map((service) => (
-                <Card key={service.id} className="p-4 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-3">
-                      <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                        {service.name.includes('Fold') ? (
-                          <img 
-                            src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" 
-                            alt="Laundry" 
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                            <ShoppingBag size={20} className="text-gray-500" />
+        <TabsContent value="standard">
+          {/* Service Categories for Standard */}
+          <div className="space-y-8">
+            {categories.map((category, idx) => (
+              <div key={idx}>
+                <div className="flex items-center gap-2 mb-4">
+                  {category.icon}
+                  <h2 className="text-lg font-bold">{category.title}</h2>
+                </div>
+
+                <div className="space-y-4">
+                  {category.services.map((service) => (
+                    <Card key={service.id} className="p-4 shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-3">
+                          <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                            {service.name.includes('Fold') ? (
+                              <img 
+                                src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" 
+                                alt="Laundry" 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                <ShoppingBag size={20} className="text-gray-500" />
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{service.name}</h3>
-                        <div className="flex items-center gap-1">
-                          <span className="text-primary font-semibold">₹{service.price.toFixed(0)}/KG</span>
-                          <div className="flex items-center gap-0.5 ml-1">
-                            <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs text-gray-500">4.8</span>
+                          <div>
+                            <h3 className="font-medium">{service.name}</h3>
+                            <div className="flex items-center gap-1">
+                              <span className="text-primary font-semibold">₹{service.price.toFixed(0)}/KG</span>
+                              <div className="flex items-center gap-0.5 ml-1">
+                                <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                <span className="text-xs text-gray-500">4.8</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                        
+                        <Button 
+                          variant="default"
+                          size="sm"
+                          className="rounded-full bg-blue-600"
+                        >
+                          <Plus size={16} className="mr-1" /> Add
+                        </Button>
                       </div>
-                    </div>
-                    
-                    <Button 
-                      variant="default"
-                      size="sm"
-                      className="rounded-full bg-blue-600"
-                    >
-                      <Plus size={16} className="mr-1" /> Add
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="express">
+          {/* Service Categories for Express */}
+          <div className="space-y-8">
+            {categories.map((category, idx) => (
+              <div key={idx}>
+                <div className="flex items-center gap-2 mb-4">
+                  {category.icon}
+                  <h2 className="text-lg font-bold">{category.title}</h2>
+                </div>
+
+                <div className="space-y-4">
+                  {category.services.map((service) => (
+                    <Card key={service.id} className="p-4 shadow-sm">
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-3">
+                          <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                            {service.name.includes('Fold') ? (
+                              <img 
+                                src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" 
+                                alt="Laundry" 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                <ShoppingBag size={20} className="text-gray-500" />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="font-medium">{service.name}</h3>
+                            <div className="flex items-center gap-1">
+                              <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}/KG</span>
+                              <div className="flex items-center gap-0.5 ml-1">
+                                <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                <span className="text-xs text-gray-500">4.8</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <Button 
+                          variant="default"
+                          size="sm"
+                          className="rounded-full bg-blue-600"
+                        >
+                          <Plus size={16} className="mr-1" /> Add
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
