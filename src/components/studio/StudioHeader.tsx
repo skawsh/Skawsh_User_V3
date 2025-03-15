@@ -9,6 +9,7 @@ interface StudioHeaderProps {
   rating: number;
   reviewCount: number;
   deliveryTime: string;
+  backButtonRef?: React.RefObject<HTMLButtonElement>;
 }
 
 const StudioHeader: React.FC<StudioHeaderProps> = ({ 
@@ -16,7 +17,8 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   image, 
   rating, 
   reviewCount, 
-  deliveryTime 
+  deliveryTime,
+  backButtonRef
 }) => {
   const navigate = useNavigate();
   
@@ -24,6 +26,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     <div className="animate-fade-in">
       <div className="relative h-56 bg-cover bg-center w-full" style={{ backgroundImage: `url(${image})` }}>
         <button 
+          ref={backButtonRef}
           onClick={() => navigate(-1)} 
           className="absolute top-4 left-4 bg-white/80 backdrop-blur-md p-2 rounded-full text-gray-700"
         >

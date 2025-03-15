@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
@@ -10,11 +10,14 @@ import { useNavigate } from 'react-router-dom';
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
   
   useEffect(() => {
     const handleScroll = () => {
-      const headerHeight = 150; // Approximate height of the main header
-      setIsScrolled(window.scrollY > headerHeight);
+      if (backButtonRef.current) {
+        const backButtonPosition = backButtonRef.current.getBoundingClientRect().top;
+        setIsScrolled(backButtonPosition < 0);
+      }
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -69,7 +72,14 @@ const StudioProfile: React.FC = () => {
           </div>
         )}
         
-        <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} />
+        <StudioHeader 
+          name={studio.name} 
+          image={studio.image} 
+          rating={studio.rating} 
+          reviewCount={studio.reviewCount} 
+          deliveryTime={studio.deliveryTime}
+          backButtonRef={backButtonRef}
+        />
         
         <div className="section-container relative">
           <ServiceList services={services} />
