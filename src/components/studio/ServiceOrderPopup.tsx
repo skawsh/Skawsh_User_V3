@@ -112,9 +112,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </div>
           
           <div>
-            <label className="text-sm font-medium block mb-2">
-              Select Clothing Category
-            </label>
+            <label className="text-sm font-medium block mb-2">Select Clothing Items</label>
             
             <div className="flex items-center justify-between mb-3">
               {isAddingItem ? <div className="flex w-full items-center gap-2">
@@ -126,9 +124,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                     Cancel
                   </Button>
                 </div> : <>
-                  <Button onClick={() => setIsAddingItem(true)} variant="link" size="sm" className="text-blue-600 p-0 h-auto">
-                    Add a clothe
-                  </Button>
+                  <Button onClick={() => setIsAddingItem(true)} variant="link" size="sm" className="text-blue-600 p-0 h-auto">Add clothing Item</Button>
                   <Button onClick={() => setIsAddingItem(true)} size="icon" variant="ghost" className="rounded-full h-8 w-8">
                     <Plus className="h-4 w-4" />
                   </Button>
