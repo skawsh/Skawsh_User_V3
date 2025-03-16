@@ -234,11 +234,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 {categories.map((category, idx) => <div key={idx} className="mb-3">
                     <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-[71px]">
                       <span className="font-medium text-white text-base">{category.title}</span>
-                      <span className="text-base font-medium">{category.count}</span>
+                      
                     </button>
                     
                     <div className="ml-8 mt-1 space-y-1">
-                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full text-left py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-[38px]">
+                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-[67px] font-normal text-left">
                           {service.name}
                         </button>)}
                       {category.services.length > 4 && <button onClick={() => scrollToCategory(category.title)} className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors rounded-lg">
