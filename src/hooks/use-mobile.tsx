@@ -7,36 +7,24 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
-    // Create a throttled resize handler for better performance
-    let timeoutId: NodeJS.Timeout | null = null;
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
-    const handleResize = () => {
-      if (timeoutId) return;
-      
-      timeoutId = setTimeout(() => {
-        setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-        timeoutId = null;
-      }, 50); // Small delay for better performance
-    };
+    const onChange = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    }
     
     // Set initial value immediately
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     
-    // Use a media query for efficient checks
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    
-    const onChange = (e: MediaQueryListEvent) => {
-      setIsMobile(e.matches)
-    }
-    
-    // Add event listeners with passive flag for better performance
+    // Add event listener with passive: true for better performance
     mql.addEventListener("change", onChange, { passive: true })
-    window.addEventListener("resize", handleResize, { passive: true })
+    
+    // Also listen for resize events for more responsive updates
+    window.addEventListener("resize", onChange, { passive: true })
     
     return () => {
       mql.removeEventListener("change", onChange)
-      window.removeEventListener("resize", handleResize)
-      if (timeoutId) clearTimeout(timeoutId);
+      window.removeEventListener("resize", onChange)
     }
   }, [])
 

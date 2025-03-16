@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -38,111 +38,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
-  const tabsObserverRef = useRef<IntersectionObserver | null>(null);
-  const tabsOffsetTopRef = useRef<number>(0);
   const tabsContentHeight = useRef<number>(0);
-  const lastScrollYRef = useRef<number>(0);
-  
-  useEffect(() => {
-    if (tabsListRef.current) {
-      const updateTabsHeight = () => {
-        if (tabsListRef.current) {
-          tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
-        }
-      };
-      
-      updateTabsHeight();
-      window.addEventListener('resize', updateTabsHeight, { passive: true });
-      
-      return () => {
-        window.removeEventListener('resize', updateTabsHeight);
-      };
-    }
-  }, []);
-  
-  const handleScroll = useCallback(() => {
-    if (!tabsWrapperRef.current) return;
-    
-    const currentScrollY = window.scrollY;
-    const headerHeight = 56;
-    
-    if (Math.abs(currentScrollY - lastScrollYRef.current) < 5) return;
-    
-    lastScrollYRef.current = currentScrollY;
-    
-    if (tabsOffsetTopRef.current === 0 && tabsWrapperRef.current) {
-      tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
-    }
-    
-    const shouldBeSticky = currentScrollY + headerHeight > tabsOffsetTopRef.current;
-    
-    if (shouldBeSticky !== isTabsSticky) {
-      setIsTabsSticky(shouldBeSticky);
-    }
-  }, [isTabsSticky]);
-
-  useEffect(() => {
-    let scrollTimeout: NodeJS.Timeout | null = null;
-    
-    const throttledScrollHandler = () => {
-      if (scrollTimeout) return;
-      
-      scrollTimeout = setTimeout(() => {
-        handleScroll();
-        scrollTimeout = null;
-      }, 16);
-    };
-    
-    if (tabsWrapperRef.current && "IntersectionObserver" in window) {
-      const options = {
-        rootMargin: `-56px 0px 0px 0px`,
-        threshold: [0, 0.1, 0.9, 1],
-      };
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          const shouldBeSticky = entry.intersectionRatio < 0.1;
-          if (shouldBeSticky !== isTabsSticky) {
-            setIsTabsSticky(shouldBeSticky);
-          }
-        });
-      }, options);
-      
-      observer.observe(tabsWrapperRef.current);
-      tabsObserverRef.current = observer;
-    }
-    
-    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
-    
-    return () => {
-      if (tabsObserverRef.current) {
-        tabsObserverRef.current.disconnect();
-      }
-      window.removeEventListener('scroll', throttledScrollHandler);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
-    };
-  }, [handleScroll, isTabsSticky]);
-
-  useEffect(() => {
-    if (tabsListRef.current) {
-      tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
-    }
-  }, [selectedTab]);
-
-  const handleTabChange = (value: string) => {
-    setSelectedTab(value);
-  };
-
-  const scrollToCategory = (categoryTitle: string) => {
-    const element = categoryRefs.current[categoryTitle];
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-    setPopoverOpen(false);
-  };
 
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
@@ -205,52 +101,84 @@ const ServiceList: React.FC<ServiceListProps> = ({
     express: "bg-orange-50"
   };
 
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-all duration-500 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+  };
+
+  const scrollToCategory = (categoryTitle: string) => {
+    const element = categoryRefs.current[categoryTitle];
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    setPopoverOpen(false);
+  };
+
+  useEffect(() => {
+    if (tabsListRef.current) {
+      tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (tabsWrapperRef.current) {
+        const headerHeight = 56;
+        const tabsPosition = tabsWrapperRef.current.getBoundingClientRect().top;
+        const shouldBeSticky = tabsPosition <= headerHeight;
+        
+        if (shouldBeSticky !== isTabsSticky) {
+          setIsTabsSticky(shouldBeSticky);
+        }
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, {
+      passive: true
+    });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isTabsSticky]);
+
+  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
-      <div ref={tabsRef} className="transition-all duration-500">
+      <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
           {isTabsSticky && (
             <div 
-              aria-hidden="true"
-              className="opacity-0 pointer-events-none"
+              className="h-0 overflow-hidden" 
               style={{ 
-                height: `${tabsContentHeight.current}px`,
-                overflow: 'hidden',
-                marginBottom: '0.75rem'
+                height: tabsContentHeight.current ? `${tabsContentHeight.current}px` : '72px'
               }}
             />
           )}
           
-          <div 
-            className={cn(
-              "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
-              "transition-opacity duration-300",
-              isTabsSticky ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
-            )}
-            style={{
-              transform: isTabsSticky ? 'translateY(0)' : 'translateY(-100%)',
-              transition: 'transform 300ms ease, opacity 300ms ease'
-            }}
-          >
-            <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-              <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
-                <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
-                  <Clock size={16} className="mr-2" />
-                  Standard Wash
-                </TabsTrigger>
-                <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
-                  <Clock size={16} className="mr-2" />
-                  Express Wash
-                </TabsTrigger>
-              </TabsList>
+          {isTabsSticky && (
+            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
+              <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
+                <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
+                  <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
+                    <Clock size={16} className="mr-2" />
+                    Standard Wash
+                  </TabsTrigger>
+                  <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
+                    <Clock size={16} className="mr-2" />
+                    Express Wash
+                  </TabsTrigger>
+                </TabsList>
+              </div>
             </div>
-          </div>
+          )}
 
           <div 
             className={cn(
-              "transition-all duration-500",
-              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible"
+              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible h-auto", 
+              "transition-all duration-500"
             )}
           >
             <TabsList 
