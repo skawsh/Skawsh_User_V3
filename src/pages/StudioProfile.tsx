@@ -97,7 +97,7 @@ const StudioProfile: React.FC = () => {
   return <Layout>
       <div>
         {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in will-change-transform">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
                 <button 

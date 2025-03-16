@@ -39,6 +39,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
+  const stickyWrapperRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
   const tabsObserverRef = useRef<IntersectionObserver | null>(null);
   const tabsOffsetTopRef = useRef<number>(0);
   const tabsContentHeight = useRef<number>(0);
@@ -54,7 +56,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
       const marginBottom = parseFloat(computedStyle.marginBottom);
       
       // Include margins in the height calculation
-      tabsContentHeight.current = tabsContent.offsetHeight + marginTop + marginBottom + 16;
+      const messageElement = document.querySelector('.flex.items-center.gap-2.mb-4.text-sm');
+      const messageHeight = messageElement ? messageElement.getBoundingClientRect().height : 0;
+      
+      tabsContentHeight.current = tabsContent.offsetHeight + marginTop + marginBottom + messageHeight + 16;
+      
+      if (placeholderRef.current) {
+        placeholderRef.current.style.height = `${tabsContentHeight.current}px`;
+      }
     }
   }, []);
   
@@ -72,10 +81,21 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   // Update on resize
   useEffect(() => {
-    window.addEventListener('resize', updateTabsHeight, { passive: true });
+    const handleResize = () => {
+      // Use requestAnimationFrame for smoother updates
+      if (!ticking.current) {
+        requestAnimationFrame(() => {
+          updateTabsHeight();
+          ticking.current = false;
+        });
+        ticking.current = true;
+      }
+    };
+    
+    window.addEventListener('resize', handleResize, { passive: true });
     
     return () => {
-      window.removeEventListener('resize', updateTabsHeight);
+      window.removeEventListener('resize', handleResize);
     };
   }, [updateTabsHeight]);
   
@@ -123,7 +143,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     if (tabsWrapperRef.current && "IntersectionObserver" in window) {
       const options = {
         rootMargin: `-56px 0px 0px 0px`,
-        threshold: [0, 0.1, 0.9, 1],
+        threshold: [0, 0.1, 0.5, 0.9, 1],
       };
       
       // Disconnect previous observer if it exists
@@ -133,7 +153,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          const shouldBeSticky = entry.boundingClientRect.top < 56;
+          // Using boundingClientRect.top to determine if the element has scrolled past the top
+          const shouldBeSticky = entry.boundingClientRect.top <= 56;
+          
           if (shouldBeSticky !== isTabsSticky) {
             setIsTabsSticky(shouldBeSticky);
             // When state changes, ensure heights are updated
@@ -146,7 +168,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       tabsObserverRef.current = observer;
     }
     
-    // Efficient scroll handling with throttling via requestAnimationFrame
+    // Scroll handler with efficient throttling
     const scrollHandler = () => {
       if (!ticking.current) {
         requestAnimationFrame(() => {
@@ -248,15 +270,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
       <div ref={tabsRef} className="transition-all duration-300 will-change-transform">
-        <Tabs defaultValue="standard" onValueChange={handleTabChange}>
+        <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
           {/* Placeholder div with exact same height as the tabs */}
           {isTabsSticky && (
             <div 
+              ref={placeholderRef}
               aria-hidden="true"
               className="opacity-0 pointer-events-none"
               style={{ 
                 height: `${tabsContentHeight.current}px`,
-                overflow: 'hidden',
                 marginBottom: '0.75rem'
               }}
             />
@@ -264,14 +286,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
           
           {/* Fixed tabs that appear when scrolled */}
           <div 
+            ref={stickyWrapperRef}
             className={cn(
               "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
-              "will-change-transform transition-all duration-300 ease-in-out",
-              isTabsSticky ? "translate-y-0 opacity-100" : "translate-y-[-100%] opacity-0"
+              "will-change-transform transition-transform duration-300 ease-in-out"
             )}
             style={{
               transform: isTabsSticky ? 'translateY(0)' : 'translateY(-100%)',
-              transition: 'transform 300ms ease, opacity 300ms ease',
+              opacity: isTabsSticky ? 1 : 0,
+              transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+              willChange: 'transform, opacity'
             }}
           >
             <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
@@ -297,7 +321,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
             style={{
               height: isTabsSticky ? 0 : 'auto',
               overflow: isTabsSticky ? 'hidden' : 'visible',
-              transition: 'opacity 300ms ease, visibility 300ms ease'
+              transition: 'opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), visibility 300ms cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <TabsList 

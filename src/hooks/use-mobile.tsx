@@ -38,6 +38,9 @@ export function useIsMobile() {
     mql.addEventListener("change", onChange, { passive: true })
     window.addEventListener("resize", handleResize, { passive: true })
     
+    // Initial call to ensure the value is set immediately
+    handleResize()
+    
     return () => {
       mql.removeEventListener("change", onChange)
       window.removeEventListener("resize", handleResize)
