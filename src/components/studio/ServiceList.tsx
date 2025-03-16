@@ -115,6 +115,26 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setPopoverOpen(false);
   };
 
+  // Prevent scroll propagation to body when Service Categories is open
+  React.useEffect(() => {
+    const handleOverlayScroll = (e: Event) => {
+      if (popoverOpen) {
+        e.stopPropagation();
+      }
+    };
+
+    // Only add the listener when the popover is open
+    if (popoverOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [popoverOpen]);
+
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {/* Backdrop blur overlay when menu is open */}
       {popoverOpen && (
@@ -230,7 +250,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
       </Tabs>
 
-      {/* Service categories modal (transformed from the button) */}
+      {/* Service categories menu button or panel */}
       {!popoverOpen ? (
         <button 
           onClick={() => setPopoverOpen(true)} 
@@ -243,10 +263,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
       ) : (
         <div 
           className="fixed bottom-0 right-0 w-full max-w-xs transform transition-all duration-300 z-50 animate-slide-in-right"
-          style={{ maxHeight: 'calc(100vh - 100px)' }}
+          style={{ 
+            maxHeight: 'calc(100vh - 100px)',
+            bottom: '1.5rem',
+            right: '1.5rem'
+          }}
         >
-          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-4 mb-4">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-0 mb-0">
+            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
               <h3 className="text-lg font-semibold">Service Categories</h3>
               <button 
                 onClick={() => setPopoverOpen(false)}
@@ -256,7 +280,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </button>
             </div>
             
-            <ScrollArea className="max-h-[60vh]">
+            <ScrollArea className="h-[calc(100vh-180px)]">
               <div className="p-3 space-y-1">
                 {categories.map((category, idx) => (
                   <div key={idx} className="mb-4">
