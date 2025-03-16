@@ -1,27 +1,31 @@
+
 import React, { useState, useRef } from 'react';
-import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints } from 'lucide-react';
+import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
 }
+
 interface ServiceListProps {
   services: Service[];
 }
+
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
@@ -67,6 +71,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     description: 'Gentle cleaning and polishing for formal heels',
     price: 349
   }];
+  
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-primary" />,
@@ -92,6 +97,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
+  
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
@@ -108,9 +114,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
     // Close the popover after selecting a category
     setPopoverOpen(false);
   };
+
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {/* Backdrop blur overlay when popover is open */}
-      {popoverOpen && <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" onClick={() => setPopoverOpen(false)} />}
+      {/* Backdrop blur overlay when menu is open */}
+      {popoverOpen && (
+        <div 
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" 
+          onClick={() => setPopoverOpen(false)} 
+        />
+      )}
       
       {/* Service type selector tabs */}
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
@@ -218,44 +230,72 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
       </Tabs>
 
-      {/* Floating action button for services menu with updated popover */}
-      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-        <PopoverTrigger asChild>
-          <Button size="icon" style={{
-          background: selectedTab === "standard" ? "#2563eb" : "#f97316",
-          color: "white"
-        }} className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white bg-black">
-            <Menu className="h-6 w-6" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="p-0 rounded-xl border-none w-72 shadow-lg bg-black" align="end" sideOffset={16}>
-          <div className="p-4 border-b border-gray-800">
-            <h3 className="text-lg font-semibold text-white">Service Categories</h3>
-          </div>
-          <ScrollArea className="max-h-[320px] overflow-auto">
-            <div className="p-3 space-y-1">
-              {categories.map((category, idx) => <div key={idx} className="mb-4">
-                  <button onClick={() => scrollToCategory(category.title)} className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{
-                  background: selectedTab === "standard" ? "#1e40af" : "#9a3412"
-                }}>
-                      {React.cloneElement(category.icon as React.ReactElement, {
-                    className: "text-white"
-                  })}
-                    </div>
-                    <span className="font-medium text-white">{category.title}</span>
-                  </button>
-                  
-                  <div className="pl-12 pr-2 space-y-1">
-                    {category.services.map(service => <button key={service.id} onClick={() => scrollToCategory(category.title)} className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-gray-300 text-sm truncate">
-                        {service.name}
-                      </button>)}
-                  </div>
-                </div>)}
+      {/* Service categories modal (transformed from the button) */}
+      {!popoverOpen ? (
+        <button 
+          onClick={() => setPopoverOpen(true)} 
+          className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in ${
+            selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500"
+          }`}
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      ) : (
+        <div 
+          className="fixed bottom-0 right-0 w-full max-w-xs transform transition-all duration-300 z-50 animate-slide-in-right"
+          style={{ maxHeight: 'calc(100vh - 100px)' }}
+        >
+          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-4 mb-4">
+            <div className="flex items-center justify-between p-4 border-b border-gray-800">
+              <h3 className="text-lg font-semibold">Service Categories</h3>
+              <button 
+                onClick={() => setPopoverOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-800 transition-colors"
+              >
+                <X size={20} />
+              </button>
             </div>
-          </ScrollArea>
-        </PopoverContent>
-      </Popover>
+            
+            <ScrollArea className="max-h-[60vh]">
+              <div className="p-3 space-y-1">
+                {categories.map((category, idx) => (
+                  <div key={idx} className="mb-4">
+                    <button 
+                      onClick={() => scrollToCategory(category.title)} 
+                      className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+                    >
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center" 
+                        style={{
+                          background: selectedTab === "standard" ? "#1e40af" : "#9a3412"
+                        }}
+                      >
+                        {React.cloneElement(category.icon as React.ReactElement, {
+                          className: "text-white"
+                        })}
+                      </div>
+                      <span className="font-medium text-white">{category.title}</span>
+                    </button>
+                    
+                    <div className="pl-12 pr-2 space-y-1">
+                      {category.services.map(service => (
+                        <button 
+                          key={service.id} 
+                          onClick={() => scrollToCategory(category.title)} 
+                          className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-gray-300 text-sm truncate"
+                        >
+                          {service.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </div>
+      )}
     </div>;
 };
+
 export default ServiceList;
