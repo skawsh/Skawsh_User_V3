@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -42,84 +43,101 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsOffsetTopRef = useRef<number>(0);
   const tabsContentHeight = useRef<number>(0);
   const lastScrollYRef = useRef<number>(0);
+  const ticking = useRef<boolean>(false);
   
-  useEffect(() => {
+  // Calculate and update tabs height whenever needed
+  const updateTabsHeight = useCallback(() => {
     if (tabsListRef.current) {
-      const updateTabsHeight = () => {
-        if (tabsListRef.current) {
-          tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
-        }
-      };
+      const tabsContent = tabsListRef.current;
+      const computedStyle = window.getComputedStyle(tabsContent);
+      const marginTop = parseFloat(computedStyle.marginTop);
+      const marginBottom = parseFloat(computedStyle.marginBottom);
       
-      updateTabsHeight();
-      window.addEventListener('resize', updateTabsHeight, { passive: true });
-      
-      return () => {
-        window.removeEventListener('resize', updateTabsHeight);
-      };
+      // Include margins in the height calculation
+      tabsContentHeight.current = tabsContent.offsetHeight + marginTop + marginBottom + 16;
     }
   }, []);
   
+  // Run once on mount and when tab changes
   useEffect(() => {
-    requestAnimationFrame(() => {
-      if (tabsListRef.current) {
-        tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
-      }
-    });
-  }, [selectedTab]);
+    updateTabsHeight();
+    
+    // Also update after a short delay to account for any dynamic content
+    const timer = setTimeout(() => {
+      updateTabsHeight();
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [selectedTab, updateTabsHeight]);
   
+  // Update on resize
+  useEffect(() => {
+    window.addEventListener('resize', updateTabsHeight, { passive: true });
+    
+    return () => {
+      window.removeEventListener('resize', updateTabsHeight);
+    };
+  }, [updateTabsHeight]);
+  
+  // Optimized scroll handler with requestAnimationFrame
   const handleScroll = useCallback(() => {
-    if (!tabsWrapperRef.current) return;
+    if (!tabsWrapperRef.current || ticking.current) return;
     
-    const currentScrollY = window.scrollY;
-    const headerHeight = 56;
+    ticking.current = true;
     
-    if (Math.abs(currentScrollY - lastScrollYRef.current) < 5) return;
-    
-    lastScrollYRef.current = currentScrollY;
-    
-    if (tabsOffsetTopRef.current === 0 && tabsWrapperRef.current) {
-      tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
-    }
-    
-    const shouldBeSticky = currentScrollY + headerHeight > tabsOffsetTopRef.current;
-    
-    if (shouldBeSticky !== isTabsSticky) {
-      setIsTabsSticky(shouldBeSticky);
-    }
-  }, [isTabsSticky]);
+    requestAnimationFrame(() => {
+      const currentScrollY = window.scrollY;
+      const headerHeight = 56;
+      
+      if (tabsOffsetTopRef.current === 0 && tabsWrapperRef.current) {
+        const rect = tabsWrapperRef.current.getBoundingClientRect();
+        tabsOffsetTopRef.current = rect.top + window.scrollY;
+      }
+      
+      const shouldBeSticky = currentScrollY + headerHeight > tabsOffsetTopRef.current;
+      
+      if (shouldBeSticky !== isTabsSticky) {
+        setIsTabsSticky(shouldBeSticky);
+        // Update height measurement when sticky state changes
+        updateTabsHeight();
+      }
+      
+      lastScrollYRef.current = currentScrollY;
+      ticking.current = false;
+    });
+  }, [isTabsSticky, updateTabsHeight]);
 
   useEffect(() => {
     const calculateTabsPosition = () => {
       if (tabsWrapperRef.current) {
-        tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
+        const rect = tabsWrapperRef.current.getBoundingClientRect();
+        tabsOffsetTopRef.current = rect.top + window.scrollY;
+        updateTabsHeight();
       }
     };
     
     calculateTabsPosition();
     window.addEventListener('resize', calculateTabsPosition, { passive: true });
     
-    let rafId: number | null = null;
-    const scrollHandler = () => {
-      if (rafId === null) {
-        rafId = requestAnimationFrame(() => {
-          handleScroll();
-          rafId = null;
-        });
-      }
-    };
-    
+    // Use IntersectionObserver for efficient detection of when tabs should become sticky
     if (tabsWrapperRef.current && "IntersectionObserver" in window) {
       const options = {
         rootMargin: `-56px 0px 0px 0px`,
         threshold: [0, 0.1, 0.9, 1],
       };
       
+      // Disconnect previous observer if it exists
+      if (tabsObserverRef.current) {
+        tabsObserverRef.current.disconnect();
+      }
+      
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           const shouldBeSticky = entry.boundingClientRect.top < 56;
           if (shouldBeSticky !== isTabsSticky) {
             setIsTabsSticky(shouldBeSticky);
+            // When state changes, ensure heights are updated
+            requestAnimationFrame(updateTabsHeight);
           }
         });
       }, options);
@@ -127,6 +145,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
       observer.observe(tabsWrapperRef.current);
       tabsObserverRef.current = observer;
     }
+    
+    // Efficient scroll handling with throttling via requestAnimationFrame
+    const scrollHandler = () => {
+      if (!ticking.current) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking.current = false;
+        });
+        ticking.current = true;
+      }
+    };
     
     window.addEventListener('scroll', scrollHandler, { passive: true });
     
@@ -136,11 +165,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
       }
       window.removeEventListener('scroll', scrollHandler);
       window.removeEventListener('resize', calculateTabsPosition);
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-      }
     };
-  }, [handleScroll, isTabsSticky]);
+  }, [handleScroll, isTabsSticky, updateTabsHeight]);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -221,12 +247,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-all duration-500 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
-      <div ref={tabsRef} className="transition-all duration-500">
+      <div ref={tabsRef} className="transition-all duration-300 will-change-transform">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
+          {/* Placeholder div with exact same height as the tabs */}
           {isTabsSticky && (
             <div 
               aria-hidden="true"
-              className="opacity-0 pointer-events-none transition-all duration-300"
+              className="opacity-0 pointer-events-none"
               style={{ 
                 height: `${tabsContentHeight.current}px`,
                 overflow: 'hidden',
@@ -235,15 +262,20 @@ const ServiceList: React.FC<ServiceListProps> = ({
             />
           )}
           
+          {/* Fixed tabs that appear when scrolled */}
           <div 
             className={cn(
               "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
-              "transition-transform transition-opacity duration-300 ease-in-out will-change-transform",
-              isTabsSticky ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[-100%]"
+              "will-change-transform transition-all duration-300 ease-in-out",
+              isTabsSticky ? "translate-y-0 opacity-100" : "translate-y-[-100%] opacity-0"
             )}
+            style={{
+              transform: isTabsSticky ? 'translateY(0)' : 'translateY(-100%)',
+              transition: 'transform 300ms ease, opacity 300ms ease',
+            }}
           >
             <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-              <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
+              <TabsList ref={tabsListRef} className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
                 <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
                   <Clock size={16} className="mr-2" />
                   Standard Wash
@@ -256,11 +288,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
             </div>
           </div>
 
+          {/* Original tabs that get replaced when scrolled */}
           <div 
             className={cn(
-              "transition-all duration-300 ease-in-out",
-              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible"
+              "transition-opacity duration-300 ease-in-out",
+              isTabsSticky ? "opacity-0 invisible" : "opacity-100 visible"
             )}
+            style={{
+              height: isTabsSticky ? 0 : 'auto',
+              overflow: isTabsSticky ? 'hidden' : 'visible',
+              transition: 'opacity 300ms ease, visibility 300ms ease'
+            }}
           >
             <TabsList 
               ref={tabsListRef} 

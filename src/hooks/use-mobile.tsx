@@ -13,11 +13,19 @@ export function useIsMobile() {
     // Set initial value based on media query
     setIsMobile(mql.matches)
     
-    // Create a throttled handler with requestAnimationFrame for performance
+    // Using a proper throttle mechanism with requestAnimationFrame
+    let rafId: number | null = null
+    
     const handleResize = () => {
+      // Cancel any pending animation frame to avoid excessive updates
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
+      
       // Use requestAnimationFrame for smoother updates aligned with browser paint cycle
-      requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
         setIsMobile(mql.matches)
+        rafId = null
       })
     }
     
@@ -33,6 +41,11 @@ export function useIsMobile() {
     return () => {
       mql.removeEventListener("change", onChange)
       window.removeEventListener("resize", handleResize)
+      
+      // Clean up any pending animation frame on unmount
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
     }
   }, [])
 
