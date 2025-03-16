@@ -65,17 +65,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }];
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
-    icon: <ShoppingBag size={16} className="text-white bg-stone-800" />,
+    icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
     services: coreServices,
     count: 6
   }, {
     title: "Dry Cleaning Services",
-    icon: <Shirt size={16} className="text-white" />,
+    icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
     services: dryCleaningServices,
     count: 30
   }, {
     title: "Shoe Laundry Services",
-    icon: <Footprints size={16} className="text-white" />,
+    icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
     services: shoeServices,
     count: 11
   }];
