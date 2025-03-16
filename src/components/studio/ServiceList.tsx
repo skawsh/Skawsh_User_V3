@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -121,14 +122,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
         const headerHeight = 56;
         const tabsPosition = tabsWrapperRef.current.getBoundingClientRect().top;
         const shouldBeSticky = tabsPosition <= headerHeight;
+        
         if (shouldBeSticky !== isTabsSticky) {
           setIsTabsSticky(shouldBeSticky);
         }
       }
     };
+    
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -156,16 +160,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             </div>}
 
-          <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0">
-            <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
-              <Clock size={16} className="mr-2" />
-              Standard Wash
-            </TabsTrigger>
-            <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
-              <Clock size={16} className="mr-2" />
-              Express Wash
-            </TabsTrigger>
-          </TabsList>
+          <div className={cn(isTabsSticky ? "opacity-0 invisible" : "opacity-100 visible", "transition-opacity duration-200")}>
+            <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0">
+              <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
+                <Clock size={16} className="mr-2" />
+                Standard Wash
+              </TabsTrigger>
+              <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
+                <Clock size={16} className="mr-2" />
+                Express Wash
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
             <Clock size={16} />
