@@ -229,29 +229,29 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
       height: isMobile ? '40vh' : '45.05vh',
       bottom: '1.5rem',
-      right: '1.5rem', // Reduced from 2rem to 1.5rem (another 5px reduction)
+      right: '1rem', // Reduced from 1.5rem to 1rem (another 10px reduction)
       maxHeight: '400px',
       width: '85%',
       maxWidth: '320px'
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-6">
-              <h3 className="text-lg font-semibold">Service Categories</h3>
+            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
+              <h3 className="text-lg font-semibold truncate">Service Categories</h3>
             </div>
             
             <ScrollArea className="flex-grow">
               <div className="p-2">
                 {categories.map((category, idx) => <div key={idx} className="mb-3">
-                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-6">
+                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5">
                       <span className="font-medium text-white text-base">{category.title}</span>
                     </button>
                     
-                    <div className="ml-8 mt-1 space-y-1">
-                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-4 font-normal text-left">
+                    <div className="ml-7 mt-1 space-y-1">
+                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
                           {service.name}
                         </button>)}
                       {category.services.length > 4 && (
-                        <button onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors px-4 font-medium text-left">
+                        <button onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors px-3 font-medium text-left">
                           View more ({category.services.length - 4})
                         </button>
                       )}
