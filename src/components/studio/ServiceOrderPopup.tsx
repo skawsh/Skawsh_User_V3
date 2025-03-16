@@ -112,7 +112,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </div>
           
           <div>
-            <label className="text-sm font-medium block mb-2">Select Clothing Items</label>
+            <label className="text-sm font-medium block mb-2">Select Clothing Items (Optional)</label>
             
             <div className="flex items-center justify-between mb-3">
               {isAddingItem ? <div className="flex w-full items-center gap-2">
