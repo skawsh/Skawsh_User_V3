@@ -1,5 +1,6 @@
+
 import React, { useState, useRef } from 'react';
-import { Clock, Plus, ShoppingBag, Shirt, Menu } from 'lucide-react';
+import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -38,7 +39,47 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
   
   // Group services into categories
   const coreServices = services.filter(s => s.name.includes('Wash'));
-  const dryCleaningServices = services.filter(s => !s.name.includes('Wash'));
+  const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
+  
+  // Define shoe laundry services
+  const shoeServices: Service[] = [
+    {
+      id: 'shoe-1',
+      name: 'Regular Shoes',
+      description: 'Deep cleaning for regular everyday shoes',
+      price: 299
+    },
+    {
+      id: 'shoe-2',
+      name: 'Leather Shoes',
+      description: 'Specialized cleaning and conditioning for leather footwear',
+      price: 399
+    },
+    {
+      id: 'shoe-3',
+      name: 'Sneakers',
+      description: 'Thorough cleaning for sports shoes and sneakers',
+      price: 349
+    },
+    {
+      id: 'shoe-4',
+      name: 'Canvas Shoes',
+      description: 'Cleaning and whitening for canvas footwear',
+      price: 249
+    },
+    {
+      id: 'shoe-5',
+      name: 'Sandals',
+      description: 'Cleaning and sanitizing for all types of sandals',
+      price: 199
+    },
+    {
+      id: 'shoe-6',
+      name: 'Heels',
+      description: 'Gentle cleaning and polishing for formal heels',
+      price: 349
+    }
+  ];
 
   const categories: ServiceCategory[] = [
     { 
@@ -50,6 +91,11 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
       title: "Dry Cleaning Services", 
       icon: <Shirt size={16} className="text-primary" />,
       services: dryCleaningServices 
+    },
+    {
+      title: "Shoe Laundry Services",
+      icon: <Footprints size={16} className="text-primary" />,
+      services: shoeServices
     }
   ];
 
@@ -138,6 +184,13 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
                                 alt="Laundry" 
                                 className="w-full h-full object-cover"
                               />
+                            ) : service.name.includes('Shoe') || service.name.includes('shoe') || 
+                               service.name.includes('Sneaker') || service.name.includes('Sandal') || 
+                               service.name.includes('Canvas') || service.name.includes('Leather') || 
+                               service.name.includes('Heel') ? (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                <Footprints size={20} className="text-gray-500" />
+                              </div>
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                 <ShoppingBag size={20} className="text-gray-500" />
@@ -147,12 +200,13 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
                           <div>
                             <h3 className="font-medium">{service.name}</h3>
                             <div className="flex items-center gap-1">
-                              <span className="text-primary font-semibold">₹{service.price.toFixed(0)}/KG</span>
+                              <span className="text-primary font-semibold">₹{service.price.toFixed(0)}</span>
                               <div className="flex items-center gap-0.5 ml-1">
                                 <Star size={12} className="fill-yellow-400 text-yellow-400" />
                                 <span className="text-xs text-gray-500">4.8</span>
                               </div>
                             </div>
+                            <p className="text-xs text-gray-500 mt-1">{service.description}</p>
                           </div>
                         </div>
                         
@@ -197,6 +251,13 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
                                 alt="Laundry" 
                                 className="w-full h-full object-cover"
                               />
+                            ) : service.name.includes('Shoe') || service.name.includes('shoe') || 
+                               service.name.includes('Sneaker') || service.name.includes('Sandal') || 
+                               service.name.includes('Canvas') || service.name.includes('Leather') || 
+                               service.name.includes('Heel') ? (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                <Footprints size={20} className="text-gray-500" />
+                              </div>
                             ) : (
                               <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                 <ShoppingBag size={20} className="text-gray-500" />
@@ -206,12 +267,13 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
                           <div>
                             <h3 className="font-medium">{service.name}</h3>
                             <div className="flex items-center gap-1">
-                              <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}/KG</span>
+                              <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}</span>
                               <div className="flex items-center gap-0.5 ml-1">
                                 <Star size={12} className="fill-yellow-400 text-yellow-400" />
                                 <span className="text-xs text-gray-500">4.8</span>
                               </div>
                             </div>
+                            <p className="text-xs text-gray-500 mt-1">{service.description}</p>
                           </div>
                         </div>
                         
