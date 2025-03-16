@@ -8,21 +8,25 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
 }
+
 interface ServiceListProps {
   services: Service[];
 }
+
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
@@ -34,6 +38,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
+
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
   const shoeServices: Service[] = [{
@@ -67,6 +72,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     description: 'Gentle cleaning and polishing for formal heels',
     price: 349
   }];
+
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
@@ -83,17 +89,21 @@ const ServiceList: React.FC<ServiceListProps> = ({
     services: shoeServices,
     count: 11
   }];
+
   const deliveryMessages = {
     standard: "Delivery in just 36 sunlight hours after pickup",
     express: "Delivery in just 12 sunlight hours after pickup"
   };
+
   const backgroundColors = {
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
+
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
+
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -104,6 +114,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
+
   useEffect(() => {
     const handleScroll = () => {
       if (tabsWrapperRef.current) {
@@ -122,6 +133,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       window.removeEventListener('scroll', handleScroll);
     };
   }, [isTabsSticky]);
+
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
@@ -144,7 +156,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             </div>}
 
-          <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[7px] py-0">
+          <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0">
             <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
               <Clock size={16} className="mr-2" />
               Standard Wash
@@ -281,4 +293,5 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </div>}
     </div>;
 };
+
 export default ServiceList;
