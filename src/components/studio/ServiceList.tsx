@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+
+import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -19,6 +20,7 @@ interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
+  count?: number;
 }
 
 interface ServiceListProps {
@@ -70,16 +72,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
-    icon: <ShoppingBag size={16} className="text-primary" />,
-    services: coreServices
+    icon: <ShoppingBag size={16} className="text-white" />,
+    services: coreServices,
+    count: 6
   }, {
     title: "Dry Cleaning Services",
-    icon: <Shirt size={16} className="text-primary" />,
-    services: dryCleaningServices
+    icon: <Shirt size={16} className="text-white" />,
+    services: dryCleaningServices,
+    count: 30
   }, {
     title: "Shoe Laundry Services",
-    icon: <Footprints size={16} className="text-primary" />,
-    services: shoeServices
+    icon: <Footprints size={16} className="text-white" />,
+    services: shoeServices,
+    count: 11
   }];
 
   const deliveryMessages = {
@@ -107,7 +112,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setPopoverOpen(false);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (popoverOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -240,58 +245,45 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </button>
       ) : (
         <div 
-          className="fixed bottom-0 right-0 w-full max-w-xs transform transition-all duration-300 z-50 animate-slide-in-right"
+          className="fixed bottom-0 right-0 w-full max-w-sm transform transition-all duration-300 z-50 animate-slide-in-right"
           style={{ 
             height: '45.05vh',
             bottom: '1.5rem',
             right: '1.5rem'
           }}
         >
-          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
+          <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
-              <h3 className="text-lg font-semibold">Service Categories</h3>
-              <button 
-                onClick={() => setPopoverOpen(false)}
-                className="p-1 rounded-full hover:bg-gray-800 transition-colors"
-              >
-                <X size={20} />
-              </button>
+              <h3 className="text-lg font-semibold">Want to repeat?</h3>
+              <div className="flex items-center">
+                <span className="mr-2 text-lg font-semibold">2</span>
+                <button 
+                  onClick={() => setPopoverOpen(false)}
+                  className="p-1 rounded-full hover:bg-gray-800 transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
             
             <ScrollArea className="flex-grow">
-              <div className="p-3 space-y-1">
+              <div className="p-2">
                 {categories.map((category, idx) => (
-                  <div key={idx} className="mb-4">
-                    <button 
-                      onClick={() => scrollToCategory(category.title)} 
-                      className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-                    >
-                      <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center" 
-                        style={{
-                          background: selectedTab === "standard" ? "#1e40af" : "#9a3412"
-                        }}
-                      >
-                        {React.cloneElement(category.icon as React.ReactElement, {
-                          className: "text-white"
-                        })}
-                      </div>
-                      <span className="font-medium text-white">{category.title}</span>
-                    </button>
-                    
-                    <div className="pl-12 pr-2 space-y-1">
-                      {category.services.map(service => (
-                        <button 
-                          key={service.id} 
-                          onClick={() => scrollToCategory(category.title)} 
-                          className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-gray-300 text-sm truncate"
-                        >
-                          {service.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <button 
+                    key={idx}
+                    onClick={() => scrollToCategory(category.title)} 
+                    className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
+                  >
+                    <span className="font-medium text-white text-base">{category.title}</span>
+                    <span className="text-base font-medium">{category.count}</span>
+                  </button>
                 ))}
+                <button 
+                  className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
+                >
+                  <span className="font-medium text-white text-base">Recommended</span>
+                  <span className="text-base font-medium">20</span>
+                </button>
               </div>
             </ScrollArea>
           </div>
