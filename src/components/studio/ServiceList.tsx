@@ -118,7 +118,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     const handleScroll = () => {
       if (tabsRef.current) {
         const rect = tabsRef.current.getBoundingClientRect();
-        const headerHeight = 112; 
+        const headerHeight = 56; // Height of the fixed header
         
         setIsTabsSticky(rect.top <= headerHeight);
       }
@@ -138,21 +138,62 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       <div 
         ref={tabsRef} 
-        className={cn(
-          "transition-all duration-300",
-          isTabsSticky ? "sticky top-[112px] z-20 bg-inherit pt-2 pb-2 -mx-4 px-4 shadow-sm" : ""
-        )}
+        className="transition-all duration-300"
       >
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
+          {isTabsSticky && (
+            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200">
+              <TabsList 
+                className="w-full grid grid-cols-2 gap-2 p-2 bg-gray-100/80 mx-auto"
+              >
+                <TabsTrigger 
+                  value="standard" 
+                  className={cn(
+                    "rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                    selectedTab === "standard" ? "text-blue-600 border-blue-200" : "text-gray-500"
+                  )}
+                >
+                  <Clock size={16} className="mr-2" />
+                  Standard Wash
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="express" 
+                  className={cn(
+                    "rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                    selectedTab === "express" ? "text-orange-500 border-orange-200" : "text-gray-500"
+                  )}
+                >
+                  <Clock size={16} className="mr-2" />
+                  Express Wash
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          )}
+
           <TabsList 
             ref={tabsListRef}
-            className="grid w-full grid-cols-2 mb-6"
+            className={cn(
+              "grid w-full grid-cols-2 gap-2 mb-6",
+              isTabsSticky ? "mt-16" : ""
+            )}
           >
-            <TabsTrigger value="standard" className={cn("rounded-full transition-colors duration-300", selectedTab === "standard" ? "bg-blue-600 text-white shadow-lg" : "")}>
+            <TabsTrigger 
+              value="standard" 
+              className={cn(
+                "rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                selectedTab === "standard" ? "text-blue-600 border-blue-200" : "text-gray-500"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Standard Wash
             </TabsTrigger>
-            <TabsTrigger value="express" className={cn("rounded-full transition-colors duration-300", selectedTab === "express" ? "bg-orange-500 text-white shadow-lg" : "")}>
+            <TabsTrigger 
+              value="express" 
+              className={cn(
+                "rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                selectedTab === "express" ? "text-orange-500 border-orange-200" : "text-gray-500"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Express Wash
             </TabsTrigger>
