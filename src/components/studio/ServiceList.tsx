@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -39,6 +38,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
+  const tabsContentHeight = useRef<number>(0);
 
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
@@ -117,6 +117,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   useEffect(() => {
+    if (tabsListRef.current) {
+      tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
+    }
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (tabsWrapperRef.current) {
         const headerHeight = 56;
@@ -143,9 +149,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
-          {isTabsSticky && <div className="h-[72px]" />}
+          {isTabsSticky && (
+            <div 
+              className="h-0 overflow-hidden" 
+              style={{ 
+                height: tabsContentHeight.current ? `${tabsContentHeight.current}px` : '72px'
+              }}
+            />
+          )}
           
-          {isTabsSticky && <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
+          {isTabsSticky && (
+            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
               <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
                 <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
                   <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
@@ -158,10 +172,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   </TabsTrigger>
                 </TabsList>
               </div>
-            </div>}
+            </div>
+          )}
 
-          <div className={cn(isTabsSticky ? "opacity-0 invisible h-0" : "opacity-100 visible h-auto", "transition-all duration-300")}>
-            <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0">
+          <div 
+            className={cn(
+              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible h-auto", 
+              "transition-all duration-500"
+            )}
+          >
+            <TabsList 
+              ref={tabsListRef} 
+              className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0"
+            >
               <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
                 <Clock size={16} className="mr-2" />
                 Standard Wash
