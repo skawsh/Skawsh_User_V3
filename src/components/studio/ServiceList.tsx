@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Service {
   id: string;
@@ -127,6 +128,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
   return (
     <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {/* Service type selector tabs */}
+      
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger 
@@ -295,7 +297,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
         </TabsContent>
       </Tabs>
 
-      {/* Floating action button for services menu - now using Popover instead of Dialog */}
+      {/* Floating action button for services menu with updated popover */}
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           <Button 
@@ -310,27 +312,44 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="p-4 rounded-xl w-72 shadow-lg border-none"
+          className="p-0 rounded-xl border-none w-72 shadow-lg max-h-96 bg-black"
           align="end"
           sideOffset={16}
         >
-          <h3 className="text-lg font-semibold mb-4">Service Categories</h3>
-          <div className="space-y-2">
-            {categories.map((category, idx) => (
-              <button
-                key={idx}
-                onClick={() => scrollToCategory(category.title)}
-                className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ background: selectedTab === "standard" ? "#dbeafe" : "#ffedd5" }}
-                >
-                  {category.icon}
-                </div>
-                <span className="font-medium">{category.title}</span>
-              </button>
-            ))}
+          <div className="p-4 border-b border-gray-800">
+            <h3 className="text-lg font-semibold text-white">Service Categories</h3>
           </div>
+          <ScrollArea className="h-[320px]">
+            <div className="p-3 space-y-1">
+              {categories.map((category, idx) => (
+                <div key={idx} className="mb-4">
+                  <button
+                    onClick={() => scrollToCategory(category.title)}
+                    className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+                  >
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ background: selectedTab === "standard" ? "#1e40af" : "#9a3412" }}
+                    >
+                      {React.cloneElement(category.icon as React.ReactElement, { className: "text-white" })}
+                    </div>
+                    <span className="font-medium text-white">{category.title}</span>
+                  </button>
+                  
+                  <div className="pl-12 pr-2 space-y-1">
+                    {category.services.map((service) => (
+                      <button
+                        key={service.id}
+                        onClick={() => scrollToCategory(category.title)}
+                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-800 transition-colors text-gray-300 text-sm truncate"
+                      >
+                        {service.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
         </PopoverContent>
       </Popover>
     </div>
