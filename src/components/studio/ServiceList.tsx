@@ -236,7 +236,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
-              <h3 className="text-lg font-semibold truncate">Service Categories</h3>
+              <h3 className="text-lg font-semibold truncate">Services</h3>
             </div>
             
             <ScrollArea className="flex-grow">
@@ -248,14 +248,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
                     </button>
                     
                     <div className="ml-7 mt-1 space-y-1">
-                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
+                      {category.services.map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
                           {service.name}
                         </button>)}
-                      {category.services.length > 4 && (
-                        <button onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors px-3 font-medium text-left">
-                          View more ({category.services.length - 4})
-                        </button>
-                      )}
                     </div>
                   </div>)}
               </div>
