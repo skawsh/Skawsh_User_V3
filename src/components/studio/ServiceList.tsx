@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -139,7 +140,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, []);
 
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
+  return (
+    <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
       <div 
@@ -165,103 +167,126 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <Clock size={16} />
             <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
           </div>
+          
+          <TabsContent value="standard">
+            <div className="space-y-8">
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+                  <div className="flex items-center gap-2 mb-4">
+                    {category.icon}
+                    <h2 className="text-lg font-bold">{category.title}</h2>
+                  </div>
+
+                  <div className="space-y-4">
+                    {category.services.map(service => (
+                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-3">
+                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                              {service.name.includes('Fold') ? (
+                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <Footprints size={20} className="text-gray-500" />
+                                </div>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <ShoppingBag size={20} className="text-gray-500" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{service.name}</h3>
+                              <div className="flex items-center gap-1">
+                                <span className="text-primary font-semibold">₹{service.price.toFixed(0)}</span>
+                                <div className="flex items-center gap-0.5 ml-1">
+                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                  <span className="text-xs text-gray-500">4.8</span>
+                                </div>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                            </div>
+                          </div>
+                          
+                          <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
+                            <Plus size={16} className="mr-1" /> Add
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="express">
+            <div className="space-y-8">
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+                  <div className="flex items-center gap-2 mb-4">
+                    {category.icon}
+                    <h2 className="text-lg font-bold">{category.title}</h2>
+                  </div>
+
+                  <div className="space-y-4">
+                    {category.services.map(service => (
+                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-3">
+                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                              {service.name.includes('Fold') ? (
+                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <Footprints size={20} className="text-gray-500" />
+                                </div>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <ShoppingBag size={20} className="text-gray-500" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{service.name}</h3>
+                              <div className="flex items-center gap-1">
+                                <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}</span>
+                                <div className="flex items-center gap-0.5 ml-1">
+                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                  <span className="text-xs text-gray-500">4.8</span>
+                                </div>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                            </div>
+                          </div>
+                          
+                          <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
+                            <Plus size={16} className="mr-1" /> Add
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
-        
-      <TabsContent value="standard">
-        <div className="space-y-8">
-          {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-              <div className="flex items-center gap-2 mb-4">
-                {category.icon}
-                <h2 className="text-lg font-bold">{category.title}</h2>
-              </div>
 
-              <div className="space-y-4">
-                {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-3">
-                        <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                          {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                              <Footprints size={20} className="text-gray-500" />
-                            </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                              <ShoppingBag size={20} className="text-gray-500" />
-                            </div>}
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{service.name}</h3>
-                          <div className="flex items-center gap-1">
-                            <span className="text-primary font-semibold">₹{service.price.toFixed(0)}</span>
-                            <div className="flex items-center gap-0.5 ml-1">
-                              <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs text-gray-500">4.8</span>
-                            </div>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                        </div>
-                      </div>
-                      
-                      <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
-                        <Plus size={16} className="mr-1" /> Add
-                      </Button>
-                    </div>
-                  </Card>)}
-              </div>
-            </div>)}
-        </div>
-      </TabsContent>
-
-      <TabsContent value="express">
-        <div className="space-y-8">
-          {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-              <div className="flex items-center gap-2 mb-4">
-                {category.icon}
-                <h2 className="text-lg font-bold">{category.title}</h2>
-              </div>
-
-              <div className="space-y-4">
-                {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-3">
-                        <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                          {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                              <Footprints size={20} className="text-gray-500" />
-                            </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                              <ShoppingBag size={20} className="text-gray-500" />
-                            </div>}
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{service.name}</h3>
-                          <div className="flex items-center gap-1">
-                            <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}</span>
-                            <div className="flex items-center gap-0.5 ml-1">
-                              <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs text-gray-500">4.8</span>
-                            </div>
-                          </div>
-                          <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                        </div>
-                      </div>
-                      
-                      <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
-                        <Plus size={16} className="mr-1" /> Add
-                      </Button>
-                    </div>
-                  </Card>)}
-              </div>
-            </div>)}
-        </div>
-      </TabsContent>
-
-      {!popoverOpen ? <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
+      {!popoverOpen ? (
+        <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
           <Menu className="h-6 w-6" />
-        </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
-      height: isMobile ? '40vh' : '45.05vh',
-      bottom: '1.5rem',
-      right: '1rem',
-      maxHeight: '400px',
-      width: '70%',
-      maxWidth: '260px'
-    }}>
+        </button>
+      ) : (
+        <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
+          height: isMobile ? '40vh' : '45.05vh',
+          bottom: '1.5rem',
+          right: '1rem',
+          maxHeight: '400px',
+          width: '70%',
+          maxWidth: '260px'
+        }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
               <h3 className="text-lg font-semibold truncate">Services</h3>
@@ -269,23 +294,29 @@ const ServiceList: React.FC<ServiceListProps> = ({
             
             <ScrollArea className="flex-grow">
               <div className="p-2">
-                {categories.map((category, idx) => <div key={idx} className="mb-3">
+                {categories.map((category, idx) => (
+                  <div key={idx} className="mb-3">
                     <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5">
                       <span className="font-medium text-white text-base">{category.title}</span>
-                      <span className="text-xs bg-gray-700 text-gray-300 rounded-full px-2 py-0.5">{category.services.length}</span>
+                      <span className="text-xs bg-gray-700 text-gray-300 rounded-full px-2 py-0.5">{category.count}</span>
                     </button>
                     
                     <div className="ml-7 mt-1 space-y-1">
-                      {category.services.map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
+                      {category.services.map((service, serviceIdx) => (
+                        <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
                           {service.name}
-                        </button>)}
+                        </button>
+                      ))}
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ServiceList;
