@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -61,6 +60,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   }, []);
   
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (tabsListRef.current) {
+        tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
+      }
+    });
+  }, [selectedTab]);
+  
   const handleScroll = useCallback(() => {
     if (!tabsWrapperRef.current) return;
     
@@ -83,23 +90,25 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }, [isTabsSticky]);
 
   useEffect(() => {
-    let scrollTimeout: NodeJS.Timeout | null = null;
-    
-    const throttledScrollHandler = () => {
-      if (scrollTimeout) return;
-      
-      scrollTimeout = setTimeout(() => {
-        handleScroll();
-        scrollTimeout = null;
-      }, 16);
+    const calculateTabsPosition = () => {
+      if (tabsWrapperRef.current) {
+        tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
+      }
     };
     
-    // Initialize offset top on mount
-    if (tabsWrapperRef.current) {
-      tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
-    }
+    calculateTabsPosition();
+    window.addEventListener('resize', calculateTabsPosition, { passive: true });
     
-    // Setup IntersectionObserver for better performance
+    let rafId: number | null = null;
+    const scrollHandler = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          handleScroll();
+          rafId = null;
+        });
+      }
+    };
+    
     if (tabsWrapperRef.current && "IntersectionObserver" in window) {
       const options = {
         rootMargin: `-56px 0px 0px 0px`,
@@ -119,23 +128,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
       tabsObserverRef.current = observer;
     }
     
-    // Fallback to scroll listener
-    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
+    window.addEventListener('scroll', scrollHandler, { passive: true });
     
     return () => {
       if (tabsObserverRef.current) {
         tabsObserverRef.current.disconnect();
       }
-      window.removeEventListener('scroll', throttledScrollHandler);
-      if (scrollTimeout) clearTimeout(scrollTimeout);
+      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('resize', calculateTabsPosition);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
   }, [handleScroll, isTabsSticky]);
-
-  useEffect(() => {
-    if (tabsListRef.current) {
-      tabsContentHeight.current = tabsListRef.current.offsetHeight + 16;
-    }
-  }, [selectedTab]);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -221,7 +226,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           {isTabsSticky && (
             <div 
               aria-hidden="true"
-              className="opacity-0 pointer-events-none"
+              className="opacity-0 pointer-events-none transition-all duration-300"
               style={{ 
                 height: `${tabsContentHeight.current}px`,
                 overflow: 'hidden',
@@ -233,8 +238,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
           <div 
             className={cn(
               "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
-              "transition-all duration-300",
-              isTabsSticky ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-[-100%]"
+              "transition-transform transition-opacity duration-300 ease-in-out will-change-transform",
+              isTabsSticky ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[-100%]"
             )}
           >
             <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
@@ -253,7 +258,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
           <div 
             className={cn(
-              "transition-all duration-500",
+              "transition-all duration-300 ease-in-out",
               isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible"
             )}
           >
