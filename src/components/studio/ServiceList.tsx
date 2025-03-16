@@ -111,7 +111,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, [popoverOpen]);
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {popoverOpen && <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" onClick={() => setPopoverOpen(false)} />}
+      {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -224,7 +224,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       maxHeight: '400px'
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
+            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-[69px]">
               <h3 className="text-lg font-semibold">Service Categories</h3>
               
             </div>
@@ -232,13 +232,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <ScrollArea className="flex-grow">
               <div className="p-2">
                 {categories.map((category, idx) => <div key={idx} className="mb-3">
-                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg">
+                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-[71px]">
                       <span className="font-medium text-white text-base">{category.title}</span>
                       <span className="text-base font-medium">{category.count}</span>
                     </button>
                     
                     <div className="ml-8 mt-1 space-y-1">
-                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg">
+                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full text-left py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-[38px]">
                           {service.name}
                         </button>)}
                       {category.services.length > 4 && <button onClick={() => scrollToCategory(category.title)} className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors rounded-lg">
