@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -32,14 +31,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  // Refs for each category section
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Group services into categories
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
 
-  // Define shoe laundry services
   const shoeServices: Service[] = [{
     id: 'shoe-1',
     name: 'Regular Shoes',
@@ -71,7 +67,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     description: 'Gentle cleaning and polishing for formal heels',
     price: 349
   }];
-  
+
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-primary" />,
@@ -86,23 +82,20 @@ const ServiceList: React.FC<ServiceListProps> = ({
     services: shoeServices
   }];
 
-  // Delivery time messages based on selected tab
   const deliveryMessages = {
     standard: "Delivery in just 36 sunlight hours after pickup",
     express: "Delivery in just 12 sunlight hours after pickup"
   };
 
-  // Background colors based on selected tab
   const backgroundColors = {
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
-  
+
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
 
-  // Scroll to a specific category section
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -111,19 +104,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
         block: 'start'
       });
     }
-    // Close the popover after selecting a category
     setPopoverOpen(false);
   };
 
-  // Prevent scroll propagation to body when Service Categories is open
   React.useEffect(() => {
-    const handleOverlayScroll = (e: Event) => {
-      if (popoverOpen) {
-        e.stopPropagation();
-      }
-    };
-
-    // Only add the listener when the popover is open
     if (popoverOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -136,7 +120,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }, [popoverOpen]);
 
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {/* Backdrop blur overlay when menu is open */}
       {popoverOpen && (
         <div 
           className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" 
@@ -144,7 +127,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         />
       )}
       
-      {/* Service type selector tabs */}
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="standard" className={cn("rounded-full transition-colors duration-300", selectedTab === "standard" ? "bg-blue-600 text-white shadow-lg" : "")}>
@@ -157,14 +139,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
           </TabsTrigger>
         </TabsList>
 
-        {/* Service delivery time indicator - changes based on selected tab */}
         <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
           <Clock size={16} />
           <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
         </div>
         
         <TabsContent value="standard">
-          {/* Service Categories for Standard */}
           <div className="space-y-8">
             {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                 <div className="flex items-center gap-2 mb-4">
@@ -207,7 +187,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
 
         <TabsContent value="express">
-          {/* Service Categories for Express */}
           <div className="space-y-8">
             {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                 <div className="flex items-center gap-2 mb-4">
@@ -250,7 +229,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
       </Tabs>
 
-      {/* Service categories menu button or panel */}
       {!popoverOpen ? (
         <button 
           onClick={() => setPopoverOpen(true)} 
@@ -264,12 +242,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
         <div 
           className="fixed bottom-0 right-0 w-full max-w-xs transform transition-all duration-300 z-50 animate-slide-in-right"
           style={{ 
-            maxHeight: 'calc(100vh - 100px)',
+            height: '45.05vh',
             bottom: '1.5rem',
             right: '1.5rem'
           }}
         >
-          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-0 mb-0">
+          <div className="bg-black text-white rounded-tl-2xl rounded-bl-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
               <h3 className="text-lg font-semibold">Service Categories</h3>
               <button 
@@ -280,7 +258,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </button>
             </div>
             
-            <ScrollArea className="h-[calc(100vh-180px)]">
+            <ScrollArea className="flex-grow">
               <div className="p-3 space-y-1">
                 {categories.map((category, idx) => (
                   <div key={idx} className="mb-4">
