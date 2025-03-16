@@ -62,7 +62,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
   };
 
   return (
-    <div className={cn("mt-8 animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
+    <div className={cn("mt-1 animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {/* Service type selector tabs */}
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
