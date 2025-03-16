@@ -110,8 +110,8 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      {/* Search bar with reduced padding */}
-      <div className="px-4 py-2 bg-white shadow-sm">
+      {/* Search bar with no bottom padding */}
+      <div className="px-4 py-2 pb-0 bg-white">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           <Input 
