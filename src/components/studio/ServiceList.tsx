@@ -229,10 +229,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
       height: isMobile ? '40vh' : '45.05vh',
       bottom: '1.5rem',
-      right: '1rem', // Reduced from 1.5rem to 1rem (another 10px reduction)
+      right: '1rem',
       maxHeight: '400px',
-      width: '85%',
-      maxWidth: '320px'
+      width: '70%', // Reduced from 85% to 70% to cut off the right portion
+      maxWidth: '260px' // Reduced from 320px to 260px
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
