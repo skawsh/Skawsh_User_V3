@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -8,11 +7,11 @@ import { Separator } from "@/components/ui/separator";
 import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Service {
   id: string;
@@ -158,7 +157,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
           <Clock size={16} />
           <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
         </div>
-
+        
         <TabsContent value="standard">
           {/* Service Categories for Standard */}
           <div className="space-y-8">
@@ -294,9 +293,9 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
         </TabsContent>
       </Tabs>
 
-      {/* Floating action button for services menu */}
-      <Drawer>
-        <DrawerTrigger asChild>
+      {/* Floating action button for services menu - now using Dialog instead of Drawer */}
+      <Dialog>
+        <DialogTrigger asChild>
           <Button 
             size="icon" 
             className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40"
@@ -307,12 +306,12 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
           >
             <Menu className="h-6 w-6" />
           </Button>
-        </DrawerTrigger>
-        <DrawerContent className="p-4 rounded-t-2xl">
+        </DialogTrigger>
+        <DialogContent className="p-4 rounded-xl w-full max-w-sm mx-auto">
           <h3 className="text-lg font-semibold mb-4">Service Categories</h3>
           <div className="space-y-2">
             {categories.map((category, idx) => (
-              <DrawerClose asChild key={idx}>
+              <DialogClose asChild key={idx}>
                 <button
                   onClick={() => scrollToCategory(category.title)}
                   className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
@@ -324,11 +323,11 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
                   </div>
                   <span className="font-medium">{category.title}</span>
                 </button>
-              </DrawerClose>
+              </DialogClose>
             ))}
           </div>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
