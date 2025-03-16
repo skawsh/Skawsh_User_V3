@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -9,37 +8,30 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
-
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
 }
-
 interface ServiceListProps {
   services: Service[];
 }
-
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const isMobile = useIsMobile();
-
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
-
   const shoeServices: Service[] = [{
     id: 'shoe-1',
     name: 'Regular Shoes',
@@ -71,7 +63,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     description: 'Gentle cleaning and polishing for formal heels',
     price: 349
   }];
-
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-white" />,
@@ -88,21 +79,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
     services: shoeServices,
     count: 11
   }];
-
   const deliveryMessages = {
     standard: "Delivery in just 36 sunlight hours after pickup",
     express: "Delivery in just 12 sunlight hours after pickup"
   };
-
   const backgroundColors = {
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
-
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
-
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -113,26 +100,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
-
   useEffect(() => {
     if (popoverOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
-
     return () => {
       document.body.style.overflow = '';
     };
   }, [popoverOpen]);
-
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {popoverOpen && (
-        <div 
-          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" 
-          onClick={() => setPopoverOpen(false)} 
-        />
-      )}
+      {popoverOpen && <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" onClick={() => setPopoverOpen(false)} />}
       
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -236,78 +215,41 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
       </Tabs>
 
-      {!popoverOpen ? (
-        <button 
-          onClick={() => setPopoverOpen(true)} 
-          className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in ${
-            selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500"
-          }`}
-        >
+      {!popoverOpen ? <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in ${selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500"}`}>
           <Menu className="h-6 w-6" />
-        </button>
-      ) : (
-        <div 
-          className="fixed bottom-0 right-0 w-full max-w-sm transform transition-all duration-300 z-50 animate-slide-in-right"
-          style={{ 
-            height: isMobile ? '40vh' : '45.05vh',
-            bottom: '1.5rem',
-            right: '1.5rem',
-            maxHeight: '400px'
-          }}
-        >
+        </button> : <div className="fixed bottom-0 right-0 w-full max-w-sm transform transition-all duration-300 z-50 animate-slide-in-right" style={{
+      height: isMobile ? '40vh' : '45.05vh',
+      bottom: '1.5rem',
+      right: '1.5rem',
+      maxHeight: '400px'
+    }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
               <h3 className="text-lg font-semibold">Service Categories</h3>
-              <div className="flex items-center">
-                <span className="mr-2 text-lg font-semibold">2</span>
-                <button 
-                  onClick={() => setPopoverOpen(false)}
-                  className="p-1 rounded-full hover:bg-gray-800 transition-colors"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              
             </div>
             
             <ScrollArea className="flex-grow">
               <div className="p-2">
-                {categories.map((category, idx) => (
-                  <div key={idx} className="mb-3">
-                    <button 
-                      onClick={() => scrollToCategory(category.title)} 
-                      className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
-                    >
+                {categories.map((category, idx) => <div key={idx} className="mb-3">
+                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg">
                       <span className="font-medium text-white text-base">{category.title}</span>
                       <span className="text-base font-medium">{category.count}</span>
                     </button>
                     
                     <div className="ml-8 mt-1 space-y-1">
-                      {category.services.slice(0, 4).map((service, serviceIdx) => (
-                        <button 
-                          key={serviceIdx}
-                          onClick={() => scrollToCategory(category.title)}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg"
-                        >
+                      {category.services.slice(0, 4).map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg">
                           {service.name}
-                        </button>
-                      ))}
-                      {category.services.length > 4 && (
-                        <button 
-                          onClick={() => scrollToCategory(category.title)}
-                          className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors rounded-lg"
-                        >
+                        </button>)}
+                      {category.services.length > 4 && <button onClick={() => scrollToCategory(category.title)} className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors rounded-lg">
                           View {category.services.length - 4} more...
-                        </button>
-                      )}
+                        </button>}
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </ScrollArea>
           </div>
-        </div>
-      )}
+        </div>}
     </div>;
 };
-
 export default ServiceList;
