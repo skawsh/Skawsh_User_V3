@@ -38,7 +38,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
-  const tabsOffsetRef = useRef<number | null>(null);
   
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
@@ -117,14 +116,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
   
   useEffect(() => {
-    if (tabsWrapperRef.current && tabsOffsetRef.current === null) {
-      tabsOffsetRef.current = tabsWrapperRef.current.offsetTop;
-    }
-    
     const handleScroll = () => {
-      if (tabsRef.current && tabsOffsetRef.current !== null) {
+      if (tabsWrapperRef.current) {
         const headerHeight = 56;
-        const shouldBeSticky = window.scrollY > tabsOffsetRef.current - headerHeight;
+        const tabsPosition = tabsWrapperRef.current.getBoundingClientRect().top;
+        
+        const shouldBeSticky = tabsPosition <= headerHeight;
         
         if (shouldBeSticky !== isTabsSticky) {
           setIsTabsSticky(shouldBeSticky);
@@ -135,8 +132,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
-    
-    handleScroll();
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -161,7 +156,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
           {isTabsSticky && (
-            <div style={{ height: tabsListRef.current ? tabsListRef.current.offsetHeight + 24 : 80 }} />
+            <div className="h-[72px]" />
           )}
           
           {isTabsSticky && (
