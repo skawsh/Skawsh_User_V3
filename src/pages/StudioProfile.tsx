@@ -94,8 +94,9 @@ const StudioProfile: React.FC = () => {
     price: 12.99
   }];
   
-  return <Layout>
-      <div>
+  return (
+    <Layout>
+      <div className="pb-16"> {/* Added bottom padding to ensure no content is hidden by sticky elements */}
         {isScrolled && (
           <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in will-change-transform">
             <div className="flex items-center justify-between px-4 py-3">
@@ -149,7 +150,8 @@ const StudioProfile: React.FC = () => {
           <ServiceList services={services} />
         </div>
       </div>
-    </Layout>;
+    </Layout>
+  );
 };
 
 export default StudioProfile;

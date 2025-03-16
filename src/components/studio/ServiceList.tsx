@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -47,7 +46,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const lastScrollYRef = useRef<number>(0);
   const ticking = useRef<boolean>(false);
   
-  // Calculate and update tabs height whenever needed
   const updateTabsHeight = useCallback(() => {
     if (tabsListRef.current) {
       const tabsContent = tabsListRef.current;
@@ -55,7 +53,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
       const marginTop = parseFloat(computedStyle.marginTop);
       const marginBottom = parseFloat(computedStyle.marginBottom);
       
-      // Include margins in the height calculation
       const messageElement = document.querySelector('.flex.items-center.gap-2.mb-4.text-sm');
       const messageHeight = messageElement ? messageElement.getBoundingClientRect().height : 0;
       
@@ -67,11 +64,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   }, []);
   
-  // Run once on mount and when tab changes
   useEffect(() => {
     updateTabsHeight();
     
-    // Also update after a short delay to account for any dynamic content
     const timer = setTimeout(() => {
       updateTabsHeight();
     }, 50);
@@ -79,10 +74,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
     return () => clearTimeout(timer);
   }, [selectedTab, updateTabsHeight]);
   
-  // Update on resize
   useEffect(() => {
     const handleResize = () => {
-      // Use requestAnimationFrame for smoother updates
       if (!ticking.current) {
         requestAnimationFrame(() => {
           updateTabsHeight();
@@ -99,7 +92,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, [updateTabsHeight]);
   
-  // Optimized scroll handler with requestAnimationFrame
   const handleScroll = useCallback(() => {
     if (!tabsWrapperRef.current || ticking.current) return;
     
@@ -118,7 +110,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       if (shouldBeSticky !== isTabsSticky) {
         setIsTabsSticky(shouldBeSticky);
-        // Update height measurement when sticky state changes
         updateTabsHeight();
       }
       
@@ -138,27 +129,23 @@ const ServiceList: React.FC<ServiceListProps> = ({
     
     calculateTabsPosition();
     window.addEventListener('resize', calculateTabsPosition, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Use IntersectionObserver for efficient detection of when tabs should become sticky
     if (tabsWrapperRef.current && "IntersectionObserver" in window) {
       const options = {
         rootMargin: `-56px 0px 0px 0px`,
-        threshold: [0, 0.1, 0.5, 0.9, 1],
+        threshold: [0, 0.1],
       };
       
-      // Disconnect previous observer if it exists
       if (tabsObserverRef.current) {
         tabsObserverRef.current.disconnect();
       }
       
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          // Using boundingClientRect.top to determine if the element has scrolled past the top
           const shouldBeSticky = entry.boundingClientRect.top <= 56;
-          
           if (shouldBeSticky !== isTabsSticky) {
             setIsTabsSticky(shouldBeSticky);
-            // When state changes, ensure heights are updated
             requestAnimationFrame(updateTabsHeight);
           }
         });
@@ -168,24 +155,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
       tabsObserverRef.current = observer;
     }
     
-    // Scroll handler with efficient throttling
-    const scrollHandler = () => {
-      if (!ticking.current) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking.current = false;
-        });
-        ticking.current = true;
-      }
-    };
-    
-    window.addEventListener('scroll', scrollHandler, { passive: true });
-    
     return () => {
       if (tabsObserverRef.current) {
         tabsObserverRef.current.disconnect();
       }
-      window.removeEventListener('scroll', scrollHandler);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', calculateTabsPosition);
     };
   }, [handleScroll, isTabsSticky, updateTabsHeight]);
@@ -266,12 +240,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
     express: "bg-orange-50"
   };
 
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-all duration-500 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
+  return (
+    <div 
+      className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-all duration-500 -mx-2 relative", 
+      backgroundColors[selectedTab as keyof typeof backgroundColors])} 
+      ref={tabsWrapperRef}
+    >
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
       <div ref={tabsRef} className="transition-all duration-300 will-change-transform">
         <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
-          {/* Placeholder div with exact same height as the tabs */}
           {isTabsSticky && (
             <div 
               ref={placeholderRef}
@@ -284,14 +262,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
             />
           )}
           
-          {/* Fixed tabs that appear when scrolled */}
           <div 
             ref={stickyWrapperRef}
             className={cn(
-              "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
+              "fixed left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
               "will-change-transform transition-transform duration-300 ease-in-out"
             )}
             style={{
+              top: '56px',
               transform: isTabsSticky ? 'translateY(0)' : 'translateY(-100%)',
               opacity: isTabsSticky ? 1 : 0,
               transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -309,10 +287,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   Express Wash
                 </TabsTrigger>
               </TabsList>
+              
+              <div className={cn("flex items-center gap-2 mt-2 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
+                <Clock size={16} />
+                <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+              </div>
             </div>
           </div>
 
-          {/* Original tabs that get replaced when scrolled */}
           <div 
             className={cn(
               "transition-opacity duration-300 ease-in-out",
@@ -326,7 +308,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           >
             <TabsList 
               ref={tabsListRef} 
-              className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0"
+              className="grid w-full grid-cols-2 gap-2 mb-4 bg-transparent my-0 py-1 mx-0"
             >
               <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
                 <Clock size={16} className="mr-2" />
@@ -337,31 +319,39 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 Express Wash
               </TabsTrigger>
             </TabsList>
-          </div>
-
-          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
-            <Clock size={16} />
-            <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+            
+            <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
+              <Clock size={16} />
+              <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+            </div>
           </div>
           
           <TabsContent value="standard">
             <div className="space-y-8">
-              {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                   <div className="flex items-center gap-2 mb-4">
                     {category.icon}
                     <h2 className="text-lg font-bold">{category.title}</h2>
                   </div>
 
                   <div className="space-y-4">
-                    {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    {category.services.map(service => (
+                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
                         <div className="flex justify-between items-center">
                           <div className="flex gap-3">
                             <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              {service.name.includes('Fold') ? (
+                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <Footprints size={20} className="text-gray-500" />
-                                </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                </div>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <ShoppingBag size={20} className="text-gray-500" />
-                                </div>}
+                                </div>
+                              )}
                             </div>
                             <div>
                               <h3 className="font-medium">{service.name}</h3>
@@ -380,30 +370,40 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             <Plus size={16} className="mr-1" /> Add
                           </Button>
                         </div>
-                      </Card>)}
+                      </Card>
+                    ))}
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </TabsContent>
 
           <TabsContent value="express">
             <div className="space-y-8">
-              {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                   <div className="flex items-center gap-2 mb-4">
                     {category.icon}
                     <h2 className="text-lg font-bold">{category.title}</h2>
                   </div>
 
                   <div className="space-y-4">
-                    {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    {category.services.map(service => (
+                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
                         <div className="flex justify-between items-center">
                           <div className="flex gap-3">
                             <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              {service.name.includes('Fold') ? (
+                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <Footprints size={20} className="text-gray-500" />
-                                </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                </div>
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <ShoppingBag size={20} className="text-gray-500" />
-                                </div>}
+                                </div>
+                              )}
                             </div>
                             <div>
                               <h3 className="font-medium">{service.name}</h3>
@@ -422,24 +422,35 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             <Plus size={16} className="mr-1" /> Add
                           </Button>
                         </div>
-                      </Card>)}
+                      </Card>
+                    ))}
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
       </div>
 
-      {!popoverOpen ? <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
+      {!popoverOpen ? (
+        <button 
+          onClick={() => setPopoverOpen(true)} 
+          className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}
+        >
           <Menu className="h-6 w-6" />
-        </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
-      height: isMobile ? '40vh' : '45.05vh',
-      bottom: '1.5rem',
-      right: '1rem',
-      maxHeight: '400px',
-      width: '70%',
-      maxWidth: '260px'
-    }}>
+        </button>
+      ) : (
+        <div 
+          className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" 
+          style={{
+            height: isMobile ? '40vh' : '45.05vh',
+            bottom: '1.5rem',
+            right: '1rem',
+            maxHeight: '400px',
+            width: '70%',
+            maxWidth: '260px'
+          }}
+        >
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
               <h3 className="text-lg font-semibold truncate">Services</h3>
@@ -447,23 +458,36 @@ const ServiceList: React.FC<ServiceListProps> = ({
             
             <ScrollArea className="flex-grow">
               <div className="p-2">
-                {categories.map((category, idx) => <div key={idx} className="mb-3">
-                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5">
+                {categories.map((category, idx) => (
+                  <div key={idx} className="mb-3">
+                    <button 
+                      onClick={() => scrollToCategory(category.title)} 
+                      className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5"
+                    >
                       <span className="font-medium text-white text-base">{category.title}</span>
                       <span className="text-xs bg-gray-700 text-gray-300 rounded-full px-2 py-0.5">{category.count}</span>
                     </button>
                     
                     <div className="ml-7 mt-1 space-y-1">
-                      {category.services.map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
+                      {category.services.map((service, serviceIdx) => (
+                        <button 
+                          key={serviceIdx} 
+                          onClick={() => scrollToCategory(category.title)} 
+                          className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left"
+                        >
                           {service.name}
-                        </button>)}
+                        </button>
+                      ))}
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ServiceList;
