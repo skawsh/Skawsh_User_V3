@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
       }, 16);
     };
     
+    // Initialize offset top on mount
+    if (tabsWrapperRef.current) {
+      tabsOffsetTopRef.current = tabsWrapperRef.current.getBoundingClientRect().top + window.scrollY;
+    }
+    
+    // Setup IntersectionObserver for better performance
     if (tabsWrapperRef.current && "IntersectionObserver" in window) {
       const options = {
         rootMargin: `-56px 0px 0px 0px`,
@@ -101,7 +108,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          const shouldBeSticky = entry.intersectionRatio < 0.1;
+          const shouldBeSticky = entry.boundingClientRect.top < 56;
           if (shouldBeSticky !== isTabsSticky) {
             setIsTabsSticky(shouldBeSticky);
           }
@@ -112,6 +119,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       tabsObserverRef.current = observer;
     }
     
+    // Fallback to scroll listener
     window.addEventListener('scroll', throttledScrollHandler, { passive: true });
     
     return () => {
@@ -225,13 +233,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
           <div 
             className={cn(
               "fixed top-[56px] left-0 right-0 z-40 border-b border-gray-200 shadow-sm",
-              "transition-opacity duration-300",
-              isTabsSticky ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+              "transition-all duration-300",
+              isTabsSticky ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-[-100%]"
             )}
-            style={{
-              transform: isTabsSticky ? 'translateY(0)' : 'translateY(-100%)',
-              transition: 'transform 300ms ease, opacity 300ms ease'
-            }}
           >
             <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
               <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
