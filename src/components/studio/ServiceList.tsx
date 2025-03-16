@@ -33,12 +33,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(false);
+  const [tabsHeight, setTabsHeight] = useState<number>(0);
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
-  const tabsContentHeight = useRef<number>(0);
+  const tabsPlaceholderRef = useRef<HTMLDivElement>(null);
+
+  // Prevent multiple scroll handlers from being triggered
+  const isTransitioning = useRef(false);
 
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
@@ -116,21 +120,32 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setPopoverOpen(false);
   };
 
+  // Calculate and update tabs height whenever elements change
   useEffect(() => {
     if (tabsListRef.current) {
-      tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
+      const height = tabsListRef.current.offsetHeight + 20; // Add some padding
+      setTabsHeight(height);
     }
-  }, []);
+  }, [selectedTab]);
 
+  // Handle scroll events with debounce to prevent flickering
   useEffect(() => {
     const handleScroll = () => {
+      if (isTransitioning.current) return;
+      
       if (tabsWrapperRef.current) {
         const headerHeight = 56;
         const tabsPosition = tabsWrapperRef.current.getBoundingClientRect().top;
         const shouldBeSticky = tabsPosition <= headerHeight;
         
         if (shouldBeSticky !== isTabsSticky) {
+          isTransitioning.current = true;
           setIsTabsSticky(shouldBeSticky);
+          
+          // Reset the transition flag after animation completes
+          setTimeout(() => {
+            isTransitioning.current = false;
+          }, 300); // Match this with the CSS transition duration
         }
       }
     };
@@ -144,52 +159,101 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, [isTabsSticky]);
 
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
-      {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
+  return (
+    <div 
+      className={cn(
+        "mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", 
+        backgroundColors[selectedTab as keyof typeof backgroundColors]
+      )} 
+      ref={tabsWrapperRef}
+    >
+      {popoverOpen && (
+        <div 
+          onClick={() => setPopoverOpen(false)} 
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" 
+        />
+      )}
       
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
-          {isTabsSticky && (
-            <div 
-              className="h-0 overflow-hidden" 
-              style={{ 
-                height: tabsContentHeight.current ? `${tabsContentHeight.current}px` : '72px'
-              }}
-            />
-          )}
+          {/* Placeholder div to maintain layout when tabs become sticky */}
+          <div 
+            ref={tabsPlaceholderRef}
+            className={cn(
+              "transition-all duration-500 ease-in-out overflow-hidden",
+              isTabsSticky ? "opacity-100" : "opacity-0 h-0"
+            )} 
+            style={{ 
+              height: isTabsSticky ? `${tabsHeight}px` : 0
+            }}
+          />
           
-          {isTabsSticky && (
-            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
-              <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-                <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
-                  <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
-                    <Clock size={16} className="mr-2" />
-                    Standard Wash
-                  </TabsTrigger>
-                  <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
-                    <Clock size={16} className="mr-2" />
-                    Express Wash
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-            </div>
-          )}
-
+          {/* Sticky tabs that appear when scrolled */}
           <div 
             className={cn(
-              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible h-auto", 
-              "transition-all duration-500"
+              "fixed left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm",
+              isTabsSticky 
+                ? "transform-none opacity-100 transition-all duration-300 ease-out" 
+                : "transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-in"
+            )}
+            style={{ top: "56px" }}
+          >
+            <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
+              <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
+                <TabsTrigger 
+                  value="standard" 
+                  className={cn(
+                    "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                    selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200"
+                  )}
+                >
+                  <Clock size={16} className="mr-2" />
+                  Standard Wash
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="express" 
+                  className={cn(
+                    "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                    selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200"
+                  )}
+                >
+                  <Clock size={16} className="mr-2" />
+                  Express Wash
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
+
+          {/* Original tabs that become invisible when sticky */}
+          <div 
+            className={cn(
+              "transform transition-all duration-500 ease-in-out",
+              isTabsSticky 
+                ? "opacity-0 invisible h-0 overflow-hidden" 
+                : "opacity-100 visible transform-none"
             )}
           >
             <TabsList 
               ref={tabsListRef} 
               className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0"
             >
-              <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
+              <TabsTrigger 
+                value="standard" 
+                className={cn(
+                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                  selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200"
+                )}
+              >
                 <Clock size={16} className="mr-2" />
                 Standard Wash
               </TabsTrigger>
-              <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
+              <TabsTrigger 
+                value="express" 
+                className={cn(
+                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                  selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200"
+                )}
+              >
                 <Clock size={16} className="mr-2" />
                 Express Wash
               </TabsTrigger>
@@ -201,6 +265,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
           </div>
           
+          {/* Tab content sections */}
           <TabsContent value="standard">
             <div className="space-y-8">
               {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
@@ -320,7 +385,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
             </ScrollArea>
           </div>
         </div>}
-    </div>;
+    </div>
+  );
 };
 
 export default ServiceList;
