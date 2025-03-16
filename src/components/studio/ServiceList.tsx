@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -126,9 +127,16 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
   };
 
   return (
-    <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {/* Service type selector tabs */}
+    <div className={cn(
+      "mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", 
+      backgroundColors[selectedTab as keyof typeof backgroundColors]
+    )}>
+      {/* Backdrop blur overlay when popover is open */}
+      {popoverOpen && (
+        <div className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30" onClick={() => setPopoverOpen(false)} />
+      )}
       
+      {/* Service type selector tabs */}
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger 
@@ -312,14 +320,14 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="p-0 rounded-xl border-none w-72 shadow-lg max-h-96 bg-black"
+          className="p-0 rounded-xl border-none w-72 shadow-lg bg-black"
           align="end"
           sideOffset={16}
         >
           <div className="p-4 border-b border-gray-800">
             <h3 className="text-lg font-semibold text-white">Service Categories</h3>
           </div>
-          <ScrollArea className="h-[320px]">
+          <ScrollArea className="max-h-[320px] overflow-auto">
             <div className="p-3 space-y-1">
               {categories.map((category, idx) => (
                 <div key={idx} className="mb-4">
