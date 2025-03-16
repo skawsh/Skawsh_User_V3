@@ -8,21 +8,25 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
 }
+
 interface ServiceListProps {
   services: Service[];
 }
+
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
@@ -87,9 +91,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
+
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
+
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -100,6 +106,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
+
   useEffect(() => {
     if (popoverOpen) {
       document.body.style.overflow = 'hidden';
@@ -110,6 +117,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       document.body.style.overflow = '';
     };
   }, [popoverOpen]);
+
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
@@ -220,13 +228,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </button> : <div className="fixed bottom-0 right-0 w-full max-w-sm transform transition-all duration-300 z-50 animate-slide-in-right" style={{
       height: isMobile ? '40vh' : '45.05vh',
       bottom: '1.5rem',
-      right: '1.5rem',
+      right: '1.9rem',
       maxHeight: '400px'
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-[69px]">
               <h3 className="text-lg font-semibold">Service Categories</h3>
-              
             </div>
             
             <ScrollArea className="flex-grow">
@@ -234,7 +241,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 {categories.map((category, idx) => <div key={idx} className="mb-3">
                     <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-[71px]">
                       <span className="font-medium text-white text-base">{category.title}</span>
-                      
                     </button>
                     
                     <div className="ml-8 mt-1 space-y-1">
@@ -250,4 +256,5 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </div>}
     </div>;
 };
+
 export default ServiceList;
