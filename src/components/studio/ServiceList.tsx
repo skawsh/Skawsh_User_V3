@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -9,25 +8,21 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
-
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
 }
-
 interface ServiceListProps {
   services: Service[];
 }
-
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
@@ -70,7 +65,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }];
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
-    icon: <ShoppingBag size={16} className="text-white" />,
+    icon: <ShoppingBag size={16} className="text-white bg-stone-800" />,
     services: coreServices,
     count: 6
   }, {
@@ -92,11 +87,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
-
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
-
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -107,7 +100,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
-
   useEffect(() => {
     if (popoverOpen) {
       document.body.style.overflow = 'hidden';
@@ -118,7 +110,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
       document.body.style.overflow = '';
     };
   }, [popoverOpen]);
-
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
       {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
@@ -231,7 +222,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
       bottom: '1.5rem',
       right: '1rem',
       maxHeight: '400px',
-      width: '70%', // Reduced from 85% to 70% to cut off the right portion
+      width: '70%',
+      // Reduced from 85% to 70% to cut off the right portion
       maxWidth: '260px' // Reduced from 320px to 260px
     }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
@@ -259,5 +251,4 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </div>}
     </div>;
 };
-
 export default ServiceList;
