@@ -41,6 +41,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsContentHeight = useRef<number>(0);
 
   const coreServices = services.filter(s => s.name.includes('Wash'));
+  
+  const washAndIronService: Service = {
+    id: 'wash-iron-1',
+    name: 'Wash & Iron',
+    description: 'Professional washing with meticulous ironing for a crisp, fresh finish.',
+    price: 349
+  };
+  
+  const updatedCoreServices = [...coreServices, washAndIronService];
+
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
   const shoeServices: Service[] = [{
     id: 'shoe-1',
@@ -77,8 +87,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
-    services: coreServices,
-    count: 6
+    services: updatedCoreServices,
+    count: updatedCoreServices.length
   }, {
     title: "Dry Cleaning Services",
     icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
@@ -214,7 +224,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
                         <div className="flex justify-between items-center">
                           <div className="flex gap-3">
                             <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Iron') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <Clock size={20} className="text-gray-500" />
+                                </div> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <Footprints size={20} className="text-gray-500" />
                                 </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <ShoppingBag size={20} className="text-gray-500" />
@@ -256,7 +268,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
                         <div className="flex justify-between items-center">
                           <div className="flex gap-3">
                             <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Iron') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <Clock size={20} className="text-gray-500" />
+                                </div> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <Footprints size={20} className="text-gray-500" />
                                 </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
                                   <ShoppingBag size={20} className="text-gray-500" />
