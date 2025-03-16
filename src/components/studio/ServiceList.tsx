@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,8 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import ServiceOrderPopup from './ServiceOrderPopup';
+import { toast } from 'sonner';
 
 interface Service {
   id: string;
@@ -42,6 +43,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         },
         {
           id: 'dry-upper-3',
-          name: 'Ladies Top',
+8 name: 'Ladies Top',
           description: 'Specialized cleaning for tops',
           price: 155
         }
@@ -190,6 +192,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
+  
+  const handleOpenServicePopup = (service: Service) => {
+    setSelectedService(service);
+  };
+  
+  const handleCloseServicePopup = () => {
+    setSelectedService(null);
+  };
+  
+  const handleAddToCart = (orderDetails: any) => {
+    console.log('Added to cart:', orderDetails);
+    toast.success(`Added ${orderDetails.serviceName} to your cart!`);
+  };
 
   useEffect(() => {
     if (tabsListRef.current) {
@@ -219,8 +234,20 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, [isTabsSticky]);
 
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])} ref={tabsWrapperRef}>
-      {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
+  return (
+    <div 
+      className={cn(
+        "mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", 
+        backgroundColors[selectedTab as keyof typeof backgroundColors]
+      )} 
+      ref={tabsWrapperRef}
+    >
+      {popoverOpen && (
+        <div 
+          onClick={() => setPopoverOpen(false)} 
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" 
+        />
+      )}
       
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
@@ -271,14 +298,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
             </TabsList>
           </div>
 
-          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
+          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", 
+            selectedTab === "standard" ? "text-blue-600" : "text-orange-500"
+          )}>
             <Clock size={16} />
             <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
           </div>
           
           <TabsContent value="standard">
             <div className="space-y-8">
-              {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                   <div className="flex items-center gap-2 mb-4">
                     {category.icon}
                     <h2 className="text-lg font-bold">{category.title}</h2>
@@ -326,7 +356,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     </div>
                                   </div>
                                   
-                                  <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
+                                  <Button 
+                                    variant="default" 
+                                    size="sm"
+                                    className="rounded-full bg-blue-600 hover:bg-blue-700"
+                                    onClick={() => handleOpenServicePopup(service)}
+                                  >
                                     <Plus size={16} className="mr-1" /> Add
                                   </Button>
                                 </div>
@@ -372,7 +407,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
                               </div>
                             </div>
                             
-                            <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              className="rounded-full bg-blue-600 hover:bg-blue-700"
+                              onClick={() => handleOpenServicePopup(service)}
+                            >
                               <Plus size={16} className="mr-1" /> Add
                             </Button>
                           </div>
@@ -380,13 +420,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
                       ))}
                     </div>
                   )}
-                </div>)}
+                </div>
+              ))}
             </div>
           </TabsContent>
 
           <TabsContent value="express">
             <div className="space-y-8">
-              {categories.map((category, idx) => <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+              {categories.map((category, idx) => (
+                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
                   <div className="flex items-center gap-2 mb-4">
                     {category.icon}
                     <h2 className="text-lg font-bold">{category.title}</h2>
@@ -434,7 +476,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     </div>
                                   </div>
                                   
-                                  <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
+                                  <Button 
+                                    variant="default" 
+                                    size="sm"
+                                    className="rounded-full bg-orange-500 hover:bg-orange-600"
+                                    onClick={() => handleOpenServicePopup(service)}
+                                  >
                                     <Plus size={16} className="mr-1" /> Add
                                   </Button>
                                 </div>
@@ -480,7 +527,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
                               </div>
                             </div>
                             
-                            <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              className="rounded-full bg-orange-500 hover:bg-orange-600"
+                              onClick={() => handleOpenServicePopup(service)}
+                            >
                               <Plus size={16} className="mr-1" /> Add
                             </Button>
                           </div>
@@ -488,7 +540,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
                       ))}
                     </div>
                   )}
-                </div>)}
+                </div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>
@@ -557,7 +610,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
           </div>
         </div>
       )}
-    </div>;
+
+      {selectedService && (
+        <ServiceOrderPopup
+          service={selectedService}
+          isOpen={!!selectedService}
+          onClose={handleCloseServicePopup}
+          onAddToCart={handleAddToCart}
+        />
+      )}
+    </div>
+  );
 };
 
 export default ServiceList;
+

@@ -4,30 +4,32 @@ import * as React from "react"
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState<boolean>(false)
+  const [isClient, setIsClient] = React.useState<boolean>(false)
 
   React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    setIsClient(true)
     
-    const onChange = () => {
+    const checkMobile = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
     
-    // Set initial value immediately
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    // Set initial value
+    checkMobile()
     
-    // Add event listener with passive: true for better performance
-    mql.addEventListener("change", onChange, { passive: true })
+    // Create media query list
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
-    // Also listen for resize events for more responsive updates
-    window.addEventListener("resize", onChange, { passive: true })
+    // Add event listeners
+    mql.addEventListener("change", checkMobile, { passive: true })
+    window.addEventListener("resize", checkMobile, { passive: true })
     
     return () => {
-      mql.removeEventListener("change", onChange)
-      window.removeEventListener("resize", onChange)
+      mql.removeEventListener("change", checkMobile)
+      window.removeEventListener("resize", checkMobile)
     }
   }, [])
 
-  // Return a boolean instead of possibly undefined
-  return isMobile === undefined ? false : isMobile
+  // Return actual value only on client-side
+  return isClient ? isMobile : false
 }
