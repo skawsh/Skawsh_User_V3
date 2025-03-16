@@ -14,6 +14,7 @@ interface Service {
   name: string;
   description: string;
   price: number;
+  unit?: string;
 }
 
 interface ServiceCategory {
@@ -21,6 +22,13 @@ interface ServiceCategory {
   icon: React.ReactNode;
   services: Service[];
   count?: number;
+  subCategories?: SubCategory[];
+}
+
+interface SubCategory {
+  title: string;
+  icon: React.ReactNode;
+  services: Service[];
 }
 
 interface ServiceListProps {
@@ -40,18 +48,73 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
   const tabsContentHeight = useRef<number>(0);
 
-  const coreServices = services.filter(s => s.name.includes('Wash'));
+  const coreServices = services.filter(s => s.name.includes('Wash')).map(service => ({
+    ...service,
+    price: 49,
+    unit: 'per kg'
+  }));
   
   const washAndIronService: Service = {
     id: 'wash-iron-1',
     name: 'Wash & Iron',
     description: 'Professional washing with meticulous ironing for a crisp, fresh finish.',
-    price: 349
+    price: 99,
+    unit: 'per kg'
   };
   
   const updatedCoreServices = [...coreServices, washAndIronService];
 
-  const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
+  const dryCleaningSubCategories: SubCategory[] = [
+    {
+      title: "Upper Wear",
+      icon: <Shirt size={16} className="text-blue-500" />,
+      services: [
+        {
+          id: 'dry-upper-1',
+          name: 'Shirt',
+          description: 'Professional dry cleaning for shirts',
+          price: 155
+        },
+        {
+          id: 'dry-upper-2',
+          name: 'T-shirt',
+          description: 'Gentle cleaning for t-shirts',
+          price: 155
+        },
+        {
+          id: 'dry-upper-3',
+          name: 'Ladies Top',
+          description: 'Specialized cleaning for tops',
+          price: 155
+        }
+      ]
+    },
+    {
+      title: "Bottom Wear",
+      icon: <Shirt size={16} className="text-indigo-500" />,
+      services: [
+        {
+          id: 'dry-bottom-1',
+          name: 'Pant',
+          description: 'Professional dry cleaning for pants',
+          price: 70
+        }
+      ]
+    },
+    {
+      title: "Ethnic Wear",
+      icon: <Shirt size={16} className="text-purple-500" />,
+      services: [
+        {
+          id: 'dry-ethnic-1',
+          name: 'Sherwani',
+          description: 'Specialized dry cleaning for sherwani',
+          price: 699
+        }
+      ]
+    }
+  ];
+
   const shoeServices: Service[] = [{
     id: 'shoe-1',
     name: 'Regular Shoes',
@@ -92,8 +155,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }, {
     title: "Dry Cleaning Services",
     icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
-    services: dryCleaningServices,
-    count: 30
+    services: [],
+    count: 5,
+    subCategories: dryCleaningSubCategories
   }, {
     title: "Shoe Laundry Services",
     icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
@@ -219,38 +283,102 @@ const ServiceList: React.FC<ServiceListProps> = ({
                     <h2 className="text-lg font-bold">{category.title}</h2>
                   </div>
 
-                  <div className="space-y-4">
-                    {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-3">
-                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Iron') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Clock size={20} className="text-gray-500" />
-                                </div> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Footprints size={20} className="text-gray-500" />
-                                </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <ShoppingBag size={20} className="text-gray-500" />
-                                </div>}
-                            </div>
-                            <div>
-                              <h3 className="font-medium">{service.name}</h3>
-                              <div className="flex items-center gap-1">
-                                <span className="text-primary font-semibold">₹{service.price.toFixed(0)}</span>
-                                <div className="flex items-center gap-0.5 ml-1">
-                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                  <span className="text-xs text-gray-500">4.8</span>
-                                </div>
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                            </div>
+                  {category.subCategories ? (
+                    <div className="space-y-8">
+                      {category.subCategories.map((subCategory, subIdx) => (
+                        <div key={subIdx} className="ml-2">
+                          <div className="flex items-center gap-2 mb-3">
+                            {subCategory.icon}
+                            <h3 className="text-md font-semibold">{subCategory.title}</h3>
                           </div>
                           
-                          <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
-                            <Plus size={16} className="mr-1" /> Add
-                          </Button>
+                          <div className="space-y-4">
+                            {subCategory.services.map(service => (
+                              <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                                <div className="flex justify-between items-center">
+                                  <div className="flex gap-3">
+                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                                      {service.name.includes('Shirt') || service.name.includes('T-shirt') || service.name.includes('Top') ? (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      ) : service.name.includes('Pant') ? (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <h3 className="font-medium">{service.name}</h3>
+                                      <div className="flex items-center gap-1">
+                                        <span className="text-primary font-semibold">₹{service.price.toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
+                                        <div className="flex items-center gap-0.5 ml-1">
+                                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                          <span className="text-xs text-gray-500">4.8</span>
+                                        </div>
+                                      </div>
+                                      <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
+                                    <Plus size={16} className="mr-1" /> Add
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
                         </div>
-                      </Card>)}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {category.services.map(service => (
+                        <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                          <div className="flex justify-between items-center">
+                            <div className="flex gap-3">
+                              <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                                {service.name.includes('Fold') ? (
+                                  <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                                ) : service.name.includes('Iron') ? (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <Clock size={20} className="text-gray-500" />
+                                  </div>
+                                ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <Footprints size={20} className="text-gray-500" />
+                                  </div>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <ShoppingBag size={20} className="text-gray-500" />
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{service.name}</h3>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-primary font-semibold">₹{service.price.toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
+                                  <div className="flex items-center gap-0.5 ml-1">
+                                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                    <span className="text-xs text-gray-500">4.8</span>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                              </div>
+                            </div>
+                            
+                            <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
+                              <Plus size={16} className="mr-1" /> Add
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </div>)}
             </div>
           </TabsContent>
@@ -263,38 +391,102 @@ const ServiceList: React.FC<ServiceListProps> = ({
                     <h2 className="text-lg font-bold">{category.title}</h2>
                   </div>
 
-                  <div className="space-y-4">
-                    {category.services.map(service => <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-3">
-                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" /> : service.name.includes('Iron') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Clock size={20} className="text-gray-500" />
-                                </div> : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Footprints size={20} className="text-gray-500" />
-                                </div> : <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <ShoppingBag size={20} className="text-gray-500" />
-                                </div>}
-                            </div>
-                            <div>
-                              <h3 className="font-medium">{service.name}</h3>
-                              <div className="flex items-center gap-1">
-                                <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}</span>
-                                <div className="flex items-center gap-0.5 ml-1">
-                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                  <span className="text-xs text-gray-500">4.8</span>
-                                </div>
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                            </div>
+                  {category.subCategories ? (
+                    <div className="space-y-8">
+                      {category.subCategories.map((subCategory, subIdx) => (
+                        <div key={subIdx} className="ml-2">
+                          <div className="flex items-center gap-2 mb-3">
+                            {subCategory.icon}
+                            <h3 className="text-md font-semibold">{subCategory.title}</h3>
                           </div>
                           
-                          <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
-                            <Plus size={16} className="mr-1" /> Add
-                          </Button>
+                          <div className="space-y-4">
+                            {subCategory.services.map(service => (
+                              <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                                <div className="flex justify-between items-center">
+                                  <div className="flex gap-3">
+                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                                      {service.name.includes('Shirt') || service.name.includes('T-shirt') || service.name.includes('Top') ? (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      ) : service.name.includes('Pant') ? (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                          <Shirt size={20} className="text-gray-500" />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <h3 className="font-medium">{service.name}</h3>
+                                      <div className="flex items-center gap-1">
+                                        <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
+                                        <div className="flex items-center gap-0.5 ml-1">
+                                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                          <span className="text-xs text-gray-500">4.8</span>
+                                        </div>
+                                      </div>
+                                      <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                                    </div>
+                                  </div>
+                                  
+                                  <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
+                                    <Plus size={16} className="mr-1" /> Add
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
                         </div>
-                      </Card>)}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {category.services.map(service => (
+                        <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                          <div className="flex justify-between items-center">
+                            <div className="flex gap-3">
+                              <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                                {service.name.includes('Fold') ? (
+                                  <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                                ) : service.name.includes('Iron') ? (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <Clock size={20} className="text-gray-500" />
+                                  </div>
+                                ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <Footprints size={20} className="text-gray-500" />
+                                  </div>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                    <ShoppingBag size={20} className="text-gray-500" />
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="font-medium">{service.name}</h3>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
+                                  <div className="flex items-center gap-0.5 ml-1">
+                                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                                    <span className="text-xs text-gray-500">4.8</span>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                              </div>
+                            </div>
+                            
+                            <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
+                              <Plus size={16} className="mr-1" /> Add
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </div>)}
             </div>
           </TabsContent>
@@ -325,9 +517,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
                     </button>
                     
                     <div className="ml-7 mt-1 space-y-1">
-                      {category.services.map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
-                          {service.name}
-                        </button>)}
+                      {category.subCategories ? (
+                        category.subCategories.map((subCategory, subIdx) => <button key={subIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
+                            {subCategory.title}
+                          </button>))
+                      ) : (
+                        category.services.map((service, serviceIdx) => <button key={serviceIdx} onClick={() => scrollToCategory(category.title)} className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left">
+                            {service.name}
+                          </button>))
+                      )}
                     </div>
                   </div>)}
               </div>
