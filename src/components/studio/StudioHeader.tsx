@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Clock, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
+import { Star, Clock, ChevronLeft, MoreVertical, Share, Info, Flag, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 interface StudioHeaderProps {
   name: string;
@@ -106,6 +107,17 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
               <span className="text-sm">{deliveryTime}</span>
             </div>
           </div>
+        </div>
+      </div>
+      
+      {/* Search bar added below the header image */}
+      <div className="px-4 py-3 bg-white shadow-sm">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <Input 
+            placeholder="Search services in this studio..." 
+            className="pl-10 bg-gray-50 border-gray-200 rounded-full"
+          />
         </div>
       </div>
     </div>
