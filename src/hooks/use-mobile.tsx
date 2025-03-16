@@ -9,31 +9,20 @@ export function useIsMobile() {
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
-    // Use throttled resize handler to prevent excessive updates
-    let resizeTimeout: number | null = null
-    
     const onChange = () => {
-      if (resizeTimeout) {
-        window.clearTimeout(resizeTimeout)
-      }
-      
-      resizeTimeout = window.setTimeout(() => {
-        setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-        resizeTimeout = null
-      }, 50) // Small throttle delay for smoother transitions
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
     
-    // Set initial value immediately without delay
+    // Set initial value immediately
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     
-    // Add event listeners with passive flag for better performance
+    // Add event listener with passive: true for better performance
     mql.addEventListener("change", onChange, { passive: true })
+    
+    // Also listen for resize events for more responsive updates
     window.addEventListener("resize", onChange, { passive: true })
     
     return () => {
-      if (resizeTimeout) {
-        window.clearTimeout(resizeTimeout)
-      }
       mql.removeEventListener("change", onChange)
       window.removeEventListener("resize", onChange)
     }
