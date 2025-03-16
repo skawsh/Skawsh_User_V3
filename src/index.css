@@ -4,8 +4,8 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Baskerville Old Face';
-  src: local('Baskerville Old Face');
+  font-family: 'Century';
+  src: local('Century');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -56,7 +56,7 @@
 
   body {
     @apply bg-background text-foreground antialiased overflow-x-hidden;
-    font-family: 'Baskerville Old Face', serif;
+    font-family: 'Century', serif;
   }
 
   html {
