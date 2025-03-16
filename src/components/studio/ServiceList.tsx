@@ -7,11 +7,10 @@ import { Separator } from "@/components/ui/separator";
 import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Service {
   id: string;
@@ -293,9 +292,9 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
         </TabsContent>
       </Tabs>
 
-      {/* Floating action button for services menu - now using Dialog instead of Drawer */}
-      <Dialog>
-        <DialogTrigger asChild>
+      {/* Floating action button for services menu - now using Popover instead of Dialog */}
+      <Popover>
+        <PopoverTrigger asChild>
           <Button 
             size="icon" 
             className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40"
@@ -306,28 +305,35 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
           >
             <Menu className="h-6 w-6" />
           </Button>
-        </DialogTrigger>
-        <DialogContent className="p-4 rounded-xl w-full max-w-sm mx-auto">
+        </PopoverTrigger>
+        <PopoverContent 
+          className="p-4 rounded-xl w-72 shadow-lg border-none"
+          align="end"
+          sideOffset={16}
+        >
           <h3 className="text-lg font-semibold mb-4">Service Categories</h3>
           <div className="space-y-2">
             {categories.map((category, idx) => (
-              <DialogClose asChild key={idx}>
-                <button
-                  onClick={() => scrollToCategory(category.title)}
-                  className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              <button
+                key={idx}
+                onClick={() => {
+                  scrollToCategory(category.title);
+                  const popoverTrigger = document.querySelector('[data-radix-collection-item]') as HTMLElement;
+                  if (popoverTrigger) popoverTrigger.click(); // Close the popover
+                }}
+                className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ background: selectedTab === "standard" ? "#dbeafe" : "#ffedd5" }}
                 >
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center"
-                    style={{ background: selectedTab === "standard" ? "#dbeafe" : "#ffedd5" }}
-                  >
-                    {category.icon}
-                  </div>
-                  <span className="font-medium">{category.title}</span>
-                </button>
-              </DialogClose>
+                  {category.icon}
+                </div>
+                <span className="font-medium">{category.title}</span>
+              </button>
             ))}
           </div>
-        </DialogContent>
-      </Dialog>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };
