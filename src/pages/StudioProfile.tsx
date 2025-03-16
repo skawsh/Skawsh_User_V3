@@ -18,6 +18,7 @@ const StudioProfile: React.FC = () => {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
+  const [isServiceMenuOpen, setIsServiceMenuOpen] = useState(false);
   
   // Reset scroll position when component mounts
   useEffect(() => {
@@ -62,6 +63,10 @@ const StudioProfile: React.FC = () => {
     alert(`Thank you for your feedback. ${studio.name} has been reported.`);
   };
 
+  const handleServiceMenuToggle = (isOpen: boolean) => {
+    setIsServiceMenuOpen(isOpen);
+  };
+
   const studio = {
     id: '1',
     name: 'Pristine Laundry',
@@ -97,7 +102,7 @@ const StudioProfile: React.FC = () => {
   return <Layout>
       <div>
         {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+          <div className={`fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in ${isServiceMenuOpen ? 'backdrop-blur-sm bg-white/80' : ''}`}>
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
                 <button 
@@ -146,7 +151,7 @@ const StudioProfile: React.FC = () => {
         />
         
         <div className="section-container relative">
-          <ServiceList services={services} />
+          <ServiceList services={services} onMenuToggle={handleServiceMenuToggle} />
         </div>
       </div>
     </Layout>;
