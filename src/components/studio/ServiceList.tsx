@@ -145,7 +145,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
           {isTabsSticky && <div className="h-[72px]" />}
           
-          {isTabsSticky && <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in">
+          {isTabsSticky && <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
               <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
                 <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
                   <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
@@ -160,7 +160,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             </div>}
 
-          <div className={cn(isTabsSticky ? "opacity-0 invisible" : "opacity-100 visible", "transition-opacity duration-200")}>
+          <div className={cn(isTabsSticky ? "opacity-0 invisible h-0" : "opacity-100 visible h-auto", "transition-all duration-300")}>
             <TabsList ref={tabsListRef} className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0">
               <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
                 <Clock size={16} className="mr-2" />
