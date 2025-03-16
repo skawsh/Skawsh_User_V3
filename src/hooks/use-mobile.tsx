@@ -7,29 +7,24 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
-    // Use a media query for efficient checks - this is the most performant way
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    
-    // Set initial value based on media query
-    setIsMobile(mql.matches)
-    
-    // Using a proper throttle mechanism with requestAnimationFrame
-    let rafId: number | null = null
+    // Create a throttled resize handler for better performance
+    let timeoutId: NodeJS.Timeout | null = null;
     
     const handleResize = () => {
-      // Cancel any pending animation frame to avoid excessive updates
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId)
-      }
+      if (timeoutId) return;
       
-      // Use requestAnimationFrame for smoother updates aligned with browser paint cycle
-      rafId = requestAnimationFrame(() => {
-        setIsMobile(mql.matches)
-        rafId = null
-      })
-    }
+      timeoutId = setTimeout(() => {
+        setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+        timeoutId = null;
+      }, 50); // Small delay for better performance
+    };
     
-    // Subscribe to media query change event
+    // Set initial value immediately
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    
+    // Use a media query for efficient checks
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
+    
     const onChange = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches)
     }
@@ -38,17 +33,10 @@ export function useIsMobile() {
     mql.addEventListener("change", onChange, { passive: true })
     window.addEventListener("resize", handleResize, { passive: true })
     
-    // Initial call to ensure the value is set immediately
-    handleResize()
-    
     return () => {
       mql.removeEventListener("change", onChange)
       window.removeEventListener("resize", handleResize)
-      
-      // Clean up any pending animation frame on unmount
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId)
-      }
+      if (timeoutId) clearTimeout(timeoutId);
     }
   }, [])
 
