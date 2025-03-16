@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -139,133 +140,117 @@ const ServiceList: React.FC<ServiceListProps> = ({
         ref={tabsRef} 
         className={cn(
           "transition-all duration-300",
-          isTabsSticky ? "sticky top-[112px] z-20 bg-inherit pt-2 pb-2 -mx-4 px-4 shadow-sm" : ""
+          isTabsSticky ? 
+            "fixed top-0 left-0 right-0 z-50 bg-white border-b shadow-sm" : 
+            ""
         )}
       >
-        <Tabs defaultValue="standard" onValueChange={handleTabChange}>
-          <TabsList 
-            ref={tabsListRef}
-            className="grid w-full grid-cols-2 mb-6"
-          >
-            <TabsTrigger value="standard" className={cn("rounded-full transition-colors duration-300", selectedTab === "standard" ? "bg-blue-600 text-white shadow-lg" : "")}>
+        {isTabsSticky && (
+          <div className="flex items-center p-3 pb-2 border-b border-gray-100">
+            <button onClick={() => window.history.back()} className="mr-4">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <h2 className="text-xl font-semibold">Pristine Laundry</h2>
+          </div>
+        )}
+        
+        <div className={cn(
+          "px-4 py-2",
+          isTabsSticky ? "bg-white" : ""
+        )}>
+          <div className="flex space-x-2">
+            <button 
+              onClick={() => setSelectedTab("standard")}
+              className={cn(
+                "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors border",
+                selectedTab === "standard" 
+                  ? "bg-blue-600 text-white border-blue-600" 
+                  : "bg-white text-gray-700 border-gray-200"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Standard Wash
-            </TabsTrigger>
-            <TabsTrigger value="express" className={cn("rounded-full transition-colors duration-300", selectedTab === "express" ? "bg-orange-500 text-white shadow-lg" : "")}>
+            </button>
+            <button 
+              onClick={() => setSelectedTab("express")}
+              className={cn(
+                "flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors border",
+                selectedTab === "express" 
+                  ? "bg-orange-500 text-white border-orange-500" 
+                  : "bg-white text-gray-500 border-gray-200"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Express Wash
-            </TabsTrigger>
-          </TabsList>
-
-          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
-            <Clock size={16} />
-            <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+            </button>
           </div>
-          
-          <TabsContent value="standard">
-            <div className="space-y-8">
-              {categories.map((category, idx) => (
-                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-                  <div className="flex items-center gap-2 mb-4">
-                    {category.icon}
-                    <h2 className="text-lg font-bold">{category.title}</h2>
-                  </div>
+        </div>
+      </div>
+      
+      <div className={cn("", isTabsSticky ? "mt-28" : "mt-4")}>
+        <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
+          <Clock size={16} />
+          <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+        </div>
+        
+        <div className="space-y-8">
+          {categories.map((category, idx) => (
+            <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
+              <div className="flex items-center gap-2 mb-4">
+                {category.icon}
+                <h2 className="text-lg font-bold">{category.title}</h2>
+              </div>
 
-                  <div className="space-y-4">
-                    {category.services.map(service => (
-                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-3">
-                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? (
-                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
-                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Footprints size={20} className="text-gray-500" />
-                                </div>
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <ShoppingBag size={20} className="text-gray-500" />
-                                </div>
-                              )}
+              <div className="space-y-4">
+                {category.services.map(service => (
+                  <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+                          {service.name.includes('Fold') ? (
+                            <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+                          ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              <Footprints size={20} className="text-gray-500" />
                             </div>
-                            <div>
-                              <h3 className="font-medium">{service.name}</h3>
-                              <div className="flex items-center gap-1">
-                                <span className="text-primary font-semibold">₹{service.price.toFixed(0)}</span>
-                                <div className="flex items-center gap-0.5 ml-1">
-                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                  <span className="text-xs text-gray-500">4.8</span>
-                                </div>
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                              <ShoppingBag size={20} className="text-gray-500" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="font-medium">{service.name}</h3>
+                          <div className="flex items-center gap-1">
+                            <span className="text-primary font-semibold">₹{selectedTab === "standard" ? service.price.toFixed(0) : (service.price * 1.5).toFixed(0)}</span>
+                            <div className="flex items-center gap-0.5 ml-1">
+                              <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs text-gray-500">4.8</span>
                             </div>
                           </div>
-                          
-                          <Button variant="default" size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700">
-                            <Plus size={16} className="mr-1" /> Add
-                          </Button>
+                          <p className="text-xs text-gray-500 mt-1">{service.description}</p>
                         </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                      </div>
+                      
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className={cn(
+                          "rounded-full",
+                          selectedTab === "standard" ? "bg-blue-600 hover:bg-blue-700" : "bg-orange-500 hover:bg-orange-600"
+                        )}
+                      >
+                        <Plus size={16} className="mr-1" /> Add
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="express">
-            <div className="space-y-8">
-              {categories.map((category, idx) => (
-                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-                  <div className="flex items-center gap-2 mb-4">
-                    {category.icon}
-                    <h2 className="text-lg font-bold">{category.title}</h2>
-                  </div>
-
-                  <div className="space-y-4">
-                    {category.services.map(service => (
-                      <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-3">
-                            <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                              {service.name.includes('Fold') ? (
-                                <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
-                              ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <Footprints size={20} className="text-gray-500" />
-                                </div>
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <ShoppingBag size={20} className="text-gray-500" />
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="font-medium">{service.name}</h3>
-                              <div className="flex items-center gap-1">
-                                <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}</span>
-                                <div className="flex items-center gap-0.5 ml-1">
-                                  <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                  <span className="text-xs text-gray-500">4.8</span>
-                                </div>
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                            </div>
-                          </div>
-                          
-                          <Button variant="default" size="sm" className="rounded-full bg-orange-500 hover:bg-orange-600">
-                            <Plus size={16} className="mr-1" /> Add
-                          </Button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+          ))}
+        </div>
       </div>
 
       {!popoverOpen ? (
