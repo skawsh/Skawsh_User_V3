@@ -26,12 +26,10 @@ interface ServiceCategory {
 
 interface ServiceListProps {
   services: Service[];
-  onMenuToggle?: (isOpen: boolean) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
-  services,
-  onMenuToggle
+  services
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -108,12 +106,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
       });
     }
     setPopoverOpen(false);
-    onMenuToggle?.(false);
-  };
-
-  const togglePopover = (isOpen: boolean) => {
-    setPopoverOpen(isOpen);
-    onMenuToggle?.(isOpen);
   };
 
   useEffect(() => {
@@ -128,7 +120,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   }, [popoverOpen]);
 
   return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {popoverOpen && <div onClick={() => togglePopover(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
+      {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
       
       <Tabs defaultValue="standard" onValueChange={handleTabChange}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -232,7 +224,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </TabsContent>
       </Tabs>
 
-      {!popoverOpen ? <button onClick={() => togglePopover(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
+      {!popoverOpen ? <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
           <Menu className="h-6 w-6" />
         </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
       height: isMobile ? '40vh' : '45.05vh',
