@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Service {
   id: string;
@@ -32,6 +33,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -247,14 +249,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
         <div 
           className="fixed bottom-0 right-0 w-full max-w-sm transform transition-all duration-300 z-50 animate-slide-in-right"
           style={{ 
-            height: '45.05vh',
+            height: isMobile ? '40vh' : '45.05vh',
             bottom: '1.5rem',
-            right: '1.5rem'
+            right: '1.5rem',
+            maxHeight: '400px'
           }}
         >
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10">
-              <h3 className="text-lg font-semibold">Want to repeat?</h3>
+              <h3 className="text-lg font-semibold">Service Categories</h3>
               <div className="flex items-center">
                 <span className="mr-2 text-lg font-semibold">2</span>
                 <button 
@@ -269,21 +272,36 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <ScrollArea className="flex-grow">
               <div className="p-2">
                 {categories.map((category, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => scrollToCategory(category.title)} 
-                    className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
-                  >
-                    <span className="font-medium text-white text-base">{category.title}</span>
-                    <span className="text-base font-medium">{category.count}</span>
-                  </button>
+                  <div key={idx} className="mb-3">
+                    <button 
+                      onClick={() => scrollToCategory(category.title)} 
+                      className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
+                    >
+                      <span className="font-medium text-white text-base">{category.title}</span>
+                      <span className="text-base font-medium">{category.count}</span>
+                    </button>
+                    
+                    <div className="ml-8 mt-1 space-y-1">
+                      {category.services.slice(0, 4).map((service, serviceIdx) => (
+                        <button 
+                          key={serviceIdx}
+                          onClick={() => scrollToCategory(category.title)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg"
+                        >
+                          {service.name}
+                        </button>
+                      ))}
+                      {category.services.length > 4 && (
+                        <button 
+                          onClick={() => scrollToCategory(category.title)}
+                          className="w-full text-left px-4 py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors rounded-lg"
+                        >
+                          View {category.services.length - 4} more...
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 ))}
-                <button 
-                  className="flex items-center justify-between w-full px-4 py-3 hover:bg-gray-800/50 transition-colors rounded-lg"
-                >
-                  <span className="font-medium text-white text-base">Recommended</span>
-                  <span className="text-base font-medium">20</span>
-                </button>
               </div>
             </ScrollArea>
           </div>
