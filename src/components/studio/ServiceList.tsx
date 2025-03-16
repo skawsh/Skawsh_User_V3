@@ -8,21 +8,25 @@ import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 interface Service {
   id: string;
   name: string;
   description: string;
   price: number;
 }
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
 }
+
 interface ServiceListProps {
   services: Service[];
 }
+
 const ServiceList: React.FC<ServiceListProps> = ({
   services
 }) => {
@@ -33,6 +37,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
+  const tabsWrapperRef = useRef<HTMLDivElement>(null);
+  const tabsOffsetRef = useRef<number | null>(null);
+  
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
   const shoeServices: Service[] = [{
@@ -66,6 +73,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     description: 'Gentle cleaning and polishing for formal heels',
     price: 349
   }];
+  
   const categories: ServiceCategory[] = [{
     title: "Core Laundry Services",
     icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
@@ -82,17 +90,21 @@ const ServiceList: React.FC<ServiceListProps> = ({
     services: shoeServices,
     count: 11
   }];
+  
   const deliveryMessages = {
     standard: "Delivery in just 36 sunlight hours after pickup",
     express: "Delivery in just 12 sunlight hours after pickup"
   };
+  
   const backgroundColors = {
     standard: "bg-blue-50",
     express: "bg-orange-50"
   };
+  
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
   };
+  
   const scrollToCategory = (categoryTitle: string) => {
     const element = categoryRefs.current[categoryTitle];
     if (element) {
@@ -103,53 +115,127 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
     setPopoverOpen(false);
   };
+  
   useEffect(() => {
+    if (tabsWrapperRef.current && tabsOffsetRef.current === null) {
+      tabsOffsetRef.current = tabsWrapperRef.current.offsetTop;
+    }
+    
     const handleScroll = () => {
-      if (tabsRef.current) {
-        const rect = tabsRef.current.getBoundingClientRect();
-        const headerHeight = 56; // Height of the fixed header
-
-        setIsTabsSticky(rect.top <= headerHeight);
+      if (tabsRef.current && tabsOffsetRef.current !== null) {
+        const headerHeight = 56;
+        const shouldBeSticky = window.scrollY > tabsOffsetRef.current - headerHeight;
+        
+        if (shouldBeSticky !== isTabsSticky) {
+          setIsTabsSticky(shouldBeSticky);
+        }
       }
     };
+    
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
+    
     handleScroll();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
-  return <div className={cn("mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-      {popoverOpen && <div onClick={() => setPopoverOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" />}
+  }, [isTabsSticky]);
+  
+  return (
+    <div 
+      className={cn(
+        "mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", 
+        backgroundColors[selectedTab as keyof typeof backgroundColors]
+      )}
+      ref={tabsWrapperRef}
+    >
+      {popoverOpen && 
+        <div 
+          onClick={() => setPopoverOpen(false)} 
+          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" 
+        />
+      }
       
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
-          {isTabsSticky && <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200">
-              <TabsList className="w-full grid grid-cols-2 gap-2 p-2 bg-gray-100/80 my-0 py-0 px-[21px] mx-0">
-                <TabsTrigger value="standard" className={cn("rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-blue-600 border-blue-200" : "text-gray-500")}>
-                  <Clock size={16} className="mr-2" />
-                  Standard Wash
-                </TabsTrigger>
-                <TabsTrigger value="express" className={cn("rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-orange-500 border-orange-200" : "text-gray-500")}>
-                  <Clock size={16} className="mr-2" />
-                  Express Wash
-                </TabsTrigger>
-              </TabsList>
-            </div>}
+          {isTabsSticky && (
+            <div style={{ height: tabsListRef.current ? tabsListRef.current.offsetHeight + 24 : 80 }} />
+          )}
+          
+          {isTabsSticky && (
+            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in">
+              <div className={cn(
+                "transition-colors duration-300 py-2 px-4",
+                backgroundColors[selectedTab as keyof typeof backgroundColors]
+              )}>
+                <TabsList 
+                  className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0"
+                >
+                  <TabsTrigger 
+                    value="standard" 
+                    className={cn(
+                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                      selectedTab === "standard" 
+                        ? "text-white bg-blue-600 border-blue-600" 
+                        : "text-gray-500 bg-white border-gray-200"
+                    )}
+                  >
+                    <Clock size={16} className="mr-2" />
+                    Standard Wash
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="express" 
+                    className={cn(
+                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                      selectedTab === "express" 
+                        ? "text-white bg-orange-500 border-orange-500" 
+                        : "text-gray-500 bg-white border-gray-200"
+                    )}
+                  >
+                    <Clock size={16} className="mr-2" />
+                    Express Wash
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+            </div>
+          )}
 
-          <TabsList ref={tabsListRef} className={cn("grid w-full grid-cols-2 gap-2 mb-6", isTabsSticky ? "mt-16" : "")}>
-            <TabsTrigger value="standard" className={cn("rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-blue-600 border-blue-200" : "text-gray-500")}>
+          <TabsList 
+            ref={tabsListRef} 
+            className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent"
+          >
+            <TabsTrigger 
+              value="standard" 
+              className={cn(
+                "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                selectedTab === "standard" 
+                  ? "text-white bg-blue-600 border-blue-600" 
+                  : "text-gray-500 bg-white border-gray-200"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Standard Wash
             </TabsTrigger>
-            <TabsTrigger value="express" className={cn("rounded-full bg-white border border-gray-200 shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-orange-500 border-orange-200" : "text-gray-500")}>
+            <TabsTrigger 
+              value="express" 
+              className={cn(
+                "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10",
+                selectedTab === "express" 
+                  ? "text-white bg-orange-500 border-orange-500" 
+                  : "text-gray-500 bg-white border-gray-200"
+              )}
+            >
               <Clock size={16} className="mr-2" />
               Express Wash
             </TabsTrigger>
           </TabsList>
 
-          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", selectedTab === "standard" ? "text-blue-600" : "text-orange-500")}>
+          <div className={cn(
+            "flex items-center gap-2 mb-4 text-sm transition-colors duration-300", 
+            selectedTab === "standard" ? "text-blue-600" : "text-orange-500"
+          )}>
             <Clock size={16} />
             <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
           </div>
@@ -240,16 +326,22 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </Tabs>
       </div>
 
-      {!popoverOpen ? <button onClick={() => setPopoverOpen(true)} className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}>
+      {!popoverOpen ? (
+        <button 
+          onClick={() => setPopoverOpen(true)} 
+          className={`fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black`}
+        >
           <Menu className="h-6 w-6" />
-        </button> : <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
-      height: isMobile ? '40vh' : '45.05vh',
-      bottom: '1.5rem',
-      right: '1rem',
-      maxHeight: '400px',
-      width: '70%',
-      maxWidth: '260px'
-    }}>
+        </button>
+      ) : (
+        <div className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" style={{
+          height: isMobile ? '40vh' : '45.05vh',
+          bottom: '1.5rem',
+          right: '1rem',
+          maxHeight: '400px',
+          width: '70%',
+          maxWidth: '260px'
+        }}>
           <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
               <h3 className="text-lg font-semibold truncate">Services</h3>
@@ -272,7 +364,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             </ScrollArea>
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default ServiceList;
