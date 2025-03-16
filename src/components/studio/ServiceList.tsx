@@ -114,27 +114,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
   
   useEffect(() => {
-    if (popoverOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [popoverOpen]);
-
-  useEffect(() => {
     const handleScroll = () => {
       if (tabsRef.current) {
         const rect = tabsRef.current.getBoundingClientRect();
-        const headerHeight = 112;
+        const headerHeight = 112; 
         
         setIsTabsSticky(rect.top <= headerHeight);
       }
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
