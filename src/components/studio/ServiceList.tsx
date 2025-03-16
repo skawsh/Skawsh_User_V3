@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -37,6 +36,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
+  const tabsListRef = useRef<HTMLDivElement>(null);
 
   const coreServices = services.filter(s => s.name.includes('Wash'));
   const dryCleaningServices = services.filter(s => !s.name.includes('Wash') && !s.name.includes('shoe') && !s.name.includes('Shoe'));
@@ -128,7 +128,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     const handleScroll = () => {
       if (tabsRef.current) {
         const rect = tabsRef.current.getBoundingClientRect();
-        const headerHeight = 56;
+        const headerHeight = 112;
         
         setIsTabsSticky(rect.top <= headerHeight);
       }
@@ -148,11 +148,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
         ref={tabsRef} 
         className={cn(
           "transition-all duration-300",
-          isTabsSticky ? "sticky top-[56px] z-20 bg-inherit pt-2 pb-2 -mx-4 px-4 shadow-sm" : ""
+          isTabsSticky ? "sticky top-[112px] z-20 bg-inherit pt-2 pb-2 -mx-4 px-4 shadow-sm" : ""
         )}
       >
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList 
+            ref={tabsListRef}
+            className="grid w-full grid-cols-2 mb-6"
+          >
             <TabsTrigger value="standard" className={cn("rounded-full transition-colors duration-300", selectedTab === "standard" ? "bg-blue-600 text-white shadow-lg" : "")}>
               <Clock size={16} className="mr-2" />
               Standard Wash
