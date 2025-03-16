@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -243,6 +244,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                 {categories.map((category, idx) => <div key={idx} className="mb-3">
                     <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5">
                       <span className="font-medium text-white text-base">{category.title}</span>
+                      <span className="text-xs bg-gray-700 text-gray-300 rounded-full px-2 py-0.5">{category.services.length}</span>
                     </button>
                     
                     <div className="ml-7 mt-1 space-y-1">
