@@ -31,6 +31,7 @@ interface ServiceListProps {
 
 const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
+  const [popoverOpen, setPopoverOpen] = useState(false);
   
   // Refs for each category section
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -119,6 +120,8 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    // Close the popover after selecting a category
+    setPopoverOpen(false);
   };
 
   return (
@@ -293,7 +296,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
       </Tabs>
 
       {/* Floating action button for services menu - now using Popover instead of Dialog */}
-      <Popover>
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           <Button 
             size="icon" 
@@ -316,11 +319,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
             {categories.map((category, idx) => (
               <button
                 key={idx}
-                onClick={() => {
-                  scrollToCategory(category.title);
-                  const popoverTrigger = document.querySelector('[data-radix-collection-item]') as HTMLElement;
-                  if (popoverTrigger) popoverTrigger.click(); // Close the popover
-                }}
+                onClick={() => scrollToCategory(category.title)}
                 className="flex items-center w-full gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <div className="w-10 h-10 rounded-full flex items-center justify-center"
