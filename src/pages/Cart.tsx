@@ -551,9 +551,15 @@ const Cart: React.FC = () => {
 
             <div className="bg-white p-4 mb-2">
               <h2 className="font-medium text-lg mb-2">Review your order</h2>
-              <p className="text-xs text-gray-500 mb-4">
-                Price may vary depending on the weight and clothing category during pickup of your order
-              </p>
+              
+              <div className="bg-amber-50 rounded-md p-3 mb-3">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-amber-600" />
+                  <p className="text-xs text-amber-700">
+                    Price may vary depending on the weight and clothing category during pickup of your order
+                  </p>
+                </div>
+              </div>
 
               {Object.entries(groupedCartItems).map(([category, subCategories]) => (
                 <div key={category} className="mb-6">
@@ -600,7 +606,7 @@ const Cart: React.FC = () => {
                   <CollapsibleContent className="p-4 bg-gray-50">
                     <div className="bg-amber-50 rounded-md p-3 mb-3">
                       <div className="flex items-start gap-2">
-                        <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
+                        <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
                         <p className={`text-xs text-amber-700 ${flickerActive ? 'flicker-effect' : ''}`}>
                           The price of your order may vary based on the weight and clothing items at the time of pickup
                         </p>
@@ -721,4 +727,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-
