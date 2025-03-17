@@ -3,7 +3,7 @@ import Layout from '../components/Layout';
 import { 
   Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
   MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2,
-  Shirt, Footprints, PlusCircle, Info
+  Shirt, Footprints, PlusCircle, Info, File, ChevronDown
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
@@ -27,6 +27,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -59,6 +64,7 @@ const Cart: React.FC = () => {
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
+  const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
 
   const studioId = location.state?.studioId || null;
   
@@ -549,53 +555,79 @@ const Cart: React.FC = () => {
               ))}
               
               <div className="mt-6 pt-4 border-t">
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">{formatIndianRupee(subtotal)}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-600">Delivery Fee</span>
-                  <span className="font-medium">{formatIndianRupee(deliveryFee)}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-gray-600">Taxes</span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="cursor-help">
-                            <Info size={14} className="text-gray-500" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent className="w-60 p-3">
-                          <div className="space-y-2">
-                            <h4 className="font-medium">Tax Breakdown</h4>
-                            <div className="text-xs space-y-1">
-                              <div className="flex justify-between">
-                                <span>Subtotal GST (18%)</span>
-                                <span>{formatIndianRupee(subtotalGST)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Delivery GST (5%)</span>
-                                <span>{formatIndianRupee(deliveryGST)}</span>
-                              </div>
-                              <Separator className="my-1" />
-                              <div className="flex justify-between font-medium">
-                                <span>Total GST</span>
-                                <span>{formatIndianRupee(totalGST)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <span className="font-medium">{formatIndianRupee(totalGST)}</span>
-                </div>
-                <div className="flex justify-between mt-3 pt-3 border-t">
-                  <span className="font-medium">Total</span>
-                  <span className="font-bold text-blue-600">{formatIndianRupee(total)}</span>
-                </div>
+                <Collapsible
+                  className="w-full border border-gray-200 rounded-lg overflow-hidden"
+                  open={isOrderSummaryOpen}
+                  onOpenChange={setIsOrderSummaryOpen}
+                >
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white">
+                    <div className="flex items-center gap-3">
+                      <File size={20} className="text-gray-700" />
+                      <div>
+                        <h3 className="text-lg font-medium">Estimated Bill ₹{total.toFixed(0)}</h3>
+                        <p className="text-xs text-gray-500">Incl. taxes and charges</p>
+                      </div>
+                    </div>
+                    <ChevronDown
+                      size={20}
+                      className={cn(
+                        "transition-transform duration-200",
+                        isOrderSummaryOpen ? "transform rotate-180" : ""
+                      )}
+                    />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="p-4 bg-gray-50">
+                    <div className="space-y-2">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Subtotal</span>
+                        <span className="font-medium">{formatIndianRupee(subtotal)}</span>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <span className="text-gray-600">Delivery Fee</span>
+                        <span className="font-medium">{formatIndianRupee(deliveryFee)}</span>
+                      </div>
+                      <div className="flex justify-between mb-2">
+                        <div className="flex items-center gap-1">
+                          <span className="text-gray-600">Taxes</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button className="cursor-help">
+                                  <Info size={14} className="text-gray-500" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent className="w-60 p-3">
+                                <div className="space-y-2">
+                                  <h4 className="font-medium">Tax Breakdown</h4>
+                                  <div className="text-xs space-y-1">
+                                    <div className="flex justify-between">
+                                      <span>Subtotal GST (18%)</span>
+                                      <span>{formatIndianRupee(subtotalGST)}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>Delivery GST (5%)</span>
+                                      <span>{formatIndianRupee(deliveryGST)}</span>
+                                    </div>
+                                    <Separator className="my-1" />
+                                    <div className="flex justify-between font-medium">
+                                      <span>Total GST</span>
+                                      <span>{formatIndianRupee(totalGST)}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <span className="font-medium">{formatIndianRupee(totalGST)}</span>
+                      </div>
+                      <div className="flex justify-between mt-3 pt-3 border-t">
+                        <span className="font-medium">Total</span>
+                        <span className="font-bold text-blue-600">{formatIndianRupee(total)}</span>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
               </div>
             </div>
             
@@ -659,4 +691,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-
