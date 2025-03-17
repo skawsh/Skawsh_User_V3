@@ -47,6 +47,22 @@ const StudioProfile: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Load initial cart count on mount
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem('cartItems');
+    if (storedCartItems) {
+      try {
+        const parsedItems = JSON.parse(storedCartItems);
+        const studioSpecificItems = parsedItems.filter((item: any) => 
+          !studio.id || item.studioId === studio.id
+        );
+        setCartCount(studioSpecificItems.length);
+      } catch (error) {
+        console.error('Error parsing cart items:', error);
+      }
+    }
+  }, []);
+
   const handleBackClick = () => {
     navigate('/');
   };
@@ -178,7 +194,8 @@ const StudioProfile: React.FC = () => {
           <ServiceList 
             services={services} 
             isScrolled={isScrolled} 
-            onCartUpdate={handleCartUpdate} 
+            onCartUpdate={handleCartUpdate}
+            studioId={studio.id}
           />
         </div>
 

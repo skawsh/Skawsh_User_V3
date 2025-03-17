@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ServiceOrderPopup from './ServiceOrderPopup';
+import { useLocation } from 'react-router-dom';
 
 interface Service {
   id: string;
@@ -21,9 +22,10 @@ interface Service {
 interface CartItem {
   serviceId: string;
   serviceName: string;
-  weight: number;
+  weight?: number;
   price: number;
   quantity?: number;
+  studioId?: string;
   items: {
     name: string;
     quantity: number;
@@ -48,12 +50,14 @@ interface ServiceListProps {
   services: Service[];
   isScrolled?: boolean;
   onCartUpdate?: (count: number) => void;
+  studioId?: string;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
   services,
   isScrolled = false,
-  onCartUpdate
+  onCartUpdate,
+  studioId = '1'
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -218,6 +222,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         serviceName: service.name,
         quantity: 1,
         price: selectedTab === "express" ? service.price * 1.5 : service.price,
+        studioId: studioId,
         items: []
       });
     }
@@ -255,6 +260,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           weight: roundedWeight,
           price: Math.round(orderDetails.price * 100) / 100,
           quantity: orderDetails.quantity,
+          studioId: studioId,
           items: orderDetails.items
         };
         updatedItems = newItems;
@@ -265,6 +271,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           weight: roundedWeight,
           price: Math.round(orderDetails.price * 100) / 100,
           quantity: orderDetails.quantity,
+          studioId: studioId,
           items: orderDetails.items
         }];
       }
@@ -300,6 +307,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         serviceName: service.name,
         weight: newWeight,
         price: service.price * newWeight,
+        studioId: studioId,
         items: []
       });
     } else {
@@ -311,6 +319,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         serviceName: service.name,
         quantity: quantity,
         price: service.price * quantity,
+        studioId: studioId,
         items: []
       });
     }
@@ -322,6 +331,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       if (currentWeight <= 1) {
         setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+        localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
         return;
       }
       
@@ -331,6 +341,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         serviceName: service.name,
         weight: newWeight,
         price: service.price * newWeight,
+        studioId: studioId,
         items: []
       });
     } else {
@@ -341,6 +352,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       if (quantity <= 0) {
         setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+        localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
         return;
       }
       
@@ -349,6 +361,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         serviceName: service.name,
         quantity: quantity,
         price: service.price * quantity,
+        studioId: studioId,
         items: []
       });
     }

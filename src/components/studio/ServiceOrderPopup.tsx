@@ -24,7 +24,7 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
-  isExpress?: boolean; // Add this new prop
+  isExpress?: boolean; // Add this prop
 }
 
 const DEFAULT_CLOTHING_ITEMS = [
@@ -145,6 +145,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
+          <DialogClose className="rounded-full h-6 w-6 flex items-center justify-center">
+            <X size={18} />
+          </DialogClose>
         </div>
         
         <div className="p-4 space-y-4">
@@ -166,7 +169,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">₹{totalPrice().toFixed(0)}</div>
+                <div className="font-semibold text-blue-600">{formatIndianRupee(totalPrice())}</div>
               </div>
             </div>
           </div>

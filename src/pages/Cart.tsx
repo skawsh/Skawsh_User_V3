@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -36,12 +35,18 @@ const Cart: React.FC = () => {
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
-      const parsedItems = JSON.parse(storedCartItems);
-      // Filter by studioId if needed
-      const filteredItems = studioId ? 
-        parsedItems.filter((item: any) => !studioId || item.studioId === studioId) : 
-        parsedItems;
-      setCartItems(filteredItems);
+      try {
+        const parsedItems = JSON.parse(storedCartItems);
+        // Filter by studioId if needed
+        const filteredItems = studioId ? 
+          parsedItems.filter((item: any) => !studioId || item.studioId === studioId) : 
+          parsedItems;
+        setCartItems(filteredItems);
+        console.log('Cart items loaded:', filteredItems); // Debug log
+      } catch (error) {
+        console.error('Error parsing cart items:', error);
+        setCartItems([]);
+      }
     }
   }, [studioId]);
 
