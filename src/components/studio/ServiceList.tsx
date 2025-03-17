@@ -14,7 +14,9 @@ interface Service {
 
 interface CartItem {
   serviceId: string;
+  serviceName?: string;
   weight: number;
+  price?: number; // Added the missing price property
   items?: { name: string; quantity: number }[];
 }
 
