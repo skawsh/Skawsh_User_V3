@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -204,10 +205,10 @@ const Home: React.FC = () => {
         position: 'relative',
         zIndex: 0,
         marginTop: '15px'
-      }} className="mb-10 my-[14px] mx-0 px-0">
-        <h2 className="section-title mb-4 font-bold text-lg px-0">Explore Studios</h2>
+      }} className="mb-10 my-[14px] -mx-4 px-[5px]">
+        <h2 className="section-title mb-4 font-bold text-lg px-4">Explore Studios</h2>
         
-        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar">
+        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-4">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />
           <FilterButton icon={<Tag size={14} />} label="Offers" />
           <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
@@ -215,7 +216,7 @@ const Home: React.FC = () => {
           <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-4 px-4">
           {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} distance={studio.distance} workingHours={studio.workingHours} index={index} promoted={studio.promoted} />)}
         </div>
       </div>
