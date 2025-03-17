@@ -227,7 +227,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const handleAddToCart = (orderDetails: any) => {
     console.log('Added to cart:', orderDetails);
     
-    const roundedWeight = Math.round(orderDetails.weight * 10) / 10;
+    const roundedWeight = orderDetails.weight ? Math.round(orderDetails.weight * 10) / 10 : 0;
     
     setCartItems(prev => {
       const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
@@ -261,6 +261,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const getServiceWeight = (serviceId: string): number | null => {
     const item = cartItems.find(item => item.serviceId === serviceId);
     return item ? item.weight : null;
+  };
+
+  const getServiceQuantity = (serviceId: string): number | null => {
+    const item = cartItems.find(item => item.serviceId === serviceId);
+    return item && item.quantity ? item.quantity : null;
   };
 
   const handleIncreaseWeight = (service: Service) => {
@@ -336,6 +341,80 @@ const ServiceList: React.FC<ServiceListProps> = ({
       }
     } else {
       handleOpenServicePopup(service);
+    }
+  };
+
+  const renderServiceControls = (service: Service, tabType: string) => {
+    const serviceWeight = getServiceWeight(service.id);
+    const serviceQuantity = getServiceQuantity(service.id);
+    const hasWeightUnit = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
+    const isInCart = hasWeightUnit ? serviceWeight !== null : serviceQuantity !== null;
+    
+    if (isInCart) {
+      return (
+        <div className="flex items-center">
+          <Button 
+            variant="default" 
+            size="sm"
+            className={cn(
+              "rounded-l-full rounded-r-none",
+              tabType === "standard" 
+                ? "bg-blue-600 hover:bg-blue-700" 
+                : "bg-orange-500 hover:bg-orange-600"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDecreaseWeight(service);
+            }}
+          >
+            <Minus size={16} />
+          </Button>
+          <span className={cn(
+            "px-2 py-1 text-sm font-medium", 
+            tabType === "standard" ? "bg-blue-600" : "bg-orange-500",
+            "text-white"
+          )}>
+            {hasWeightUnit 
+              ? (serviceWeight || 0).toFixed(1) 
+              : serviceQuantity || 0}
+          </span>
+          <Button 
+            variant="default" 
+            size="sm"
+            className={cn(
+              "rounded-l-none rounded-r-full",
+              tabType === "standard" 
+                ? "bg-blue-600 hover:bg-blue-700" 
+                : "bg-orange-500 hover:bg-orange-600"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleIncreaseWeight(service);
+            }}
+          >
+            <Plus size={16} />
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <Button 
+          variant="default" 
+          size="sm"
+          className={cn(
+            "rounded-full",
+            tabType === "standard" 
+              ? "bg-blue-600 hover:bg-blue-700" 
+              : "bg-orange-500 hover:bg-orange-600"
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleOpenServicePopup(service);
+          }}
+        >
+          <Plus size={16} className="mr-1" /> Add
+        </Button>
+      );
     }
   };
 
@@ -493,66 +572,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     </div>
                                   </div>
                                   
-                                  {getServiceWeight(service.id) ? (
-                                    <div className="flex items-center">
-                                      <Button 
-                                        variant="default" 
-                                        size="sm"
-                                        className={cn(
-                                          "rounded-l-full rounded-r-none",
-                                          selectedTab === "standard" 
-                                            ? "bg-blue-600 hover:bg-blue-700" 
-                                            : "bg-orange-500 hover:bg-orange-600"
-                                        )}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDecreaseWeight(service);
-                                        }}
-                                      >
-                                        <Minus size={16} />
-                                      </Button>
-                                      <span className={cn(
-                                        "px-2 py-1 text-sm font-medium", 
-                                        selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500",
-                                        "text-white"
-                                      )}>
-                                        {(getServiceWeight(service.id) || 0).toFixed(1)}
-                                      </span>
-                                      <Button 
-                                        variant="default" 
-                                        size="sm"
-                                        className={cn(
-                                          "rounded-l-none rounded-r-full",
-                                          selectedTab === "standard" 
-                                            ? "bg-blue-600 hover:bg-blue-700" 
-                                            : "bg-orange-500 hover:bg-orange-600"
-                                        )}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleIncreaseWeight(service);
-                                        }}
-                                      >
-                                        <Plus size={16} />
-                                      </Button>
-                                    </div>
-                                  ) : (
-                                    <Button 
-                                      variant="default" 
-                                      size="sm"
-                                      className={cn(
-                                        "rounded-full",
-                                        selectedTab === "standard" 
-                                          ? "bg-blue-600 hover:bg-blue-700" 
-                                          : "bg-orange-500 hover:bg-orange-600"
-                                      )}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOpenServicePopup(service);
-                                      }}
-                                    >
-                                      <Plus size={16} className="mr-1" /> Add
-                                    </Button>
-                                  )}
+                                  {renderServiceControls(service, "standard")}
                                 </div>
                               </Card>
                             ))}
@@ -600,66 +620,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                               </div>
                             </div>
                             
-                            {getServiceWeight(service.id) ? (
-                              <div className="flex items-center">
-                                <Button 
-                                  variant="default" 
-                                  size="sm"
-                                  className={cn(
-                                    "rounded-l-full rounded-r-none",
-                                    selectedTab === "standard" 
-                                      ? "bg-blue-600 hover:bg-blue-700" 
-                                      : "bg-orange-500 hover:bg-orange-600"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDecreaseWeight(service);
-                                  }}
-                                >
-                                  <Minus size={16} />
-                                </Button>
-                                <span className={cn(
-                                  "px-2 py-1 text-sm font-medium", 
-                                  selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500",
-                                  "text-white"
-                                )}>
-                                  {(getServiceWeight(service.id) || 0).toFixed(1)}
-                                </span>
-                                <Button 
-                                  variant="default" 
-                                  size="sm"
-                                  className={cn(
-                                    "rounded-l-none rounded-r-full",
-                                    selectedTab === "standard" 
-                                      ? "bg-blue-600 hover:bg-blue-700" 
-                                      : "bg-orange-500 hover:bg-orange-600"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleIncreaseWeight(service);
-                                  }}
-                                >
-                                  <Plus size={16} />
-                                </Button>
-                              </div>
-                            ) : (
-                              <Button 
-                                variant="default" 
-                                size="sm"
-                                className={cn(
-                                  "rounded-full",
-                                  selectedTab === "standard" 
-                                    ? "bg-blue-600 hover:bg-blue-700" 
-                                    : "bg-orange-500 hover:bg-orange-600"
-                                )}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenServicePopup(service);
-                                }}
-                              >
-                                <Plus size={16} className="mr-1" /> Add
-                              </Button>
-                            )}
+                            {renderServiceControls(service, "standard")}
                           </div>
                         </Card>
                       ))}
@@ -725,59 +686,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     </div>
                                   </div>
                                   
-                                  {getServiceWeight(service.id) ? (
-                                    <div className="flex items-center">
-                                      <Button 
-                                        variant="default" 
-                                        size="sm"
-                                        className={cn(
-                                          "rounded-l-full rounded-r-none",
-                                          "bg-orange-500 hover:bg-orange-600"
-                                        )}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDecreaseWeight(service);
-                                        }}
-                                      >
-                                        <Minus size={16} />
-                                      </Button>
-                                      <span className={cn(
-                                        "px-2 py-1 text-sm font-medium",
-                                        "bg-orange-500 text-white"
-                                      )}>
-                                        {(getServiceWeight(service.id) || 0).toFixed(1)}
-                                      </span>
-                                      <Button 
-                                        variant="default" 
-                                        size="sm"
-                                        className={cn(
-                                          "rounded-l-none rounded-r-full",
-                                          "bg-orange-500 hover:bg-orange-600"
-                                        )}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleIncreaseWeight(service);
-                                        }}
-                                      >
-                                        <Plus size={16} />
-                                      </Button>
-                                    </div>
-                                  ) : (
-                                    <Button 
-                                      variant="default" 
-                                      size="sm"
-                                      className={cn(
-                                        "rounded-full",
-                                        "bg-orange-500 hover:bg-orange-600"
-                                      )}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOpenServicePopup(service);
-                                      }}
-                                    >
-                                      <Plus size={16} className="mr-1" /> Add
-                                    </Button>
-                                  )}
+                                  {renderServiceControls(service, "express")}
                                 </div>
                               </Card>
                             ))}
@@ -825,59 +734,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                               </div>
                             </div>
                             
-                            {getServiceWeight(service.id) ? (
-                              <div className="flex items-center">
-                                <Button 
-                                  variant="default" 
-                                  size="sm"
-                                  className={cn(
-                                    "rounded-l-full rounded-r-none",
-                                    "bg-orange-500 hover:bg-orange-600"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDecreaseWeight(service);
-                                  }}
-                                >
-                                  <Minus size={16} />
-                                </Button>
-                                <span className={cn(
-                                  "px-2 py-1 text-sm font-medium",
-                                  "bg-orange-500 text-white"
-                                )}>
-                                  {(getServiceWeight(service.id) || 0).toFixed(1)}
-                                </span>
-                                <Button 
-                                  variant="default" 
-                                  size="sm"
-                                  className={cn(
-                                    "rounded-l-none rounded-r-full",
-                                    "bg-orange-500 hover:bg-orange-600"
-                                  )}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleIncreaseWeight(service);
-                                  }}
-                                >
-                                  <Plus size={16} />
-                                </Button>
-                              </div>
-                            ) : (
-                              <Button 
-                                variant="default" 
-                                size="sm"
-                                className={cn(
-                                  "rounded-full",
-                                  "bg-orange-500 hover:bg-orange-600"
-                                )}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOpenServicePopup(service);
-                                }}
-                              >
-                                <Plus size={16} className="mr-1" /> Add
-                              </Button>
-                            )}
+                            {renderServiceControls(service, "express")}
                           </div>
                         </Card>
                       ))}
