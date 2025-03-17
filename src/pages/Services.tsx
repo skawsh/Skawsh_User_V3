@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
-import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronRight, Boot, Trash, WashingMachine } from 'lucide-react';
+import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronRight, Footprints, Trash, WashingMachine } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -61,7 +61,7 @@ const Services: React.FC = () => {
     {
       id: 'shoe-laundry',
       name: 'Shoe Laundry',
-      icon: <Boot size={24} className="text-amber-500" />,
+      icon: <Footprints size={24} className="text-amber-500" />,
       description: 'Professional cleaning for all types of footwear',
       subServices: [
         {
