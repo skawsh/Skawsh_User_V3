@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
 interface ClothingItem {
   name: string;
   quantity: number;
 }
+
 interface ServiceOrderPopupProps {
   service: {
     id: string;
@@ -20,6 +22,7 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
 }
+
 const DEFAULT_CLOTHING_ITEMS = [{
   name: 'Shirt',
   quantity: 0
@@ -39,30 +42,47 @@ const DEFAULT_CLOTHING_ITEMS = [{
   name: 'Pants',
   quantity: 0
 }];
+
 const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   service,
   isOpen,
   onClose,
   onAddToCart
 }) => {
-  const [weight, setWeight] = useState<number>(1);
+  const [weight, setWeight] = useState<number | string>(1);
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setWeight(1);
+      setClothingItems(DEFAULT_CLOTHING_ITEMS);
+      setNewItemName('');
+      setIsAddingItem(false);
+    }
+  }, [isOpen]);
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value) && value > 0) {
-      setWeight(value);
-    } else if (e.target.value === '') {
-      setWeight(0);
+    const inputValue = e.target.value;
+    
+    if (inputValue === '') {
+      setWeight('');
+    } else {
+      const value = parseFloat(inputValue);
+      if (!isNaN(value) && value > 0) {
+        setWeight(value);
+      }
     }
   };
+
   const handleQuantityChange = (index: number, change: number) => {
     const newItems = [...clothingItems];
     const newQuantity = Math.max(0, newItems[index].quantity + change);
     newItems[index].quantity = newQuantity;
     setClothingItems(newItems);
   };
+
   const handleAddItem = () => {
     if (newItemName.trim()) {
       setClothingItems([...clothingItems, {
@@ -73,24 +93,30 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setIsAddingItem(false);
     }
   };
-  const totalPrice = service.price * weight;
+
+  const totalPrice = typeof weight === 'number' ? service.price * weight : 0;
+
   const handleAddToCart = () => {
-    const orderDetails = {
-      serviceId: service.id,
-      serviceName: service.name,
-      weight,
-      price: totalPrice,
-      items: clothingItems.filter(item => item.quantity > 0)
-    };
-    onAddToCart(orderDetails);
-    onClose();
+    if (typeof weight === 'number' && weight > 0) {
+      const orderDetails = {
+        serviceId: service.id,
+        serviceName: service.name,
+        weight,
+        price: totalPrice,
+        items: clothingItems.filter(item => item.quantity > 0)
+      };
+      onAddToCart(orderDetails);
+      onClose();
+    }
   };
-  return <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
+
+  return (
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
           <DialogClose className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100">
-            
+            <X className="h-4 w-4" />
           </DialogClose>
         </div>
         
@@ -102,7 +128,15 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             <div className="flex items-center gap-2">
               <div className="flex-grow relative">
                 <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input id="weight" type="number" min="0.5" step="0.5" value={weight} onChange={handleWeightChange} className="pl-9" />
+                <Input 
+                  id="weight" 
+                  type="number" 
+                  min="0.5" 
+                  step="0.5" 
+                  value={weight} 
+                  onChange={handleWeightChange} 
+                  className="pl-9"
+                />
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
@@ -151,12 +185,23 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         </div>
         
         <div className="p-4 pt-0">
-          <Button className={cn("w-full h-12 rounded-lg text-white", weight > 0 ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600")} onClick={handleAddToCart} disabled={weight <= 0}>
+          <Button 
+            className={cn(
+              "w-full h-12 rounded-lg text-white", 
+              typeof weight === 'number' && weight > 0 
+                ? "bg-green-500 hover:bg-green-600" 
+                : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+            )} 
+            onClick={handleAddToCart}
+            disabled={typeof weight !== 'number' || weight <= 0}
+          >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };
+
 export default ServiceOrderPopup;
