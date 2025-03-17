@@ -1,9 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
   Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
   MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2,
-  Shirt, Footprints
+  Shirt, Footprints, PlusCircle
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
@@ -107,18 +108,56 @@ const Cart: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const additionalServices = [
+  // Updated services to match home page format
+  const services = [
+    {
+      id: 'wash-fold-1',
+      title: 'Wash & Fold',
+      image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 99,
+      studioId: studioId || '',
+      serviceCategory: 'Core Laundry Services'
+    }, 
+    {
+      id: 'dry-clean-1',
+      title: 'Dry Clean',
+      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 149,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Upper Wear'
+    }, 
+    {
+      id: 'iron-only-1',
+      title: 'Iron Only',
+      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 79,
+      studioId: studioId || '',
+      serviceCategory: 'Core Laundry Services'
+    }, 
+    {
+      id: 'shoe-laundry-1',
+      title: 'Shoe Laundry',
+      icon: <Footprints size={24} />,
+      price: 129,
+      studioId: studioId || '',
+      serviceCategory: 'Shoe Laundry Services'
+    },
     {
       id: 'stain-protection',
-      name: 'Stain Protection',
+      title: 'Stain Protection',
       description: 'Add extra protection against stains',
-      price: 99
+      price: 99,
+      studioId: studioId || '',
+      serviceCategory: 'Additional Services'
     },
     {
       id: 'premium-detergent',
-      name: 'Premium Detergent',
+      title: 'Premium Detergent',
       description: 'Use premium quality detergent',
-      price: 49
+      price: 49,
+      studioId: studioId || '',
+      serviceCategory: 'Additional Services'
     }
   ];
 
@@ -192,29 +231,57 @@ const Cart: React.FC = () => {
     });
   };
 
-  const handleAddService = (serviceId: string) => {
-    const serviceToAdd = additionalServices.find(service => service.id === serviceId);
+  const handleAddService = (service: any) => {
+    // Check if service already in cart to avoid duplicates
+    const existingItemIndex = cartItems.findIndex(item => item.serviceId === service.id);
     
-    if (serviceToAdd) {
+    if (existingItemIndex !== -1) {
+      // If item exists, increase quantity by 1
+      const updatedItems = [...cartItems];
+      const currentItem = updatedItems[existingItemIndex];
+      const currentQuantity = currentItem.quantity || currentItem.weight || 1;
+      const isKgBased = !!currentItem.weight;
+      
+      // Increment by 0.1 for weight-based items, 1 for others
+      const increment = isKgBased ? 0.1 : 1;
+      const newQuantity = formatDecimal(currentQuantity + increment);
+      
+      if (isKgBased) {
+        updatedItems[existingItemIndex] = { ...currentItem, weight: newQuantity };
+      } else {
+        updatedItems[existingItemIndex] = { ...currentItem, quantity: newQuantity };
+      }
+      
+      setCartItems(updatedItems);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    } else {
+      // Add new service to cart
       const newItem = {
-        serviceId: serviceToAdd.id,
-        serviceName: serviceToAdd.name,
+        serviceId: service.id,
+        serviceName: service.title,
+        price: service.price,
         quantity: 1,
-        price: serviceToAdd.price,
-        studioId: studioId || '',
-        items: [],
-        serviceCategory: 'Additional Services'
+        studioId: service.studioId || studioId || '',
+        serviceCategory: service.serviceCategory,
+        serviceSubCategory: service.serviceSubCategory,
+        items: []
       };
+      
+      // For services with weight
+      if (service.id === 'wash-fold-1' || service.id === 'dry-clean-1') {
+        newItem.weight = 1.0;
+        delete newItem.quantity;
+      }
       
       const updatedItems = [...cartItems, newItem];
       setCartItems(updatedItems);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-      
-      toast({
-        title: "Service added",
-        description: `${serviceToAdd.name} has been added to your cart`,
-      });
     }
+    
+    toast({
+      title: "Service added",
+      description: `${service.title} has been added to your cart`,
+    });
   };
 
   const handleApplyCoupon = () => {
@@ -340,6 +407,35 @@ const Cart: React.FC = () => {
     }
   };
 
+  // Service Card Component styled like on home page
+  const ServiceCard = ({ service, index }: { service: any, index: number }) => {
+    const isInCart = cartItems.some(item => item.serviceId === service.id);
+    
+    return (
+      <div className="flex flex-col items-center text-center animate-fade-in" style={{
+        animationDelay: `${150 + index * 75}ms`
+      }}>
+        <div className="relative">
+          <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
+            {service.image ? 
+              <img src={service.image} alt={service.title} className="w-full h-full object-cover rounded-full" /> : 
+              <div className="text-primary-500">{service.icon}</div>
+            }
+          </div>
+          <button 
+            onClick={() => handleAddService(service)}
+            className="absolute -right-1 -bottom-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-blue-700"
+            aria-label={`Add ${service.title}`}
+          >
+            <PlusCircle size={14} />
+          </button>
+        </div>
+        <h3 className="text-xs font-bold mt-1 text-gray-800">{service.title}</h3>
+        <span className="text-xs text-blue-600 font-medium">{formatIndianRupee(service.price)}</span>
+      </div>
+    );
+  };
+
   return (
     <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
@@ -458,35 +554,12 @@ const Cart: React.FC = () => {
                 <span className="text-blue-500">✦</span> You might need this
               </h2>
               
-              {additionalServices.map((service) => (
-                <div key={service.id} className="flex justify-between items-center mb-3">
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center",
-                      service.id === 'stain-protection' ? "bg-purple-100 text-purple-600" : 
-                      "bg-blue-100 text-blue-600"
-                    )}>
-                      {service.id === 'stain-protection' ? '⛨' : '✦'}
-                    </div>
-                    <div>
-                      <p className="font-medium">{service.name}</p>
-                      <p className="text-xs text-gray-600">{service.description}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium text-gray-700 mr-2">
-                      {formatIndianRupee(service.price)}
-                    </span>
-                    <button 
-                      onClick={() => handleAddService(service.id)}
-                      className="text-blue-600 text-lg font-bold"
-                      aria-label={`Add ${service.name}`}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
+              {/* New home page style services grid */}
+              <div className="grid grid-cols-4 gap-4 mb-4">
+                {services.map((service, index) => (
+                  <ServiceCard key={service.id} service={service} index={index} />
+                ))}
+              </div>
               
               <button className="text-blue-600 text-sm font-medium mt-2">
                 See all services
