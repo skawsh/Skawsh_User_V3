@@ -48,11 +48,13 @@ interface SubCategory {
 interface ServiceListProps {
   services: Service[];
   isScrolled?: boolean;
+  onCartUpdate?: (count: number) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
   services,
-  isScrolled = false
+  isScrolled = false,
+  onCartUpdate
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -259,6 +261,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
     
     toast.success(`Added ${orderDetails.serviceName} to your cart!`);
   };
+
+  useEffect(() => {
+    if (onCartUpdate) {
+      onCartUpdate(cartItems.length);
+    }
+  }, [cartItems, onCartUpdate]);
 
   const getServiceWeight = (serviceId: string): number | null => {
     const item = cartItems.find(item => item.serviceId === serviceId);
@@ -837,3 +845,4 @@ const ServiceList: React.FC<ServiceListProps> = ({
 };
 
 export default ServiceList;
+

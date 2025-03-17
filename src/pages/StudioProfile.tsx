@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -11,12 +12,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
+  const [cartCount, setCartCount] = useState(0);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -57,6 +60,14 @@ const StudioProfile: React.FC = () => {
 
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${studio.name} has been reported.`);
+  };
+
+  const handleCartUpdate = (count: number) => {
+    setCartCount(count);
+  };
+
+  const handleGoToCart = () => {
+    navigate('/cart');
   };
 
   const studio = {
@@ -153,8 +164,29 @@ const StudioProfile: React.FC = () => {
         />
         
         <div className="section-container relative">
-          <ServiceList services={services} isScrolled={isScrolled} />
+          <ServiceList 
+            services={services} 
+            isScrolled={isScrolled} 
+            onCartUpdate={handleCartUpdate} 
+          />
         </div>
+
+        {cartCount > 0 && (
+          <div 
+            onClick={handleGoToCart}
+            className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once"
+          >
+            <div className="relative">
+              <ShoppingBag className="h-6 w-6" />
+              <Badge 
+                variant="default" 
+                className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white" 
+              >
+                {cartCount}
+              </Badge>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>;
 };
