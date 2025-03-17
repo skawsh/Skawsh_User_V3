@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { formatIndianRupee } from "@/pages/StudioProfile";
 
 interface ClothingItem {
   name: string;
@@ -161,7 +162,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">₹{totalPrice().toFixed(2)}</div>
+                <div className="font-semibold text-blue-600">₹{totalPrice().toFixed(0)}</div>
               </div>
             </div>
           </div>
@@ -191,7 +192,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 )}
               </div>
               
-              <div className="space-y-4 max-h-[240px] overflow-y-auto">
+              <div className="space-y-4 max-h-[240px] overflow-y-auto no-scrollbar">
                 {clothingItems.map((item, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <span className="text-gray-700">{item.name}</span>

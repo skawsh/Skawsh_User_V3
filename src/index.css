@@ -63,6 +63,16 @@
       transform: translateY(-10px);
     }
   }
+  
+  /* Hide scrollbars but maintain scrolling functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
 
 @layer base {
@@ -70,7 +80,12 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground no-scrollbar;
+  }
+  
+  /* Apply no-scrollbar to common scrollable elements */
+  .scrollable-content {
+    @apply no-scrollbar;
   }
 }
 

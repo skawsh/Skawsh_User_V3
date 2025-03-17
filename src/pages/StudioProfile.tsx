@@ -14,6 +14,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
+// Helper function to format currency in Indian Rupee format
+export const formatIndianRupee = (amount: number): string => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0
+  }).format(amount).replace('₹', '₹');
+};
+
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,7 +123,7 @@ const StudioProfile: React.FC = () => {
   }];
   
   return <Layout>
-      <div>
+      <div className="no-scrollbar">
         {isScrolled && (
           <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
             <div className="flex items-center justify-between px-4 py-3">
