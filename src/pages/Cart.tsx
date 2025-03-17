@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
   Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
-  MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2 
+  MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2,
+  Shirt, Footprints
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
@@ -30,6 +30,8 @@ interface CartItem {
     quantity: number;
   }[];
   isExpress?: boolean;
+  serviceCategory?: string;
+  serviceSubCategory?: string;
 }
 
 const Cart: React.FC = () => {
@@ -56,8 +58,45 @@ const Cart: React.FC = () => {
         const filteredItems = studioId ? 
           parsedItems.filter((item: CartItem) => !studioId || item.studioId === studioId) : 
           parsedItems;
-        setCartItems(filteredItems);
-        console.log('Cart items loaded:', filteredItems); // Debug log
+        
+        // Categorize items based on serviceId patterns
+        const categorizedItems = filteredItems.map((item: CartItem) => {
+          let serviceCategory = '';
+          let serviceSubCategory = '';
+
+          // Core Laundry Services (Wash & Iron, etc)
+          if (item.serviceId.includes('wash') || item.serviceId.includes('iron')) {
+            serviceCategory = 'Core Laundry Services';
+          }
+          // Dry Cleaning - Upper Wear
+          else if (item.serviceId.includes('dry-upper')) {
+            serviceCategory = 'Dry Cleaning Services';
+            serviceSubCategory = 'Upper Wear';
+          }
+          // Dry Cleaning - Bottom Wear
+          else if (item.serviceId.includes('dry-bottom')) {
+            serviceCategory = 'Dry Cleaning Services';
+            serviceSubCategory = 'Bottom Wear';
+          }
+          // Dry Cleaning - Ethnic Wear
+          else if (item.serviceId.includes('dry-ethnic')) {
+            serviceCategory = 'Dry Cleaning Services';
+            serviceSubCategory = 'Ethnic Wear';
+          }
+          // Shoe Laundry Services
+          else if (item.serviceId.includes('shoe')) {
+            serviceCategory = 'Shoe Laundry Services';
+          }
+          // Additional services
+          else if (item.serviceId === 'stain-protection' || item.serviceId === 'premium-detergent') {
+            serviceCategory = 'Additional Services';
+          }
+          
+          return { ...item, serviceCategory, serviceSubCategory };
+        });
+        
+        setCartItems(categorizedItems);
+        console.log('Cart items loaded:', categorizedItems); // Debug log
       } catch (error) {
         console.error('Error parsing cart items:', error);
         setCartItems([]);
@@ -86,14 +125,28 @@ const Cart: React.FC = () => {
     }
   ];
 
-  // Group cart items by service type for better organization
-  const groupedCartItems = cartItems.reduce((acc: {[key: string]: CartItem[]}, item) => {
-    // Create a service category key based on the service name's first word
-    const serviceCategory = item.serviceName.split(' ')[0].toLowerCase();
-    if (!acc[serviceCategory]) {
-      acc[serviceCategory] = [];
+  // Get unique service categories for display
+  const serviceCategories = Array.from(new Set(cartItems.map(item => item.serviceCategory)));
+
+  // Group cart items by service category and subcategory for better organization
+  const groupedCartItems = cartItems.reduce((acc: {[key: string]: {[key: string]: CartItem[]}}, item) => {
+    // Skip items without a category (should not happen with our categorization logic)
+    if (!item.serviceCategory) return acc;
+    
+    // Create a key based on the service category
+    if (!acc[item.serviceCategory]) {
+      acc[item.serviceCategory] = {};
     }
-    acc[serviceCategory].push(item);
+    
+    // If there's a subcategory, group by that too
+    const subCategoryKey = item.serviceSubCategory || 'default';
+    if (!acc[item.serviceCategory][subCategoryKey]) {
+      acc[item.serviceCategory][subCategoryKey] = [];
+    }
+    
+    // Add item to the appropriate category/subcategory group
+    acc[item.serviceCategory][subCategoryKey].push(item);
+    
     return acc;
   }, {});
 
@@ -149,7 +202,8 @@ const Cart: React.FC = () => {
         quantity: 1,
         price: serviceToAdd.price,
         studioId: studioId || '',
-        items: []
+        items: [],
+        serviceCategory: 'Additional Services'
       };
       
       const updatedItems = [...cartItems, newItem];
@@ -265,7 +319,21 @@ const Cart: React.FC = () => {
       </div>
     );
   };
-  
+
+  // Helper function to get the appropriate icon for service categories
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'Core Laundry Services':
+        return <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full p-0.5" />;
+      case 'Dry Cleaning Services':
+        return <Shirt size={16} className="text-white bg-black rounded-full p-0.5" />;
+      case 'Shoe Laundry Services':
+        return <Footprints size={16} className="text-white bg-slate-950 rounded-full p-0.5" />;
+      default:
+        return <Tag size={16} className="text-white bg-blue-600 rounded-full p-0.5" />;
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
@@ -331,16 +399,33 @@ const Cart: React.FC = () => {
                 Price may vary depending on the weight and clothing category during pickup of your order
               </p>
 
-              {Object.entries(groupedCartItems).map(([category, items]) => (
+              {/* Display items grouped by service category and subcategory */}
+              {Object.entries(groupedCartItems).map(([category, subcategories]) => (
                 <div key={category} className="mb-4">
-                  {/* Category heading if we have multiple categories */}
-                  {Object.keys(groupedCartItems).length > 1 && (
-                    <div className="capitalize text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
-                      {category} Services
+                  {/* Main category heading */}
+                  <div className="capitalize text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
+                    {getCategoryIcon(category)}
+                    {category}
+                  </div>
+                  
+                  {/* For each subcategory */}
+                  {Object.entries(subcategories).map(([subcategory, items]) => (
+                    <div key={`${category}-${subcategory}`} className="mb-3">
+                      {/* Only show subcategory if it's not the default and we have multiple subcategories */}
+                      {subcategory !== 'default' && Object.keys(subcategories).length > 1 && (
+                        <div className="ml-4 text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
+                          <div className="w-1 h-3 bg-gray-300 rounded-full"></div>
+                          {subcategory}
+                        </div>
+                      )}
+                      
+                      {/* Render items in this subcategory */}
+                      <div className={subcategory !== 'default' ? "ml-4" : ""}>
+                        {items.map(renderCartItemWithDetails)}
+                      </div>
                     </div>
-                  )}
-                  {items.map(renderCartItemWithDetails)}
+                  ))}
                 </div>
               ))}
               
@@ -486,3 +571,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+
