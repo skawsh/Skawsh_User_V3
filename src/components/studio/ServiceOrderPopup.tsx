@@ -133,7 +133,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             <div className="flex items-center gap-2">
               <div className="flex-grow relative">
                 <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input id="weight" type="number" min="0.5" step="0.5" value={weight} onChange={handleWeightChange} className="pl-9" />
+                <Input id="weight" type="number" min="0.1" step="0.1" value={weight} onChange={handleWeightChange} className="pl-9" />
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>

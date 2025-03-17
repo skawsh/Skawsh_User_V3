@@ -21,8 +21,13 @@ interface Service {
 
 interface CartItem {
   serviceId: string;
+  serviceName: string;
   weight: number;
   price: number;
+  items: {
+    name: string;
+    quantity: number;
+  }[];
 }
 
 interface ServiceCategory {
@@ -219,14 +224,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
         newItems[existingItemIndex] = {
           serviceId: orderDetails.serviceId,
           weight: orderDetails.weight,
-          price: orderDetails.price
+          price: orderDetails.price,
+          items: orderDetails.items
         };
         return newItems;
       } else {
         return [...prev, {
           serviceId: orderDetails.serviceId,
           weight: orderDetails.weight,
-          price: orderDetails.price
+          price: orderDetails.price,
+          items: orderDetails.items
         }];
       }
     });
@@ -241,7 +248,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   const handleIncreaseWeight = (service: Service) => {
     const currentWeight = getServiceWeight(service.id) || 0;
-    const newWeight = currentWeight + 0.5;
+    const newWeight = currentWeight + 0.1;
     
     handleAddToCart({
       serviceId: service.id,
@@ -254,12 +261,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   const handleDecreaseWeight = (service: Service) => {
     const currentWeight = getServiceWeight(service.id) || 0;
-    if (currentWeight <= 0.5) {
+    
+    if (currentWeight <= 1) {
       setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
       return;
     }
     
-    const newWeight = currentWeight - 0.5;
+    const newWeight = currentWeight - 0.1;
     handleAddToCart({
       serviceId: service.id,
       serviceName: service.name,
