@@ -13,12 +13,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import ServiceCard from '../components/home/ServiceCard';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from '@/components/ui/input';
+
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
 };
+
 const formatDecimal = (value: number): number => {
   return Math.round(value * 10) / 10;
 };
+
 interface CartItem {
   serviceId: string;
   serviceName: string;
@@ -34,19 +38,20 @@ interface CartItem {
   serviceCategory?: string;
   serviceSubCategory?: string;
 }
+
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const {
     toast
   } = useToast();
-  const [specialInstructions, setSpecialInstructions] = useState('');
+  const [specialInstructions, setSpecialInstructions] = useState<string[]>([]);
+  const [newInstruction, setNewInstruction] = useState('');
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
-  const [flickerActive, setFlickerActive] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const studioId = location.state?.studioId || null;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
@@ -86,9 +91,11 @@ const Cart: React.FC = () => {
       }
     }
   }, [studioId]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   useEffect(() => {
     let flickerTimer: NodeJS.Timeout;
     if (isOrderSummaryOpen) {
@@ -103,6 +110,7 @@ const Cart: React.FC = () => {
       if (flickerTimer) clearInterval(flickerTimer);
     };
   }, [isOrderSummaryOpen]);
+
   const services = [{
     id: 'wash-fold-1',
     title: 'Wash & Fold',
@@ -193,6 +201,7 @@ const Cart: React.FC = () => {
     studioId: studioId || '',
     serviceCategory: 'Additional Services'
   }];
+
   const serviceCategories = Array.from(new Set(cartItems.map(item => item.serviceCategory)));
   const groupedCartItems = cartItems.reduce((acc: {
     [key: string]: {
@@ -210,16 +219,19 @@ const Cart: React.FC = () => {
     acc[item.serviceCategory][subCategoryKey].push(item);
     return acc;
   }, {});
+
   const subtotal = cartItems.reduce((total, item) => {
     const itemPrice = item.price || 0;
     const itemQuantity = item.quantity || item.weight || 1;
     return total + itemPrice * itemQuantity;
   }, 0);
+
   const deliveryFee = 49;
   const subtotalGST = subtotal * 0.18; // 18% GST on subtotal
   const deliveryGST = deliveryFee * 0.05; // 5% GST on delivery fee
   const totalGST = subtotalGST + deliveryGST;
   const total = subtotal + deliveryFee + totalGST;
+
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     const formattedQuantity = formatDecimal(newQuantity);
     if (formattedQuantity <= 0) {
@@ -239,6 +251,7 @@ const Cart: React.FC = () => {
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
   };
+
   const handleRemoveItem = (itemId: string) => {
     if (itemId === 'all') {
       setCartItems([]);
@@ -257,6 +270,7 @@ const Cart: React.FC = () => {
       description: "The item has been removed from your cart"
     });
   };
+
   const handleAddService = (service: any) => {
     const existingItemIndex = cartItems.findIndex(item => item.serviceId === service.id);
     if (existingItemIndex !== -1) {
@@ -303,6 +317,7 @@ const Cart: React.FC = () => {
       description: `${service.title} has been added to your cart`
     });
   };
+
   const handleApplyCoupon = () => {
     if (couponCode.trim()) {
       toast({
@@ -312,6 +327,7 @@ const Cart: React.FC = () => {
       // Logic to apply coupon would go here
     }
   };
+
   const renderCartItemWithDetails = (item: CartItem) => {
     const quantity = item.weight ? formatDecimal(item.weight) : item.quantity || 1;
     const unitLabel = item.weight ? 'KG' : item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
@@ -385,6 +401,7 @@ const Cart: React.FC = () => {
         </div>
       </div>;
   };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Core Laundry Services':
@@ -397,6 +414,62 @@ const Cart: React.FC = () => {
         return <Tag size={16} className="text-white bg-blue-600 rounded-full p-0.5" />;
     }
   };
+
+  const addInstruction = () => {
+    if (newInstruction.trim()) {
+      if (editingIndex !== null) {
+        // Edit existing instruction
+        const updatedInstructions = [...specialInstructions];
+        updatedInstructions[editingIndex] = newInstruction;
+        setSpecialInstructions(updatedInstructions);
+        setEditingIndex(null);
+      } else {
+        // Add new instruction
+        setSpecialInstructions([...specialInstructions, newInstruction]);
+      }
+      
+      setNewInstruction('');
+      
+      // Save to localStorage
+      localStorage.setItem('specialInstructions', JSON.stringify([...specialInstructions, newInstruction]));
+      
+      toast({
+        title: editingIndex !== null ? "Instruction updated" : "Instruction added",
+        description: editingIndex !== null ? "Your special instruction has been updated" : "Your special instruction has been added"
+      });
+    }
+  };
+
+  const editInstruction = (index: number) => {
+    setNewInstruction(specialInstructions[index]);
+    setEditingIndex(index);
+    setShowInstructionsInput(true);
+  };
+
+  const removeInstruction = (index: number) => {
+    const updatedInstructions = specialInstructions.filter((_, i) => i !== index);
+    setSpecialInstructions(updatedInstructions);
+    
+    // Save to localStorage
+    localStorage.setItem('specialInstructions', JSON.stringify(updatedInstructions));
+    
+    toast({
+      title: "Instruction removed",
+      description: "Your special instruction has been removed"
+    });
+  };
+
+  useEffect(() => {
+    const savedInstructions = localStorage.getItem('specialInstructions');
+    if (savedInstructions) {
+      try {
+        setSpecialInstructions(JSON.parse(savedInstructions));
+      } catch (error) {
+        console.error('Error parsing saved instructions:', error);
+      }
+    }
+  }, []);
+
   return <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
         <div className="bg-white p-4 sticky top-0 z-10 flex items-center justify-between border-b">
@@ -540,13 +613,76 @@ const Cart: React.FC = () => {
             
             <div className="bg-white p-4 mb-2">
               <div className="flex justify-between items-center mb-3">
-                <h3 className="font-medium">Special Instructions</h3>
-                <button onClick={() => setShowInstructionsInput(!showInstructionsInput)} className="text-blue-500 text-sm">
+                <div className="flex items-center gap-2">
+                  <File size={16} className="text-blue-500" />
+                  <h3 className="font-medium">Special Instructions</h3>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowInstructionsInput(!showInstructionsInput);
+                    if (!showInstructionsInput) {
+                      setNewInstruction('');
+                      setEditingIndex(null);
+                    }
+                  }} 
+                  className="text-blue-500 text-sm flex items-center gap-1"
+                >
                   {showInstructionsInput ? 'Hide' : 'Add'}
+                  {!showInstructionsInput && <PlusCircle size={14} />}
                 </button>
               </div>
               
-              {showInstructionsInput && <Textarea value={specialInstructions} onChange={e => setSpecialInstructions(e.target.value)} placeholder="Add any special instructions for your order..." className="w-full h-24 text-sm" />}
+              {specialInstructions.length > 0 && (
+                <div className="mb-4 space-y-2">
+                  {specialInstructions.map((instruction, index) => (
+                    <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
+                      <div className="flex items-start gap-2">
+                        <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-gray-700">{instruction}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => editInstruction(index)} 
+                          className="text-gray-500 hover:text-blue-500"
+                          aria-label="Edit instruction"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button 
+                          onClick={() => removeInstruction(index)} 
+                          className="text-gray-500 hover:text-red-500"
+                          aria-label="Remove instruction"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {showInstructionsInput && (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      value={newInstruction}
+                      onChange={(e) => setNewInstruction(e.target.value)}
+                      placeholder="Add any special instructions for your order..."
+                      className="flex-1"
+                    />
+                    <Button 
+                      onClick={addInstruction} 
+                      disabled={!newInstruction.trim()} 
+                      className="bg-blue-600 text-white px-3 py-2 rounded-md flex-shrink-0"
+                    >
+                      {editingIndex !== null ? 'Update' : 'Add'}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Examples: "Handle with care", "Contact before delivery", "Fragile items inside"
+                  </p>
+                </div>
+              )}
             </div>
             
             <div className="bg-white p-4 mb-2">
@@ -572,4 +708,5 @@ const Cart: React.FC = () => {
       </div>
     </Layout>;
 };
+
 export default Cart;
