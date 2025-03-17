@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -232,8 +233,10 @@ const Cart: React.FC = () => {
         
         <div className="text-sm text-gray-600 mb-2">
           {item.weight ? 
-            `${item.weight} KG` : 
-            `Quantity: ${item.quantity || 1}`}
+            `${item.weight} KG × ${formatIndianRupee(item.price)}` : 
+            item.serviceCategory === 'Shoe Laundry Services' ?
+            `${item.quantity || 1} pair × ${formatIndianRupee(item.price)}` :
+            `Quantity: ${item.quantity || 1} × ${formatIndianRupee(item.price)}`}
         </div>
         
         {item.items && item.items.length > 0 && (
