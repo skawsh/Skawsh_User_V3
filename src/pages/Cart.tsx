@@ -602,15 +602,18 @@ const Cart: React.FC = () => {
                     />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 bg-gray-50">
-                    <div className={cn(
-                      "text-xs text-amber-700 bg-amber-50 rounded-md p-3 mb-3 transition-all duration-500",
-                      showGlowingText ? "animate-price-warning" : "opacity-90"
-                    )}>
+                    <div className="bg-amber-50 rounded-md p-3 mb-3">
                       <div className="flex items-start gap-2">
-                        <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
-                        <p>The price of your order may vary based on the weight and clothing items at the time of pickup</p>
+                        <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
+                        <p className={cn(
+                          "text-xs transition-all duration-500",
+                          showGlowingText ? "animate-price-warning" : "text-amber-700"
+                        )}>
+                          The price of your order may vary based on the weight and clothing items at the time of pickup
+                        </p>
                       </div>
                     </div>
+                    
                     <div className="space-y-2">
                       <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Subtotal</span>
