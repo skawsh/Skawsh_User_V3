@@ -5,7 +5,7 @@ import GlassCard from '../components/ui-elements/GlassCard';
 import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronRight, Footprints, Trash, WashingMachine } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -223,7 +223,7 @@ const Services: React.FC = () => {
           />
         </div>
         
-        <div className="space-y-5 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
           {filteredServices.length === 0 ? (
             <div className="text-center py-10 text-gray-500">
               No services found matching "{searchQuery}"
@@ -238,39 +238,34 @@ const Services: React.FC = () => {
                 )}
                 style={{ animationDelay: `${index * 75}ms` }}
               >
-                <Accordion type="single" collapsible className="border-none">
-                  <AccordionItem value={category.id} className="border-none mb-3">
-                    <GlassCard className="overflow-hidden transition-all duration-300 hover:shadow-md">
-                      <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                        <div className="flex items-center gap-3">
-                          <div className="rounded-full bg-gray-100 p-3 flex items-center justify-center">
-                            {category.icon}
-                          </div>
+                <GlassCard className="overflow-hidden transition-all duration-300 hover:shadow-md">
+                  <div className="px-4 py-3">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="rounded-full bg-gray-100 p-3 flex items-center justify-center">
+                        {category.icon}
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-gray-800 text-lg text-left">{category.name}</h3>
+                        <p className="text-sm text-gray-500 mt-0.5 text-left">{category.description}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3 pl-14 mt-4">
+                      {category.subServices.map((subService) => (
+                        <div 
+                          key={subService.id}
+                          className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-between"
+                        >
                           <div>
-                            <h3 className="font-medium text-gray-800 text-lg text-left">{category.name}</h3>
-                            <p className="text-sm text-gray-500 mt-0.5 text-left">{category.description}</p>
+                            <h4 className="font-medium text-gray-700">{subService.name}</h4>
+                            <p className="text-sm text-gray-500 mt-0.5">{subService.description}</p>
                           </div>
+                          <ChevronRight size={18} className="text-gray-400" />
                         </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pt-1 pb-3">
-                        <div className="space-y-3 pl-14">
-                          {category.subServices.map((subService) => (
-                            <div 
-                              key={subService.id}
-                              className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer flex items-center justify-between"
-                            >
-                              <div>
-                                <h4 className="font-medium text-gray-700">{subService.name}</h4>
-                                <p className="text-sm text-gray-500 mt-0.5">{subService.description}</p>
-                              </div>
-                              <ChevronRight size={18} className="text-gray-400" />
-                            </div>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </GlassCard>
-                  </AccordionItem>
-                </Accordion>
+                      ))}
+                    </div>
+                  </div>
+                </GlassCard>
               </div>
             ))
           )}
