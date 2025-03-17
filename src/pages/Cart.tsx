@@ -65,9 +65,7 @@ const Cart: React.FC = () => {
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
-  const [showGlowingText, setShowGlowingText] = useState(false);
-  const [currentGlowingWordIndex, setCurrentGlowingWordIndex] = useState(-1);
-  const [warningWords, setWarningWords] = useState<string[]>([]);
+  const [flickerActive, setFlickerActive] = useState(false);
 
   const studioId = location.state?.studioId || null;
   
@@ -131,33 +129,20 @@ const Cart: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let flickerTimer: NodeJS.Timeout;
+    
     if (isOrderSummaryOpen) {
-      const warning = "The price of your order may vary based on the weight and clothing items at the time of pickup";
-      const words = warning.split(' ');
-      setWarningWords(words);
+      setFlickerActive(true);
+      setTimeout(() => setFlickerActive(false), 500);
       
-      let wordIndex = 0;
-      setCurrentGlowingWordIndex(wordIndex);
-      
-      const animateNextWord = () => {
-        wordIndex++;
-        if (wordIndex < words.length) {
-          setCurrentGlowingWordIndex(wordIndex);
-          timer = setTimeout(animateNextWord, 250);
-        } else {
-          setCurrentGlowingWordIndex(-1);
-        }
-      };
-      
-      timer = setTimeout(animateNextWord, 250);
-    } else {
-      setCurrentGlowingWordIndex(-1);
-      setWarningWords([]);
+      flickerTimer = setInterval(() => {
+        setFlickerActive(true);
+        setTimeout(() => setFlickerActive(false), 500);
+      }, 5000);
     }
     
     return () => {
-      if (timer) clearTimeout(timer);
+      if (flickerTimer) clearInterval(flickerTimer);
     };
   }, [isOrderSummaryOpen]);
 
@@ -508,23 +493,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  const createAnimatedText = (text: string) => {
-    if (warningWords.length === 0) return text;
-    
-    return warningWords.map((word, index) => (
-      <span 
-        key={index}
-        className={index === currentGlowingWordIndex ? "animate-price-warning" : ""}
-        style={{ 
-          display: 'inline-block',
-          marginRight: '4px'
-        }}
-      >
-        {word}
-      </span>
-    ));
-  };
-
   return (
     <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
@@ -611,9 +579,6 @@ const Cart: React.FC = () => {
                   open={isOrderSummaryOpen}
                   onOpenChange={(open) => {
                     setIsOrderSummaryOpen(open);
-                    if (!open) {
-                      setCurrentGlowingWordIndex(-1);
-                    }
                   }}
                 >
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white">
@@ -636,8 +601,8 @@ const Cart: React.FC = () => {
                     <div className="bg-amber-50 rounded-md p-3 mb-3">
                       <div className="flex items-start gap-2">
                         <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
-                        <p className="text-xs text-amber-700">
-                          {createAnimatedText("The price of your order may vary based on the weight and clothing items at the time of pickup")}
+                        <p className={`text-xs text-amber-700 ${flickerActive ? 'flicker-effect' : ''}`}>
+                          The price of your order may vary based on the weight and clothing items at the time of pickup
                         </p>
                       </div>
                     </div>
@@ -756,3 +721,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+

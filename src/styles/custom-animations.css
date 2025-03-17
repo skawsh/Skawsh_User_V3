@@ -1,4 +1,5 @@
 
+
 @keyframes price-warning-glow {
   0% { color: #b45309; text-shadow: 0 0 3px rgba(251, 191, 36, 0.7); }
   20% { color: #92400e; text-shadow: 0 0 4px rgba(251, 191, 36, 0.8); }
@@ -13,6 +14,20 @@
   100% { background-position: 100% 50%; }
 }
 
+.flicker-effect {
+  animation: flicker 0.5s ease-in-out;
+}
+
+@keyframes flicker {
+  0% { color: inherit; text-shadow: none; }
+  10% { color: #33C3F0; text-shadow: 0 0 10px rgba(51, 195, 240, 0.9); }
+  25% { color: inherit; text-shadow: none; }
+  30% { color: #33C3F0; text-shadow: 0 0 8px rgba(51, 195, 240, 0.8); }
+  70% { color: #33C3F0; text-shadow: 0 0 12px rgba(51, 195, 240, 1); }
+  90% { color: inherit; text-shadow: none; }
+  100% { color: inherit; text-shadow: none; }
+}
+
 .animate-price-warning {
   color: #33C3F0;
   text-shadow: 0 0 8px rgba(51, 195, 240, 0.8);
@@ -24,3 +39,4 @@
   50% { color: #33C3F0; text-shadow: 0 0 8px rgba(51, 195, 240, 0.8); }
   100% { color: inherit; text-shadow: none; }
 }
+
