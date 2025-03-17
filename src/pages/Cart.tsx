@@ -66,6 +66,8 @@ const Cart: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
   const [showGlowingText, setShowGlowingText] = useState(false);
+  const [currentGlowingWordIndex, setCurrentGlowingWordIndex] = useState(-1);
+  const [warningWords, setWarningWords] = useState<string[]>([]);
 
   const studioId = location.state?.studioId || null;
   
@@ -131,18 +133,32 @@ const Cart: React.FC = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isOrderSummaryOpen) {
-      setShowGlowingText(true);
+      const warning = "The price of your order may vary based on the weight and clothing items at the time of pickup";
+      const words = warning.split(' ');
+      setWarningWords(words);
       
-      const resetTimer = setTimeout(() => {
-        setShowGlowingText(false);
-      }, 3000);
+      let wordIndex = 0;
+      setCurrentGlowingWordIndex(wordIndex);
       
-      return () => clearTimeout(resetTimer);
+      const animateNextWord = () => {
+        wordIndex++;
+        if (wordIndex < words.length) {
+          setCurrentGlowingWordIndex(wordIndex);
+          timer = setTimeout(animateNextWord, 500);
+        } else {
+          setCurrentGlowingWordIndex(-1);
+        }
+      };
+      
+      timer = setTimeout(animateNextWord, 500);
     } else {
-      setShowGlowingText(false);
+      setCurrentGlowingWordIndex(-1);
+      setWarningWords([]);
     }
     
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isOrderSummaryOpen]);
 
   const services = [
@@ -493,13 +509,13 @@ const Cart: React.FC = () => {
   };
 
   const createAnimatedText = (text: string) => {
-    const words = text.split(' ');
-    return words.map((word, index) => (
+    if (warningWords.length === 0) return text;
+    
+    return warningWords.map((word, index) => (
       <span 
         key={index}
-        className={showGlowingText ? "animate-price-warning" : ""}
+        className={index === currentGlowingWordIndex ? "animate-price-warning" : ""}
         style={{ 
-          animationDelay: `${index * 0.1}s`,
           display: 'inline-block',
           marginRight: '4px'
         }}
@@ -596,7 +612,7 @@ const Cart: React.FC = () => {
                   onOpenChange={(open) => {
                     setIsOrderSummaryOpen(open);
                     if (!open) {
-                      setShowGlowingText(false);
+                      setCurrentGlowingWordIndex(-1);
                     }
                   }}
                 >
