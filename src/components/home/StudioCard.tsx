@@ -37,9 +37,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
           }} />
           </AspectRatio>
           
-          {promoted && <Badge variant="default" className="absolute top-2 left-2 bg-primary shadow-sm">
-              Promoted
-            </Badge>}
+          {promoted}
         </div>
         
         {/* Content section - bottom */}
