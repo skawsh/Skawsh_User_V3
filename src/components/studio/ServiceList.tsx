@@ -22,7 +22,7 @@ interface Service {
 interface CartItem {
   serviceId: string;
   weight: number;
-  price?: number;
+  price: number;
 }
 
 interface ServiceCategory {
@@ -269,6 +269,15 @@ const ServiceList: React.FC<ServiceListProps> = ({
     });
   };
 
+  const handleCardClick = (service: Service) => {
+    const existingWeight = getServiceWeight(service.id);
+    if (existingWeight !== null) {
+      setSelectedService(service);
+    } else {
+      handleOpenServicePopup(service);
+    }
+  };
+
   useEffect(() => {
     if (tabsListRef.current) {
       tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
@@ -388,7 +397,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                           
                           <div className="space-y-4">
                             {subCategory.services.map(service => (
-                              <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                              <Card 
+                                key={service.id} 
+                                className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                                onClick={() => handleCardClick(service)}
+                              >
                                 <div className="flex justify-between items-center">
                                   <div className="flex gap-3">
                                     <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
@@ -430,7 +443,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                             ? "bg-blue-600 hover:bg-blue-700" 
                                             : "bg-orange-500 hover:bg-orange-600"
                                         )}
-                                        onClick={() => handleDecreaseWeight(service)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDecreaseWeight(service);
+                                        }}
                                       >
                                         <Minus size={16} />
                                       </Button>
@@ -450,7 +466,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                             ? "bg-blue-600 hover:bg-blue-700" 
                                             : "bg-orange-500 hover:bg-orange-600"
                                         )}
-                                        onClick={() => handleIncreaseWeight(service)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleIncreaseWeight(service);
+                                        }}
                                       >
                                         <Plus size={16} />
                                       </Button>
@@ -465,7 +484,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                           ? "bg-blue-600 hover:bg-blue-700" 
                                           : "bg-orange-500 hover:bg-orange-600"
                                       )}
-                                      onClick={() => handleOpenServicePopup(service)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenServicePopup(service);
+                                      }}
                                     >
                                       <Plus size={16} className="mr-1" /> Add
                                     </Button>
@@ -480,7 +502,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   ) : (
                     <div className="space-y-4">
                       {category.services.map(service => (
-                        <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <Card 
+                          key={service.id} 
+                          className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                          onClick={() => handleCardClick(service)}
+                        >
                           <div className="flex justify-between items-center">
                             <div className="flex gap-3">
                               <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
@@ -524,7 +550,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                       ? "bg-blue-600 hover:bg-blue-700" 
                                       : "bg-orange-500 hover:bg-orange-600"
                                   )}
-                                  onClick={() => handleDecreaseWeight(service)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDecreaseWeight(service);
+                                  }}
                                 >
                                   <Minus size={16} />
                                 </Button>
@@ -544,7 +573,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                       ? "bg-blue-600 hover:bg-blue-700" 
                                       : "bg-orange-500 hover:bg-orange-600"
                                   )}
-                                  onClick={() => handleIncreaseWeight(service)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleIncreaseWeight(service);
+                                  }}
                                 >
                                   <Plus size={16} />
                                 </Button>
@@ -559,7 +591,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     ? "bg-blue-600 hover:bg-blue-700" 
                                     : "bg-orange-500 hover:bg-orange-600"
                                 )}
-                                onClick={() => handleOpenServicePopup(service)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenServicePopup(service);
+                                }}
                               >
                                 <Plus size={16} className="mr-1" /> Add
                               </Button>
@@ -594,7 +629,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                           
                           <div className="space-y-4">
                             {subCategory.services.map(service => (
-                              <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                              <Card 
+                                key={service.id} 
+                                className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                                onClick={() => handleCardClick(service)}
+                              >
                                 <div className="flex justify-between items-center">
                                   <div className="flex gap-3">
                                     <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
@@ -634,7 +673,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                           "rounded-l-full rounded-r-none",
                                           "bg-orange-500 hover:bg-orange-600"
                                         )}
-                                        onClick={() => handleDecreaseWeight(service)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDecreaseWeight(service);
+                                        }}
                                       >
                                         <Minus size={16} />
                                       </Button>
@@ -651,7 +693,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                           "rounded-l-none rounded-r-full",
                                           "bg-orange-500 hover:bg-orange-600"
                                         )}
-                                        onClick={() => handleIncreaseWeight(service)}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleIncreaseWeight(service);
+                                        }}
                                       >
                                         <Plus size={16} />
                                       </Button>
@@ -664,7 +709,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                         "rounded-full",
                                         "bg-orange-500 hover:bg-orange-600"
                                       )}
-                                      onClick={() => handleOpenServicePopup(service)}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleOpenServicePopup(service);
+                                      }}
                                     >
                                       <Plus size={16} className="mr-1" /> Add
                                     </Button>
@@ -679,7 +727,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   ) : (
                     <div className="space-y-4">
                       {category.services.map(service => (
-                        <Card key={service.id} className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <Card 
+                          key={service.id} 
+                          className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                          onClick={() => handleCardClick(service)}
+                        >
                           <div className="flex justify-between items-center">
                             <div className="flex gap-3">
                               <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
@@ -721,7 +773,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     "rounded-l-full rounded-r-none",
                                     "bg-orange-500 hover:bg-orange-600"
                                   )}
-                                  onClick={() => handleDecreaseWeight(service)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDecreaseWeight(service);
+                                  }}
                                 >
                                   <Minus size={16} />
                                 </Button>
@@ -738,7 +793,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                     "rounded-l-none rounded-r-full",
                                     "bg-orange-500 hover:bg-orange-600"
                                   )}
-                                  onClick={() => handleIncreaseWeight(service)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleIncreaseWeight(service);
+                                  }}
                                 >
                                   <Plus size={16} />
                                 </Button>
@@ -751,7 +809,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                   "rounded-full",
                                   "bg-orange-500 hover:bg-orange-600"
                                 )}
-                                onClick={() => handleOpenServicePopup(service)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenServicePopup(service);
+                                }}
                               >
                                 <Plus size={16} className="mr-1" /> Add
                               </Button>
@@ -834,10 +895,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
       {selectedService && (
         <ServiceOrderPopup
-          service={selectedService}
+          service={{
+            ...selectedService,
+            price: selectedTab === "express" ? selectedService.price * 1.5 : selectedService.price
+          }}
           isOpen={!!selectedService}
           onClose={handleCloseServicePopup}
           onAddToCart={handleAddToCart}
+          initialWeight={getServiceWeight(selectedService.id) || undefined}
         />
       )}
     </div>

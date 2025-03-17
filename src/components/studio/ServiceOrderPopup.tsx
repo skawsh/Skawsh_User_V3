@@ -5,10 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
 interface ClothingItem {
   name: string;
   quantity: number;
 }
+
 interface ServiceOrderPopupProps {
   service: {
     id: string;
@@ -19,44 +21,57 @@ interface ServiceOrderPopupProps {
   isOpen: boolean;
   onClose: () => void;
   onAddToCart: (order: any) => void;
+  initialWeight?: number;
 }
-const DEFAULT_CLOTHING_ITEMS = [{
-  name: 'Shirt',
-  quantity: 0
-}, {
-  name: 'T-Shirt',
-  quantity: 0
-}, {
-  name: 'Cotton Saree',
-  quantity: 0
-}, {
-  name: 'Silk Saree',
-  quantity: 0
-}, {
-  name: 'Jeans',
-  quantity: 0
-}, {
-  name: 'Pants',
-  quantity: 0
-}];
+
+const DEFAULT_CLOTHING_ITEMS = [
+  {
+    name: 'Shirt',
+    quantity: 0
+  },
+  {
+    name: 'T-Shirt',
+    quantity: 0
+  },
+  {
+    name: 'Cotton Saree',
+    quantity: 0
+  },
+  {
+    name: 'Silk Saree',
+    quantity: 0
+  },
+  {
+    name: 'Jeans',
+    quantity: 0
+  },
+  {
+    name: 'Pants',
+    quantity: 0
+  }
+];
+
 const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   service,
   isOpen,
   onClose,
-  onAddToCart
+  onAddToCart,
+  initialWeight
 }) => {
-  const [weight, setWeight] = useState<number | string>(1);
+  const [weight, setWeight] = useState<number | string>(initialWeight || 1);
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
+
   useEffect(() => {
     if (isOpen) {
-      setWeight(1);
+      setWeight(initialWeight || 1);
       setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
     }
-  }, [isOpen]);
+  }, [isOpen, initialWeight]);
+
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     if (inputValue === '') {
@@ -68,12 +83,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       }
     }
   };
+
   const handleQuantityChange = (index: number, change: number) => {
     const newItems = [...clothingItems];
     const newQuantity = Math.max(0, newItems[index].quantity + change);
     newItems[index].quantity = newQuantity;
     setClothingItems(newItems);
   };
+
   const handleAddItem = () => {
     if (newItemName.trim()) {
       setClothingItems([...clothingItems, {
@@ -84,7 +101,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setIsAddingItem(false);
     }
   };
+
   const totalPrice = typeof weight === 'number' ? service.price * weight : 0;
+
   const handleAddToCart = () => {
     if (typeof weight === 'number' && weight > 0) {
       const orderDetails = {
@@ -98,11 +117,12 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       onClose();
     }
   };
-  return <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
+
+  return (
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
-          
         </div>
         
         <div className="p-4 space-y-4">
@@ -168,6 +188,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </Button>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };
+
 export default ServiceOrderPopup;
