@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils';
 import Button from '../components/ui-elements/Button';
 import { useToast } from '@/hooks/use-toast';
 
-// Mock function to format price in Indian Rupee format
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount}`;
 };
@@ -42,29 +41,23 @@ const Cart: React.FC = () => {
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
 
-  // Get the studioId from the previous location if it exists
   const studioId = location.state?.studioId || null;
   
-  // Get cart items from localStorage (this would come from a context in a real app)
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Fetch cart items when component mounts
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
       try {
         const parsedItems = JSON.parse(storedCartItems);
-        // Filter by studioId if needed
         const filteredItems = studioId ? 
           parsedItems.filter((item: CartItem) => !studioId || item.studioId === studioId) : 
           parsedItems;
         
-        // Categorize items based on serviceId patterns
         const categorizedItems = filteredItems.map((item: CartItem) => {
           let serviceCategory = '';
           let serviceSubCategory = '';
 
-          // Core Laundry Services (Wash & Iron, etc)
           if (item.serviceId.includes('wash') || 
               item.serviceId.includes('iron') || 
               item.serviceId === '1' || 
@@ -74,26 +67,21 @@ const Cart: React.FC = () => {
               item.serviceId === 'wash-iron-1') {
             serviceCategory = 'Core Laundry Services';
           }
-          // Dry Cleaning - Upper Wear
           else if (item.serviceId.includes('dry-upper')) {
             serviceCategory = 'Dry Cleaning Services';
             serviceSubCategory = 'Upper Wear';
           }
-          // Dry Cleaning - Bottom Wear
           else if (item.serviceId.includes('dry-bottom')) {
             serviceCategory = 'Dry Cleaning Services';
             serviceSubCategory = 'Bottom Wear';
           }
-          // Dry Cleaning - Ethnic Wear
           else if (item.serviceId.includes('dry-ethnic')) {
             serviceCategory = 'Dry Cleaning Services';
             serviceSubCategory = 'Ethnic Wear';
           }
-          // Shoe Laundry Services
           else if (item.serviceId.includes('shoe')) {
             serviceCategory = 'Shoe Laundry Services';
           }
-          // Additional services
           else if (item.serviceId === 'stain-protection' || item.serviceId === 'premium-detergent') {
             serviceCategory = 'Additional Services';
           }
@@ -102,7 +90,7 @@ const Cart: React.FC = () => {
         });
         
         setCartItems(categorizedItems);
-        console.log('Cart items loaded:', categorizedItems); // Debug log
+        console.log('Cart items loaded:', categorizedItems);
       } catch (error) {
         console.error('Error parsing cart items:', error);
         setCartItems([]);
@@ -110,12 +98,10 @@ const Cart: React.FC = () => {
     }
   }, [studioId]);
 
-  // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
-  // Additional services that might be needed
+
   const additionalServices = [
     {
       id: 'stain-protection',
@@ -131,26 +117,20 @@ const Cart: React.FC = () => {
     }
   ];
 
-  // Get unique service categories for display
   const serviceCategories = Array.from(new Set(cartItems.map(item => item.serviceCategory)));
 
-  // Group cart items by service category and subcategory for better organization
   const groupedCartItems = cartItems.reduce((acc: {[key: string]: {[key: string]: CartItem[]}}, item) => {
-    // Skip items without a category (should not happen with our categorization logic)
     if (!item.serviceCategory) return acc;
     
-    // Create a key based on the service category
     if (!acc[item.serviceCategory]) {
       acc[item.serviceCategory] = {};
     }
     
-    // If there's a subcategory, group by that too
     const subCategoryKey = item.serviceSubCategory || 'default';
     if (!acc[item.serviceCategory][subCategoryKey]) {
       acc[item.serviceCategory][subCategoryKey] = [];
     }
     
-    // Add item to the appropriate category/subcategory group
     acc[item.serviceCategory][subCategoryKey].push(item);
     
     return acc;
@@ -233,7 +213,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  // Helper function to render item details with sub-services
   const renderCartItemWithDetails = (item: CartItem) => {
     return (
       <div key={item.serviceId} className="mb-4 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
@@ -326,7 +305,6 @@ const Cart: React.FC = () => {
     );
   };
 
-  // Helper function to get the appropriate icon for service categories
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Core Laundry Services':
@@ -343,7 +321,6 @@ const Cart: React.FC = () => {
   return (
     <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
-        {/* Header */}
         <div className="bg-white p-4 sticky top-0 z-10 flex items-center justify-between border-b">
           <div className="flex items-center gap-3">
             <button 
@@ -380,7 +357,6 @@ const Cart: React.FC = () => {
           </div>
         ) : (
           <div className="flex flex-col">
-            {/* Delivery Address */}
             <div className="bg-white p-4 mb-2">
               <div className="flex justify-between items-start">
                 <div className="flex gap-3">
@@ -398,35 +374,29 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            {/* Review Order - Grouped by service categories */}
             <div className="bg-white p-4 mb-2">
               <h2 className="font-medium text-lg mb-2">Review your order</h2>
               <p className="text-xs text-gray-500 mb-4">
                 Price may vary depending on the weight and clothing category during pickup of your order
               </p>
 
-              {/* Display items grouped by service category and subcategory */}
               {Object.entries(groupedCartItems).map(([category, subcategories]) => (
                 <div key={category} className="mb-4">
-                  {/* Main category heading */}
                   <div className="capitalize text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                     <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
                     {getCategoryIcon(category)}
                     {category}
                   </div>
                   
-                  {/* For each subcategory */}
                   {Object.entries(subcategories).map(([subcategory, items]) => (
                     <div key={`${category}-${subcategory}`} className="mb-3">
-                      {/* Only show subcategory if it's not the default and we have multiple subcategories */}
-                      {subcategory !== 'default' && Object.keys(subcategories).length > 1 && (
+                      {(subcategory !== 'default' || category === 'Dry Cleaning Services') && (
                         <div className="ml-4 text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
                           <div className="w-1 h-3 bg-gray-300 rounded-full"></div>
                           {subcategory}
                         </div>
                       )}
                       
-                      {/* Render items in this subcategory */}
                       <div className={subcategory !== 'default' ? "ml-4" : ""}>
                         {items.map(renderCartItemWithDetails)}
                       </div>
@@ -435,7 +405,6 @@ const Cart: React.FC = () => {
                 </div>
               ))}
               
-              {/* Special Instructions */}
               <div className="mt-4">
                 <div 
                   onClick={() => setShowInstructionsInput(!showInstructionsInput)}
@@ -462,7 +431,6 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            {/* You might need this */}
             <div className="bg-white p-4 mb-2">
               <h2 className="font-medium text-blue-600 flex items-center gap-2 mb-4">
                 <span className="text-blue-500">✦</span> You might need this
@@ -503,7 +471,6 @@ const Cart: React.FC = () => {
               </button>
             </div>
 
-            {/* Delivery Info & Payment Details */}
             <div className="bg-white p-4 mb-2">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
@@ -552,7 +519,6 @@ const Cart: React.FC = () => {
               </div>
             </div>
             
-            {/* Place Order Button */}
             <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg">
               <Button 
                 fullWidth
