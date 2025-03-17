@@ -256,11 +256,10 @@ const Cart: React.FC = () => {
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     } else {
       // Add new service to cart
-      const newItem = {
+      let newItem: CartItem = {
         serviceId: service.id,
         serviceName: service.title,
         price: service.price,
-        quantity: 1,
         studioId: service.studioId || studioId || '',
         serviceCategory: service.serviceCategory,
         serviceSubCategory: service.serviceSubCategory,
@@ -270,7 +269,8 @@ const Cart: React.FC = () => {
       // For services with weight
       if (service.id === 'wash-fold-1' || service.id === 'dry-clean-1') {
         newItem.weight = 1.0;
-        delete newItem.quantity;
+      } else {
+        newItem.quantity = 1;
       }
       
       const updatedItems = [...cartItems, newItem];
