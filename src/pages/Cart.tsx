@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -15,7 +14,12 @@ import Button from '../components/ui-elements/Button';
 import { useToast } from '@/hooks/use-toast';
 
 const formatIndianRupee = (amount: number): string => {
-  return `₹${amount}`;
+  return `₹${amount.toFixed(0)}`;
+};
+
+// Format decimals to show only one digit after decimal point
+const formatDecimal = (value: number): number => {
+  return Math.round(value * 10) / 10;
 };
 
 interface CartItem {
@@ -147,15 +151,18 @@ const Cart: React.FC = () => {
   const total = subtotal + deliveryFee;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    // Format the newQuantity to have one decimal place
+    const formattedQuantity = formatDecimal(newQuantity);
+    
     // Don't allow zero or negative values
-    if (newQuantity <= 0) {
+    if (formattedQuantity <= 0) {
       handleRemoveItem(itemId);
       return;
     }
     
     const updatedItems = cartItems.map(item => {
       if (item.serviceId === itemId) {
-        return { ...item, quantity: newQuantity, weight: item.weight ? newQuantity : undefined };
+        return { ...item, quantity: formattedQuantity, weight: item.weight ? formattedQuantity : undefined };
       }
       return item;
     });
@@ -221,7 +228,8 @@ const Cart: React.FC = () => {
   };
 
   const renderCartItemWithDetails = (item: CartItem) => {
-    const quantity = item.weight ? item.weight : (item.quantity || 1);
+    // Format quantity to show only one decimal place when it's a weight
+    const quantity = item.weight ? formatDecimal(item.weight) : (item.quantity || 1);
     const unitLabel = item.weight ? 'KG' : 
                       item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
     const totalPrice = item.price * quantity;
@@ -278,11 +286,10 @@ const Cart: React.FC = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => {
-                const newValue = isKgBased ? 
-                  Math.max(0, (quantity) - 0.1) : 
-                  Math.max(0, (quantity) - 1);
+                const decrement = isKgBased ? 0.1 : 1;
+                const newValue = formatDecimal(quantity - decrement);
                 
-                if (newValue === 0) {
+                if (newValue <= 0) {
                   handleRemoveItem(item.serviceId);
                 } else {
                   handleQuantityChange(item.serviceId, newValue);
@@ -294,12 +301,12 @@ const Cart: React.FC = () => {
               <Minus size={16} />
             </button>
             <span className="w-6 text-center">
-              {quantity}
+              {isKgBased ? quantity.toFixed(1) : quantity}
             </span>
             <button 
               onClick={() => {
                 const increment = isKgBased ? 0.1 : 1;
-                const newValue = quantity + increment;
+                const newValue = formatDecimal(quantity + increment);
                 handleQuantityChange(item.serviceId, newValue);
               }}
               className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"

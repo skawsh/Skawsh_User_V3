@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,11 @@ import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { formatIndianRupee } from "@/pages/StudioProfile";
+
+// Format decimals to show only one digit after decimal point
+const formatDecimal = (value: number): number => {
+  return Math.round(value * 10) / 10;
+};
 
 interface ClothingItem {
   name: string;
@@ -61,7 +65,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   onClose,
   onAddToCart,
   initialWeight,
-  isExpress = false, // Set default value to false
+  isExpress = false,
   studioId = ''
 }) => {
   const [weight, setWeight] = useState<number | string>(initialWeight || 1);
@@ -115,7 +119,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     if (isNaN(numWeight)) return 0;
     // Apply 1.5x price multiplier for express service
     const basePrice = service.price * numWeight;
-    return Math.round((isExpress ? basePrice * 1.5 : basePrice) * 100) / 100;
+    return Math.round(isExpress ? basePrice * 1.5 : basePrice);
   };
 
   const handleAddToCart = () => {
@@ -124,14 +128,17 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     
     // Only proceed if weight is a valid number and greater than 0
     if (!isNaN(numWeight) && numWeight > 0) {
+      // Format the weight to have only one decimal place
+      numWeight = formatDecimal(numWeight);
+      
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
         weight: numWeight, 
-        price: totalPrice(),
+        price: service.price, // Store base price, not total
         items: clothingItems.filter(item => item.quantity > 0),
-        isExpress: isExpress, // Include the express flag in cart items
-        studioId: studioId // Include the studioId in cart items
+        isExpress: isExpress,
+        studioId: studioId
       };
       onAddToCart(orderDetails);
       onClose();
