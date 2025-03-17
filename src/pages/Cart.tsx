@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -13,6 +12,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import Button from '../components/ui-elements/Button';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from "@/components/ui/carousel";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -108,7 +115,6 @@ const Cart: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Updated services to match home page format
   const services = [
     {
       id: 'wash-fold-1',
@@ -119,14 +125,13 @@ const Cart: React.FC = () => {
       serviceCategory: 'Core Laundry Services'
     }, 
     {
-      id: 'dry-clean-1',
-      title: 'Dry Clean',
-      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      price: 149,
+      id: 'wash-iron-1',
+      title: 'Wash & Iron',
+      image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 129,
       studioId: studioId || '',
-      serviceCategory: 'Dry Cleaning Services',
-      serviceSubCategory: 'Upper Wear'
-    }, 
+      serviceCategory: 'Core Laundry Services'
+    },
     {
       id: 'iron-only-1',
       title: 'Iron Only',
@@ -136,10 +141,63 @@ const Cart: React.FC = () => {
       serviceCategory: 'Core Laundry Services'
     }, 
     {
+      id: 'dry-upper-1',
+      title: 'Shirts',
+      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 149,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Upper Wear'
+    },
+    {
+      id: 'dry-upper-2',
+      title: 'T-Shirts',
+      image: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 129,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Upper Wear'
+    },
+    {
+      id: 'dry-bottom-1',
+      title: 'Jeans',
+      image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 159,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Bottom Wear'
+    },
+    {
+      id: 'dry-bottom-2',
+      title: 'Trousers',
+      image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 139,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Bottom Wear'
+    },
+    {
+      id: 'dry-ethnic-1',
+      title: 'Saree',
+      image: 'https://images.unsplash.com/photo-1610189185762-6eb7e639603f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 249,
+      studioId: studioId || '',
+      serviceCategory: 'Dry Cleaning Services',
+      serviceSubCategory: 'Ethnic Wear'
+    },
+    {
       id: 'shoe-laundry-1',
-      title: 'Shoe Laundry',
+      title: 'Sneakers',
       icon: <Footprints size={24} />,
       price: 129,
+      studioId: studioId || '',
+      serviceCategory: 'Shoe Laundry Services'
+    },
+    {
+      id: 'shoe-laundry-2',
+      title: 'Formal Shoes',
+      icon: <Footprints size={24} />,
+      price: 149,
       studioId: studioId || '',
       serviceCategory: 'Shoe Laundry Services'
     },
@@ -190,10 +248,8 @@ const Cart: React.FC = () => {
   const total = subtotal + deliveryFee;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
-    // Format the newQuantity to have one decimal place
     const formattedQuantity = formatDecimal(newQuantity);
     
-    // Don't allow zero or negative values
     if (formattedQuantity <= 0) {
       handleRemoveItem(itemId);
       return;
@@ -232,17 +288,14 @@ const Cart: React.FC = () => {
   };
 
   const handleAddService = (service: any) => {
-    // Check if service already in cart to avoid duplicates
     const existingItemIndex = cartItems.findIndex(item => item.serviceId === service.id);
     
     if (existingItemIndex !== -1) {
-      // If item exists, increase quantity by 1
       const updatedItems = [...cartItems];
       const currentItem = updatedItems[existingItemIndex];
       const currentQuantity = currentItem.quantity || currentItem.weight || 1;
       const isKgBased = !!currentItem.weight;
       
-      // Increment by 0.1 for weight-based items, 1 for others
       const increment = isKgBased ? 0.1 : 1;
       const newQuantity = formatDecimal(currentQuantity + increment);
       
@@ -255,7 +308,6 @@ const Cart: React.FC = () => {
       setCartItems(updatedItems);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
     } else {
-      // Add new service to cart
       let newItem: CartItem = {
         serviceId: service.id,
         serviceName: service.title,
@@ -266,7 +318,6 @@ const Cart: React.FC = () => {
         items: []
       };
       
-      // For services with weight
       if (service.id === 'wash-fold-1' || service.id === 'dry-clean-1') {
         newItem.weight = 1.0;
       } else {
@@ -295,7 +346,6 @@ const Cart: React.FC = () => {
   };
 
   const renderCartItemWithDetails = (item: CartItem) => {
-    // Format quantity to show only one decimal place when it's a weight
     const quantity = item.weight ? formatDecimal(item.weight) : (item.quantity || 1);
     const unitLabel = item.weight ? 'KG' : 
                       item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
@@ -407,7 +457,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  // Service Card Component styled like on home page
   const ServiceCard = ({ service, index }: { service: any, index: number }) => {
     const isInCart = cartItems.some(item => item.serviceId === service.id);
     
@@ -435,6 +484,15 @@ const Cart: React.FC = () => {
       </div>
     );
   };
+
+  const servicesByCategory = services.reduce((acc: Record<string, any[]>, service) => {
+    const category = service.serviceCategory || 'Other Services';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(service);
+    return acc;
+  }, {});
 
   return (
     <Layout>
@@ -498,143 +556,5 @@ const Cart: React.FC = () => {
                 Price may vary depending on the weight and clothing category during pickup of your order
               </p>
 
-              {Object.entries(groupedCartItems).map(([category, subcategories]) => (
-                <div key={category} className="mb-4">
-                  <div className="capitalize text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
-                    {getCategoryIcon(category)}
-                    {category}
-                  </div>
-                  
-                  {Object.entries(subcategories).map(([subcategory, items]) => (
-                    <div key={`${category}-${subcategory}`} className="mb-3">
-                      {(subcategory !== 'default' || category === 'Dry Cleaning Services') && (
-                        <div className="ml-4 text-xs font-medium text-gray-600 mb-2 flex items-center gap-1">
-                          <div className="w-1 h-3 bg-gray-300 rounded-full"></div>
-                          {subcategory}
-                        </div>
-                      )}
-                      
-                      <div className={subcategory !== 'default' ? "ml-4" : ""}>
-                        {items.map(renderCartItemWithDetails)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-              
-              <div className="mt-4">
-                <div 
-                  onClick={() => setShowInstructionsInput(!showInstructionsInput)}
-                  className="flex items-center gap-2 text-blue-600 cursor-pointer"
-                >
-                  <Checkbox
-                    id="special-instructions"
-                    checked={showInstructionsInput}
-                    onCheckedChange={() => setShowInstructionsInput(!showInstructionsInput)}
-                  />
-                  <label htmlFor="special-instructions" className="text-sm cursor-pointer">
-                    Add Special Instructions
-                  </label>
-                </div>
-                
-                {showInstructionsInput && (
-                  <Textarea
-                    placeholder="Any specific cleaning requirements?"
-                    className="mt-2 w-full border rounded-md"
-                    value={specialInstructions}
-                    onChange={(e) => setSpecialInstructions(e.target.value)}
-                  />
-                )}
-              </div>
-            </div>
+              <
 
-            <div className="bg-white p-4 mb-2">
-              <h2 className="font-medium text-blue-600 flex items-center gap-2 mb-4">
-                <span className="text-blue-500">✦</span> You might need this
-              </h2>
-              
-              {/* New home page style services grid */}
-              <div className="grid grid-cols-4 gap-4 mb-4">
-                {services.map((service, index) => (
-                  <ServiceCard key={service.id} service={service} index={index} />
-                ))}
-              </div>
-              
-              <button className="text-blue-600 text-sm font-medium mt-2">
-                See all services
-              </button>
-            </div>
-
-            <div className="bg-white p-4 mb-2">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-2">
-                  <Package size={16} className="text-blue-600" />
-                  <span className="text-sm font-medium">Delivery Info</span>
-                </div>
-                <span className="text-sm text-gray-600">Standard Wash - 36h Delivery</span>
-              </div>
-              
-              <div className="flex items-center gap-2 mb-4">
-                <Tag size={16} className="text-blue-600" />
-                <span className="text-sm font-medium">Apply Coupon</span>
-              </div>
-              
-              <div className="flex mb-4">
-                <input
-                  type="text"
-                  placeholder="Enter coupon code"
-                  className="flex-grow border rounded-l-md p-2 text-sm"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                />
-                <button 
-                  onClick={handleApplyCoupon}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-r-md text-sm"
-                >
-                  Apply
-                </button>
-              </div>
-              
-              <Separator className="my-4" />
-              
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span>{formatIndianRupee(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Delivery Fee</span>
-                  <span>{formatIndianRupee(deliveryFee)}</span>
-                </div>
-                <div className="flex justify-between font-medium mt-4">
-                  <span>Total</span>
-                  <span className="text-blue-600">{formatIndianRupee(total)}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg">
-              <Button 
-                fullWidth
-                className="bg-blue-600 text-white"
-                icon={<ChevronRight size={18} />}
-                iconPosition="right"
-                onClick={() => {
-                  toast({
-                    title: "Order Placed",
-                    description: "Your order has been placed successfully!",
-                  });
-                }}
-              >
-                Place Order
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
-    </Layout>
-  );
-};
-
-export default Cart;
