@@ -65,7 +65,13 @@ const Cart: React.FC = () => {
           let serviceSubCategory = '';
 
           // Core Laundry Services (Wash & Iron, etc)
-          if (item.serviceId.includes('wash') || item.serviceId.includes('iron')) {
+          if (item.serviceId.includes('wash') || 
+              item.serviceId.includes('iron') || 
+              item.serviceId === '1' || 
+              item.serviceId === '2' || 
+              item.serviceId === '3' || 
+              item.serviceId === '4' || 
+              item.serviceId === 'wash-iron-1') {
             serviceCategory = 'Core Laundry Services';
           }
           // Dry Cleaning - Upper Wear
@@ -571,4 +577,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-
