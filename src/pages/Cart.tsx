@@ -1,66 +1,120 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import GlassCard from '../components/ui-elements/GlassCard';
+import { 
+  Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
+  MapPin, Clock, Minus, Plus, Edit, Tag, Package 
+} from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 import Button from '../components/ui-elements/Button';
-import { Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+
+// Mock function to format price in Indian Rupee format
+const formatIndianRupee = (amount: number): string => {
+  return `₹${amount}`;
+};
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [specialInstructions, setSpecialInstructions] = useState('');
+  const [showInstructionsInput, setShowInstructionsInput] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+
+  // Get the studioId from the previous location if it exists
+  const studioId = location.state?.studioId || null;
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
+  // This would be replaced with actual cart items from a context or state management
+  // This is a simplified example - in a real app, you'd filter by studioId
   const cartItems = [
-    {
-      id: '1',
-      studioId: '1',
-      studioName: 'Pristine Laundry',
-      serviceName: 'Dry Cleaning',
-      quantity: 2,
-      price: 8.99
-    },
     {
       id: '2',
       studioId: '1',
       studioName: 'Pristine Laundry',
       serviceName: 'Wash & Fold',
       quantity: 1,
-      price: 2.49
+      price: 75,
+      unit: 'KG',
+      details: ['Cotton Saree (1)'],
+      deliveryTime: '36h Standard Delivery'
+    }
+  ].filter(item => !studioId || item.studioId === studioId);
+  
+  // Additional services that might be needed
+  const additionalServices = [
+    {
+      id: 'stain-protection',
+      name: 'Stain Protection',
+      description: 'Add extra protection against stains',
+      price: 99
     },
     {
-      id: '3',
-      studioId: '2',
-      studioName: 'Fresh & Clean Co.',
-      serviceName: 'Express Service',
-      quantity: 1,
-      price: 12.99
+      id: 'premium-detergent',
+      name: 'Premium Detergent',
+      description: 'Use premium quality detergent',
+      price: 49
     }
   ];
-  
+
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const deliveryFee = 2.99;
+  const deliveryFee = 49;
   const total = subtotal + deliveryFee;
+
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    // In a real app, this would update the cart state
+    console.log('Updating quantity for item', itemId, 'to', newQuantity);
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    // In a real app, this would remove the item from the cart
+    console.log('Removing item', itemId);
+  };
+
+  const handleAddService = (serviceId: string) => {
+    // In a real app, this would add the service to the cart
+    console.log('Adding service', serviceId);
+  };
+
+  const handleApplyCoupon = () => {
+    if (couponCode.trim()) {
+      console.log('Applying coupon', couponCode);
+      // Logic to apply coupon would go here
+    }
+  };
   
   return (
     <Layout>
-      <div className="section-container pb-24">
-        <div className="flex items-center gap-2 mb-4 pt-2 animate-fade-in">
+      <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
+        {/* Header */}
+        <div className="bg-white p-4 sticky top-0 z-10 flex items-center justify-between border-b">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => navigate(-1)} 
+              className="rounded-full"
+              aria-label="Go back"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <h1 className="text-lg font-medium">Your Sack</h1>
+          </div>
           <button 
-            onClick={() => navigate(-1)} 
-            className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-            aria-label="Go back"
+            onClick={() => handleRemoveItem('all')} 
+            className="text-red-500"
           >
-            <ChevronLeft size={20} />
+            <Trash2 size={20} />
           </button>
-          <h1 className="text-2xl font-semibold">Your Sack</h1>
         </div>
         
         {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-center animate-fade-in">
+          <div className="flex flex-col items-center justify-center h-64 text-center p-4">
             <ShoppingBag size={48} className="text-gray-300 mb-4" />
             <h2 className="text-lg font-medium text-gray-700 mb-2">Your Sack is Empty</h2>
             <p className="text-gray-500 mb-4">Add laundry services to your sack to get started.</p>
@@ -72,76 +126,205 @@ const Cart: React.FC = () => {
             </Link>
           </div>
         ) : (
-          <>
-            <div className="space-y-4 mb-6 animate-fade-in animate-stagger-1">
-              {cartItems.map((item, index) => (
-                <GlassCard 
-                  key={item.id} 
-                  className="p-4"
-                  interactive={false}
-                  style={{ animationDelay: `${150 + index * 75}ms` }}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium text-gray-800 mb-1">{item.serviceName}</h3>
-                      <p className="text-sm text-gray-500 mb-2">From: {item.studioName}</p>
-                      
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center">
-                          <button className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-                            -
-                          </button>
-                          <span className="w-8 text-center">{item.quantity}</span>
-                          <button className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-                            +
-                          </button>
-                        </div>
-                        <div className="text-primary-500 font-semibold">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </div>
-                      </div>
+          <div className="flex flex-col">
+            {/* Delivery Address */}
+            <div className="bg-white p-4 mb-2">
+              <div className="flex justify-between items-start">
+                <div className="flex gap-3">
+                  <MapPin size={18} className="text-blue-500 mt-1" />
+                  <div>
+                    <div className="flex items-center justify-between w-full">
+                      <p className="font-medium text-gray-700">Delivery Address</p>
+                      <button className="text-blue-500 text-sm">Change</button>
                     </div>
-                    <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                      <Trash2 size={18} />
+                    <p className="text-sm text-gray-600 mt-1">
+                      123 Main Street, Apartment 4B, New York, NY 10001
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Review Order */}
+            <div className="bg-white p-4 mb-2">
+              <h2 className="font-medium text-lg mb-2">Review your order</h2>
+              <p className="text-xs text-gray-500 mb-4">
+                Price may vary depending on the weight and clothing category during pickup of your order
+              </p>
+
+              {cartItems.map((item) => (
+                <div key={item.id} className="mb-4">
+                  <div className="flex justify-between mb-1">
+                    <div className="font-medium">{item.serviceName}</div>
+                    <div className="font-medium text-blue-600">{formatIndianRupee(item.price)}</div>
+                  </div>
+                  
+                  <div className="text-sm text-gray-600 mb-2">
+                    {item.unit} × {item.quantity}
+                  </div>
+                  
+                  {item.details && item.details.length > 0 && (
+                    <div className="text-sm text-gray-600 mb-2">
+                      {item.details.map((detail, index) => (
+                        <p key={index}>• {detail}</p>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock size={14} className="text-gray-500" />
+                    <span className="text-xs text-gray-600">{item.deliveryTime}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => handleQuantityChange(item.id, Math.max(1, item.quantity - 1))}
+                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+                      >
+                        <Minus size={16} />
+                      </button>
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      <button 
+                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {/* Special Instructions */}
+              <div className="mt-4">
+                <div 
+                  onClick={() => setShowInstructionsInput(!showInstructionsInput)}
+                  className="flex items-center gap-2 text-blue-600 cursor-pointer"
+                >
+                  <Checkbox
+                    id="special-instructions"
+                    checked={showInstructionsInput}
+                    onCheckedChange={() => setShowInstructionsInput(!showInstructionsInput)}
+                  />
+                  <label htmlFor="special-instructions" className="text-sm cursor-pointer">
+                    Add Special Instructions
+                  </label>
+                </div>
+                
+                {showInstructionsInput && (
+                  <Textarea
+                    placeholder="Any specific cleaning requirements?"
+                    className="mt-2 w-full border rounded-md"
+                    value={specialInstructions}
+                    onChange={(e) => setSpecialInstructions(e.target.value)}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* You might need this */}
+            <div className="bg-white p-4 mb-2">
+              <h2 className="font-medium text-blue-600 flex items-center gap-2 mb-4">
+                <span className="text-blue-500">✦</span> You might need this
+              </h2>
+              
+              {additionalServices.map((service) => (
+                <div key={service.id} className="flex justify-between items-center mb-3">
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center",
+                      service.id === 'stain-protection' ? "bg-purple-100 text-purple-600" : 
+                      "bg-blue-100 text-blue-600"
+                    )}>
+                      {service.id === 'stain-protection' ? '⛨' : '✦'}
+                    </div>
+                    <div>
+                      <p className="font-medium">{service.name}</p>
+                      <p className="text-xs text-gray-600">{service.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-gray-700 mr-2">
+                      {formatIndianRupee(service.price)}
+                    </span>
+                    <button 
+                      onClick={() => handleAddService(service.id)}
+                      className="text-blue-600 text-lg font-bold"
+                    >
+                      +
                     </button>
                   </div>
-                </GlassCard>
+                </div>
               ))}
+              
+              <button className="text-blue-600 text-sm font-medium mt-2">
+                See all services
+              </button>
             </div>
-            
-            <GlassCard className="p-4 mb-6 animate-fade-in animate-stagger-2" interactive={false}>
-              <div className="flex items-center gap-2 text-amber-500 mb-3">
-                <AlertCircle size={18} />
-                <p className="text-sm">Add $10 more to qualify for free delivery!</p>
+
+            {/* Delivery Info & Payment Details */}
+            <div className="bg-white p-4 mb-2">
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <Package size={16} className="text-blue-600" />
+                  <span className="text-sm font-medium">Delivery Info</span>
+                </div>
+                <span className="text-sm text-gray-600">Standard Wash - 36h Delivery</span>
               </div>
               
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
+              <div className="flex items-center gap-2 mb-4">
+                <Tag size={16} className="text-blue-600" />
+                <span className="text-sm font-medium">Apply Coupon</span>
+              </div>
+              
+              <div className="flex mb-4">
+                <input
+                  type="text"
+                  placeholder="Enter coupon code"
+                  className="flex-grow border rounded-l-md p-2 text-sm"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                />
+                <button 
+                  onClick={handleApplyCoupon}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-r-md text-sm"
+                >
+                  Apply
+                </button>
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="text-gray-800 font-medium">${subtotal.toFixed(2)}</span>
+                  <span>{formatIndianRupee(subtotal)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Delivery Fee</span>
-                  <span className="text-gray-800 font-medium">${deliveryFee.toFixed(2)}</span>
+                  <span>{formatIndianRupee(deliveryFee)}</span>
                 </div>
-                <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between text-base font-semibold">
+                <div className="flex justify-between font-medium mt-4">
                   <span>Total</span>
-                  <span className="text-primary-500">${total.toFixed(2)}</span>
+                  <span className="text-blue-600">{formatIndianRupee(total)}</span>
                 </div>
               </div>
-            </GlassCard>
+            </div>
             
-            <div className="fixed bottom-20 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-gray-100 animate-slide-in">
+            {/* Place Order Button */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg">
               <Button 
-                fullWidth 
-                className="shadow-lg"
+                fullWidth
+                className="bg-blue-600 text-white"
                 icon={<ChevronRight size={18} />}
                 iconPosition="right"
+                onClick={() => console.log('Placing order...')}
               >
-                Proceed to Checkout
+                Place Order
               </Button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </Layout>

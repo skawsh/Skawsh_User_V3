@@ -77,7 +77,8 @@ const StudioProfile: React.FC = () => {
   };
 
   const handleGoToCart = () => {
-    navigate('/cart');
+    // Pass studio id to the cart page to filter items
+    navigate('/cart', { state: { studioId: studio.id } });
   };
 
   const studio = {
