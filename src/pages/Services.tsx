@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
-import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronRight } from 'lucide-react';
+import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronRight, Boot, Trash, WashingMachine } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -13,25 +13,91 @@ const Services: React.FC = () => {
   
   const services: ServiceCategory[] = [
     {
-      id: 'dry-cleaning',
-      name: 'Dry Cleaning',
-      icon: <Shirt size={24} className="text-primary" />,
-      description: 'Professional cleaning for delicate fabrics',
+      id: 'core-laundry',
+      name: 'Core Laundry Services',
+      icon: <WashingMachine size={24} className="text-blue-500" />,
+      description: 'Essential laundry services for everyday needs',
       subServices: [
         {
-          id: 'regular-dry-cleaning',
-          name: 'Regular Dry Cleaning',
-          description: 'Professional cleaning for everyday garments'
+          id: 'wash-fold',
+          name: 'Wash & Fold',
+          description: 'Complete washing and folding of your clothes'
         },
         {
-          id: 'delicate-dry-cleaning',
-          name: 'Delicate Dry Cleaning',
-          description: 'Special care for sensitive fabrics and materials'
+          id: 'wash-iron',
+          name: 'Wash & Iron',
+          description: 'Full service washing and professional ironing'
+        }
+      ]
+    },
+    {
+      id: 'dry-cleaning',
+      name: 'Dry Cleaning Services',
+      icon: <Shirt size={24} className="text-primary" />,
+      description: 'Professional cleaning for all types of garments',
+      subServices: [
+        {
+          id: 'daily-wear',
+          name: 'Daily Wear',
+          description: 'Dry cleaning for your everyday clothing items'
         },
         {
-          id: 'premium-dry-cleaning',
-          name: 'Premium Dry Cleaning',
-          description: 'Enhanced care for luxury fabrics and designer clothes'
+          id: 'ethnic-wear',
+          name: 'Ethnic Wear',
+          description: 'Specialized care for traditional and cultural garments'
+        },
+        {
+          id: 'winter-wear',
+          name: 'Winter Wear',
+          description: 'Deep cleaning for jackets, coats, and sweaters'
+        },
+        {
+          id: 'miscellaneous',
+          name: 'Miscellaneous',
+          description: 'Dry cleaning for other specialized clothing items'
+        }
+      ]
+    },
+    {
+      id: 'shoe-laundry',
+      name: 'Shoe Laundry',
+      icon: <Boot size={24} className="text-amber-500" />,
+      description: 'Professional cleaning for all types of footwear',
+      subServices: [
+        {
+          id: 'calf-boots',
+          name: 'Calf Boots',
+          description: 'Cleaning service for calf-length boots'
+        },
+        {
+          id: 'heels',
+          name: 'Heels',
+          description: 'Specialized cleaning for all types of heel shoes'
+        },
+        {
+          id: 'high-boots',
+          name: 'High Boots',
+          description: 'Thorough cleaning for knee-high and taller boots'
+        },
+        {
+          id: 'sandals',
+          name: 'Sandals',
+          description: 'Professional cleaning for open footwear'
+        },
+        {
+          id: 'shoe-boots',
+          name: 'Shoe-Boots',
+          description: 'Cleaning for ankle and short boots'
+        },
+        {
+          id: 'canvas-sports',
+          name: 'Canvas/Sports Shoes',
+          description: 'Deep cleaning for athletic and casual canvas shoes'
+        },
+        {
+          id: 'leather-formal',
+          name: 'Leather/Formal Shoes',
+          description: 'Professional care for leather and business footwear'
         }
       ]
     },
