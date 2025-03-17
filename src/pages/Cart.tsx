@@ -215,6 +215,11 @@ const Cart: React.FC = () => {
   };
 
   const renderCartItemWithDetails = (item: CartItem) => {
+    const quantity = item.weight ? item.weight : (item.quantity || 1);
+    const unitLabel = item.weight ? 'KG' : 
+                      item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : '';
+    const totalPrice = item.price * quantity;
+    
     return (
       <div key={item.serviceId} className="mb-4 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
         <div className="flex justify-between mb-1">
@@ -226,17 +231,17 @@ const Cart: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="font-medium text-blue-600">
-            {formatIndianRupee(item.price)}
-          </div>
         </div>
         
-        <div className="text-sm text-gray-600 mb-2">
-          {item.weight ? 
-            `${item.weight} KG × ${formatIndianRupee(item.price)}` : 
-            item.serviceCategory === 'Shoe Laundry Services' ?
-            `${item.quantity || 1} pair × ${formatIndianRupee(item.price)}` :
-            `Quantity: ${item.quantity || 1} × ${formatIndianRupee(item.price)}`}
+        <div className="flex justify-between text-sm text-gray-600 mb-2">
+          <div>
+            {unitLabel ? 
+              `${quantity} ${unitLabel} × ${formatIndianRupee(item.price)}` : 
+              `Quantity: ${quantity} × ${formatIndianRupee(item.price)}`}
+          </div>
+          <div className="font-medium text-blue-600">
+            {formatIndianRupee(totalPrice)}
+          </div>
         </div>
         
         {item.items && item.items.length > 0 && (
