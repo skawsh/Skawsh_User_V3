@@ -227,12 +227,26 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setSelectedService(null);
   };
   
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem('cartItems');
+    if (storedCartItems) {
+      try {
+        const parsedItems = JSON.parse(storedCartItems);
+        setCartItems(parsedItems);
+      } catch (error) {
+        console.error('Error parsing cart items:', error);
+        setCartItems([]);
+      }
+    }
+  }, []);
+  
   const handleAddToCart = (orderDetails: any) => {
     const roundedWeight = orderDetails.weight ? Math.round(orderDetails.weight * 10) / 10 : 0;
     
     setCartItems(prev => {
       const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
       
+      let updatedItems;
       if (existingItemIndex >= 0) {
         const newItems = [...prev];
         newItems[existingItemIndex] = {
@@ -243,9 +257,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
           quantity: orderDetails.quantity,
           items: orderDetails.items
         };
-        return newItems;
+        updatedItems = newItems;
       } else {
-        return [...prev, {
+        updatedItems = [...prev, {
           serviceId: orderDetails.serviceId,
           serviceName: orderDetails.serviceName,
           weight: roundedWeight,
@@ -254,6 +268,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
           items: orderDetails.items
         }];
       }
+      
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      return updatedItems;
     });
   };
 
@@ -764,79 +781,3 @@ const ServiceList: React.FC<ServiceListProps> = ({
           onClick={() => setPopoverOpen(true)} 
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
         >
-          <Menu className="h-6 w-6" />
-        </button>
-      ) : (
-        <div 
-          className="fixed bottom-0 transform transition-all duration-300 z-50 animate-slide-in-right" 
-          style={{
-            height: isMobile ? '40vh' : '45.05vh',
-            bottom: '1.5rem',
-            right: '1rem',
-            maxHeight: '400px',
-            width: '70%',
-            maxWidth: '260px'
-          }}
-        >
-          <div className="bg-black text-white rounded-2xl overflow-hidden shadow-xl mr-0 mb-0 h-full flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 bg-black z-10 px-5">
-              <h3 className="text-lg font-semibold truncate">Services</h3>
-            </div>
-            
-            <ScrollArea className="flex-grow">
-              <div className="p-2">
-                {categories.map((category, idx) => (
-                  <div key={idx} className="mb-3">
-                    <button onClick={() => scrollToCategory(category.title)} className="flex items-center justify-between w-full py-3 hover:bg-gray-800/50 transition-colors rounded-lg px-5">
-                      <span className="font-medium text-white text-base">{category.title}</span>
-                      <span className="text-xs bg-gray-700 text-gray-300 rounded-full px-2 py-0.5">{category.count}</span>
-                    </button>
-                    
-                    <div className="ml-7 mt-1 space-y-1">
-                      {category.subCategories ? (
-                        category.subCategories.map((subCategory, subIdx) => (
-                          <button 
-                            key={subIdx} 
-                            onClick={() => scrollToCategory(category.title)} 
-                            className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left"
-                          >
-                            {subCategory.title}
-                          </button>
-                        ))
-                      ) : (
-                        category.services.map((service, serviceIdx) => (
-                          <button 
-                            key={serviceIdx} 
-                            onClick={() => scrollToCategory(category.title)} 
-                            className="w-full py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800/30 transition-colors rounded-lg px-3 font-normal text-left"
-                          >
-                            {service.name}
-                          </button>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        </div>
-      )}
-
-      {selectedService && (
-        <ServiceOrderPopup
-          service={{
-            ...selectedService,
-            price: selectedTab === "express" ? selectedService.price * 1.5 : selectedService.price
-          }}
-          isOpen={!!selectedService}
-          onClose={handleCloseServicePopup}
-          onAddToCart={handleAddToCart}
-          initialWeight={getServiceWeight(selectedService.id) || undefined}
-        />
-      )}
-    </div>
-  );
-};
-
-export default ServiceList;

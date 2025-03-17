@@ -26,27 +26,27 @@ const Cart: React.FC = () => {
 
   // Get the studioId from the previous location if it exists
   const studioId = location.state?.studioId || null;
+  
+  // Get cart items from localStorage (this would come from a context in a real app)
+  const [cartItems, setCartItems] = useState<any[]>([]);
+
+  // Fetch cart items when component mounts
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem('cartItems');
+    if (storedCartItems) {
+      const parsedItems = JSON.parse(storedCartItems);
+      // Filter by studioId if needed
+      const filteredItems = studioId ? 
+        parsedItems.filter((item: any) => !studioId || item.studioId === studioId) : 
+        parsedItems;
+      setCartItems(filteredItems);
+    }
+  }, [studioId]);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
-  // This would be replaced with actual cart items from a context or state management
-  // This is a simplified example - in a real app, you'd filter by studioId
-  const cartItems = [
-    {
-      id: '2',
-      studioId: '1',
-      studioName: 'Pristine Laundry',
-      serviceName: 'Wash & Fold',
-      quantity: 1,
-      price: 75,
-      unit: 'KG',
-      details: ['Cotton Saree (1)'],
-      deliveryTime: '36h Standard Delivery'
-    }
-  ].filter(item => !studioId || item.studioId === studioId);
   
   // Additional services that might be needed
   const additionalServices = [
@@ -64,23 +64,55 @@ const Cart: React.FC = () => {
     }
   ];
 
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((total, item) => {
+    const itemPrice = item.price || 0;
+    const itemQuantity = item.quantity || item.weight || 1;
+    return total + (itemPrice * itemQuantity);
+  }, 0);
+  
   const deliveryFee = 49;
   const total = subtotal + deliveryFee;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
-    // In a real app, this would update the cart state
-    console.log('Updating quantity for item', itemId, 'to', newQuantity);
+    const updatedItems = cartItems.map(item => {
+      if (item.serviceId === itemId) {
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
   };
 
   const handleRemoveItem = (itemId: string) => {
-    // In a real app, this would remove the item from the cart
-    console.log('Removing item', itemId);
+    if (itemId === 'all') {
+      setCartItems([]);
+      localStorage.removeItem('cartItems');
+      return;
+    }
+    
+    const updatedItems = cartItems.filter(item => item.serviceId !== itemId);
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
   };
 
   const handleAddService = (serviceId: string) => {
-    // In a real app, this would add the service to the cart
-    console.log('Adding service', serviceId);
+    const serviceToAdd = additionalServices.find(service => service.id === serviceId);
+    
+    if (serviceToAdd) {
+      const newItem = {
+        serviceId: serviceToAdd.id,
+        serviceName: serviceToAdd.name,
+        quantity: 1,
+        price: serviceToAdd.price,
+        items: []
+      };
+      
+      const updatedItems = [...cartItems, newItem];
+      setCartItems(updatedItems);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    }
   };
 
   const handleApplyCoupon = () => {
@@ -105,12 +137,14 @@ const Cart: React.FC = () => {
             </button>
             <h1 className="text-lg font-medium">Your Sack</h1>
           </div>
-          <button 
-            onClick={() => handleRemoveItem('all')} 
-            className="text-red-500"
-          >
-            <Trash2 size={20} />
-          </button>
+          {cartItems.length > 0 && (
+            <button 
+              onClick={() => handleRemoveItem('all')} 
+              className="text-red-500"
+            >
+              <Trash2 size={20} />
+            </button>
+          )}
         </div>
         
         {cartItems.length === 0 ? (
@@ -153,45 +187,71 @@ const Cart: React.FC = () => {
               </p>
 
               {cartItems.map((item) => (
-                <div key={item.id} className="mb-4">
+                <div key={item.serviceId} className="mb-4">
                   <div className="flex justify-between mb-1">
                     <div className="font-medium">{item.serviceName}</div>
-                    <div className="font-medium text-blue-600">{formatIndianRupee(item.price)}</div>
+                    <div className="font-medium text-blue-600">
+                      {formatIndianRupee(item.price)}
+                    </div>
                   </div>
                   
                   <div className="text-sm text-gray-600 mb-2">
-                    {item.unit} × {item.quantity}
+                    {item.weight ? 
+                      `KG × ${item.weight}` : 
+                      `Quantity: ${item.quantity || 1}`}
                   </div>
                   
-                  {item.details && item.details.length > 0 && (
+                  {item.items && item.items.length > 0 && (
                     <div className="text-sm text-gray-600 mb-2">
-                      {item.details.map((detail, index) => (
-                        <p key={index}>• {detail}</p>
+                      {item.items.map((detail: any, index: number) => (
+                        <p key={index}>• {detail.name} ({detail.quantity})</p>
                       ))}
                     </div>
                   )}
                   
                   <div className="flex items-center gap-2 mb-3">
                     <Clock size={14} className="text-gray-500" />
-                    <span className="text-xs text-gray-600">{item.deliveryTime}</span>
+                    <span className="text-xs text-gray-600">36h Standard Delivery</span>
                   </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <button 
-                        onClick={() => handleQuantityChange(item.id, Math.max(1, item.quantity - 1))}
+                        onClick={() => {
+                          if (item.weight) {
+                            const newWeight = Math.max(0.1, (item.weight || 1) - 0.1);
+                            handleQuantityChange(item.serviceId, newWeight);
+                          } else {
+                            handleQuantityChange(item.serviceId, Math.max(1, (item.quantity || 1) - 1));
+                          }
+                        }}
                         className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="w-6 text-center">{item.quantity}</span>
+                      <span className="w-6 text-center">
+                        {item.weight ? item.weight : (item.quantity || 1)}
+                      </span>
                       <button 
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        onClick={() => {
+                          if (item.weight) {
+                            const newWeight = (item.weight || 1) + 0.1;
+                            handleQuantityChange(item.serviceId, newWeight);
+                          } else {
+                            handleQuantityChange(item.serviceId, (item.quantity || 1) + 1);
+                          }
+                        }}
                         className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
                       >
                         <Plus size={16} />
                       </button>
                     </div>
+                    <button
+                      onClick={() => handleRemoveItem(item.serviceId)}
+                      className="text-red-500"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               ))}
