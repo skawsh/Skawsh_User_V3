@@ -1,12 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
 import Button from '../components/ui-elements/Button';
-import { Trash2, ShoppingBag, ChevronRight, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const cartItems = [
     {
       id: '1',
@@ -41,7 +48,16 @@ const Cart: React.FC = () => {
   return (
     <Layout>
       <div className="section-container pb-24">
-        <h1 className="text-2xl font-semibold mb-6 pt-2 animate-fade-in">Your Sack</h1>
+        <div className="flex items-center gap-2 mb-4 pt-2 animate-fade-in">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            aria-label="Go back"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <h1 className="text-2xl font-semibold">Your Sack</h1>
+        </div>
         
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center animate-fade-in">
