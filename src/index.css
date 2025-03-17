@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Geometric Sans-Serif';
-  src: local('Arial'), local('Helvetica'), local('Futura');
+  font-family: 'Proxima Nova';
+  src: local('Proxima Nova'), local('ProximaNova'), local('Arial'), local('Helvetica');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -55,7 +56,7 @@
 
   body {
     @apply bg-background text-foreground antialiased overflow-x-hidden;
-    font-family: 'Geometric Sans-Serif', 'Arial', 'Helvetica', sans-serif;
+    font-family: 'Proxima Nova', 'Arial', 'Helvetica', sans-serif;
   }
 
   html {

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -23,7 +24,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Geometric Sans-Serif', 'Arial', 'Helvetica', 'sans-serif'],
+        sans: ['Proxima Nova', 'Arial', 'Helvetica', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
