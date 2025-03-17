@@ -1,11 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Century';
-  src: local('Century');
+  font-family: 'Geometric Sans-Serif';
+  src: local('Arial'), local('Helvetica'), local('Futura');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -56,7 +55,7 @@
 
   body {
     @apply bg-background text-foreground antialiased overflow-x-hidden;
-    font-family: 'Century', serif;
+    font-family: 'Geometric Sans-Serif', 'Arial', 'Helvetica', sans-serif;
   }
 
   html {
