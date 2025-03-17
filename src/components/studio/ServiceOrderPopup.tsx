@@ -102,9 +102,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
-          <DialogClose className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100">
-            
-          </DialogClose>
+          
         </div>
         
         <div className="p-4 space-y-4">
