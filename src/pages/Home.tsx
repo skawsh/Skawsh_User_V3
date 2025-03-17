@@ -6,7 +6,6 @@ import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
-
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
@@ -14,7 +13,6 @@ const Home: React.FC = () => {
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleScroll = () => {
       const servicesRow = servicesRowRef.current;
@@ -39,13 +37,11 @@ const Home: React.FC = () => {
     });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isSticky]);
-
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {
       setStickyHeight(servicesRowRef.current.offsetHeight);
     }
   }, []);
-
   const services = [{
     id: '1',
     title: 'Wash & Fold',
@@ -83,7 +79,6 @@ const Home: React.FC = () => {
     title: 'Business Attire',
     icon: <Briefcase size={24} />
   }];
-
   const studios = [{
     id: '1',
     name: 'Pristine Laundry',
@@ -139,7 +134,6 @@ const Home: React.FC = () => {
     workingHours: '7 AM - 10 PM',
     promoted: true
   }];
-
   const banners = [{
     id: '1',
     title: 'Premium Care',
@@ -173,7 +167,6 @@ const Home: React.FC = () => {
     textColor: 'text-gray-800',
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
   }];
-
   return <Layout>
     <div className="section-container p-0">
       <div className="bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl">
@@ -186,7 +179,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       
-      <div className="px-4 pb-1 -mx-4" ref={servicesRef}>
+      <div ref={servicesRef} className="pb-1 -mx-4 px-[5px]">
         <h2 className="section-title mb-2 pt-2 font-bold text-lg">Explore Services</h2>
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
@@ -211,8 +204,8 @@ const Home: React.FC = () => {
         position: 'relative',
         zIndex: 0,
         marginTop: '15px'
-      }} className="mb-10 px-0 my-[14px]">
-        <h2 className="section-title mb-4 font-bold text-lg">Explore Studios</h2>
+      }} className="mb-10 my-[14px] mx-0 px-0">
+        <h2 className="section-title mb-4 font-bold text-lg px-0">Explore Studios</h2>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />
@@ -229,13 +222,11 @@ const Home: React.FC = () => {
     </div>
   </Layout>;
 };
-
 interface FilterButtonProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
 }
-
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   label,
@@ -246,5 +237,4 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       {label}
     </button>;
 };
-
 export default Home;
