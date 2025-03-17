@@ -14,13 +14,13 @@
 }
 
 .animate-price-warning {
-  color: #ff8c00;
-  text-shadow: 0 0 8px rgba(255, 140, 0, 0.8);
-  animation: word-glow 0.5s ease-out;
+  color: #33C3F0;
+  text-shadow: 0 0 8px rgba(51, 195, 240, 0.8);
+  animation: word-glow 0.25s ease-out;
 }
 
 @keyframes word-glow {
   0% { color: inherit; text-shadow: none; }
-  50% { color: #ff8c00; text-shadow: 0 0 8px rgba(255, 140, 0, 0.8); }
+  50% { color: #33C3F0; text-shadow: 0 0 8px rgba(51, 195, 240, 0.8); }
   100% { color: inherit; text-shadow: none; }
 }

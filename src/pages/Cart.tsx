@@ -144,13 +144,13 @@ const Cart: React.FC = () => {
         wordIndex++;
         if (wordIndex < words.length) {
           setCurrentGlowingWordIndex(wordIndex);
-          timer = setTimeout(animateNextWord, 500);
+          timer = setTimeout(animateNextWord, 250);
         } else {
           setCurrentGlowingWordIndex(-1);
         }
       };
       
-      timer = setTimeout(animateNextWord, 500);
+      timer = setTimeout(animateNextWord, 250);
     } else {
       setCurrentGlowingWordIndex(-1);
       setWarningWords([]);
@@ -756,4 +756,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-
