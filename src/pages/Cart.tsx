@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import Button from '../components/ui-elements/Button';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock function to format price in Indian Rupee format
 const formatIndianRupee = (amount: number): string => {
@@ -20,6 +21,7 @@ const formatIndianRupee = (amount: number): string => {
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
@@ -89,12 +91,21 @@ const Cart: React.FC = () => {
     if (itemId === 'all') {
       setCartItems([]);
       localStorage.removeItem('cartItems');
+      toast({
+        title: "Cart cleared",
+        description: "All items have been removed from your cart",
+      });
       return;
     }
     
     const updatedItems = cartItems.filter(item => item.serviceId !== itemId);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    toast({
+      title: "Item removed",
+      description: "The item has been removed from your cart",
+    });
   };
 
   const handleAddService = (serviceId: string) => {
@@ -112,12 +123,20 @@ const Cart: React.FC = () => {
       const updatedItems = [...cartItems, newItem];
       setCartItems(updatedItems);
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      
+      toast({
+        title: "Service added",
+        description: `${serviceToAdd.name} has been added to your cart`,
+      });
     }
   };
 
   const handleApplyCoupon = () => {
     if (couponCode.trim()) {
-      console.log('Applying coupon', couponCode);
+      toast({
+        title: "Trying to apply coupon",
+        description: `Processing coupon: ${couponCode}`,
+      });
       // Logic to apply coupon would go here
     }
   };
@@ -154,9 +173,9 @@ const Cart: React.FC = () => {
             <p className="text-gray-500 mb-4">Add laundry services to your sack to get started.</p>
             <Link 
               to="/" 
-              className="text-primary-500 font-medium hover:text-primary-600 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition-colors"
             >
-              Browse Services
+              Browse Studios <ChevronRight size={16} />
             </Link>
           </div>
         ) : (
@@ -379,7 +398,12 @@ const Cart: React.FC = () => {
                 className="bg-blue-600 text-white"
                 icon={<ChevronRight size={18} />}
                 iconPosition="right"
-                onClick={() => console.log('Placing order...')}
+                onClick={() => {
+                  toast({
+                    title: "Order Placed",
+                    description: "Your order has been placed successfully!",
+                  });
+                }}
               >
                 Place Order
               </Button>
