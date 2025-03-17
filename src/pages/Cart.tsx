@@ -226,7 +226,7 @@ const Cart: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="font-medium text-blue-600 mt-1.5">
+          <div className="font-medium text-blue-600">
             {formatIndianRupee(item.price)}
           </div>
         </div>
