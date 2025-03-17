@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -556,5 +557,122 @@ const Cart: React.FC = () => {
                 Price may vary depending on the weight and clothing category during pickup of your order
               </p>
 
-              <
+              {Object.entries(groupedCartItems).map(([category, subCategories]) => (
+                <div key={category} className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    {getCategoryIcon(category)}
+                    <span className="font-medium">{category}</span>
+                  </div>
+                  
+                  {Object.entries(subCategories).map(([subCategory, items]) => (
+                    <div key={`${category}-${subCategory}`} className="pl-6 mb-4">
+                      {subCategory !== 'default' && (
+                        <p className="text-sm font-medium text-gray-700 mb-2">{subCategory}</p>
+                      )}
+                      {items.map(item => renderCartItemWithDetails(item))}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              
+              <div className="mt-6 pt-4 border-t">
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span className="font-medium">{formatIndianRupee(subtotal)}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-gray-600">Delivery Fee</span>
+                  <span className="font-medium">{formatIndianRupee(deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between mt-3 pt-3 border-t">
+                  <span className="font-medium">Total</span>
+                  <span className="font-bold text-blue-600">{formatIndianRupee(total)}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-4 mb-2">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-medium">Special Instructions</h3>
+                <button 
+                  onClick={() => setShowInstructionsInput(!showInstructionsInput)}
+                  className="text-blue-500 text-sm"
+                >
+                  {showInstructionsInput ? 'Hide' : 'Add'}
+                </button>
+              </div>
+              
+              {showInstructionsInput && (
+                <Textarea
+                  value={specialInstructions}
+                  onChange={(e) => setSpecialInstructions(e.target.value)}
+                  placeholder="Add any special instructions for your order..."
+                  className="w-full h-24 text-sm"
+                />
+              )}
+            </div>
+            
+            <div className="bg-white p-4 mb-2">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag size={16} className="text-blue-500" />
+                <h3 className="font-medium">Apply Coupon</h3>
+              </div>
+              
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  placeholder="Enter coupon code"
+                  className="flex-1 px-3 py-2 border rounded-md text-sm"
+                />
+                <button 
+                  onClick={handleApplyCoupon}
+                  className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+            
+            <div className="bg-white p-4 mb-2">
+              <h3 className="font-medium mb-4">You might need this</h3>
+              
+              {Object.entries(servicesByCategory).map(([category, categoryServices]) => (
+                <div key={category} className="mb-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    {getCategoryIcon(category)}
+                    <h4 className="text-sm font-medium">{category}</h4>
+                  </div>
+                  
+                  <ScrollArea className="w-full">
+                    <Carousel opts={{ align: "start" }}>
+                      <CarouselContent className="-ml-2">
+                        {categoryServices.map((service, index) => (
+                          <CarouselItem key={service.id} className="pl-2 basis-1/4 min-w-[90px] max-w-[90px]">
+                            <ServiceCard service={service} index={index} />
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                    </Carousel>
+                  </ScrollArea>
+                </div>
+              ))}
+            </div>
+            
+            <div className="px-4 mt-4">
+              <Button
+                onClick={() => navigate('/checkout')}
+                className="w-full text-md flex items-center justify-center gap-2 py-3"
+              >
+                Proceed to Checkout <ChevronRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+};
 
+export default Cart;
