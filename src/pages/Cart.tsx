@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -217,7 +216,7 @@ const Cart: React.FC = () => {
   const renderCartItemWithDetails = (item: CartItem) => {
     const quantity = item.weight ? item.weight : (item.quantity || 1);
     const unitLabel = item.weight ? 'KG' : 
-                      item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : '';
+                      item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
     const totalPrice = item.price * quantity;
     
     return (
@@ -237,7 +236,7 @@ const Cart: React.FC = () => {
           <div>
             {unitLabel ? 
               `${quantity} ${unitLabel} × ${formatIndianRupee(item.price)}` : 
-              `Quantity: ${quantity} × ${formatIndianRupee(item.price)}`}
+              `1 Item × ${formatIndianRupee(item.price)}`}
           </div>
           <div className="font-medium text-blue-600">
             {formatIndianRupee(totalPrice)}
