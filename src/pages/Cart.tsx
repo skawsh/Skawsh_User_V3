@@ -3,7 +3,7 @@ import Layout from '../components/Layout';
 import { 
   Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
   MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2,
-  Shirt, Footprints, PlusCircle
+  Shirt, Footprints, PlusCircle, Info
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +21,12 @@ import {
 } from "@/components/ui/carousel";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ServiceCard from '../components/home/ServiceCard';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -245,7 +251,12 @@ const Cart: React.FC = () => {
   }, 0);
   
   const deliveryFee = 49;
-  const total = subtotal + deliveryFee;
+  
+  const subtotalGST = subtotal * 0.18; // 18% GST on subtotal
+  const deliveryGST = deliveryFee * 0.05; // 5% GST on delivery fee
+  const totalGST = subtotalGST + deliveryGST;
+  
+  const total = subtotal + deliveryFee + totalGST;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     const formattedQuantity = formatDecimal(newQuantity);
@@ -546,6 +557,41 @@ const Cart: React.FC = () => {
                   <span className="text-gray-600">Delivery Fee</span>
                   <span className="font-medium">{formatIndianRupee(deliveryFee)}</span>
                 </div>
+                <div className="flex justify-between mb-2">
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-600">Taxes</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="cursor-help">
+                            <Info size={14} className="text-gray-500" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent className="w-60 p-3">
+                          <div className="space-y-2">
+                            <h4 className="font-medium">Tax Breakdown</h4>
+                            <div className="text-xs space-y-1">
+                              <div className="flex justify-between">
+                                <span>Subtotal GST (18%)</span>
+                                <span>{formatIndianRupee(subtotalGST)}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>Delivery GST (5%)</span>
+                                <span>{formatIndianRupee(deliveryGST)}</span>
+                              </div>
+                              <Separator className="my-1" />
+                              <div className="flex justify-between font-medium">
+                                <span>Total GST</span>
+                                <span>{formatIndianRupee(totalGST)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <span className="font-medium">{formatIndianRupee(totalGST)}</span>
+                </div>
                 <div className="flex justify-between mt-3 pt-3 border-t">
                   <span className="font-medium">Total</span>
                   <span className="font-bold text-blue-600">{formatIndianRupee(total)}</span>
@@ -613,3 +659,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+
