@@ -19,6 +19,11 @@ interface Service {
   unit?: string;
 }
 
+interface CartItem {
+  serviceId: string;
+  weight: number;
+}
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
@@ -44,6 +49,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -203,7 +209,31 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   const handleAddToCart = (orderDetails: any) => {
     console.log('Added to cart:', orderDetails);
+    
+    setCartItems(prev => {
+      const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
+      
+      if (existingItemIndex >= 0) {
+        const newItems = [...prev];
+        newItems[existingItemIndex] = {
+          serviceId: orderDetails.serviceId,
+          weight: orderDetails.weight
+        };
+        return newItems;
+      } else {
+        return [...prev, {
+          serviceId: orderDetails.serviceId,
+          weight: orderDetails.weight
+        }];
+      }
+    });
+    
     toast.success(`Added ${orderDetails.serviceName} to your cart!`);
+  };
+
+  const getServiceWeight = (serviceId: string): number | null => {
+    const item = cartItems.find(item => item.serviceId === serviceId);
+    return item ? item.weight : null;
   };
 
   useEffect(() => {
@@ -359,10 +389,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                   <Button 
                                     variant="default" 
                                     size="sm"
-                                    className="rounded-full bg-blue-600 hover:bg-blue-700"
+                                    className={cn(
+                                      "rounded-full",
+                                      getServiceWeight(service.id) 
+                                        ? "bg-blue-600 hover:bg-blue-700" 
+                                        : "bg-blue-600 hover:bg-blue-700"
+                                    )}
                                     onClick={() => handleOpenServicePopup(service)}
                                   >
-                                    <Plus size={16} className="mr-1" /> Add
+                                    {getServiceWeight(service.id) ? (
+                                      <>- {getServiceWeight(service.id)} +</>
+                                    ) : (
+                                      <><Plus size={16} className="mr-1" /> Add</>
+                                    )}
                                   </Button>
                                 </div>
                               </Card>
@@ -410,10 +449,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             <Button 
                               variant="default" 
                               size="sm"
-                              className="rounded-full bg-blue-600 hover:bg-blue-700"
+                              className={cn(
+                                "rounded-full",
+                                getServiceWeight(service.id) 
+                                  ? "bg-blue-600 hover:bg-blue-700" 
+                                  : "bg-blue-600 hover:bg-blue-700"
+                              )}
                               onClick={() => handleOpenServicePopup(service)}
                             >
-                              <Plus size={16} className="mr-1" /> Add
+                              {getServiceWeight(service.id) ? (
+                                <>- {getServiceWeight(service.id)} +</>
+                              ) : (
+                                <><Plus size={16} className="mr-1" /> Add</>
+                              )}
                             </Button>
                           </div>
                         </Card>
@@ -479,10 +527,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                   <Button 
                                     variant="default" 
                                     size="sm"
-                                    className="rounded-full bg-orange-500 hover:bg-orange-600"
+                                    className={cn(
+                                      "rounded-full",
+                                      getServiceWeight(service.id) 
+                                        ? "bg-orange-500 hover:bg-orange-600" 
+                                        : "bg-orange-500 hover:bg-orange-600"
+                                    )}
                                     onClick={() => handleOpenServicePopup(service)}
                                   >
-                                    <Plus size={16} className="mr-1" /> Add
+                                    {getServiceWeight(service.id) ? (
+                                      <>- {getServiceWeight(service.id)} +</>
+                                    ) : (
+                                      <><Plus size={16} className="mr-1" /> Add</>
+                                    )}
                                   </Button>
                                 </div>
                               </Card>
@@ -530,10 +587,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             <Button 
                               variant="default" 
                               size="sm"
-                              className="rounded-full bg-orange-500 hover:bg-orange-600"
+                              className={cn(
+                                "rounded-full",
+                                getServiceWeight(service.id) 
+                                  ? "bg-orange-500 hover:bg-orange-600" 
+                                  : "bg-orange-500 hover:bg-orange-600"
+                              )}
                               onClick={() => handleOpenServicePopup(service)}
                             >
-                              <Plus size={16} className="mr-1" /> Add
+                              {getServiceWeight(service.id) ? (
+                                <>- {getServiceWeight(service.id)} +</>
+                              ) : (
+                                <><Plus size={16} className="mr-1" /> Add</>
+                              )}
                             </Button>
                           </div>
                         </Card>

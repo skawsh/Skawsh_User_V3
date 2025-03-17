@@ -101,7 +101,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
           <DialogClose className="rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100">
-            
+            <X className="h-4 w-4" />
           </DialogClose>
         </div>
         
@@ -164,12 +164,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         <div className="p-4 pt-0">
           <Button 
             className={cn(
-              "w-full h-12 rounded-lg text-gray-800",
+              "w-full h-12 rounded-lg text-white",
               weight > 0 
-                ? "bg-green-500 hover:bg-green-600 text-white" 
-                : "bg-gray-200 hover:bg-gray-300"
+                ? "bg-green-500 hover:bg-green-600" 
+                : "bg-gray-300 hover:bg-gray-400 text-gray-600"
             )} 
             onClick={handleAddToCart}
+            disabled={weight <= 0}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
