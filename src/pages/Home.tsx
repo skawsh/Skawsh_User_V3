@@ -182,13 +182,13 @@ const Home: React.FC = () => {
         <SearchBar />
         <PromotionSlider banners={banners} />
         <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
-          <span className="font-normal text-xs">Welcome to Skawsh</span>
+          <span className="font-bold text-xs">Welcome to Skawsh</span>
           <Heart size={14} className="ml-1 text-white" fill="white" />
         </div>
       </div>
       
       <div className="px-4 pb-1 -mx-4" ref={servicesRef}>
-        <h2 className="section-title text-base mb-2 pt-2">Explore Services</h2>
+        <h2 className="section-title text-base mb-2 pt-2 font-bold">Explore Services</h2>
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
@@ -222,7 +222,7 @@ const Home: React.FC = () => {
         zIndex: 0,
         marginTop: '15px'
       }} className="mb-10 px-0 my-[14px]">
-        <h2 className="section-title text-base mb-4">Explore Studios</h2>
+        <h2 className="section-title text-base mb-4 font-bold">Explore Studios</h2>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />

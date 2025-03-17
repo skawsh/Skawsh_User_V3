@@ -114,7 +114,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, isActive }) => {
       >
         {icon}
       </div>
-      <span className={`text-xs font-medium transition-all ${
+      <span className={`text-xs font-bold transition-all ${
         isActive ? 'opacity-100' : 'opacity-80'
       } ${isPressed ? 'scale-95' : ''}`}>
         {label}

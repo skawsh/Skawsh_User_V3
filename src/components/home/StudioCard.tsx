@@ -49,7 +49,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
         <div className="p-3 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-gray-800 truncate pr-2">{name}</h3>
+              <h3 className="font-bold text-gray-800 truncate pr-2">{name}</h3>
               <button className="bg-white/80 p-1 rounded-full hover:bg-white transition-colors duration-200 flex-shrink-0">
                 <Heart size={16} className="text-gray-600" />
               </button>

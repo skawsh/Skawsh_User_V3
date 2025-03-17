@@ -7,7 +7,7 @@ const PremiumBanner: React.FC = () => {
     <div className="mb-8 animate-fade-in animate-stagger-2">
       <div className="bg-blue-700 text-white p-5 rounded-xl shadow-md overflow-hidden relative">
         <div className="relative z-10">
-          <h3 className="font-semibold text-xl mb-1">Premium Care</h3>
+          <h3 className="font-bold text-xl mb-1">Premium Care</h3>
           <p className="text-white/90 text-sm mb-4">
             For Your Delicate Fabrics
           </p>

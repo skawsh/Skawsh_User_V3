@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,7 +87,7 @@
   }
 
   .section-title {
-    @apply text-lg font-semibold mb-4 flex items-center;
+    @apply text-lg font-bold mb-4 flex items-center;
   }
 
   .animate-stagger-1 {
