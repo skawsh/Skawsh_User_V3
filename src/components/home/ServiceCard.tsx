@@ -9,9 +9,6 @@ interface ServiceCardProps {
   image?: string;
   index: number;
   isSticky?: boolean;
-  showTitle?: boolean;
-  onClick?: () => void;
-  linkTo?: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -20,37 +17,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   description,
   image,
   index,
-  isSticky = false,
-  showTitle = true,
-  onClick,
-  linkTo = "/services"
+  isSticky = false
 }) => {
-  const CardContent = () => (
-    <div className="flex flex-col items-center text-center">
-      <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
-        {image ? <img src={image} alt={title} className="w-full h-full object-cover rounded-full" /> : <div className="text-primary-500">{icon}</div>}
+  return <Link to="/services" className="animate-fade-in transition-all duration-500 ease-in-out" style={{
+    animationDelay: `${150 + index * 75}ms`
+  }}>
+      <div className="flex flex-col items-center text-center">
+        <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
+          {image ? <img src={image} alt={title} className="w-full h-full object-cover rounded-full" /> : <div className="text-primary-500">{icon}</div>}
+        </div>
+        <h3 className={`text-xs font-bold mt-1 ${isSticky ? 'text-white' : 'text-gray-800'} transition-colors duration-300`}>{title}</h3>
       </div>
-      {showTitle && <h3 className={`text-xs font-bold mt-1 ${isSticky ? 'text-white' : 'text-gray-800'} transition-colors duration-300`}>{title}</h3>}
-    </div>
-  );
-
-  if (onClick) {
-    return (
-      <button onClick={onClick} className="animate-fade-in transition-all duration-500 ease-in-out" style={{
-        animationDelay: `${150 + index * 75}ms`
-      }}>
-        <CardContent />
-      </button>
-    );
-  }
-
-  return (
-    <Link to={linkTo} className="animate-fade-in transition-all duration-500 ease-in-out" style={{
-      animationDelay: `${150 + index * 75}ms`
-    }}>
-      <CardContent />
-    </Link>
-  );
+    </Link>;
 };
 
 export default ServiceCard;
