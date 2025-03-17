@@ -75,16 +75,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-    if (inputValue === '') {
-      setWeight('');
-    } else {
-      const value = parseFloat(inputValue);
-      if (!isNaN(value) && value > 0) {
-        // Round to 1 decimal place for display purposes
-        const roundedValue = Math.round(value * 10) / 10;
-        setWeight(roundedValue);
-      }
-    }
+    setWeight(inputValue);
   };
 
   const handleQuantityChange = (index: number, change: number) => {
@@ -105,15 +96,24 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  const totalPrice = typeof weight === 'number' ? Math.round(service.price * weight * 100) / 100 : 0;
+  // Calculate price based on weight
+  const totalPrice = () => {
+    const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
+    if (isNaN(numWeight)) return 0;
+    return Math.round(service.price * numWeight * 100) / 100;
+  };
 
   const handleAddToCart = () => {
-    if (typeof weight === 'number' && weight > 0) {
+    // Convert weight to number for cart
+    let numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
+    
+    // Only proceed if weight is a valid number and greater than 0
+    if (!isNaN(numWeight) && numWeight > 0) {
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
-        weight: Math.round(weight * 10) / 10, // Round to 1 decimal place
-        price: totalPrice,
+        weight: numWeight, 
+        price: totalPrice(),
         items: clothingItems.filter(item => item.quantity > 0)
       };
       onAddToCart(orderDetails);
@@ -121,7 +121,11 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  const formattedWeight = typeof weight === 'number' ? weight.toFixed(1) : weight;
+  // Determine if Add to Cart button should be enabled
+  const isAddToCartEnabled = () => {
+    const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
+    return !isNaN(numWeight) && numWeight > 0;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
@@ -140,17 +144,16 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
                 <Input 
                   id="weight" 
-                  type="number" 
-                  min="0.1" 
-                  step="0.1" 
-                  value={formattedWeight} 
+                  type="text" 
+                  value={weight} 
                   onChange={handleWeightChange} 
                   className="pl-9" 
+                  placeholder="Enter weight"
                 />
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">₹{totalPrice.toFixed(2)}</div>
+                <div className="font-semibold text-blue-600">₹{totalPrice().toFixed(2)}</div>
               </div>
             </div>
           </div>
@@ -195,7 +198,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         </div>
         
         <div className="p-4 pt-0">
-          <Button className={cn("w-full h-12 rounded-lg text-white", typeof weight === 'number' && weight > 0 ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600")} onClick={handleAddToCart} disabled={typeof weight !== 'number' || weight <= 0}>
+          <Button 
+            className={cn(
+              "w-full h-12 rounded-lg text-white", 
+              isAddToCartEnabled() ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+            )} 
+            onClick={handleAddToCart} 
+            disabled={!isAddToCartEnabled()}
+          >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>
