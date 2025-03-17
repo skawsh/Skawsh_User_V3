@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
@@ -12,7 +11,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   
-  // Check if current path is a studio profile page
   const isStudioProfilePage = location.pathname.includes('/studio/');
   
   useEffect(() => {
@@ -20,10 +18,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       const currentScrollY = window.scrollY;
       
       if (currentScrollY < lastScrollY) {
-        // Scrolling up
         setIsVisible(true);
       } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down and not at the top
         setIsVisible(false);
       }
       
@@ -42,8 +38,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col pb-16 overflow-hidden bg-primary-50">
-      <main className="flex-1 page-transition-enter bg-white">
+    <div className="min-h-screen flex flex-col pb-16 overflow-hidden bg-primary-50 no-scrollbar">
+      <main className="flex-1 page-transition-enter bg-white no-scrollbar">
         {children}
       </main>
       
