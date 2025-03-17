@@ -24,7 +24,8 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
-  isExpress?: boolean; // Add this prop
+  isExpress?: boolean; // Define this prop
+  studioId?: string; // Add studioId prop
 }
 
 const DEFAULT_CLOTHING_ITEMS = [
@@ -60,7 +61,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   onClose,
   onAddToCart,
   initialWeight,
-  isExpress = false // Set default value to false
+  isExpress = false, // Set default value to false
+  studioId = ''
 }) => {
   const [weight, setWeight] = useState<number | string>(initialWeight || 1);
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
@@ -127,7 +129,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         serviceName: service.name,
         weight: numWeight, 
         price: totalPrice(),
-        items: clothingItems.filter(item => item.quantity > 0)
+        items: clothingItems.filter(item => item.quantity > 0),
+        isExpress: isExpress, // Include the express flag in cart items
+        studioId: studioId // Include the studioId in cart items
       };
       onAddToCart(orderDetails);
       onClose();
@@ -144,7 +148,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
         <div className="flex items-center justify-between p-4 border-b">
-          <DialogTitle className="text-lg font-semibold">{service.name}</DialogTitle>
+          <DialogTitle className="text-lg font-semibold flex items-center gap-2">
+            {service.name}
+            {isExpress && (
+              <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">
+                Express
+              </span>
+            )}
+          </DialogTitle>
           <DialogClose className="rounded-full h-6 w-6 flex items-center justify-center">
             <X size={18} />
           </DialogClose>

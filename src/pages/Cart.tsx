@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
   Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, 
-  MapPin, Clock, Minus, Plus, Edit, Tag, Package 
+  MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2 
 } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
@@ -17,6 +18,20 @@ const formatIndianRupee = (amount: number): string => {
   return `₹${amount}`;
 };
 
+interface CartItem {
+  serviceId: string;
+  serviceName: string;
+  studioId: string;
+  price: number;
+  quantity?: number;
+  weight?: number;
+  items?: {
+    name: string;
+    quantity: number;
+  }[];
+  isExpress?: boolean;
+}
+
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,7 +44,7 @@ const Cart: React.FC = () => {
   const studioId = location.state?.studioId || null;
   
   // Get cart items from localStorage (this would come from a context in a real app)
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   // Fetch cart items when component mounts
   useEffect(() => {
@@ -39,7 +54,7 @@ const Cart: React.FC = () => {
         const parsedItems = JSON.parse(storedCartItems);
         // Filter by studioId if needed
         const filteredItems = studioId ? 
-          parsedItems.filter((item: any) => !studioId || item.studioId === studioId) : 
+          parsedItems.filter((item: CartItem) => !studioId || item.studioId === studioId) : 
           parsedItems;
         setCartItems(filteredItems);
         console.log('Cart items loaded:', filteredItems); // Debug log
@@ -70,6 +85,17 @@ const Cart: React.FC = () => {
       price: 49
     }
   ];
+
+  // Group cart items by service type for better organization
+  const groupedCartItems = cartItems.reduce((acc: {[key: string]: CartItem[]}, item) => {
+    // Create a service category key based on the service name's first word
+    const serviceCategory = item.serviceName.split(' ')[0].toLowerCase();
+    if (!acc[serviceCategory]) {
+      acc[serviceCategory] = [];
+    }
+    acc[serviceCategory].push(item);
+    return acc;
+  }, {});
 
   const subtotal = cartItems.reduce((total, item) => {
     const itemPrice = item.price || 0;
@@ -122,6 +148,7 @@ const Cart: React.FC = () => {
         serviceName: serviceToAdd.name,
         quantity: 1,
         price: serviceToAdd.price,
+        studioId: studioId || '',
         items: []
       };
       
@@ -145,6 +172,99 @@ const Cart: React.FC = () => {
       // Logic to apply coupon would go here
     }
   };
+
+  // Helper function to render item details with sub-services
+  const renderCartItemWithDetails = (item: CartItem) => {
+    return (
+      <div key={item.serviceId} className="mb-4 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
+        <div className="flex justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{item.serviceName}</span>
+            {item.isExpress && (
+              <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">
+                Express
+              </span>
+            )}
+          </div>
+          <div className="font-medium text-blue-600">
+            {formatIndianRupee(item.price)}
+          </div>
+        </div>
+        
+        <div className="text-sm text-gray-600 mb-2">
+          {item.weight ? 
+            `${item.weight} KG` : 
+            `Quantity: ${item.quantity || 1}`}
+        </div>
+        
+        {item.items && item.items.length > 0 && (
+          <div className="bg-gray-50 p-2 rounded-md mb-3">
+            <div className="text-xs font-medium text-gray-700 mb-1">Selected Items:</div>
+            <div className="space-y-1">
+              {item.items.map((subItem, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                  <CheckCircle2 size={12} className="text-green-500" />
+                  <span>{subItem.name}</span>
+                  <span className="text-gray-400">×</span>
+                  <span>{subItem.quantity}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="flex items-center gap-2 mb-3">
+          <Clock size={14} className="text-gray-500" />
+          <span className="text-xs text-gray-600">
+            {item.isExpress ? '4-6h Express Delivery' : '36h Standard Delivery'}
+          </span>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => {
+                if (item.weight) {
+                  const newWeight = Math.max(0.1, (item.weight || 1) - 0.1);
+                  handleQuantityChange(item.serviceId, newWeight);
+                } else {
+                  handleQuantityChange(item.serviceId, Math.max(1, (item.quantity || 1) - 1));
+                }
+              }}
+              className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+              aria-label="Decrease quantity"
+            >
+              <Minus size={16} />
+            </button>
+            <span className="w-6 text-center">
+              {item.weight ? item.weight : (item.quantity || 1)}
+            </span>
+            <button 
+              onClick={() => {
+                if (item.weight) {
+                  const newWeight = (item.weight || 1) + 0.1;
+                  handleQuantityChange(item.serviceId, newWeight);
+                } else {
+                  handleQuantityChange(item.serviceId, (item.quantity || 1) + 1);
+                }
+              }}
+              className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+              aria-label="Increase quantity"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+          <button
+            onClick={() => handleRemoveItem(item.serviceId)}
+            className="text-red-500"
+            aria-label="Remove item"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  };
   
   return (
     <Layout>
@@ -165,6 +285,7 @@ const Cart: React.FC = () => {
             <button 
               onClick={() => handleRemoveItem('all')} 
               className="text-red-500"
+              aria-label="Clear cart"
             >
               <Trash2 size={20} />
             </button>
@@ -203,80 +324,23 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            {/* Review Order */}
+            {/* Review Order - Grouped by service categories */}
             <div className="bg-white p-4 mb-2">
               <h2 className="font-medium text-lg mb-2">Review your order</h2>
               <p className="text-xs text-gray-500 mb-4">
                 Price may vary depending on the weight and clothing category during pickup of your order
               </p>
 
-              {cartItems.map((item) => (
-                <div key={item.serviceId} className="mb-4">
-                  <div className="flex justify-between mb-1">
-                    <div className="font-medium">{item.serviceName}</div>
-                    <div className="font-medium text-blue-600">
-                      {formatIndianRupee(item.price)}
-                    </div>
-                  </div>
-                  
-                  <div className="text-sm text-gray-600 mb-2">
-                    {item.weight ? 
-                      `KG × ${item.weight}` : 
-                      `Quantity: ${item.quantity || 1}`}
-                  </div>
-                  
-                  {item.items && item.items.length > 0 && (
-                    <div className="text-sm text-gray-600 mb-2">
-                      {item.items.map((detail: any, index: number) => (
-                        <p key={index}>• {detail.name} ({detail.quantity})</p>
-                      ))}
+              {Object.entries(groupedCartItems).map(([category, items]) => (
+                <div key={category} className="mb-4">
+                  {/* Category heading if we have multiple categories */}
+                  {Object.keys(groupedCartItems).length > 1 && (
+                    <div className="capitalize text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <div className="w-1 h-4 bg-blue-500 rounded-full"></div>
+                      {category} Services
                     </div>
                   )}
-                  
-                  <div className="flex items-center gap-2 mb-3">
-                    <Clock size={14} className="text-gray-500" />
-                    <span className="text-xs text-gray-600">36h Standard Delivery</span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => {
-                          if (item.weight) {
-                            const newWeight = Math.max(0.1, (item.weight || 1) - 0.1);
-                            handleQuantityChange(item.serviceId, newWeight);
-                          } else {
-                            handleQuantityChange(item.serviceId, Math.max(1, (item.quantity || 1) - 1));
-                          }
-                        }}
-                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <span className="w-6 text-center">
-                        {item.weight ? item.weight : (item.quantity || 1)}
-                      </span>
-                      <button 
-                        onClick={() => {
-                          if (item.weight) {
-                            const newWeight = (item.weight || 1) + 0.1;
-                            handleQuantityChange(item.serviceId, newWeight);
-                          } else {
-                            handleQuantityChange(item.serviceId, (item.quantity || 1) + 1);
-                          }
-                        }}
-                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => handleRemoveItem(item.serviceId)}
-                      className="text-red-500"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                  {items.map(renderCartItemWithDetails)}
                 </div>
               ))}
               
@@ -335,6 +399,7 @@ const Cart: React.FC = () => {
                     <button 
                       onClick={() => handleAddService(service.id)}
                       className="text-blue-600 text-lg font-bold"
+                      aria-label={`Add ${service.name}`}
                     >
                       +
                     </button>
