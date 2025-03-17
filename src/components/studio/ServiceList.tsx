@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X, Minus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -781,21 +780,3 @@ const ServiceList: React.FC<ServiceListProps> = ({
         <button 
           onClick={() => setPopoverOpen(true)} 
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
-        >
-          <Menu size={20} />
-        </button>
-      ) : null}
-
-      {selectedService && (
-        <ServiceOrderPopup 
-          service={selectedService}
-          onClose={handleCloseServicePopup}
-          onSubmit={handleAddToCart}
-          selectedTab={selectedTab}
-        />
-      )}
-    </div>
-  );
-};
-
-export default ServiceList;
