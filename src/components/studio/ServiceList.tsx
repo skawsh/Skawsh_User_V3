@@ -721,7 +721,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             ))}
                           </div>
                         </div>
-                      ))}\n
+                      ))}
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -780,3 +780,4 @@ const ServiceList: React.FC<ServiceListProps> = ({
         <button 
           onClick={() => setPopoverOpen(true)} 
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
+        >
