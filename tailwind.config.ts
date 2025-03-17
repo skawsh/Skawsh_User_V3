@@ -24,7 +24,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Proxima Nova', 'Arial', 'Helvetica', 'sans-serif'],
+        sans: ['Century', 'Century Gothic', 'Arial', 'Helvetica', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
