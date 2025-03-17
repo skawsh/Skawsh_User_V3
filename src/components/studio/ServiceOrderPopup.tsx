@@ -24,6 +24,7 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
+  isExpress?: boolean; // Add this new prop
 }
 
 const DEFAULT_CLOTHING_ITEMS = [
@@ -58,7 +59,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   isOpen,
   onClose,
   onAddToCart,
-  initialWeight
+  initialWeight,
+  isExpress = false // Set default value to false
 }) => {
   const [weight, setWeight] = useState<number | string>(initialWeight || 1);
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
@@ -105,11 +107,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  // Calculate price based on weight
+  // Calculate price based on weight and express status
   const totalPrice = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     if (isNaN(numWeight)) return 0;
-    return Math.round(service.price * numWeight * 100) / 100;
+    // Apply 1.5x price multiplier for express service
+    const basePrice = service.price * numWeight;
+    return Math.round((isExpress ? basePrice * 1.5 : basePrice) * 100) / 100;
   };
 
   const handleAddToCart = () => {

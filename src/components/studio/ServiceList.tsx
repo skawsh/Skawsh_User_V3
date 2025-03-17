@@ -788,6 +788,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       {selectedService && (
         <ServiceOrderPopup
           service={selectedService}
+          isOpen={selectedService !== null}
           onClose={handleCloseServicePopup}
           onAddToCart={handleAddToCart}
           isExpress={selectedTab === "express"}
