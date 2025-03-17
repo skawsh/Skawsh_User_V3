@@ -16,15 +16,18 @@
 .animate-price-warning {
   background: linear-gradient(
     90deg,
-    rgba(120, 53, 15, 1) 0%,
-    rgba(180, 83, 9, 1) 20%,
-    rgba(146, 64, 14, 1) 40%,
-    rgba(120, 53, 15, 1) 60%,
-    rgba(120, 53, 15, 0.8) 100%
+    #ff00cc 0%,
+    #ff9900 15%,
+    #33cc33 30%,
+    #00ccff 45%,
+    #cc66ff 60%,
+    #ff3366 75%,
+    #ff00cc 100%
   );
   background-size: 200% auto;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
   animation: text-glow-travel 3s linear;
 }
