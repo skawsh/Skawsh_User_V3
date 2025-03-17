@@ -98,7 +98,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         },
         {
           id: 'dry-upper-3',
-8 name: 'Ladies Top',
+          name: 'Ladies Top',
           description: 'Specialized cleaning for tops',
           price: 155
         }
