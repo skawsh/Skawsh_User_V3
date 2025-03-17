@@ -68,15 +68,10 @@
   .no-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-    overflow-y: auto;
-    overflow-x: auto;
-    scroll-behavior: smooth;
   }
   
   .no-scrollbar::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
-    width: 0;
-    height: 0;
   }
 }
 
@@ -90,11 +85,6 @@
   
   /* Apply no-scrollbar to common scrollable elements */
   .scrollable-content {
-    @apply no-scrollbar;
-  }
-  
-  /* Target all elements that might scroll */
-  div, main, section, article, aside, nav, header, footer {
     @apply no-scrollbar;
   }
 }

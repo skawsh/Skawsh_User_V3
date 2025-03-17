@@ -16,9 +16,7 @@ const ScrollArea = React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.
       className="h-full w-full rounded-[inherit] no-scrollbar" 
       style={{
         overscrollBehavior: 'contain',
-        touchAction: 'pan-y',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
+        touchAction: 'pan-y'
       }}
     >
       {children}
