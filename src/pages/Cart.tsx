@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -26,7 +25,6 @@ const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
 };
 
-// Format decimals to show only one digit after decimal point
 const formatDecimal = (value: number): number => {
   return Math.round(value * 10) / 10;
 };
@@ -646,15 +644,20 @@ const Cart: React.FC = () => {
                   </div>
                   
                   <ScrollArea className="w-full">
-                    <Carousel opts={{ align: "start" }}>
-                      <CarouselContent className="-ml-2">
-                        {categoryServices.map((service, index) => (
-                          <CarouselItem key={service.id} className="pl-2 basis-1/4 min-w-[90px] max-w-[90px]">
-                            <ServiceCard service={service} index={index} />
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                    </Carousel>
+                    <div className="flex gap-4 pb-2 overflow-x-auto">
+                      {categoryServices.map((service, index) => (
+                        <div key={service.id} className="flex-shrink-0">
+                          <ServiceCard
+                            icon={service.icon || <ShoppingBag size={24} />}
+                            title={service.title}
+                            image={service.image}
+                            index={index}
+                            showTitle={false}
+                            onClick={() => handleAddService(service)}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </ScrollArea>
                 </div>
               ))}
