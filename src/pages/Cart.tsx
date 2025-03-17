@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -146,9 +147,15 @@ const Cart: React.FC = () => {
   const total = subtotal + deliveryFee;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    // Don't allow zero or negative values
+    if (newQuantity <= 0) {
+      handleRemoveItem(itemId);
+      return;
+    }
+    
     const updatedItems = cartItems.map(item => {
       if (item.serviceId === itemId) {
-        return { ...item, quantity: newQuantity };
+        return { ...item, quantity: newQuantity, weight: item.weight ? newQuantity : undefined };
       }
       return item;
     });
@@ -218,6 +225,7 @@ const Cart: React.FC = () => {
     const unitLabel = item.weight ? 'KG' : 
                       item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
     const totalPrice = item.price * quantity;
+    const isKgBased = !!item.weight;
     
     return (
       <div key={item.serviceId} className="mb-4 p-3 bg-white rounded-lg border border-gray-100 shadow-sm">
@@ -270,11 +278,14 @@ const Cart: React.FC = () => {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => {
-                if (item.weight) {
-                  const newWeight = Math.max(0.1, (item.weight || 1) - 0.1);
-                  handleQuantityChange(item.serviceId, newWeight);
+                const newValue = isKgBased ? 
+                  Math.max(0, (quantity) - 0.1) : 
+                  Math.max(0, (quantity) - 1);
+                
+                if (newValue === 0) {
+                  handleRemoveItem(item.serviceId);
                 } else {
-                  handleQuantityChange(item.serviceId, Math.max(1, (item.quantity || 1) - 1));
+                  handleQuantityChange(item.serviceId, newValue);
                 }
               }}
               className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
@@ -283,16 +294,13 @@ const Cart: React.FC = () => {
               <Minus size={16} />
             </button>
             <span className="w-6 text-center">
-              {item.weight ? item.weight : (item.quantity || 1)}
+              {quantity}
             </span>
             <button 
               onClick={() => {
-                if (item.weight) {
-                  const newWeight = (item.weight || 1) + 0.1;
-                  handleQuantityChange(item.serviceId, newWeight);
-                } else {
-                  handleQuantityChange(item.serviceId, (item.quantity || 1) + 1);
-                }
+                const increment = isKgBased ? 0.1 : 1;
+                const newValue = quantity + increment;
+                handleQuantityChange(item.serviceId, newValue);
               }}
               className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
               aria-label="Increase quantity"
