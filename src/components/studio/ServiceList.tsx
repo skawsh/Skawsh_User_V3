@@ -721,7 +721,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                             ))}
                           </div>
                         </div>
-                      ))}
+                      ))}\n
                     </div>
                   ) : (
                     <div className="space-y-4">
