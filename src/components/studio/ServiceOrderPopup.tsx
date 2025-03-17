@@ -63,6 +63,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
+  const [unit, setUnit] = useState<string>('kg');
 
   useEffect(() => {
     if (isOpen) {
@@ -70,8 +71,15 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
+      
+      // Set the unit based on the service unit
+      if (service.unit && service.unit.includes('per sft')) {
+        setUnit('sft');
+      } else {
+        setUnit('kg');
+      }
     }
-  }, [isOpen, initialWeight]);
+  }, [isOpen, initialWeight, service.unit]);
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -137,7 +145,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         <div className="p-4 space-y-4">
           <div>
             <label htmlFor="weight" className="text-sm font-medium block mb-2">
-              Weight (KG)
+              {unit === 'sft' ? 'Area (SFT)' : 'Weight (KG)'}
             </label>
             <div className="flex items-center gap-2">
               <div className="flex-grow relative">
@@ -148,7 +156,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                   value={weight} 
                   onChange={handleWeightChange} 
                   className="pl-9" 
-                  placeholder="Enter weight"
+                  placeholder={unit === 'sft' ? "Enter area" : "Enter weight"}
                 />
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
@@ -158,43 +166,51 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             </div>
           </div>
           
-          <div>
-            <label className="text-sm font-medium block mb-2">Select Clothing Items (Optional)</label>
-            
-            <div className="flex items-center justify-between mb-3">
-              {isAddingItem ? <div className="flex w-full items-center gap-2">
-                  <Input value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Item name" className="flex-grow" />
-                  <Button onClick={handleAddItem} size="sm" className="whitespace-nowrap">
-                    Add
-                  </Button>
-                  <Button onClick={() => setIsAddingItem(false)} size="sm" variant="ghost">
-                    Cancel
-                  </Button>
-                </div> : <>
-                  <Button onClick={() => setIsAddingItem(true)} variant="link" size="sm" className="text-blue-600 p-0 h-auto">Add clothing Item</Button>
-                  <Button onClick={() => setIsAddingItem(true)} size="icon" variant="ghost" className="rounded-full h-8 w-8">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </>}
-            </div>
-            
-            <div className="space-y-4 max-h-[240px] overflow-y-auto">
-              {clothingItems.map((item, index) => <div key={index} className="flex items-center justify-between">
-                  <span className="text-gray-700">{item.name}</span>
-                  <div className="flex items-center gap-3">
-                    <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, -1)} disabled={item.quantity === 0}>
-                      <Minus className="h-3 w-3" />
+          {unit === 'kg' && (
+            <div>
+              <label className="text-sm font-medium block mb-2">Select Clothing Items (Optional)</label>
+              
+              <div className="flex items-center justify-between mb-3">
+                {isAddingItem ? (
+                  <div className="flex w-full items-center gap-2">
+                    <Input value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Item name" className="flex-grow" />
+                    <Button onClick={handleAddItem} size="sm" className="whitespace-nowrap">
+                      Add
                     </Button>
-                    
-                    <span className="w-6 text-center">{item.quantity}</span>
-                    
-                    <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, 1)}>
-                      <Plus className="h-3 w-3" />
+                    <Button onClick={() => setIsAddingItem(false)} size="sm" variant="ghost">
+                      Cancel
                     </Button>
                   </div>
-                </div>)}
+                ) : (
+                  <>
+                    <Button onClick={() => setIsAddingItem(true)} variant="link" size="sm" className="text-blue-600 p-0 h-auto">Add clothing Item</Button>
+                    <Button onClick={() => setIsAddingItem(true)} size="icon" variant="ghost" className="rounded-full h-8 w-8">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+              </div>
+              
+              <div className="space-y-4 max-h-[240px] overflow-y-auto">
+                {clothingItems.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-gray-700">{item.name}</span>
+                    <div className="flex items-center gap-3">
+                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, -1)} disabled={item.quantity === 0}>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      
+                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, 1)}>
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         
         <div className="p-4 pt-0">

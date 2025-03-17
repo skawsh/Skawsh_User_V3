@@ -76,22 +76,32 @@ const StudioProfile: React.FC = () => {
     id: '1',
     name: 'Dry Cleaning',
     description: 'Professional cleaning for delicate fabrics and special care items.',
-    price: 8.99
+    price: 8.99,
+    unit: 'per piece'
   }, {
     id: '2',
     name: 'Wash & Fold',
     description: 'Complete laundry service charged by weight.',
-    price: 2.49
+    price: 2.49,
+    unit: 'per kg'
   }, {
     id: '3',
     name: 'Ironing',
     description: 'Professional pressing and wrinkle removal.',
-    price: 4.99
+    price: 4.99,
+    unit: 'per piece'
   }, {
     id: '4',
     name: 'Express Service',
     description: 'Same-day service when ordered before 10 AM.',
-    price: 12.99
+    price: 12.99,
+    unit: 'per kg'
+  }, {
+    id: '5',
+    name: 'Carpet Cleaning',
+    description: 'Deep cleaning for carpets and rugs.',
+    price: 3.49,
+    unit: 'per sft'
   }];
   
   return <Layout>

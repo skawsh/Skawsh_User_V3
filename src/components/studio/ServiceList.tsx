@@ -98,7 +98,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         },
         {
           id: 'dry-upper-3',
-          name: 'Ladies Top',
+8 name: 'Ladies Top',
           description: 'Specialized cleaning for tops',
           price: 155
         }
@@ -206,7 +206,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
   
   const handleOpenServicePopup = (service: Service) => {
-    setSelectedService(service);
+    if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+      setSelectedService(service);
+    } else {
+      handleAddToCart({
+        serviceId: service.id,
+        serviceName: service.name,
+        quantity: 1,
+        price: selectedTab === "express" ? service.price * 1.5 : service.price,
+        items: []
+      });
+    }
   };
   
   const handleCloseServicePopup = () => {
@@ -251,40 +261,76 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   const handleIncreaseWeight = (service: Service) => {
-    const currentWeight = getServiceWeight(service.id) || 0;
-    const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
-    
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      weight: newWeight,
-      price: service.price * newWeight,
-      items: []
-    });
+    if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+      const currentWeight = getServiceWeight(service.id) || 0;
+      const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
+      
+      handleAddToCart({
+        serviceId: service.id,
+        serviceName: service.name,
+        weight: newWeight,
+        price: service.price * newWeight,
+        items: []
+      });
+    } else {
+      const existingItem = cartItems.find(item => item.serviceId === service.id);
+      const quantity = existingItem ? (existingItem.quantity || 1) + 1 : 1;
+      
+      handleAddToCart({
+        serviceId: service.id,
+        serviceName: service.name,
+        quantity: quantity,
+        price: service.price * quantity,
+        items: []
+      });
+    }
   };
 
   const handleDecreaseWeight = (service: Service) => {
-    const currentWeight = getServiceWeight(service.id) || 0;
-    
-    if (currentWeight <= 1) {
-      setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
-      return;
+    if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+      const currentWeight = getServiceWeight(service.id) || 0;
+      
+      if (currentWeight <= 1) {
+        setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+        return;
+      }
+      
+      const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
+      handleAddToCart({
+        serviceId: service.id,
+        serviceName: service.name,
+        weight: newWeight,
+        price: service.price * newWeight,
+        items: []
+      });
+    } else {
+      const existingItem = cartItems.find(item => item.serviceId === service.id);
+      if (!existingItem) return;
+      
+      const quantity = (existingItem.quantity || 1) - 1;
+      
+      if (quantity <= 0) {
+        setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+        return;
+      }
+      
+      handleAddToCart({
+        serviceId: service.id,
+        serviceName: service.name,
+        quantity: quantity,
+        price: service.price * quantity,
+        items: []
+      });
     }
-    
-    const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      weight: newWeight,
-      price: service.price * newWeight,
-      items: []
-    });
   };
 
   const handleCardClick = (service: Service) => {
-    const existingWeight = getServiceWeight(service.id);
-    if (existingWeight !== null) {
-      setSelectedService(service);
+    const existingItem = cartItems.find(item => item.serviceId === service.id);
+    
+    if (existingItem) {
+      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+        setSelectedService(service);
+      }
     } else {
       handleOpenServicePopup(service);
     }
