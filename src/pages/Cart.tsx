@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -226,7 +225,7 @@ const Cart: React.FC = () => {
               </span>
             )}
           </div>
-          <div className="font-medium text-blue-600">
+          <div className="font-medium text-blue-600 mt-0.5">
             {formatIndianRupee(item.price)}
           </div>
         </div>
