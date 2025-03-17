@@ -781,3 +781,20 @@ const ServiceList: React.FC<ServiceListProps> = ({
           onClick={() => setPopoverOpen(true)} 
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
         >
+          <Menu size={24} />
+        </button>
+      ) : null}
+
+      {selectedService && (
+        <ServiceOrderPopup
+          service={selectedService}
+          onClose={handleCloseServicePopup}
+          onAddToCart={handleAddToCart}
+          isExpress={selectedTab === "express"}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ServiceList;
