@@ -131,15 +131,13 @@ const Cart: React.FC = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isOrderSummaryOpen) {
-      timer = setTimeout(() => {
-        setShowGlowingText(true);
-        
-        const resetTimer = setTimeout(() => {
-          setShowGlowingText(false);
-        }, 3000);
-        
-        return () => clearTimeout(resetTimer);
-      }, 2000);
+      setShowGlowingText(true);
+      
+      const resetTimer = setTimeout(() => {
+        setShowGlowingText(false);
+      }, 3000);
+      
+      return () => clearTimeout(resetTimer);
     } else {
       setShowGlowingText(false);
     }
@@ -494,6 +492,23 @@ const Cart: React.FC = () => {
     }
   };
 
+  const createAnimatedText = (text: string) => {
+    const words = text.split(' ');
+    return words.map((word, index) => (
+      <span 
+        key={index}
+        className={showGlowingText ? "animate-price-warning" : ""}
+        style={{ 
+          animationDelay: `${index * 0.1}s`,
+          display: 'inline-block',
+          marginRight: '4px'
+        }}
+      >
+        {word}
+      </span>
+    ));
+  };
+
   return (
     <Layout>
       <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
@@ -605,11 +620,8 @@ const Cart: React.FC = () => {
                     <div className="bg-amber-50 rounded-md p-3 mb-3">
                       <div className="flex items-start gap-2">
                         <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
-                        <p className={cn(
-                          "text-xs transition-all duration-500",
-                          showGlowingText ? "animate-price-warning" : "text-amber-700"
-                        )}>
-                          The price of your order may vary based on the weight and clothing items at the time of pickup
+                        <p className="text-xs text-amber-700">
+                          {createAnimatedText("The price of your order may vary based on the weight and clothing items at the time of pickup")}
                         </p>
                       </div>
                     </div>
@@ -728,3 +740,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+
