@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { 
@@ -21,6 +20,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ServiceCard from '../components/home/ServiceCard';
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -458,7 +458,7 @@ const Cart: React.FC = () => {
     }
   };
 
-  const ServiceCard = ({ service, index }: { service: any, index: number }) => {
+  const ServiceCardComponent = ({ service, index }: { service: any, index: number }) => {
     const isInCart = cartItems.some(item => item.serviceId === service.id);
     
     return (
@@ -494,6 +494,40 @@ const Cart: React.FC = () => {
     acc[category].push(service);
     return acc;
   }, {});
+
+  // Updated servicesByCategory to be a simple array for the redesigned UI
+  const recommendedServices = [
+    {
+      id: 'wash-fold-1',
+      title: 'Wash & Fold',
+      image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 99,
+    },
+    {
+      id: 'wash-iron-1',
+      title: 'Wash & Iron',
+      image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 129,
+    },
+    {
+      id: 'iron-only-1',
+      title: 'Iron Only',
+      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      price: 79,
+    },
+    {
+      id: 'shoe-laundry-1',
+      title: 'Sneakers',
+      icon: <Footprints size={24} />,
+      price: 129,
+    },
+    {
+      id: 'shoe-laundry-2',
+      title: 'Formal Shoes',
+      icon: <Footprints size={24} />,
+      price: 149,
+    }
+  ];
 
   return (
     <Layout>
@@ -635,29 +669,28 @@ const Cart: React.FC = () => {
               </div>
             </div>
             
+            {/* Redesigned "You might need this" section */}
             <div className="bg-white p-4 mb-2">
               <h3 className="font-medium mb-4">You might need this</h3>
               
-              {Object.entries(servicesByCategory).map(([category, categoryServices]) => (
-                <div key={category} className="mb-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    {getCategoryIcon(category)}
-                    <h4 className="text-sm font-medium">{category}</h4>
-                  </div>
-                  
-                  <ScrollArea className="w-full">
-                    <Carousel opts={{ align: "start" }}>
-                      <CarouselContent className="-ml-2">
-                        {categoryServices.map((service, index) => (
-                          <CarouselItem key={service.id} className="pl-2 basis-1/4 min-w-[90px] max-w-[90px]">
-                            <ServiceCard service={service} index={index} />
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                    </Carousel>
-                  </ScrollArea>
+              <div className="border border-gray-200 rounded-md p-3 mb-2">
+                <div className="flex justify-between overflow-x-auto pb-2 no-scrollbar">
+                  {recommendedServices.map((service, index) => (
+                    <div key={service.id} className="flex flex-col items-center min-w-[80px]">
+                      <ServiceCard 
+                        icon={service.icon}
+                        title={service.title}
+                        image={service.image}
+                        index={index}
+                        showTitle={true}
+                        showPrice={true}
+                        price={service.price}
+                        onClick={() => handleAddService(service)}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
             
             <div className="px-4 mt-4">
