@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Heart, Star, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -38,11 +37,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
           }} />
           </AspectRatio>
           
-          {promoted && (
-            <Badge variant="default" className="absolute top-2 right-2 bg-blue-500 hover:bg-blue-600">
-              Promoted
-            </Badge>
-          )}
+          {promoted}
         </div>
         
         {/* Content section - bottom */}

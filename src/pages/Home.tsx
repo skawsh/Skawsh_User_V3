@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -206,7 +205,7 @@ const Home: React.FC = () => {
         zIndex: 0,
         marginTop: '15px'
       }} className="mb-10 my-[14px] -mx-4 px-[5px]">
-        <h2 className="section-title mb-4 font-bold text-lg px-4">Explore Studios</h2>
+        <h2 className="section-title mb-4 font-bold text-lg px-0">Explore Studios</h2>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-4">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />
