@@ -24,6 +24,7 @@ interface CartItem {
   serviceName: string;
   weight: number;
   price: number;
+  quantity?: number;
   items: {
     name: string;
     quantity: number;
@@ -238,6 +239,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           serviceName: orderDetails.serviceName,
           weight: roundedWeight,
           price: Math.round(orderDetails.price * 100) / 100,
+          quantity: orderDetails.quantity,
           items: orderDetails.items
         };
         return newItems;
@@ -247,6 +249,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
           serviceName: orderDetails.serviceName,
           weight: roundedWeight,
           price: Math.round(orderDetails.price * 100) / 100,
+          quantity: orderDetails.quantity,
           items: orderDetails.items
         }];
       }
@@ -274,7 +277,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       });
     } else {
       const existingItem = cartItems.find(item => item.serviceId === service.id);
-      const quantity = existingItem ? (existingItem.quantity || 1) + 1 : 1;
+      const quantity = existingItem && existingItem.quantity ? existingItem.quantity + 1 : 1;
       
       handleAddToCart({
         serviceId: service.id,
@@ -307,7 +310,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       const existingItem = cartItems.find(item => item.serviceId === service.id);
       if (!existingItem) return;
       
-      const quantity = (existingItem.quantity || 1) - 1;
+      const quantity = existingItem.quantity ? existingItem.quantity - 1 : 0;
       
       if (quantity <= 0) {
         setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
