@@ -20,6 +20,7 @@ import {
   CarouselPrevious 
 } from "@/components/ui/carousel";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import ServiceCard from '../components/home/ServiceCard';
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -456,34 +457,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  const ServiceCard = ({ service, index }: { service: any, index: number }) => {
-    const isInCart = cartItems.some(item => item.serviceId === service.id);
-    
-    return (
-      <div className="flex flex-col items-center text-center animate-fade-in" style={{
-        animationDelay: `${150 + index * 75}ms`
-      }}>
-        <div className="relative">
-          <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
-            {service.image ? 
-              <img src={service.image} alt={service.title} className="w-full h-full object-cover rounded-full" /> : 
-              <div className="text-primary-500">{service.icon}</div>
-            }
-          </div>
-          <button 
-            onClick={() => handleAddService(service)}
-            className="absolute -right-1 -bottom-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-blue-700"
-            aria-label={`Add ${service.title}`}
-          >
-            <PlusCircle size={14} />
-          </button>
-        </div>
-        <h3 className="text-xs font-bold mt-1 text-gray-800">{service.title}</h3>
-        <span className="text-xs text-blue-600 font-medium">{formatIndianRupee(service.price)}</span>
-      </div>
-    );
-  };
-
   const servicesByCategory = services.reduce((acc: Record<string, any[]>, service) => {
     const category = service.serviceCategory || 'Other Services';
     if (!acc[category]) {
@@ -650,8 +623,10 @@ const Cart: React.FC = () => {
                           <ServiceCard
                             icon={service.icon || <ShoppingBag size={24} />}
                             title={service.title}
+                            description={service.description}
                             image={service.image}
                             index={index}
+                            isSticky={false}
                             showTitle={false}
                             onClick={() => handleAddService(service)}
                           />
