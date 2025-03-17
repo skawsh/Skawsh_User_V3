@@ -188,7 +188,7 @@ const StudioProfile: React.FC = () => {
             className="fixed bottom-24 right-6 h-14 w-14 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once"
           >
             <div className="relative">
-              <ShoppingBag className="h-6 w-6" />
+              <ShoppingBag size={24} />
               <Badge 
                 variant="default" 
                 className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white" 
