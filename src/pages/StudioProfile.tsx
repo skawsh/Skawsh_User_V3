@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -19,7 +18,6 @@ const StudioProfile: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   
-  // Reset scroll position when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -36,7 +34,6 @@ const StudioProfile: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Navigate to home page when back button is clicked
   const handleBackClick = () => {
     navigate('/');
   };
@@ -156,7 +153,7 @@ const StudioProfile: React.FC = () => {
         />
         
         <div className="section-container relative">
-          <ServiceList services={services} />
+          <ServiceList services={services} isScrolled={isScrolled} />
         </div>
       </div>
     </Layout>;

@@ -47,10 +47,12 @@ interface SubCategory {
 
 interface ServiceListProps {
   services: Service[];
+  isScrolled?: boolean;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
-  services
+  services,
+  isScrolled = false
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -485,6 +487,13 @@ const ServiceList: React.FC<ServiceListProps> = ({
                     Express Wash
                   </TabsTrigger>
                 </TabsList>
+                
+                <div className={cn("flex items-center gap-2 mt-2 text-sm transition-colors duration-300", 
+                  selectedTab === "standard" ? "text-blue-600" : "text-orange-500"
+                )}>
+                  <Clock size={16} />
+                  <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
+                </div>
               </div>
             </div>
           )}
