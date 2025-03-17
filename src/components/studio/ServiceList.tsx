@@ -216,6 +216,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const handleAddToCart = (orderDetails: any) => {
     console.log('Added to cart:', orderDetails);
     
+    const roundedWeight = Math.round(orderDetails.weight * 10) / 10;
+    
     setCartItems(prev => {
       const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
       
@@ -223,16 +225,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
         const newItems = [...prev];
         newItems[existingItemIndex] = {
           serviceId: orderDetails.serviceId,
-          weight: orderDetails.weight,
-          price: orderDetails.price,
+          serviceName: orderDetails.serviceName,
+          weight: roundedWeight,
+          price: Math.round(orderDetails.price * 100) / 100,
           items: orderDetails.items
         };
         return newItems;
       } else {
         return [...prev, {
           serviceId: orderDetails.serviceId,
-          weight: orderDetails.weight,
-          price: orderDetails.price,
+          serviceName: orderDetails.serviceName,
+          weight: roundedWeight,
+          price: Math.round(orderDetails.price * 100) / 100,
           items: orderDetails.items
         }];
       }
@@ -248,7 +252,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   const handleIncreaseWeight = (service: Service) => {
     const currentWeight = getServiceWeight(service.id) || 0;
-    const newWeight = currentWeight + 0.1;
+    const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
     
     handleAddToCart({
       serviceId: service.id,
@@ -267,7 +271,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       return;
     }
     
-    const newWeight = currentWeight - 0.1;
+    const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
     handleAddToCart({
       serviceId: service.id,
       serviceName: service.name,
@@ -463,7 +467,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                         selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500",
                                         "text-white"
                                       )}>
-                                        {getServiceWeight(service.id)}
+                                        {(getServiceWeight(service.id) || 0).toFixed(1)}
                                       </span>
                                       <Button 
                                         variant="default" 
@@ -570,7 +574,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                   selectedTab === "standard" ? "bg-blue-600" : "bg-orange-500",
                                   "text-white"
                                 )}>
-                                  {getServiceWeight(service.id)}
+                                  {(getServiceWeight(service.id) || 0).toFixed(1)}
                                 </span>
                                 <Button 
                                   variant="default" 
@@ -692,7 +696,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                         "px-2 py-1 text-sm font-medium",
                                         "bg-orange-500 text-white"
                                       )}>
-                                        {getServiceWeight(service.id)}
+                                        {(getServiceWeight(service.id) || 0).toFixed(1)}
                                       </span>
                                       <Button 
                                         variant="default" 
@@ -792,7 +796,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                                   "px-2 py-1 text-sm font-medium",
                                   "bg-orange-500 text-white"
                                 )}>
-                                  {getServiceWeight(service.id)}
+                                  {(getServiceWeight(service.id) || 0).toFixed(1)}
                                 </span>
                                 <Button 
                                   variant="default" 

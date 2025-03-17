@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     } else {
       const value = parseFloat(inputValue);
       if (!isNaN(value) && value > 0) {
-        setWeight(value);
+        // Round to 1 decimal place for display purposes
+        const roundedValue = Math.round(value * 10) / 10;
+        setWeight(roundedValue);
       }
     }
   };
@@ -102,14 +105,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  const totalPrice = typeof weight === 'number' ? service.price * weight : 0;
+  const totalPrice = typeof weight === 'number' ? Math.round(service.price * weight * 100) / 100 : 0;
 
   const handleAddToCart = () => {
     if (typeof weight === 'number' && weight > 0) {
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
-        weight,
+        weight: Math.round(weight * 10) / 10, // Round to 1 decimal place
         price: totalPrice,
         items: clothingItems.filter(item => item.quantity > 0)
       };
@@ -117,6 +120,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       onClose();
     }
   };
+
+  const formattedWeight = typeof weight === 'number' ? weight.toFixed(1) : weight;
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
@@ -133,11 +138,19 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             <div className="flex items-center gap-2">
               <div className="flex-grow relative">
                 <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input id="weight" type="number" min="0.1" step="0.1" value={weight} onChange={handleWeightChange} className="pl-9" />
+                <Input 
+                  id="weight" 
+                  type="number" 
+                  min="0.1" 
+                  step="0.1" 
+                  value={formattedWeight} 
+                  onChange={handleWeightChange} 
+                  className="pl-9" 
+                />
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">₹{totalPrice}</div>
+                <div className="font-semibold text-blue-600">₹{totalPrice.toFixed(2)}</div>
               </div>
             </div>
           </div>
