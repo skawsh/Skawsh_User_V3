@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ServiceOrderPopup from './ServiceOrderPopup';
-import { toast } from 'sonner';
 
 interface Service {
   id: string;
@@ -229,8 +228,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
   
   const handleAddToCart = (orderDetails: any) => {
-    console.log('Added to cart:', orderDetails);
-    
     const roundedWeight = orderDetails.weight ? Math.round(orderDetails.weight * 10) / 10 : 0;
     
     setCartItems(prev => {
@@ -258,8 +255,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         }];
       }
     });
-    
-    toast.success(`Added ${orderDetails.serviceName} to your cart!`);
   };
 
   useEffect(() => {
@@ -845,4 +840,3 @@ const ServiceList: React.FC<ServiceListProps> = ({
 };
 
 export default ServiceList;
-
