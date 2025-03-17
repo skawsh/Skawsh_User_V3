@@ -1,0 +1,13 @@
+
+@keyframes price-warning-glow {
+  0% { background-color: rgba(254, 243, 199, 0.7); color: #b45309; }
+  20% { background-color: rgba(254, 240, 138, 0.8); color: #92400e; }
+  40% { background-color: rgba(253, 224, 71, 0.75); color: #78350f; }
+  60% { background-color: rgba(250, 204, 21, 0.7); color: #b45309; }
+  80% { background-color: rgba(254, 240, 138, 0.8); color: #92400e; }
+  100% { background-color: rgba(254, 243, 199, 0.7); color: #b45309; }
+}
+
+.animate-price-warning {
+  animation: price-warning-glow 3s ease-in-out;
+}

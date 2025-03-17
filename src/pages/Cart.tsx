@@ -65,6 +65,7 @@ const Cart: React.FC = () => {
   const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
+  const [showGlowingText, setShowGlowingText] = useState(false);
 
   const studioId = location.state?.studioId || null;
   
@@ -126,6 +127,25 @@ const Cart: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isOrderSummaryOpen) {
+      timer = setTimeout(() => {
+        setShowGlowingText(true);
+        
+        const resetTimer = setTimeout(() => {
+          setShowGlowingText(false);
+        }, 3000);
+        
+        return () => clearTimeout(resetTimer);
+      }, 2000);
+    } else {
+      setShowGlowingText(false);
+    }
+    
+    return () => clearTimeout(timer);
+  }, [isOrderSummaryOpen]);
 
   const services = [
     {
@@ -558,7 +578,12 @@ const Cart: React.FC = () => {
                 <Collapsible
                   className="w-full border border-gray-200 rounded-lg overflow-hidden"
                   open={isOrderSummaryOpen}
-                  onOpenChange={setIsOrderSummaryOpen}
+                  onOpenChange={(open) => {
+                    setIsOrderSummaryOpen(open);
+                    if (!open) {
+                      setShowGlowingText(false);
+                    }
+                  }}
                 >
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white">
                     <div className="flex items-center gap-3">
@@ -577,6 +602,15 @@ const Cart: React.FC = () => {
                     />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 bg-gray-50">
+                    <div className={cn(
+                      "text-xs text-amber-700 bg-amber-50 rounded-md p-3 mb-3 transition-all duration-500",
+                      showGlowingText ? "animate-price-warning" : "opacity-90"
+                    )}>
+                      <div className="flex items-start gap-2">
+                        <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+                        <p>The price of your order may vary based on the weight and clothing items at the time of pickup</p>
+                      </div>
+                    </div>
                     <div className="space-y-2">
                       <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Subtotal</span>
