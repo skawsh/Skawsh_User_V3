@@ -63,6 +63,14 @@
     @apply scroll-smooth overflow-x-hidden;
     -webkit-tap-highlight-color: transparent;
   }
+  
+  h1 {
+    @apply font-bold text-gray-900;
+  }
+  
+  h2 {
+    @apply font-bold text-gray-800;
+  }
 }
 
 /* Custom utilities */
