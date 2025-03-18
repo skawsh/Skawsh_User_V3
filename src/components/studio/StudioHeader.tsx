@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +25,8 @@ interface LocationOption {
   time: string;
   distance: string;
   isCurrent?: boolean;
+  isNearest?: boolean;
+  isClosedForDelivery?: boolean;
 }
 
 const StudioHeader: React.FC<StudioHeaderProps> = ({
@@ -43,49 +44,44 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   
   // Mock location data
   const currentLocation: LocationOption = {
-    name: "Gachibowli",
-    area: "Toli Chowki",
-    rating: 4.3,
+    name: "Tolichowki",
+    area: "Hyderabad",
+    rating: 4.1,
     time: "",
-    distance: "1.2 km",
-    isCurrent: true
+    distance: "4.1 km",
+    isCurrent: true,
+    isNearest: true
   };
   
   const otherLocations: LocationOption[] = [
     {
-      name: "R5 Chambers",
-      area: "Mehdipatnam",
+      name: "Mehdipatnam",
+      area: "Hyderabad",
       rating: 4.2,
       time: "",
-      distance: "8.1 km"
+      distance: "8.0 km"
     },
     {
-      name: "M Cube Mall",
-      area: "Attapur",
+      name: "Attapur",
+      area: "Hyderabad",
       rating: 4.1,
       time: "",
-      distance: "9.3 km"
+      distance: "9.7 km"
     },
     {
-      name: "Khairatabad",
-      area: "Khairatabad",
-      rating: 4.1,
+      name: "Panjagutta",
+      area: "Hyderabad",
+      rating: 3.8,
       time: "",
-      distance: "10.4 km"
+      distance: "10.5 km"
     },
     {
-      name: "Chandanagar Circle No 21",
-      area: "Miyapur",
-      rating: 4.1,
+      name: "Narsingi",
+      area: "Hyderabad",
+      rating: 4.0,
       time: "",
-      distance: "10.7 km"
-    },
-    {
-      name: "Rangareddi",
-      area: "Pebel City",
-      rating: 4.1,
-      time: "",
-      distance: "13.7 km"
+      distance: "11.2 km",
+      isClosedForDelivery: true
     }
   ];
   
@@ -131,7 +127,6 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   };
 
   const handleLocationSelect = (location: LocationOption) => {
-    // This would typically update the current location in a real app
     console.log(`Selected location: ${location.name}, ${location.area}`);
     setDrawerOpen(false);
   };
@@ -199,67 +194,79 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                   </div>
                 </DrawerTrigger>
                 <DrawerContent className="px-0 max-h-[90vh] rounded-t-[20px]">
-                  <div className="px-4 pt-6 pb-2">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-bold">Current Outlet</h2>
-                      <DrawerClose className="rounded-full p-1 hover:bg-gray-100">
-                        <X size={20} />
+                  <div className="relative">
+                    <div className="absolute right-4 top-4 z-10">
+                      <DrawerClose className="rounded-full p-2 bg-black/70 text-white hover:bg-black/80">
+                        <X size={16} />
                       </DrawerClose>
                     </div>
                     
-                    <div 
-                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 hover:bg-blue-100 transition-colors"
-                      onClick={() => handleLocationSelect(currentLocation)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-semibold text-base text-blue-700">{currentLocation.name}, {currentLocation.area}</h3>
-                        <Check size={20} className="text-blue-500" />
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="bg-green-600 text-white rounded-full p-0.5">
-                          <Star size={14} className="fill-white text-white" />
-                        </div>
-                        <span className="text-sm text-blue-600">{currentLocation.rating} • {currentLocation.distance}</span>
-                      </div>
+                    <div className="bg-gradient-to-b from-amber-700/90 to-amber-800/90 pt-14 pb-8 px-6 text-center">
+                      <p className="text-white/80 text-sm mb-1">All delivery outlets for</p>
+                      <h2 className="text-2xl font-bold text-white">{name}</h2>
                     </div>
                     
-                    <div className="mb-2">
-                      <h2 className="text-lg font-semibold">Other Outlets Around You</h2>
-                      <Separator className="my-4" />
-                    </div>
-                    
-                    <ScrollArea 
-                      className="h-[40vh] pr-4 overflow-auto hover:scrollbar"
-                      style={{
-                        overscrollBehavior: 'contain',
-                        touchAction: 'pan-y',
-                      }}
-                    >
-                      <div className="space-y-3">
-                        {otherLocations.map((location, index) => (
-                          <div 
-                            key={index}
-                            className="bg-white rounded-lg p-4 border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
-                            onClick={() => handleLocationSelect(location)}
-                          >
-                            <div className="flex justify-between items-center">
-                              <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
-                              <ChevronRight size={20} className="text-gray-400" />
+                    <div className="px-4 py-6 bg-gray-50">
+                      <ScrollArea 
+                        className="max-h-[60vh] pr-2 space-y-3 overflow-auto"
+                        style={{
+                          overscrollBehavior: 'contain',
+                          touchAction: 'pan-y',
+                        }}
+                      >
+                        <div 
+                          className="relative mb-4"
+                          onClick={() => handleLocationSelect(currentLocation)}
+                        >
+                          {currentLocation.isNearest && (
+                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs flex items-center">
+                              <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
+                              Nearest available outlet
                             </div>
-                            <div className="flex items-center gap-2 mt-1">
-                              <div className="bg-green-600 text-white rounded-full p-0.5">
-                                <Star size={14} className="fill-white text-white" />
+                          )}
+                          <div className="bg-white border border-green-200 rounded-lg p-4 shadow-sm hover:border-green-300 transition-colors">
+                            <div className="flex justify-between items-center">
+                              <h3 className="font-semibold text-base">{currentLocation.name}, {currentLocation.area}</h3>
+                              <div className="bg-green-600 text-white rounded-sm px-1.5 py-0.5 text-xs font-medium">
+                                {currentLocation.rating}
                               </div>
-                              <span className="text-sm">{location.rating} • {location.distance}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="text-sm text-gray-600">Distance · {currentLocation.distance}</span>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                    
-                    <button className="w-full py-3 text-blue-500 font-medium text-center border-t border-t-gray-200 mt-4">
-                      SEE MORE OUTLETS
-                    </button>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {otherLocations.map((location, index) => (
+                            <div 
+                              key={index}
+                              className="relative"
+                              onClick={() => handleLocationSelect(location)}
+                            >
+                              <div className={`bg-white rounded-lg p-4 shadow-sm hover:bg-gray-50 transition-colors ${location.isClosedForDelivery ? 'border-gray-200' : 'border-gray-100'}`}>
+                                <div className="flex justify-between items-center">
+                                  <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
+                                  <div className={`text-white rounded-sm px-1.5 py-0.5 text-xs font-medium ${location.rating >= 4 ? 'bg-green-600' : 'bg-amber-500'}`}>
+                                    {location.rating}
+                                  </div>
+                                </div>
+                                <div className="flex justify-between items-center mt-2">
+                                  <span className="text-sm text-gray-600">Distance · {location.distance}</span>
+                                  {location.isClosedForDelivery && (
+                                    <span className="text-xs text-red-500">Currently closed for delivery</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                      
+                      <button className="w-full py-3 text-red-500 font-medium text-center mt-4 text-sm flex items-center justify-center">
+                        See all 25 outlets <ChevronDown size={16} className="ml-1" />
+                      </button>
+                    </div>
                   </div>
                 </DrawerContent>
               </Drawer>
