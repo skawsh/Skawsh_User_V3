@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -147,7 +148,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent 
         className="max-w-[80%] w-[80%] p-0 gap-0 rounded-xl h-[40vh] 
-                   fixed bottom-4 right-4 top-auto transform-none"
+                   fixed bottom-4 right-4 top-auto transform-none z-50"
       >
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
