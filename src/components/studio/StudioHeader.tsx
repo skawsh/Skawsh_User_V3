@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -105,17 +106,12 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         
         <div className="mx-auto px-4 pb-4">
           <div className="bg-white rounded-xl p-4 shadow-sm">
-            <h1 className="text-2xl font-bold text-center mb-2">{name}</h1>
+            <h1 className="text-2xl font-bold text-left mb-2">{name}</h1>
             
-            <div className="mb-3">
-              <p className="font-medium">Operating Hours</p>
-              <p className="text-gray-600">{getOpeningHours()}</p>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <span className="text-sm">1.2 Km - Gachibowli</span>
-                <ChevronDown size={16} className="text-blue-500" />
+            <div className="flex justify-between items-start mt-2">
+              <div className="mt-2">
+                <p className="font-medium">Operating Hours</p>
+                <p className="text-gray-600">{getOpeningHours()}</p>
               </div>
               
               <div className="flex flex-col items-end">
@@ -124,6 +120,13 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                   <span>{rating}</span>
                 </div>
                 <a href="#" className="text-xs text-blue-500 mt-1">See all review</a>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center mt-2">
+              <div className="flex items-center gap-1">
+                <span className="text-sm">1.2 Km - Gachibowli</span>
+                <ChevronDown size={16} className="text-blue-500" />
               </div>
             </div>
           </div>
