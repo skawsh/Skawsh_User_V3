@@ -6,6 +6,10 @@ import { ChevronLeft } from 'lucide-react';
 interface SubCategory {
   title: string;
   icon: React.ReactNode;
+  services: Array<{
+    name: string;
+    description: string;
+  }>;
 }
 
 interface Category {
@@ -30,6 +34,19 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onCategorySelect,
   onClose
 }) => {
+  const handleServiceSelect = (categoryTitle: string, serviceName: string) => {
+    // First scroll to the category
+    onCategorySelect(categoryTitle);
+    
+    // Then find and scroll to the specific service element
+    setTimeout(() => {
+      const serviceElement = document.querySelector(`[data-service-name="${serviceName}"]`);
+      if (serviceElement) {
+        serviceElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100); // Small delay to ensure category scroll completes first
+  };
+
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-end sm:items-center sm:justify-center">
       <div 
@@ -45,7 +62,8 @@ const CategoryList: React.FC<CategoryListProps> = ({
             {categories.map((category, idx) => (
               <div key={idx} className="mb-4">
                 <div 
-                  className="flex items-center justify-between w-full text-left px-4 py-2"
+                  onClick={() => onCategorySelect(category.title)}
+                  className="flex items-center justify-between w-full text-left px-4 py-2 cursor-pointer hover:bg-white/5"
                 >
                   <div className="flex items-center gap-3">
                     {category.icon}
@@ -61,19 +79,26 @@ const CategoryList: React.FC<CategoryListProps> = ({
                 <div className="pl-10 space-y-2.5">
                   {category.subCategories ? (
                     category.subCategories.map((subCategory, subIdx) => (
-                      <button
-                        key={subIdx}
-                        onClick={() => onCategorySelect(subCategory.title)}
-                        className="text-gray-400 hover:text-white text-sm w-full text-left py-1.5"
-                      >
-                        {subCategory.title}
-                      </button>
+                      <React.Fragment key={subIdx}>
+                        <div className="text-gray-400 text-sm py-1.5 font-medium">
+                          {subCategory.title}
+                        </div>
+                        {subCategory.services.map((service, serviceIdx) => (
+                          <button
+                            key={serviceIdx}
+                            onClick={() => handleServiceSelect(category.title, service.name)}
+                            className="text-gray-400 hover:text-white text-sm w-full text-left py-1.5 pl-4"
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+                      </React.Fragment>
                     ))
                   ) : (
                     category.services.map((service, serviceIdx) => (
                       <button
                         key={serviceIdx}
-                        onClick={() => onCategorySelect(service.name)}
+                        onClick={() => handleServiceSelect(category.title, service.name)}
                         className="text-gray-400 hover:text-white text-sm w-full text-left py-1.5"
                       >
                         {service.name}

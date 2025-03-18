@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
 import { Card } from "@/components/ui/card";
@@ -34,8 +33,9 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   onDecrease,
   onClick
 }) => {
-  const hasWeightUnit = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
-  const isInCart = hasWeightUnit ? weight !== null : quantity !== null;
+  const price = tabType === "express" ? service.price * 1.5 : service.price;
+  const hasWeight = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
+  const isInCart = weight !== null || quantity !== null;
   
   const getServiceIcon = () => {
     if (service.name.includes('Fold')) {
@@ -98,7 +98,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             tabType === "standard" ? "bg-blue-600" : "bg-orange-500",
             "text-white"
           )}>
-            {hasWeightUnit 
+            {hasWeight 
               ? (weight || 0).toFixed(1) 
               : quantity || 0}
           </span>
@@ -143,8 +143,9 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   };
 
   return (
-    <Card 
-      className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+    <div 
+      data-service-name={service.name}
+      className="bg-white rounded-lg shadow-sm p-4 cursor-pointer transition-all duration-200 hover:shadow-md"
       onClick={() => onClick(service)}
     >
       <div className="flex justify-between items-center">
@@ -156,7 +157,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             <h3 className="font-medium">{service.name}</h3>
             <div className="flex items-center gap-1">
               <span className="text-primary font-semibold">
-                ₹{tabType === "express" ? (service.price * 1.5).toFixed(0) : service.price.toFixed(0)}
+                ₹{price.toFixed(0)}
                 {service.unit ? ` ${service.unit}` : ''}
               </span>
               <div className="flex items-center gap-0.5 ml-1">
@@ -170,7 +171,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
         
         {renderControls()}
       </div>
-    </Card>
+    </div>
   );
 };
 
