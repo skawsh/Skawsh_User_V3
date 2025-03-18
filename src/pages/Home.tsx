@@ -180,7 +180,7 @@ const Home: React.FC = () => {
       </div>
       
       <div ref={servicesRef} className="pb-1 -mx-4 px-[5px]">
-        <h2 className="section-title mb-2 pt-2 font-bold text-lg">Explore Services</h2>
+        <h2 className="section-title mb-2 pt-2 font-bold text-lg px-[15px]">Explore Services</h2>
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
@@ -188,7 +188,7 @@ const Home: React.FC = () => {
           transition: 'transform 0.2s ease, opacity 0.2s ease'
         }}>
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
-            <div className="flex gap-3 pb-1.5 min-w-max">
+            <div className="flex gap-3 pb-1.5 min-w-max px-[10px]">
               {services.map((service, index) => <ServiceCard key={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
             </div>
           </div>
@@ -205,9 +205,9 @@ const Home: React.FC = () => {
         zIndex: 0,
         marginTop: '15px'
       }} className="mb-10 my-[14px] -mx-4 px-[5px]">
-        <h2 className="section-title mb-4 font-bold text-lg px-0">Explore Studios</h2>
+        <h2 className="section-title mb-4 font-bold text-lg px-[15px]">Explore Studios</h2>
         
-        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-0">
+        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px]">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />
           <FilterButton icon={<Tag size={14} />} label="Offers" />
           <FilterButton icon={<Clock size={14} />} label="Express Delivery" />

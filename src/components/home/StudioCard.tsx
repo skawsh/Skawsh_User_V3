@@ -25,9 +25,9 @@ const StudioCard: React.FC<StudioCardProps> = ({
   index,
   promoted = false
 }) => {
-  return <Link to={`/studio/${id}`} className="animate-fade-in block" style={{
+  return <Link to={`/studio/${id}`} style={{
     animationDelay: `${200 + index * 100}ms`
-  }}>
+  }} className="animate-fade-in block px-[14px]">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
         {/* Image section - top */}
         <div className="relative">
