@@ -3,10 +3,11 @@ import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
-import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag, Edit } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/use-toast";
 
 // Helper function to format currency in Indian Rupee format
 export const formatIndianRupee = (amount: number): string => {
@@ -17,15 +18,18 @@ export const formatIndianRupee = (amount: number): string => {
     minimumFractionDigits: 0
   }).format(amount).replace('₹', '₹');
 };
+
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (backButtonRef.current) {
@@ -52,9 +56,11 @@ const StudioProfile: React.FC = () => {
       }
     }
   }, []);
+
   const handleBackClick = () => {
     navigate('/');
   };
+
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
@@ -64,26 +70,46 @@ const StudioProfile: React.FC = () => {
       }).catch(err => console.error('Error sharing:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      toast({
+        title: "Link copied!",
+        description: "Studio link copied to clipboard"
+      });
     }
   };
+
   const handleAboutStudio = () => {
-    alert(`About ${studio.name}: ${studio.description}`);
+    toast({
+      title: `About ${studio.name}`,
+      description: studio.description,
+    });
   };
+
   const handleReportStudio = () => {
-    alert(`Thank you for your feedback. ${studio.name} has been reported.`);
+    toast({
+      title: "Thank you for your feedback",
+      description: `${studio.name} has been reported`,
+    });
   };
+  
+  const handleEditStudio = () => {
+    toast({
+      title: "Edit Studio",
+      description: "Studio editing functionality is coming soon",
+    });
+  };
+
   const handleCartUpdate = (count: number) => {
     setCartCount(count);
   };
+
   const handleGoToCart = () => {
-    // Pass studio id to the cart page to filter items
     navigate('/cart', {
       state: {
         studioId: studio.id
       }
     });
   };
+
   const studio = {
     id: '1',
     name: 'Pristine Laundry',
@@ -93,40 +119,50 @@ const StudioProfile: React.FC = () => {
     deliveryTime: '1-2 days',
     description: 'Premium laundry services with eco-friendly cleaning options.'
   };
-  const services = [{
-    id: '1',
-    name: 'Dry Cleaning',
-    description: 'Professional cleaning for delicate fabrics and special care items.',
-    price: 8.99,
-    unit: 'per piece'
-  }, {
-    id: '2',
-    name: 'Wash & Fold',
-    description: 'Complete laundry service charged by weight.',
-    price: 2.49,
-    unit: 'per kg'
-  }, {
-    id: '3',
-    name: 'Ironing',
-    description: 'Professional pressing and wrinkle removal.',
-    price: 4.99,
-    unit: 'per piece'
-  }, {
-    id: '4',
-    name: 'Express Service',
-    description: 'Same-day service when ordered before 10 AM.',
-    price: 12.99,
-    unit: 'per kg'
-  }, {
-    id: '5',
-    name: 'Carpet Cleaning',
-    description: 'Deep cleaning for carpets and rugs.',
-    price: 3.49,
-    unit: 'per sft'
-  }];
-  return <Layout>
+
+  const services = [
+    {
+      id: '1',
+      name: 'Dry Cleaning',
+      description: 'Professional cleaning for delicate fabrics and special care items.',
+      price: 8.99,
+      unit: 'per piece'
+    },
+    {
+      id: '2',
+      name: 'Wash & Fold',
+      description: 'Complete laundry service charged by weight.',
+      price: 2.49,
+      unit: 'per kg'
+    },
+    {
+      id: '3',
+      name: 'Ironing',
+      description: 'Professional pressing and wrinkle removal.',
+      price: 4.99,
+      unit: 'per piece'
+    },
+    {
+      id: '4',
+      name: 'Express Service',
+      description: 'Same-day service when ordered before 10 AM.',
+      price: 12.99,
+      unit: 'per kg'
+    },
+    {
+      id: '5',
+      name: 'Carpet Cleaning',
+      description: 'Deep cleaning for carpets and rugs.',
+      price: 3.49,
+      unit: 'per sft'
+    }
+  ];
+
+  return (
+    <Layout>
       <div className="no-scrollbar">
-        {isScrolled && <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+        {isScrolled && (
+          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
                 <button onClick={handleBackClick} className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70">
@@ -150,6 +186,10 @@ const StudioProfile: React.FC = () => {
                     <Info size={16} />
                     <span>About Studio</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleEditStudio} className="flex items-center gap-2">
+                    <Edit size={16} />
+                    <span>Edit Studio</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
                     <Flag size={16} />
                     <span>Report this Studio</span>
@@ -157,23 +197,45 @@ const StudioProfile: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>}
+          </div>
+        )}
         
-        <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} backButtonRef={backButtonRef} description={studio.description} onBackClick={handleBackClick} />
+        <StudioHeader 
+          name={studio.name} 
+          image={studio.image} 
+          rating={studio.rating} 
+          reviewCount={studio.reviewCount} 
+          deliveryTime={studio.deliveryTime} 
+          backButtonRef={backButtonRef} 
+          description={studio.description} 
+          onBackClick={handleBackClick} 
+        />
         
         <div className="section-container relative">
-          <ServiceList services={services} isScrolled={isScrolled} onCartUpdate={handleCartUpdate} studioId={studio.id} />
+          <ServiceList 
+            services={services} 
+            isScrolled={isScrolled} 
+            onCartUpdate={handleCartUpdate} 
+            studioId={studio.id} 
+          />
         </div>
 
-        {cartCount > 0 && <div onClick={handleGoToCart} className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px]">
+        {cartCount > 0 && (
+          <div 
+            onClick={handleGoToCart} 
+            className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px]"
+          >
             <div className="relative">
               <ShoppingBag size={20} />
               <Badge variant="default" className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white">
                 {cartCount}
               </Badge>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
-    </Layout>;
+    </Layout>
+  );
 };
+
 export default StudioProfile;
