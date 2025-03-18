@@ -1,9 +1,11 @@
 
-import React from 'react';
-import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Drawer, DrawerContent, DrawerClose, DrawerTrigger } from "@/components/ui/drawer";
+import { Separator } from "@/components/ui/separator";
 
 interface StudioHeaderProps {
   name: string;
@@ -14,6 +16,15 @@ interface StudioHeaderProps {
   backButtonRef?: React.RefObject<HTMLButtonElement>;
   description?: string;
   onBackClick?: () => void;
+}
+
+interface LocationOption {
+  name: string;
+  area: string;
+  rating: number;
+  time: string;
+  distance: string;
+  isCurrent?: boolean;
 }
 
 const StudioHeader: React.FC<StudioHeaderProps> = ({
@@ -27,6 +38,55 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   onBackClick
 }) => {
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  
+  // Mock location data
+  const currentLocation: LocationOption = {
+    name: "Gachibowli",
+    area: "Toli Chowki",
+    rating: 4.3,
+    time: "25-30 MINS",
+    distance: "1.2 km",
+    isCurrent: true
+  };
+  
+  const otherLocations: LocationOption[] = [
+    {
+      name: "R5 Chambers",
+      area: "Mehdipatnam",
+      rating: 4.2,
+      time: "35-40 mins",
+      distance: "8.1 km"
+    },
+    {
+      name: "M Cube Mall",
+      area: "Attapur",
+      rating: 4.1,
+      time: "40-45 mins",
+      distance: "9.3 km"
+    },
+    {
+      name: "Khairatabad",
+      area: "Khairatabad",
+      rating: 4.1,
+      time: "45-50 mins",
+      distance: "10.4 km"
+    },
+    {
+      name: "Chandanagar Circle No 21",
+      area: "Miyapur",
+      rating: 4.1,
+      time: "35-40 mins",
+      distance: "10.7 km"
+    },
+    {
+      name: "Rangareddi",
+      area: "Pebel City",
+      rating: 4.1,
+      time: "40-45 mins",
+      distance: "13.7 km"
+    }
+  ];
   
   const getOpeningHours = () => {
     const timeMappings: Record<string, string> = {
@@ -67,6 +127,12 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${name} has been reported.`);
+  };
+
+  const handleLocationSelect = (location: LocationOption) => {
+    // This would typically update the current location in a real app
+    console.log(`Selected location: ${location.name}, ${location.area}`);
+    setDrawerOpen(false);
   };
   
   return (
@@ -124,10 +190,68 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
             </div>
             
             <div className="flex justify-between items-center mt-2">
-              <div className="flex items-center gap-1">
-                <span className="text-sm">1.2 Km - Gachibowli</span>
-                <ChevronDown size={16} className="text-blue-500" />
-              </div>
+              <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+                <DrawerTrigger asChild>
+                  <div className="flex items-center gap-1 cursor-pointer">
+                    <span className="text-sm">{currentLocation.distance} - {currentLocation.name}</span>
+                    <ChevronDown size={16} className="text-blue-500" />
+                  </div>
+                </DrawerTrigger>
+                <DrawerContent className="px-0 max-h-[90vh] overflow-y-auto rounded-t-[20px]">
+                  <div className="px-4 pt-6 pb-2">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-bold">Current Outlet</h2>
+                      <DrawerClose className="rounded-full p-1 hover:bg-gray-100">
+                        <X size={20} />
+                      </DrawerClose>
+                    </div>
+                    
+                    <div 
+                      className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6"
+                      onClick={() => handleLocationSelect(currentLocation)}
+                    >
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-semibold text-base">{currentLocation.name}, {currentLocation.area}</h3>
+                        <Check size={20} className="text-orange-500" />
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="bg-green-600 text-white rounded-full p-0.5">
+                          <Star size={14} className="fill-white text-white" />
+                        </div>
+                        <span className="text-sm">{currentLocation.rating} • {currentLocation.time} • {currentLocation.distance}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-2">
+                      <h2 className="text-lg font-semibold">Other Outlets Around You</h2>
+                      <Separator className="my-4" />
+                    </div>
+                    
+                    {otherLocations.map((location, index) => (
+                      <div 
+                        key={index}
+                        className="bg-white rounded-lg p-4 mb-3 border border-gray-100 hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleLocationSelect(location)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
+                          <ChevronRight size={20} className="text-gray-400" />
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="bg-green-600 text-white rounded-full p-0.5">
+                            <Star size={14} className="fill-white text-white" />
+                          </div>
+                          <span className="text-sm">{location.rating} • {location.time} • {location.distance}</span>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    <button className="w-full py-3 text-orange-500 font-medium text-center border-t border-t-gray-200 mt-4">
+                      SEE MORE OUTLETS
+                    </button>
+                  </div>
+                </DrawerContent>
+              </Drawer>
             </div>
           </div>
         </div>
