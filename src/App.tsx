@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import StudioProfile from "./pages/StudioProfile";
 import StudioReviews from "./pages/StudioReviews";
+import StudioAbout from "./pages/StudioAbout";
 import Services from "./pages/Services";
 import Favorites from "./pages/Favorites";
 import Cart from "./pages/Cart";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/index" element={<Index />} />
           <Route path="/studio/:id" element={<StudioProfile />} />
+          <Route path="/studio/:id/about" element={<StudioAbout />} />
           <Route path="/studio/:studioId/reviews" element={<StudioReviews />} />
           <Route path="/services" element={<Services />} />
           <Route path="/favorites" element={<Favorites />} />

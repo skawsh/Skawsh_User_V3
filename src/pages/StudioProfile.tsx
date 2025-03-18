@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -83,10 +82,7 @@ const StudioProfile: React.FC = () => {
   };
 
   const handleAboutStudio = () => {
-    toast({
-      title: `About ${studio.name}`,
-      description: studio.description,
-    });
+    navigate(`/studio/${id}/about`);
   };
 
   const handleReportStudio = () => {
