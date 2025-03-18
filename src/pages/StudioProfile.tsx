@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag, Edit } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
@@ -22,9 +23,13 @@ export const formatIndianRupee = (amount: number): string => {
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { id } = useParams<{ id: string }>();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+
+  // Use console log to debug the route params
+  console.log("Studio ID from URL:", id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -110,8 +115,10 @@ const StudioProfile: React.FC = () => {
     });
   };
 
+  // This would normally come from an API using the ID from the URL
+  // For now, we'll use hardcoded data but acknowledge that the ID exists
   const studio = {
-    id: '1',
+    id: id || '1',
     name: 'Pristine Laundry',
     image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.8,
@@ -177,7 +184,7 @@ const StudioProfile: React.FC = () => {
                     <MoreVertical size={20} />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-white">
                   <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
                     <Share size={16} />
                     <span>Share Studio</span>

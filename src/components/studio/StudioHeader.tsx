@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Star, Clock, ChevronLeft, MoreVertical, Share, Info, Flag, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+
 interface StudioHeaderProps {
   name: string;
   image: string;
@@ -13,6 +15,7 @@ interface StudioHeaderProps {
   description?: string;
   onBackClick?: () => void;
 }
+
 const StudioHeader: React.FC<StudioHeaderProps> = ({
   name,
   image,
@@ -24,6 +27,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   onBackClick
 }) => {
   const navigate = useNavigate();
+  
   const handleBackClick = () => {
     if (onBackClick) {
       onBackClick();
@@ -31,6 +35,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       navigate(-1);
     }
   };
+  
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
@@ -43,17 +48,25 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       alert('Link copied to clipboard!');
     }
   };
+  
   const handleAboutStudio = () => {
     alert(`About ${name}: ${description || 'No description available.'}`);
   };
+  
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${name} has been reported.`);
   };
-  return <div className="animate-fade-in">
+  
+  return (
+    <div className="animate-fade-in">
       <div className="relative h-56 bg-cover bg-center w-full" style={{
-      backgroundImage: `url(${image})`
-    }}>
-        <button ref={backButtonRef} onClick={handleBackClick} className="absolute top-4 left-4 bg-white/70 backdrop-blur-md p-2 rounded-full text-gray-700">
+        backgroundImage: `url(${image})`
+      }}>
+        <button 
+          ref={backButtonRef} 
+          onClick={handleBackClick} 
+          className="absolute top-4 left-4 bg-white/70 backdrop-blur-md p-2 rounded-full text-gray-700"
+        >
           <ChevronLeft size={24} />
         </button>
         
@@ -63,7 +76,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
               <MoreVertical size={20} />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="bg-white z-50">
             <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
               <Share size={16} />
               <span>Share Studio</span>
@@ -101,6 +114,8 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           <Input placeholder="Search services in this studio..." className="pl-10 bg-gray-50 border-gray-200 rounded-full" />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default StudioHeader;
