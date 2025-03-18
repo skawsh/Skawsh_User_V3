@@ -31,16 +31,16 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onClose
 }) => {
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-[100] flex items-start justify-end sm:items-center sm:justify-center">
       <div 
         className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
         onClick={onClose}
       />
-      <div className="relative w-full max-w-[280px] mx-auto bg-black rounded-t-xl sm:rounded-xl overflow-hidden animate-slide-up">
+      <div className="relative w-[280px] mx-auto bg-black rounded-t-xl sm:rounded-xl overflow-hidden animate-slide-up mt-[30vh]">
         <div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
-          <h3 className="text-lg font-bold text-white">Services</h3>
+          <h3 className="text-lg font-medium text-white">Services</h3>
         </div>
-        <ScrollArea className="max-h-[min(85vh,600px)]">
+        <ScrollArea className="h-[min(400px,70vh)]">
           <div className="py-2">
             {categories.map((category, idx) => (
               <div key={idx} className="mb-4">
