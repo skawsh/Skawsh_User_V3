@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Star, Clock, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown } from 'lucide-react';
+import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
