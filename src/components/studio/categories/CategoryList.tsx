@@ -27,19 +27,19 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onClose
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center sm:items-center">
       <div 
         className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
         onClick={onClose}
       />
-      <div className="relative w-full max-w-[280px] mx-auto bg-black rounded-xl overflow-hidden animate-slide-up">
+      <div className="relative w-full max-w-[280px] mx-auto bg-black rounded-t-xl sm:rounded-xl overflow-hidden animate-slide-up">
         <div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
           <h3 className="text-lg font-bold text-white">Services</h3>
         </div>
-        <ScrollArea className="h-[400px]">
+        <ScrollArea className="max-h-[min(85vh,600px)]">
           <div className="py-2">
             {categories.map((category, idx) => (
-              <div key={idx} className="mb-2">
+              <div key={idx} className="mb-4">
                 <div 
                   className="flex items-center justify-between w-full text-left px-4 py-2"
                 >
@@ -55,12 +55,12 @@ const CategoryList: React.FC<CategoryListProps> = ({
                 </div>
 
                 {category.subCategories && (
-                  <div className="pl-10 space-y-3 mt-1">
+                  <div className="pl-10 space-y-2.5">
                     {category.subCategories.map((subCategory, subIdx) => (
                       <button
                         key={subIdx}
                         onClick={() => onCategorySelect(subCategory.title)}
-                        className="text-gray-300 hover:text-white text-sm w-full text-left py-1.5"
+                        className="text-gray-400 hover:text-white text-sm w-full text-left py-1.5"
                       >
                         {subCategory.title}
                       </button>
