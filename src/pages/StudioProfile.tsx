@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
-import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag, Edit } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -96,13 +96,6 @@ const StudioProfile: React.FC = () => {
     });
   };
   
-  const handleEditStudio = () => {
-    toast({
-      title: "Edit Studio",
-      description: "Studio editing functionality is coming soon",
-    });
-  };
-
   const handleCartUpdate = (count: number) => {
     setCartCount(count);
   };
@@ -192,10 +185,6 @@ const StudioProfile: React.FC = () => {
                   <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
                     <Info size={16} />
                     <span>About Studio</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleEditStudio} className="flex items-center gap-2">
-                    <Edit size={16} />
-                    <span>Edit Studio</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
                     <Flag size={16} />
