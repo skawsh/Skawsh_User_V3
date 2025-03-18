@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from 'lucide-react';
 
 interface SubCategory {
   title: string;
@@ -29,7 +28,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm" 
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
         onClick={onClose}
       />
       <div className="relative w-full max-w-[300px] mx-auto bg-black rounded-xl overflow-hidden animate-slide-up">
@@ -48,14 +47,14 @@ const CategoryList: React.FC<CategoryListProps> = ({
                     <h4 className="font-medium text-white">{category.title}</h4>
                   </div>
                   {category.count && (
-                    <div className="bg-white/20 rounded-full h-6 w-6 flex items-center justify-center">
+                    <div className="bg-primary-500/20 rounded-full h-6 w-6 flex items-center justify-center">
                       <span className="text-xs text-white">{category.count}</span>
                     </div>
                   )}
                 </div>
 
                 {category.subCategories && (
-                  <div className="pl-8 space-y-3 mt-2">
+                  <div className="pl-8 space-y-2 mt-1">
                     {category.subCategories.map((subCategory, subIdx) => (
                       <button
                         key={subIdx}
