@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ServiceOrderPopup from './ServiceOrderPopup';
 import { useLocation } from 'react-router-dom';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface Service {
   id: string;
@@ -789,14 +790,39 @@ const ServiceList: React.FC<ServiceListProps> = ({
         </Tabs>
       </div>
 
-      {!popoverOpen ? (
-        <button 
-          onClick={() => setPopoverOpen(true)} 
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
-        >
-          <Menu size={24} />
-        </button>
-      ) : null}
+      <Sheet>
+        <SheetTrigger asChild>
+          <button 
+            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
+          >
+            <Menu size={24} />
+          </button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="rounded-t-xl px-0 py-4">
+          <div className="px-4 pb-2">
+            <h3 className="text-lg font-bold mb-4">Browse Categories</h3>
+            <ScrollArea className="h-[60vh]">
+              <div className="space-y-4 px-2">
+                {categories.map((category, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToCategory(category.title)}
+                    className="flex items-center gap-3 p-3 w-full text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center">
+                      {category.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-medium">{category.title}</h4>
+                      <p className="text-xs text-gray-500">{category.count} services</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {selectedService && (
         <ServiceOrderPopup
