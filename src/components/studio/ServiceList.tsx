@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Menu } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -443,11 +444,27 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
               <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
                 <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
-                  <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
+                  <TabsTrigger 
+                    value="standard" 
+                    className={cn(
+                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                      selectedTab === "standard" 
+                        ? "text-white bg-blue-600 border-blue-600 font-medium" 
+                        : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
+                    )}
+                  >
                     <Clock size={16} className="mr-2" />
                     Standard Wash
                   </TabsTrigger>
-                  <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
+                  <TabsTrigger 
+                    value="express" 
+                    className={cn(
+                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                      selectedTab === "express" 
+                        ? "text-white bg-orange-500 border-orange-500 font-medium" 
+                        : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
+                    )}
+                  >
                     <Clock size={16} className="mr-2" />
                     Express Wash
                   </TabsTrigger>
@@ -473,11 +490,27 @@ const ServiceList: React.FC<ServiceListProps> = ({
               ref={tabsListRef} 
               className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0"
             >
-              <TabsTrigger value="standard" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "standard" ? "text-white bg-blue-600 border-blue-600" : "text-gray-500 bg-white border-gray-200")}>
+              <TabsTrigger 
+                value="standard" 
+                className={cn(
+                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                  selectedTab === "standard" 
+                    ? "text-white bg-blue-600 border-blue-600 font-medium" 
+                    : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
+                )}
+              >
                 <Clock size={16} className="mr-2" />
                 Standard Wash
               </TabsTrigger>
-              <TabsTrigger value="express" className={cn("rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", selectedTab === "express" ? "text-white bg-orange-500 border-orange-500" : "text-gray-500 bg-white border-gray-200")}>
+              <TabsTrigger 
+                value="express" 
+                className={cn(
+                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
+                  selectedTab === "express" 
+                    ? "text-white bg-orange-500 border-orange-500 font-medium" 
+                    : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
+                )}
+              >
                 <Clock size={16} className="mr-2" />
                 Express Wash
               </TabsTrigger>
