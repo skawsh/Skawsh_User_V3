@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +42,6 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   
-  // Mock location data
   const currentLocation: LocationOption = {
     name: "Tolichowki",
     area: "Hyderabad",
@@ -224,7 +222,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                           onClick={() => handleLocationSelect(currentLocation)}
                         >
                           {currentLocation.isNearest && (
-                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs font-medium flex items-center z-10 shadow-sm">
+                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs font-medium flex items-center z-10 shadow-md nearest-outlet-tag">
                               <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
                               Nearest available outlet
                             </div>
@@ -256,10 +254,10 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                                     {location.rating}
                                   </div>
                                 </div>
-                                <div className="flex justify-between items-center mt-2">
+                                <div className="flex flex-col mt-2">
                                   <span className="text-sm text-gray-600">Distance · {location.distance}</span>
                                   {location.isClosedForDelivery && (
-                                    <span className="text-xs text-red-500">Currently closed for delivery</span>
+                                    <span className="text-xs text-red-500 mt-1">Currently closed for delivery</span>
                                   )}
                                 </div>
                               </div>

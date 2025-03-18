@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,6 +104,15 @@
   
   .custom-scrollbar:hover::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Styles for the nearest outlet tag */
+  .nearest-outlet-tag {
+    background-color: #e2f7e2 !important;
+    color: #166534 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
   }
 }
 
