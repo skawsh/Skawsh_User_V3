@@ -119,7 +119,7 @@ const StudioProfile: React.FC = () => {
   // For now, we'll use hardcoded data but acknowledge that the ID exists
   const studio = {
     id: id || '1',
-    name: 'Pristine Laundry',
+    name: 'Busy Bee',
     image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.8,
     reviewCount: 126,
