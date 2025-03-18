@@ -116,24 +116,28 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
             {/* Studio Name */}
             <h1 className="text-2xl font-bold text-center mb-2">{name}</h1>
             
-            {/* Operating Hours - Modified to show label on left and hours on right */}
-            <div className="flex justify-between items-center mb-3">
-              <p className="font-medium">Operating Hours</p>
-              <p>{getOpeningHours()}</p>
+            {/* Rating Badge moved to middle */}
+            <div className="flex justify-center mb-3">
+              <div className="bg-green-500 text-white px-2 py-0.5 rounded flex items-center">
+                <Star size={14} className="fill-white text-white mr-1" />
+                <span>{rating}</span>
+              </div>
             </div>
             
-            {/* Rating Badge */}
+            {/* Operating Hours with stacked layout */}
+            <div className="mb-3">
+              <p className="font-medium">Operating Hours</p>
+              <p className="text-gray-600">{getOpeningHours()}</p>
+            </div>
+            
+            {/* Location and Reviews Link */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1">
                 <span className="text-sm">1.2 Km - Gachibowli</span>
                 <ChevronDown size={16} className="text-blue-500" />
               </div>
               
-              <div className="flex flex-col items-end">
-                <div className="bg-green-500 text-white px-2 py-0.5 rounded flex items-center">
-                  <Star size={14} className="fill-white text-white mr-1" />
-                  <span>{rating}</span>
-                </div>
+              <div>
                 <a href="#" className="text-xs text-blue-500">See all review</a>
               </div>
             </div>
