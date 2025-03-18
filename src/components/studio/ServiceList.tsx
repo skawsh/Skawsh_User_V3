@@ -1,16 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Clock, Plus, ShoppingBag, Shirt, Menu, Footprints, X, Minus } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { Clock, Menu } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ServiceOrderPopup from './ServiceOrderPopup';
 import { useLocation } from 'react-router-dom';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import CategoryList from './categories/CategoryList';
+import ServiceCategory from './services/ServiceCategory';
+import { ShoppingBag, Shirt, Footprints } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -33,18 +30,18 @@ interface CartItem {
   }[];
 }
 
+interface SubCategory {
+  title: string;
+  icon: React.ReactNode;
+  services: Service[];
+}
+
 interface ServiceCategory {
   title: string;
   icon: React.ReactNode;
   services: Service[];
   count?: number;
   subCategories?: SubCategory[];
-}
-
-interface SubCategory {
-  title: string;
-  icon: React.ReactNode;
-  services: Service[];
 }
 
 interface ServiceListProps {
@@ -139,55 +136,66 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   ];
 
-  const shoeServices: Service[] = [{
-    id: 'shoe-1',
-    name: 'Regular Shoes',
-    description: 'Deep cleaning for regular everyday shoes',
-    price: 299
-  }, {
-    id: 'shoe-2',
-    name: 'Leather Shoes',
-    description: 'Specialized cleaning and conditioning for leather footwear',
-    price: 399
-  }, {
-    id: 'shoe-3',
-    name: 'Sneakers',
-    description: 'Thorough cleaning for sports shoes and sneakers',
-    price: 349
-  }, {
-    id: 'shoe-4',
-    name: 'Canvas Shoes',
-    description: 'Cleaning and whitening for canvas footwear',
-    price: 249
-  }, {
-    id: 'shoe-5',
-    name: 'Sandals',
-    description: 'Cleaning and sanitizing for all types of sandals',
-    price: 199
-  }, {
-    id: 'shoe-6',
-    name: 'Heels',
-    description: 'Gentle cleaning and polishing for formal heels',
-    price: 349
-  }];
+  const shoeServices: Service[] = [
+    {
+      id: 'shoe-1',
+      name: 'Regular Shoes',
+      description: 'Deep cleaning for regular everyday shoes',
+      price: 299
+    },
+    {
+      id: 'shoe-2',
+      name: 'Leather Shoes',
+      description: 'Specialized cleaning and conditioning for leather footwear',
+      price: 399
+    },
+    {
+      id: 'shoe-3',
+      name: 'Sneakers',
+      description: 'Thorough cleaning for sports shoes and sneakers',
+      price: 349
+    },
+    {
+      id: 'shoe-4',
+      name: 'Canvas Shoes',
+      description: 'Cleaning and whitening for canvas footwear',
+      price: 249
+    },
+    {
+      id: 'shoe-5',
+      name: 'Sandals',
+      description: 'Cleaning and sanitizing for all types of sandals',
+      price: 199
+    },
+    {
+      id: 'shoe-6',
+      name: 'Heels',
+      description: 'Gentle cleaning and polishing for formal heels',
+      price: 349
+    }
+  ];
 
-  const categories: ServiceCategory[] = [{
-    title: "Core Laundry Services",
-    icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
-    services: updatedCoreServices,
-    count: updatedCoreServices.length
-  }, {
-    title: "Dry Cleaning Services",
-    icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
-    services: [],
-    count: 5,
-    subCategories: dryCleaningSubCategories
-  }, {
-    title: "Shoe Laundry Services",
-    icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
-    services: shoeServices,
-    count: 11
-  }];
+  const categories: ServiceCategory[] = [
+    {
+      title: "Core Laundry Services",
+      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
+      services: updatedCoreServices,
+      count: updatedCoreServices.length
+    }, 
+    {
+      title: "Dry Cleaning Services",
+      icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
+      services: [],
+      count: 5,
+      subCategories: dryCleaningSubCategories
+    }, 
+    {
+      title: "Shoe Laundry Services",
+      icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
+      services: shoeServices,
+      count: 11
+    }
+  ];
 
   const deliveryMessages = {
     standard: "Delivery in just 36 sunlight hours after pickup",
@@ -380,80 +388,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   };
 
-  const renderServiceControls = (service: Service, tabType: string) => {
-    const serviceWeight = getServiceWeight(service.id);
-    const serviceQuantity = getServiceQuantity(service.id);
-    const hasWeightUnit = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
-    const isInCart = hasWeightUnit ? serviceWeight !== null : serviceQuantity !== null;
-    
-    if (isInCart) {
-      return (
-        <div className="flex items-center">
-          <Button 
-            variant="default" 
-            size="sm"
-            className={cn(
-              "rounded-l-full rounded-r-none",
-              tabType === "standard" 
-                ? "bg-blue-600 hover:bg-blue-700" 
-                : "bg-orange-500 hover:bg-orange-600"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDecreaseWeight(service);
-            }}
-          >
-            <Minus size={16} />
-          </Button>
-          <span className={cn(
-            "px-2 py-1 text-sm font-medium", 
-            tabType === "standard" ? "bg-blue-600" : "bg-orange-500",
-            "text-white"
-          )}>
-            {hasWeightUnit 
-              ? (serviceWeight || 0).toFixed(1) 
-              : serviceQuantity || 0}
-          </span>
-          <Button 
-            variant="default" 
-            size="sm"
-            className={cn(
-              "rounded-l-none rounded-r-full",
-              tabType === "standard" 
-                ? "bg-blue-600 hover:bg-blue-700" 
-                : "bg-orange-500 hover:bg-orange-600"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleIncreaseWeight(service);
-            }}
-          >
-            <Plus size={16} />
-          </Button>
-        </div>
-      );
-    } else {
-      return (
-        <Button 
-          variant="default" 
-          size="sm"
-          className={cn(
-            "rounded-full",
-            tabType === "standard" 
-              ? "bg-blue-600 hover:bg-blue-700" 
-              : "bg-orange-500 hover:bg-orange-600"
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleOpenServicePopup(service);
-          }}
-        >
-          <Plus size={16} className="mr-1" /> Add
-        </Button>
-      );
-    }
-  };
-
   useEffect(() => {
     if (tabsListRef.current) {
       tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
@@ -490,13 +424,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
       )} 
       ref={tabsWrapperRef}
     >
-      {popoverOpen && (
-        <div 
-          onClick={() => setPopoverOpen(false)} 
-          className="fixed inset-0 bg-black/10 backdrop-blur-sm z-30 px-0 py-0" 
-        />
-      )}
-      
       <div ref={tabsRef} className="transition-all duration-300">
         <Tabs defaultValue="standard" onValueChange={handleTabChange}>
           {isTabsSticky && (
@@ -563,113 +490,21 @@ const ServiceList: React.FC<ServiceListProps> = ({
           <TabsContent value="standard">
             <div className="space-y-8">
               {categories.map((category, idx) => (
-                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-                  <div className="flex items-center gap-2 mb-4">
-                    {category.icon}
-                    <h2 className="text-lg font-bold">{category.title}</h2>
-                  </div>
-
-                  {category.subCategories ? (
-                    <div className="space-y-8">
-                      {category.subCategories.map((subCategory, subIdx) => (
-                        <div key={subIdx} className="ml-2">
-                          <div className="flex items-center gap-2 mb-3">
-                            {subCategory.icon}
-                            <h3 className="text-md font-semibold">{subCategory.title}</h3>
-                          </div>
-                          
-                          <div className="space-y-4">
-                            {subCategory.services.map(service => (
-                              <Card 
-                                key={service.id} 
-                                className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
-                                onClick={() => handleCardClick(service)}
-                              >
-                                <div className="flex justify-between items-center">
-                                  <div className="flex gap-3">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                                      {service.name.includes('Shirt') || service.name.includes('T-shirt') || service.name.includes('Top') ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      ) : service.name.includes('Pant') ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div>
-                                      <h3 className="font-medium">{service.name}</h3>
-                                      <div className="flex items-center gap-1">
-                                        <span className="text-primary font-semibold">₹{service.price.toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
-                                        <div className="flex items-center gap-0.5 ml-1">
-                                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                          <span className="text-xs text-gray-500">4.8</span>
-                                        </div>
-                                      </div>
-                                      <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                                    </div>
-                                  </div>
-                                  
-                                  {renderServiceControls(service, "standard")}
-                                </div>
-                              </Card>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {category.services.map(service => (
-                        <Card 
-                          key={service.id} 
-                          className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
-                          onClick={() => handleCardClick(service)}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                              <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                                {service.name.includes('Fold') ? (
-                                  <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
-                                ) : service.name.includes('Iron') ? (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <Clock size={20} className="text-gray-500" />
-                                  </div>
-                                ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <Footprints size={20} className="text-gray-500" />
-                                  </div>
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <ShoppingBag size={20} className="text-gray-500" />
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                <h3 className="font-medium">{service.name}</h3>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-primary font-semibold">₹{service.price.toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
-                                  <div className="flex items-center gap-0.5 ml-1">
-                                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                    <span className="text-xs text-gray-500">4.8</span>
-                                  </div>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                              </div>
-                            </div>
-                            
-                            {renderServiceControls(service, "standard")}
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ServiceCategory
+                  key={idx}
+                  title={category.title}
+                  icon={category.icon}
+                  services={category.services}
+                  subCategories={category.subCategories}
+                  tabType="standard"
+                  getServiceWeight={getServiceWeight}
+                  getServiceQuantity={getServiceQuantity}
+                  onServiceAdd={handleOpenServicePopup}
+                  onServiceIncrease={handleIncreaseWeight}
+                  onServiceDecrease={handleDecreaseWeight}
+                  onServiceClick={handleCardClick}
+                  categoryRef={el => categoryRefs.current[category.title] = el}
+                />
               ))}
             </div>
           </TabsContent>
@@ -677,152 +512,41 @@ const ServiceList: React.FC<ServiceListProps> = ({
           <TabsContent value="express">
             <div className="space-y-8">
               {categories.map((category, idx) => (
-                <div key={idx} ref={el => categoryRefs.current[category.title] = el}>
-                  <div className="flex items-center gap-2 mb-4">
-                    {category.icon}
-                    <h2 className="text-lg font-bold">{category.title}</h2>
-                  </div>
-
-                  {category.subCategories ? (
-                    <div className="space-y-8">
-                      {category.subCategories.map((subCategory, subIdx) => (
-                        <div key={subIdx} className="ml-2">
-                          <div className="flex items-center gap-2 mb-3">
-                            {subCategory.icon}
-                            <h3 className="text-md font-semibold">{subCategory.title}</h3>
-                          </div>
-                          
-                          <div className="space-y-4">
-                            {subCategory.services.map(service => (
-                              <Card 
-                                key={service.id} 
-                                className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
-                                onClick={() => handleCardClick(service)}
-                              >
-                                <div className="flex justify-between items-center">
-                                  <div className="flex gap-3">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                                      {service.name.includes('Shirt') || service.name.includes('T-shirt') || service.name.includes('Top') ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      ) : service.name.includes('Pant') ? (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                          <Shirt size={20} className="text-gray-500" />
-                                        </div>
-                                      )}
-                                    </div>
-                                    <div>
-                                      <h3 className="font-medium">{service.name}</h3>
-                                      <div className="flex items-center gap-1">
-                                        <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
-                                        <div className="flex items-center gap-0.5 ml-1">
-                                          <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                          <span className="text-xs text-gray-500">4.8</span>
-                                        </div>
-                                      </div>
-                                      <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                                    </div>
-                                  </div>
-                                  
-                                  {renderServiceControls(service, "express")}
-                                </div>
-                              </Card>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {category.services.map(service => (
-                        <Card 
-                          key={service.id} 
-                          className="p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
-                          onClick={() => handleCardClick(service)}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div className="flex gap-3">
-                              <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-                                {service.name.includes('Fold') ? (
-                                  <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
-                                ) : service.name.includes('Iron') ? (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <Clock size={20} className="text-gray-500" />
-                                  </div>
-                                ) : service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel') ? (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <Footprints size={20} className="text-gray-500" />
-                                  </div>
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                    <ShoppingBag size={20} className="text-gray-500" />
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                <h3 className="font-medium">{service.name}</h3>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-primary font-semibold">₹{(service.price * 1.5).toFixed(0)}{service.unit ? ` ${service.unit}` : ''}</span>
-                                  <div className="flex items-center gap-0.5 ml-1">
-                                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                                    <span className="text-xs text-gray-500">4.8</span>
-                                  </div>
-                                </div>
-                                <p className="text-xs text-gray-500 mt-1">{service.description}</p>
-                              </div>
-                            </div>
-                            
-                            {renderServiceControls(service, "express")}
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ServiceCategory
+                  key={idx}
+                  title={category.title}
+                  icon={category.icon}
+                  services={category.services}
+                  subCategories={category.subCategories}
+                  tabType="express"
+                  getServiceWeight={getServiceWeight}
+                  getServiceQuantity={getServiceQuantity}
+                  onServiceAdd={handleOpenServicePopup}
+                  onServiceIncrease={handleIncreaseWeight}
+                  onServiceDecrease={handleDecreaseWeight}
+                  onServiceClick={handleCardClick}
+                  categoryRef={el => categoryRefs.current[category.title] = el}
+                />
               ))}
             </div>
           </TabsContent>
         </Tabs>
       </div>
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <button 
-            className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
-          >
-            <Menu size={24} />
-          </button>
-        </SheetTrigger>
-        <SheetContent side="bottom" className="rounded-t-xl px-0 py-4">
-          <div className="px-4 pb-2">
-            <h3 className="text-lg font-bold mb-4">Browse Categories</h3>
-            <ScrollArea className="h-[60vh]">
-              <div className="space-y-4 px-2">
-                {categories.map((category, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => scrollToCategory(category.title)}
-                    className="flex items-center gap-3 p-3 w-full text-left bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center">
-                      {category.icon}
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{category.title}</h4>
-                      <p className="text-xs text-gray-500">{category.count} services</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        </SheetContent>
-      </Sheet>
+      <button 
+        onClick={() => setPopoverOpen(true)} 
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-40 text-white flex items-center justify-center transition-all duration-300 animate-scale-in bg-black"
+      >
+        <Menu size={24} />
+      </button>
+      
+      {popoverOpen && (
+        <CategoryList
+          categories={categories}
+          onCategorySelect={scrollToCategory}
+          onClose={() => setPopoverOpen(false)}
+        />
+      )}
 
       {selectedService && (
         <ServiceOrderPopup

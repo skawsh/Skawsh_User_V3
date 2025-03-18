@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { Heart, Star, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+
 interface StudioCardProps {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ interface StudioCardProps {
   index: number;
   promoted?: boolean;
 }
+
 const StudioCard: React.FC<StudioCardProps> = ({
   id,
   name,
@@ -25,19 +28,34 @@ const StudioCard: React.FC<StudioCardProps> = ({
   index,
   promoted = false
 }) => {
-  return <Link to={`/studio/${id}`} style={{
-    animationDelay: `${200 + index * 100}ms`
-  }} className="animate-fade-in block px-[14px]">
+  return (
+    <Link 
+      to={`/studio/${id}`} 
+      style={{
+        animationDelay: `${200 + index * 100}ms`
+      }} 
+      className="animate-fade-in block px-[14px]"
+    >
       <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
         {/* Image section - top */}
         <div className="relative">
           <AspectRatio ratio={16 / 9} className="w-full">
-            <div className="h-full w-full bg-cover bg-center" style={{
-            backgroundImage: `url(${image})`
-          }} />
+            <div 
+              className="h-full w-full bg-cover bg-center" 
+              style={{
+                backgroundImage: `url(${image})`
+              }}
+            />
           </AspectRatio>
           
-          {promoted}
+          {promoted && (
+            <Badge 
+              variant="default" 
+              className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-400 text-white border-0"
+            >
+              Promoted
+            </Badge>
+          )}
         </div>
         
         {/* Content section - bottom */}
@@ -58,19 +76,25 @@ const StudioCard: React.FC<StudioCardProps> = ({
           
           <div className="space-y-1.5 mt-1">
             <div className="flex flex-wrap gap-x-3 gap-y-1.5">
-              {distance && <div className="flex items-center gap-1.5 text-gray-500">
+              {distance && (
+                <div className="flex items-center gap-1.5 text-gray-500">
                   <MapPin size={14} />
                   <span className="text-xs">{distance}</span>
-                </div>}
+                </div>
+              )}
               
-              {workingHours && <div className="flex items-center gap-1.5 text-gray-500">
+              {workingHours && (
+                <div className="flex items-center gap-1.5 text-gray-500">
                   <Clock size={14} />
                   <span className="text-xs">{workingHours}</span>
-                </div>}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </Link>;
+    </Link>
+  );
 };
+
 export default StudioCard;
