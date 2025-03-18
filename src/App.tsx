@@ -11,6 +11,7 @@ import Favorites from "./pages/Favorites";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index"; // Import the Index component
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/index" element={<Index />} />
           <Route path="/studio/:id" element={<StudioProfile />} />
           <Route path="/services" element={<Services />} />
           <Route path="/favorites" element={<Favorites />} />
