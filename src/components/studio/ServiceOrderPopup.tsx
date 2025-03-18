@@ -1,12 +1,13 @@
-
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogTitle, DialogClose, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { formatIndianRupee } from "@/pages/StudioProfile";
 
+// Format decimals to show only one digit after decimal point
 const formatDecimal = (value: number): number => {
   return Math.round(value * 10) / 10;
 };
@@ -27,18 +28,35 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
-  isExpress?: boolean;
-  studioId?: string;
+  isExpress?: boolean; // Define this prop
+  studioId?: string; // Add studioId prop
 }
 
-// Default clothing items memoized outside component to prevent recreation
 const DEFAULT_CLOTHING_ITEMS = [
-  { name: 'Shirt', quantity: 0 },
-  { name: 'T-Shirt', quantity: 0 },
-  { name: 'Cotton Saree', quantity: 0 },
-  { name: 'Silk Saree', quantity: 0 },
-  { name: 'Jeans', quantity: 0 },
-  { name: 'Pants', quantity: 0 }
+  {
+    name: 'Shirt',
+    quantity: 0
+  },
+  {
+    name: 'T-Shirt',
+    quantity: 0
+  },
+  {
+    name: 'Cotton Saree',
+    quantity: 0
+  },
+  {
+    name: 'Silk Saree',
+    quantity: 0
+  },
+  {
+    name: 'Jeans',
+    quantity: 0
+  },
+  {
+    name: 'Pants',
+    quantity: 0
+  }
 ];
 
 const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
@@ -56,14 +74,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [unit, setUnit] = useState<string>('kg');
 
-  // Reset state when popup opens
   useEffect(() => {
     if (isOpen) {
       setWeight(initialWeight || 1);
-      setClothingItems([...DEFAULT_CLOTHING_ITEMS]); // Create a fresh copy
+      setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
       
+      // Set the unit based on the service unit
       if (service.unit && service.unit.includes('per sft')) {
         setUnit('sft');
       } else {
@@ -73,48 +91,51 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   }, [isOpen, initialWeight, service.unit]);
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWeight(e.target.value);
+    const inputValue = e.target.value;
+    setWeight(inputValue);
   };
 
   const handleQuantityChange = (index: number, change: number) => {
-    setClothingItems(prevItems => {
-      const newItems = [...prevItems];
-      const newQuantity = Math.max(0, newItems[index].quantity + change);
-      newItems[index].quantity = newQuantity;
-      return newItems;
-    });
+    const newItems = [...clothingItems];
+    const newQuantity = Math.max(0, newItems[index].quantity + change);
+    newItems[index].quantity = newQuantity;
+    setClothingItems(newItems);
   };
 
   const handleAddItem = () => {
     if (newItemName.trim()) {
-      setClothingItems(prevItems => [
-        ...prevItems, 
-        { name: newItemName.trim(), quantity: 0 }
-      ]);
+      setClothingItems([...clothingItems, {
+        name: newItemName.trim(),
+        quantity: 0
+      }]);
       setNewItemName('');
       setIsAddingItem(false);
     }
   };
 
-  // Memoized calculation for total price
-  const totalPrice = React.useMemo(() => {
+  // Calculate price based on weight and express status
+  const totalPrice = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     if (isNaN(numWeight)) return 0;
+    // Apply 1.5x price multiplier for express service
     const basePrice = service.price * numWeight;
     return Math.round(isExpress ? basePrice * 1.5 : basePrice);
-  }, [weight, service.price, isExpress]);
+  };
 
   const handleAddToCart = () => {
+    // Convert weight to number for cart
     let numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     
+    // Only proceed if weight is a valid number and greater than 0
     if (!isNaN(numWeight) && numWeight > 0) {
+      // Format the weight to have only one decimal place
       numWeight = formatDecimal(numWeight);
       
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
         weight: numWeight, 
-        price: service.price,
+        price: service.price, // Store base price, not total
         items: clothingItems.filter(item => item.quantity > 0),
         isExpress: isExpress,
         studioId: studioId
@@ -124,56 +145,20 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  const isAddToCartEnabled = React.useMemo(() => {
+  // Determine if Add to Cart button should be enabled
+  const isAddToCartEnabled = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     return !isNaN(numWeight) && numWeight > 0;
-  }, [weight]);
-
-  // Memoize the clothing items list to prevent unnecessary re-renders
-  const clothingItemsList = React.useMemo(() => (
-    <div className="space-y-4 max-h-[120px] overflow-y-auto no-scrollbar">
-      {clothingItems.map((item, index) => (
-        <div key={index} className="flex items-center justify-between">
-          <span className="text-gray-700">{item.name}</span>
-          <div className="flex items-center gap-3">
-            <Button 
-              size="icon" 
-              variant="outline" 
-              className="h-7 w-7 rounded-full border-gray-300" 
-              onClick={() => handleQuantityChange(index, -1)} 
-              disabled={item.quantity === 0}
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            
-            <span className="w-6 text-center">{item.quantity}</span>
-            
-            <Button 
-              size="icon" 
-              variant="outline" 
-              className="h-7 w-7 rounded-full border-gray-300" 
-              onClick={() => handleQuantityChange(index, 1)}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-      ))}
-    </div>
-  ), [clothingItems]);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent 
         className="max-w-[80%] w-[80%] p-0 gap-0 rounded-xl h-[40vh] 
-                   fixed bottom-4 right-4 top-auto transform-none z-50"
+                   fixed bottom-4 right-4 top-auto transform-none"
       >
-        <DialogDescription className="sr-only">
-          Order details for {service.name}
-        </DialogDescription>
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4" />
             {service.name}
             {isExpress && (
               <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">
@@ -205,7 +190,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               </div>
               <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">{formatIndianRupee(totalPrice)}</div>
+                <div className="font-semibold text-blue-600">{formatIndianRupee(totalPrice())}</div>
               </div>
             </div>
           </div>
@@ -217,12 +202,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               <div className="flex items-center justify-between mb-3">
                 {isAddingItem ? (
                   <div className="flex w-full items-center gap-2">
-                    <Input 
-                      value={newItemName} 
-                      onChange={e => setNewItemName(e.target.value)} 
-                      placeholder="Item name" 
-                      className="flex-grow" 
-                    />
+                    <Input value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Item name" className="flex-grow" />
                     <Button onClick={handleAddItem} size="sm" className="whitespace-nowrap">
                       Add
                     </Button>
@@ -240,7 +220,24 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 )}
               </div>
               
-              {clothingItemsList}
+              <div className="space-y-4 max-h-[120px] overflow-y-auto no-scrollbar">
+                {clothingItems.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <span className="text-gray-700">{item.name}</span>
+                    <div className="flex items-center gap-3">
+                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, -1)} disabled={item.quantity === 0}>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      
+                      <span className="w-6 text-center">{item.quantity}</span>
+                      
+                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, 1)}>
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -249,10 +246,10 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           <Button 
             className={cn(
               "w-full h-12 rounded-lg text-white", 
-              isAddToCartEnabled ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+              isAddToCartEnabled() ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600"
             )} 
             onClick={handleAddToCart} 
-            disabled={!isAddToCartEnabled}
+            disabled={!isAddToCartEnabled()}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Add to Cart
@@ -263,5 +260,4 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   );
 };
 
-// Use memo to prevent unnecessary re-renders
-export default memo(ServiceOrderPopup);
+export default ServiceOrderPopup;

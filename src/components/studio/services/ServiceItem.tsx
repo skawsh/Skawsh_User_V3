@@ -1,5 +1,4 @@
-
-import React, { memo, useMemo } from 'react';
+import React from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -34,16 +33,13 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   onDecrease,
   onClick
 }) => {
-  const price = useMemo(() => 
-    tabType === "express" ? service.price * 1.5 : service.price
-  , [tabType, service.price]);
-  
+  const price = tabType === "express" ? service.price * 1.5 : service.price;
   const hasWeight = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
   const isInCart = weight !== null || quantity !== null;
   
-  const getServiceIcon = useMemo(() => {
+  const getServiceIcon = () => {
     if (service.name.includes('Fold')) {
-      return <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" loading="lazy" />;
+      return <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />;
     } else if (service.name.includes('Iron')) {
       return (
         <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -75,28 +71,9 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
         </div>
       );
     }
-  }, [service.name]);
-
-  const handleServiceAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onAdd(service);
   };
 
-  const handleServiceIncrease = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onIncrease(service);
-  };
-
-  const handleServiceDecrease = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDecrease(service);
-  };
-
-  const handleServiceClick = () => {
-    onClick(service);
-  };
-
-  const renderControls = useMemo(() => {
+  const renderControls = () => {
     if (isInCart) {
       return (
         <div className="flex items-center">
@@ -109,7 +86,10 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
                 ? "bg-blue-600 hover:bg-blue-700" 
                 : "bg-orange-500 hover:bg-orange-600"
             )}
-            onClick={handleServiceDecrease}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDecrease(service);
+            }}
           >
             <Minus size={16} />
           </Button>
@@ -131,7 +111,10 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
                 ? "bg-blue-600 hover:bg-blue-700" 
                 : "bg-orange-500 hover:bg-orange-600"
             )}
-            onClick={handleServiceIncrease}
+            onClick={(e) => {
+              e.stopPropagation();
+              onIncrease(service);
+            }}
           >
             <Plus size={16} />
           </Button>
@@ -148,36 +131,35 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
               ? "bg-blue-600 hover:bg-blue-700" 
               : "bg-orange-500 hover:bg-orange-600"
           )}
-          onClick={handleServiceAdd}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd(service);
+          }}
         >
           <Plus size={16} className="mr-1" /> Add
         </Button>
       );
     }
-  }, [isInCart, tabType, hasWeight, weight, quantity, handleServiceDecrease, handleServiceIncrease, handleServiceAdd]);
-
-  const priceDisplay = useMemo(() => (
-    <span className="text-primary font-semibold">
-      ₹{price.toFixed(0)}
-      {service.unit ? ` ${service.unit}` : ''}
-    </span>
-  ), [price, service.unit]);
+  };
 
   return (
     <div 
       data-service-name={service.name}
       className="bg-white rounded-lg shadow-sm p-4 cursor-pointer transition-all duration-200 hover:shadow-md"
-      onClick={handleServiceClick}
+      onClick={() => onClick(service)}
     >
       <div className="flex justify-between items-center">
         <div className="flex gap-3">
           <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-            {getServiceIcon}
+            {getServiceIcon()}
           </div>
           <div>
             <h3 className="font-medium">{service.name}</h3>
             <div className="flex items-center gap-1">
-              {priceDisplay}
+              <span className="text-primary font-semibold">
+                ₹{price.toFixed(0)}
+                {service.unit ? ` ${service.unit}` : ''}
+              </span>
               <div className="flex items-center gap-0.5 ml-1">
                 <Star size={12} className="fill-yellow-400 text-yellow-400" />
                 <span className="text-xs text-gray-500">4.8</span>
@@ -187,10 +169,10 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
           </div>
         </div>
         
-        {renderControls}
+        {renderControls()}
       </div>
     </div>
   );
 };
 
-export default memo(ServiceItem);
+export default ServiceItem;

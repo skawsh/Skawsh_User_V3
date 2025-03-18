@@ -49,15 +49,13 @@ interface ServiceListProps {
   isScrolled?: boolean;
   onCartUpdate?: (count: number) => void;
   studioId?: string;
-  onPopupVisibilityChange?: (isOpen: boolean) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
   services,
   isScrolled = false,
   onCartUpdate,
-  studioId = '1',
-  onPopupVisibilityChange
+  studioId = '1'
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -231,9 +229,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const handleOpenServicePopup = (service: Service) => {
     if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
       setSelectedService(service);
-      if (onPopupVisibilityChange) {
-        onPopupVisibilityChange(true);
-      }
     } else {
       handleAddToCart({
         serviceId: service.id,
@@ -248,9 +243,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   const handleCloseServicePopup = () => {
     setSelectedService(null);
-    if (onPopupVisibilityChange) {
-      onPopupVisibilityChange(false);
-    }
   };
   
   useEffect(() => {
@@ -567,7 +559,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
           onClose={handleCloseServicePopup}
           onAddToCart={handleAddToCart}
           isExpress={selectedTab === "express"}
-          studioId={studioId}
         />
       )}
     </div>
