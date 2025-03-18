@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import { Trash2, ShoppingBag, ChevronRight, AlertCircle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, AlertTriangle } from 'lucide-react';
+import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, AlertTriangle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -51,6 +51,9 @@ const Cart: React.FC = () => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const studioId = location.state?.studioId || null;
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
+  const [flickerActive, setFlickerActive] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
 
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
@@ -493,18 +496,16 @@ const Cart: React.FC = () => {
             </Link>
           </div> : <div className="flex flex-col">
             <div className="bg-white p-4 mb-2">
-              <div className="flex justify-between items-start">
-                <div className="flex gap-3">
-                  <MapPin size={18} className="text-blue-500 mt-1" />
-                  <div>
-                    <div className="flex items-center justify-between w-full">
-                      <p className="font-medium text-gray-700">Address</p>
-                      <button className="text-blue-500 text-sm">Change</button>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      123 Main Street, Apartment 4B, New York, NY 10001
-                    </p>
+              <div className="flex gap-3">
+                <MapPin size={18} className="text-blue-500 mt-1" />
+                <div>
+                  <div className="flex items-center justify-between w-full">
+                    <p className="font-medium text-gray-700">Address</p>
+                    <button className="text-blue-500 text-sm">Change</button>
                   </div>
+                  <p className="text-sm text-gray-600 mt-1">
+                    123 Main Street, Apartment 4B, New York, NY 10001
+                  </p>
                 </div>
               </div>
             </div>
