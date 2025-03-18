@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
-import Button from '../components/ui-elements/Button';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -26,42 +25,58 @@ const StudioProfile: React.FC = () => {
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
+  
+  // Optimize initial scroll to top
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }, [location]);
 
+  // Optimize scroll event handling
   useEffect(() => {
     const handleScroll = () => {
       if (backButtonRef.current) {
         const backButtonPosition = backButtonRef.current.getBoundingClientRect().top;
-        setIsScrolled(backButtonPosition < 0);
+        if ((backButtonPosition < 0 && !isScrolled) || (backButtonPosition >= 0 && isScrolled)) {
+          setIsScrolled(backButtonPosition < 0);
+        }
       }
     };
-    window.addEventListener('scroll', handleScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    
+    // Use requestAnimationFrame for smoother scroll handling
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isScrolled]);
 
-  // Load initial cart count on mount - optimized with a single localStorage read
+  // Optimized cart data loading
   useEffect(() => {
     const loadCartData = () => {
-      const storedCartItems = localStorage.getItem('cartItems');
-      if (storedCartItems) {
-        try {
+      try {
+        const storedCartItems = localStorage.getItem('cartItems');
+        if (storedCartItems) {
           const parsedItems = JSON.parse(storedCartItems);
           const studioSpecificItems = parsedItems.filter((item: any) => !studio.id || item.studioId === studio.id);
           setCartCount(studioSpecificItems.length);
-        } catch (error) {
-          console.error('Error parsing cart items:', error);
         }
+      } catch (error) {
+        console.error('Error parsing cart items:', error);
       }
     };
     
     loadCartData();
   }, []);
 
+  // Memoized callbacks
   const handleBackClick = useCallback(() => {
     navigate('/');
   }, [navigate]);
@@ -96,7 +111,6 @@ const StudioProfile: React.FC = () => {
   }, []);
 
   const handleGoToCart = useCallback(() => {
-    // Pass studio id to the cart page to filter items
     navigate('/cart', {
       state: {
         studioId: studio.id
@@ -104,7 +118,7 @@ const StudioProfile: React.FC = () => {
     });
   }, [navigate]);
 
-  // Memoize studio data to prevent unnecessary re-renders
+  // Memoize studio data
   const studio = useMemo(() => ({
     id: '1',
     name: 'Pristine Laundry',
@@ -115,6 +129,7 @@ const StudioProfile: React.FC = () => {
     description: 'Premium laundry services with eco-friendly cleaning options.'
   }), []);
 
+  // Memoize services data
   const services = useMemo(() => [{
     id: '1',
     name: 'Dry Cleaning',
@@ -147,7 +162,7 @@ const StudioProfile: React.FC = () => {
     unit: 'per sft'
   }], []);
 
-  // Memoize the cart button element to prevent unnecessary re-renders
+  // Optimize cart button rendering with memoization
   const cartButton = useMemo(() => {
     if (cartCount > 0) {
       return (
@@ -169,43 +184,50 @@ const StudioProfile: React.FC = () => {
     return null;
   }, [cartCount, isPopupOpen, handleGoToCart]);
 
+  // Pre-compute sticky header elements to avoid recalculation
+  const stickyHeader = useMemo(() => {
+    if (!isScrolled) return null;
+    
+    return (
+      <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center">
+            <button onClick={handleBackClick} className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70">
+              <ChevronLeft size={24} />
+            </button>
+            <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
+          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded-full hover:bg-gray-100 bg-gray-100/70">
+                <MoreVertical size={20} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
+                <Share size={16} />
+                <span>Share Studio</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
+                <Info size={16} />
+                <span>About Studio</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
+                <Flag size={16} />
+                <span>Report this Studio</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    );
+  }, [isScrolled, handleBackClick, studio.name, handleShareStudio, handleAboutStudio, handleReportStudio]);
+
   return (
     <Layout>
       <div className="no-scrollbar">
-        {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
-            <div className="flex items-center justify-between px-4 py-3">
-              <div className="flex items-center">
-                <button onClick={handleBackClick} className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70">
-                  <ChevronLeft size={24} />
-                </button>
-                <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
-              </div>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded-full hover:bg-gray-100 bg-gray-100/70">
-                    <MoreVertical size={20} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
-                    <Share size={16} />
-                    <span>Share Studio</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
-                    <Info size={16} />
-                    <span>About Studio</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
-                    <Flag size={16} />
-                    <span>Report this Studio</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        )}
+        {stickyHeader}
         
         <StudioHeader 
           name={studio.name} 
@@ -234,4 +256,4 @@ const StudioProfile: React.FC = () => {
   );
 };
 
-export default StudioProfile;
+export default React.memo(StudioProfile);

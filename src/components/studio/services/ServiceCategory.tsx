@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import ServiceItem from './ServiceItem';
 
 interface Service {
@@ -105,4 +105,4 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
   );
 };
 
-export default ServiceCategory;
+export default memo(ServiceCategory);
