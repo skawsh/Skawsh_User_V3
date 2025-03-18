@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -6,12 +5,7 @@ import ServiceList from '../components/studio/ServiceList';
 import Button from '../components/ui-elements/Button';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
 // Helper function to format currency in Indian Rupee format
@@ -23,18 +17,15 @@ export const formatIndianRupee = (amount: number): string => {
     minimumFractionDigits: 0
   }).format(amount).replace('₹', '₹');
 };
-
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
-  
   useEffect(() => {
     const handleScroll = () => {
       if (backButtonRef.current) {
@@ -42,8 +33,9 @@ const StudioProfile: React.FC = () => {
         setIsScrolled(backButtonPosition < 0);
       }
     };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, {
+      passive: true
+    });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -53,50 +45,45 @@ const StudioProfile: React.FC = () => {
     if (storedCartItems) {
       try {
         const parsedItems = JSON.parse(storedCartItems);
-        const studioSpecificItems = parsedItems.filter((item: any) => 
-          !studio.id || item.studioId === studio.id
-        );
+        const studioSpecificItems = parsedItems.filter((item: any) => !studio.id || item.studioId === studio.id);
         setCartCount(studioSpecificItems.length);
       } catch (error) {
         console.error('Error parsing cart items:', error);
       }
     }
   }, []);
-
   const handleBackClick = () => {
     navigate('/');
   };
-
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
         title: studio.name,
         text: `Check out ${studio.name}`,
-        url: window.location.href,
+        url: window.location.href
       }).catch(err => console.error('Error sharing:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
-
   const handleAboutStudio = () => {
     alert(`About ${studio.name}: ${studio.description}`);
   };
-
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${studio.name} has been reported.`);
   };
-
   const handleCartUpdate = (count: number) => {
     setCartCount(count);
   };
-
   const handleGoToCart = () => {
     // Pass studio id to the cart page to filter items
-    navigate('/cart', { state: { studioId: studio.id } });
+    navigate('/cart', {
+      state: {
+        studioId: studio.id
+      }
+    });
   };
-
   const studio = {
     id: '1',
     name: 'Pristine Laundry',
@@ -106,7 +93,6 @@ const StudioProfile: React.FC = () => {
     deliveryTime: '1-2 days',
     description: 'Premium laundry services with eco-friendly cleaning options.'
   };
-  
   const services = [{
     id: '1',
     name: 'Dry Cleaning',
@@ -138,17 +124,12 @@ const StudioProfile: React.FC = () => {
     price: 3.49,
     unit: 'per sft'
   }];
-  
   return <Layout>
       <div className="no-scrollbar">
-        {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+        {isScrolled && <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
-                <button 
-                  onClick={handleBackClick} 
-                  className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70"
-                >
+                <button onClick={handleBackClick} className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70">
                   <ChevronLeft size={24} />
                 </button>
                 <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
@@ -176,47 +157,23 @@ const StudioProfile: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
-        )}
+          </div>}
         
-        <StudioHeader 
-          name={studio.name} 
-          image={studio.image} 
-          rating={studio.rating} 
-          reviewCount={studio.reviewCount} 
-          deliveryTime={studio.deliveryTime}
-          backButtonRef={backButtonRef}
-          description={studio.description}
-          onBackClick={handleBackClick}
-        />
+        <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} backButtonRef={backButtonRef} description={studio.description} onBackClick={handleBackClick} />
         
         <div className="section-container relative">
-          <ServiceList 
-            services={services} 
-            isScrolled={isScrolled} 
-            onCartUpdate={handleCartUpdate}
-            studioId={studio.id}
-          />
+          <ServiceList services={services} isScrolled={isScrolled} onCartUpdate={handleCartUpdate} studioId={studio.id} />
         </div>
 
-        {cartCount > 0 && (
-          <div 
-            onClick={handleGoToCart}
-            className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once"
-          >
+        {cartCount > 0 && <div onClick={handleGoToCart} className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px]">
             <div className="relative">
               <ShoppingBag size={20} />
-              <Badge 
-                variant="default" 
-                className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white" 
-              >
+              <Badge variant="default" className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white">
                 {cartCount}
               </Badge>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
     </Layout>;
 };
-
 export default StudioProfile;
