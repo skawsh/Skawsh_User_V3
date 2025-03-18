@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -45,7 +46,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     name: "Gachibowli",
     area: "Toli Chowki",
     rating: 4.3,
-    time: "25-30",
+    time: "",
     distance: "1.2 km",
     isCurrent: true
   };
@@ -55,35 +56,35 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       name: "R5 Chambers",
       area: "Mehdipatnam",
       rating: 4.2,
-      time: "35-40",
+      time: "",
       distance: "8.1 km"
     },
     {
       name: "M Cube Mall",
       area: "Attapur",
       rating: 4.1,
-      time: "40-45",
+      time: "",
       distance: "9.3 km"
     },
     {
       name: "Khairatabad",
       area: "Khairatabad",
       rating: 4.1,
-      time: "45-50",
+      time: "",
       distance: "10.4 km"
     },
     {
       name: "Chandanagar Circle No 21",
       area: "Miyapur",
       rating: 4.1,
-      time: "35-40",
+      time: "",
       distance: "10.7 km"
     },
     {
       name: "Rangareddi",
       area: "Pebel City",
       rating: 4.1,
-      time: "40-45",
+      time: "",
       distance: "13.7 km"
     }
   ];
@@ -207,18 +208,18 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                     </div>
                     
                     <div 
-                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6"
+                      className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 hover:bg-blue-100 transition-colors"
                       onClick={() => handleLocationSelect(currentLocation)}
                     >
                       <div className="flex justify-between items-center">
-                        <h3 className="font-semibold text-base">{currentLocation.name}, {currentLocation.area}</h3>
+                        <h3 className="font-semibold text-base text-blue-700">{currentLocation.name}, {currentLocation.area}</h3>
                         <Check size={20} className="text-blue-500" />
                       </div>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="bg-green-600 text-white rounded-full p-0.5">
                           <Star size={14} className="fill-white text-white" />
                         </div>
-                        <span className="text-sm">{currentLocation.rating} • {currentLocation.time} • {currentLocation.distance}</span>
+                        <span className="text-sm text-blue-600">{currentLocation.rating} • {currentLocation.distance}</span>
                       </div>
                     </div>
                     
@@ -227,26 +228,34 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                       <Separator className="my-4" />
                     </div>
                     
-                    <div className="space-y-3">
-                      {otherLocations.map((location, index) => (
-                        <div 
-                          key={index}
-                          className="bg-white rounded-lg p-4 border border-gray-100 hover:bg-gray-50 cursor-pointer"
-                          onClick={() => handleLocationSelect(location)}
-                        >
-                          <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
-                            <ChevronRight size={20} className="text-gray-400" />
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <div className="bg-green-600 text-white rounded-full p-0.5">
-                              <Star size={14} className="fill-white text-white" />
+                    <ScrollArea 
+                      className="h-[40vh] pr-4 overflow-auto hover:scrollbar"
+                      style={{
+                        overscrollBehavior: 'contain',
+                        touchAction: 'pan-y',
+                      }}
+                    >
+                      <div className="space-y-3">
+                        {otherLocations.map((location, index) => (
+                          <div 
+                            key={index}
+                            className="bg-white rounded-lg p-4 border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                            onClick={() => handleLocationSelect(location)}
+                          >
+                            <div className="flex justify-between items-center">
+                              <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
+                              <ChevronRight size={20} className="text-gray-400" />
                             </div>
-                            <span className="text-sm">{location.rating} • {location.time} • {location.distance}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="bg-green-600 text-white rounded-full p-0.5">
+                                <Star size={14} className="fill-white text-white" />
+                              </div>
+                              <span className="text-sm">{location.rating} • {location.distance}</span>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                     
                     <button className="w-full py-3 text-blue-500 font-medium text-center border-t border-t-gray-200 mt-4">
                       SEE MORE OUTLETS
