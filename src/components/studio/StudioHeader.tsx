@@ -29,17 +29,17 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   const navigate = useNavigate();
   
   // Format the delivery time to show as opening and closing time
-  // This interprets the "1-2 days" as "9 AM - 8 PM" for display purposes
+  // This interprets the "1-2 days" as "09:00 AM - 08:00 PM" for display purposes
   // In a real app, you would use actual opening and closing times from the data
   const getOpeningHours = () => {
     // For now, use a simple mapping based on deliveryTime
     // In a real scenario, this would come from the API
     const timeMappings: Record<string, string> = {
-      "1-2 days": "9 AM - 8 PM",
-      "Same Day": "8 AM - 9 PM",
-      "1 day": "10 AM - 7 PM",
+      "1-2 days": "09:00 AM - 08:00 PM",
+      "Same Day": "08:00 AM - 09:00 PM",
+      "1 day": "10:00 AM - 07:00 PM",
       "3-4 hours": "24 hours",
-      "2 days": "8 AM - 6 PM"
+      "2 days": "08:00 AM - 06:00 PM"
     };
     
     return timeMappings[deliveryTime] || deliveryTime;
