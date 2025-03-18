@@ -27,44 +27,39 @@ const CategoryList: React.FC<CategoryListProps> = ({
   onClose
 }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm" 
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md mx-auto bg-black text-white rounded-t-xl p-4 pb-8 animate-slide-up">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">Services</h3>
-          <button 
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <X size={20} />
-          </button>
+      <div className="relative w-full max-w-[300px] mx-auto bg-black rounded-xl overflow-hidden animate-slide-up">
+        <div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
+          <h3 className="text-lg font-bold text-white">Services</h3>
         </div>
-        <ScrollArea className="h-[60vh] pr-4">
-          <div className="space-y-6">
+        <ScrollArea className="h-[320px]">
+          <div className="px-4 py-2">
             {categories.map((category, idx) => (
-              <div key={idx} className="space-y-2">
-                <button
-                  onClick={() => onCategorySelect(category.title)}
+              <div key={idx} className="mb-4">
+                <div 
                   className="flex items-center justify-between w-full text-left py-2"
                 >
                   <div className="flex items-center gap-3">
                     {category.icon}
-                    <h4 className="font-medium">{category.title}</h4>
+                    <h4 className="font-medium text-white">{category.title}</h4>
                   </div>
-                  <div className="bg-gray-700 rounded-full h-6 w-6 flex items-center justify-center">
-                    <span className="text-xs">{category.count}</span>
-                  </div>
-                </button>
+                  {category.count && (
+                    <div className="bg-white/20 rounded-full h-6 w-6 flex items-center justify-center">
+                      <span className="text-xs text-white">{category.count}</span>
+                    </div>
+                  )}
+                </div>
 
                 {category.subCategories && (
-                  <div className="pl-8 space-y-3">
+                  <div className="pl-8 space-y-3 mt-2">
                     {category.subCategories.map((subCategory, subIdx) => (
                       <button
                         key={subIdx}
-                        onClick={() => onCategorySelect(category.title)}
+                        onClick={() => onCategorySelect(subCategory.title)}
                         className="text-gray-300 hover:text-white text-sm w-full text-left py-1"
                       >
                         {subCategory.title}
