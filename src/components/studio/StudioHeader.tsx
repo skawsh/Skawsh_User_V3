@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +27,23 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   onBackClick
 }) => {
   const navigate = useNavigate();
+  
+  // Format the delivery time to show as opening and closing time
+  // This interprets the "1-2 days" as "9 AM - 8 PM" for display purposes
+  // In a real app, you would use actual opening and closing times from the data
+  const getOpeningHours = () => {
+    // For now, use a simple mapping based on deliveryTime
+    // In a real scenario, this would come from the API
+    const timeMappings: Record<string, string> = {
+      "1-2 days": "9 AM - 8 PM",
+      "Same Day": "8 AM - 9 PM",
+      "1 day": "10 AM - 7 PM",
+      "3-4 hours": "24 hours",
+      "2 days": "8 AM - 6 PM"
+    };
+    
+    return timeMappings[deliveryTime] || deliveryTime;
+  };
   
   const handleBackClick = () => {
     if (onBackClick) {
@@ -100,7 +118,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
             
             {/* Operating Hours */}
             <p className="text-center font-medium mb-1">Operating Hours</p>
-            <p className="text-center mb-3">{deliveryTime}</p>
+            <p className="text-center mb-3">{getOpeningHours()}</p>
             
             {/* Rating Badge */}
             <div className="flex justify-between items-center">
