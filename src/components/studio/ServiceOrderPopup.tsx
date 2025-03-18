@@ -7,7 +7,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { formatIndianRupee } from "@/pages/StudioProfile";
 
-// Format decimals to show only one digit after decimal point
 const formatDecimal = (value: number): number => {
   return Math.round(value * 10) / 10;
 };
@@ -28,8 +27,8 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
-  isExpress?: boolean; // Define this prop
-  studioId?: string; // Add studioId prop
+  isExpress?: boolean;
+  studioId?: string;
 }
 
 const DEFAULT_CLOTHING_ITEMS = [
@@ -81,7 +80,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setNewItemName('');
       setIsAddingItem(false);
       
-      // Set the unit based on the service unit
       if (service.unit && service.unit.includes('per sft')) {
         setUnit('sft');
       } else {
@@ -113,29 +111,24 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  // Calculate price based on weight and express status
   const totalPrice = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     if (isNaN(numWeight)) return 0;
-    // Apply 1.5x price multiplier for express service
     const basePrice = service.price * numWeight;
     return Math.round(isExpress ? basePrice * 1.5 : basePrice);
   };
 
   const handleAddToCart = () => {
-    // Convert weight to number for cart
     let numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     
-    // Only proceed if weight is a valid number and greater than 0
     if (!isNaN(numWeight) && numWeight > 0) {
-      // Format the weight to have only one decimal place
       numWeight = formatDecimal(numWeight);
       
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
         weight: numWeight, 
-        price: service.price, // Store base price, not total
+        price: service.price,
         items: clothingItems.filter(item => item.quantity > 0),
         isExpress: isExpress,
         studioId: studioId
@@ -145,7 +138,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  // Determine if Add to Cart button should be enabled
   const isAddToCartEnabled = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     return !isNaN(numWeight) && numWeight > 0;
@@ -159,6 +151,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       >
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
+            <ShoppingBag className="h-4 w-4" />
             {service.name}
             {isExpress && (
               <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">
