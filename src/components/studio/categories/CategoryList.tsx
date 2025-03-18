@@ -13,6 +13,10 @@ interface Category {
   icon: React.ReactNode;
   count?: number;
   subCategories?: SubCategory[];
+  services: Array<{
+    name: string;
+    description: string;
+  }>;
 }
 
 interface CategoryListProps {
@@ -54,9 +58,9 @@ const CategoryList: React.FC<CategoryListProps> = ({
                   )}
                 </div>
 
-                {category.subCategories && (
-                  <div className="pl-10 space-y-2.5">
-                    {category.subCategories.map((subCategory, subIdx) => (
+                <div className="pl-10 space-y-2.5">
+                  {category.subCategories ? (
+                    category.subCategories.map((subCategory, subIdx) => (
                       <button
                         key={subIdx}
                         onClick={() => onCategorySelect(subCategory.title)}
@@ -64,9 +68,19 @@ const CategoryList: React.FC<CategoryListProps> = ({
                       >
                         {subCategory.title}
                       </button>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  ) : (
+                    category.services.map((service, serviceIdx) => (
+                      <button
+                        key={serviceIdx}
+                        onClick={() => onCategorySelect(service.name)}
+                        className="text-gray-400 hover:text-white text-sm w-full text-left py-1.5"
+                      >
+                        {service.name}
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
             ))}
           </div>
