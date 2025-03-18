@@ -202,10 +202,10 @@ const StudioProfile: React.FC = () => {
         {cartCount > 0 && (
           <div 
             onClick={handleGoToCart}
-            className="fixed bottom-24 left-6 h-14 w-14 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once"
+            className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once"
           >
             <div className="relative">
-              <ShoppingBag size={24} />
+              <ShoppingBag size={20} />
               <Badge 
                 variant="default" 
                 className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white" 
