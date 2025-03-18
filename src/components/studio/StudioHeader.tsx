@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Drawer, DrawerContent, DrawerClose, DrawerTrigger } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
 interface StudioHeaderProps {
   name: string;
   image: string;
@@ -17,7 +16,6 @@ interface StudioHeaderProps {
   description?: string;
   onBackClick?: () => void;
 }
-
 interface LocationOption {
   name: string;
   area: string;
@@ -28,7 +26,6 @@ interface LocationOption {
   isNearest?: boolean;
   isClosedForDelivery?: boolean;
 }
-
 const StudioHeader: React.FC<StudioHeaderProps> = ({
   name,
   image,
@@ -41,7 +38,6 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
   const currentLocation: LocationOption = {
     name: "Tolichowki",
     area: "Hyderabad",
@@ -51,39 +47,32 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     isCurrent: true,
     isNearest: true
   };
-  
-  const otherLocations: LocationOption[] = [
-    {
-      name: "Mehdipatnam",
-      area: "Hyderabad",
-      rating: 4.2,
-      time: "",
-      distance: "8.0 km"
-    },
-    {
-      name: "Attapur",
-      area: "Hyderabad",
-      rating: 4.1,
-      time: "",
-      distance: "9.7 km"
-    },
-    {
-      name: "Panjagutta",
-      area: "Hyderabad",
-      rating: 3.8,
-      time: "",
-      distance: "10.5 km"
-    },
-    {
-      name: "Narsingi",
-      area: "Hyderabad",
-      rating: 4.0,
-      time: "",
-      distance: "11.2 km",
-      isClosedForDelivery: true
-    }
-  ];
-  
+  const otherLocations: LocationOption[] = [{
+    name: "Mehdipatnam",
+    area: "Hyderabad",
+    rating: 4.2,
+    time: "",
+    distance: "8.0 km"
+  }, {
+    name: "Attapur",
+    area: "Hyderabad",
+    rating: 4.1,
+    time: "",
+    distance: "9.7 km"
+  }, {
+    name: "Panjagutta",
+    area: "Hyderabad",
+    rating: 3.8,
+    time: "",
+    distance: "10.5 km"
+  }, {
+    name: "Narsingi",
+    area: "Hyderabad",
+    rating: 4.0,
+    time: "",
+    distance: "11.2 km",
+    isClosedForDelivery: true
+  }];
   const getOpeningHours = () => {
     const timeMappings: Record<string, string> = {
       "1-2 days": "09:00 AM - 08:00 PM",
@@ -92,10 +81,8 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       "3-4 hours": "24 hours",
       "2 days": "08:00 AM - 06:00 PM"
     };
-    
     return timeMappings[deliveryTime] || deliveryTime;
   };
-  
   const handleBackClick = () => {
     if (onBackClick) {
       onBackClick();
@@ -103,7 +90,6 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       navigate(-1);
     }
   };
-  
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
@@ -116,33 +102,25 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       alert('Link copied to clipboard!');
     }
   };
-  
   const handleAboutStudio = () => {
     alert(`About ${name}: ${description || 'No description available.'}`);
   };
-  
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${name} has been reported.`);
   };
-
   const handleLocationSelect = (location: LocationOption) => {
     console.log(`Selected location: ${location.name}, ${location.area}`);
     setDrawerOpen(false);
   };
-  
   const handleViewAllReviews = () => {
     navigate(`/studio/${name.toLowerCase().replace(/\s+/g, '-')}/reviews`);
   };
-  
-  return (
-    <div className="animate-fade-in">
-      <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden" style={{ maxHeight: '280px' }}>
+  return <div className="animate-fade-in">
+      <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden" style={{
+      maxHeight: '280px'
+    }}>
         <div className="flex justify-between items-center p-4">
-          <button 
-            ref={backButtonRef} 
-            onClick={handleBackClick} 
-            className="text-gray-700"
-          >
+          <button ref={backButtonRef} onClick={handleBackClick} className="text-gray-700">
             <ChevronLeft size={24} />
           </button>
           
@@ -184,7 +162,10 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                   <Star size={14} className="fill-white text-white mr-1" />
                   <span>{rating}</span>
                 </div>
-                <a href="#" onClick={(e) => { e.preventDefault(); handleViewAllReviews(); }} className="text-xs text-blue-500 mt-1">See all reviews</a>
+                <a href="#" onClick={e => {
+                e.preventDefault();
+                handleViewAllReviews();
+              }} className="text-xs text-blue-500 mt-1">See all reviews</a>
               </div>
             </div>
             
@@ -210,26 +191,18 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                     </div>
                     
                     <div className="px-4 py-6 bg-gray-50">
-                      <ScrollArea 
-                        className="max-h-[60vh] pr-2 space-y-3 overflow-auto custom-scrollbar"
-                        style={{
-                          overscrollBehavior: 'contain',
-                          touchAction: 'pan-y',
-                        }}
-                      >
-                        <div 
-                          className="relative mb-4"
-                          onClick={() => handleLocationSelect(currentLocation)}
-                        >
-                          {currentLocation.isNearest && (
-                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs font-medium flex items-center z-10 shadow-md nearest-outlet-tag">
+                      <ScrollArea className="max-h-[60vh] pr-2 space-y-3 overflow-auto custom-scrollbar" style={{
+                      overscrollBehavior: 'contain',
+                      touchAction: 'pan-y'
+                    }}>
+                        <div className="relative mb-4" onClick={() => handleLocationSelect(currentLocation)}>
+                          {currentLocation.isNearest && <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 rounded-sm text-xs font-medium flex items-center z-10 shadow-md nearest-outlet-tag py-[8px]">
                               <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
                               Nearest available outlet
-                            </div>
-                          )}
+                            </div>}
                           <div className="bg-white border border-green-200 rounded-lg p-4 shadow-sm hover:border-green-300 transition-colors">
                             <div className="flex justify-between items-center">
-                              <h3 className="font-semibold text-base">{currentLocation.name}, {currentLocation.area}</h3>
+                              <h3 className="font-semibold text-base py-[9px]">{currentLocation.name}, {currentLocation.area}</h3>
                               <div className="bg-green-600 text-white rounded-sm px-1.5 py-0.5 text-xs font-medium">
                                 {currentLocation.rating}
                               </div>
@@ -241,12 +214,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                         </div>
                         
                         <div className="space-y-3">
-                          {otherLocations.map((location, index) => (
-                            <div 
-                              key={index}
-                              className="relative"
-                              onClick={() => handleLocationSelect(location)}
-                            >
+                          {otherLocations.map((location, index) => <div key={index} className="relative" onClick={() => handleLocationSelect(location)}>
                               <div className={`bg-white rounded-lg p-4 shadow-sm hover:bg-gray-50 transition-colors ${location.isClosedForDelivery ? 'border-gray-200' : 'border-gray-100'}`}>
                                 <div className="flex justify-between items-center">
                                   <h3 className="font-semibold text-base">{location.name}, {location.area}</h3>
@@ -256,13 +224,10 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                                 </div>
                                 <div className="flex flex-col mt-2">
                                   <span className="text-sm text-gray-600">Distance · {location.distance}</span>
-                                  {location.isClosedForDelivery && (
-                                    <span className="text-xs text-red-500 mt-1">Currently closed for delivery</span>
-                                  )}
+                                  {location.isClosedForDelivery && <span className="text-xs text-red-500 mt-1">Currently closed for delivery</span>}
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            </div>)}
                         </div>
                       </ScrollArea>
                       
@@ -284,8 +249,6 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           <Input placeholder="Search services in this studio..." className="pl-10 bg-gray-50 border-gray-200 rounded-full" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default StudioHeader;
