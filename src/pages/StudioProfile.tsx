@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -17,15 +18,19 @@ export const formatIndianRupee = (amount: number): string => {
     minimumFractionDigits: 0
   }).format(amount).replace('₹', '₹');
 };
+
 const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (backButtonRef.current) {
@@ -52,9 +57,11 @@ const StudioProfile: React.FC = () => {
       }
     }
   }, []);
+
   const handleBackClick = () => {
     navigate('/');
   };
+
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
@@ -67,15 +74,23 @@ const StudioProfile: React.FC = () => {
       alert('Link copied to clipboard!');
     }
   };
+
   const handleAboutStudio = () => {
     alert(`About ${studio.name}: ${studio.description}`);
   };
+
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${studio.name} has been reported.`);
   };
+
   const handleCartUpdate = (count: number) => {
     setCartCount(count);
   };
+
+  const handlePopupVisibility = (isOpen: boolean) => {
+    setIsPopupOpen(isOpen);
+  };
+
   const handleGoToCart = () => {
     // Pass studio id to the cart page to filter items
     navigate('/cart', {
@@ -84,6 +99,7 @@ const StudioProfile: React.FC = () => {
       }
     });
   };
+
   const studio = {
     id: '1',
     name: 'Pristine Laundry',
@@ -93,6 +109,7 @@ const StudioProfile: React.FC = () => {
     deliveryTime: '1-2 days',
     description: 'Premium laundry services with eco-friendly cleaning options.'
   };
+
   const services = [{
     id: '1',
     name: 'Dry Cleaning',
@@ -124,6 +141,7 @@ const StudioProfile: React.FC = () => {
     price: 3.49,
     unit: 'per sft'
   }];
+
   return <Layout>
       <div className="no-scrollbar">
         {isScrolled && <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
@@ -162,10 +180,21 @@ const StudioProfile: React.FC = () => {
         <StudioHeader name={studio.name} image={studio.image} rating={studio.rating} reviewCount={studio.reviewCount} deliveryTime={studio.deliveryTime} backButtonRef={backButtonRef} description={studio.description} onBackClick={handleBackClick} />
         
         <div className="section-container relative">
-          <ServiceList services={services} isScrolled={isScrolled} onCartUpdate={handleCartUpdate} studioId={studio.id} />
+          <ServiceList 
+            services={services} 
+            isScrolled={isScrolled} 
+            onCartUpdate={handleCartUpdate} 
+            studioId={studio.id}
+            onPopupVisibilityChange={handlePopupVisibility} 
+          />
         </div>
 
-        {cartCount > 0 && <div onClick={handleGoToCart} className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px]">
+        {cartCount > 0 && <div 
+            onClick={handleGoToCart} 
+            className={`fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px] ${
+              isPopupOpen ? 'z-30 bg-primary-400' : 'z-40 bg-primary-500'
+            }`}
+          >
             <div className="relative">
               <ShoppingBag size={20} />
               <Badge variant="default" className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white">
@@ -176,4 +205,5 @@ const StudioProfile: React.FC = () => {
       </div>
     </Layout>;
 };
+
 export default StudioProfile;
