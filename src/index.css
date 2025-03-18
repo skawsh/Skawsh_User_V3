@@ -87,6 +87,25 @@
     width: 0 !important;
     height: 0 !important;
   }
+  
+  /* Custom scrollbar for specific components */
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 3px !important;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 10px !important;
+  }
+  
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
 }
 
 @layer base {

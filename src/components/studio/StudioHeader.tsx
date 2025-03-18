@@ -213,7 +213,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                     
                     <div className="px-4 py-6 bg-gray-50">
                       <ScrollArea 
-                        className="max-h-[60vh] pr-2 space-y-3 overflow-auto"
+                        className="max-h-[60vh] pr-2 space-y-3 overflow-auto custom-scrollbar"
                         style={{
                           overscrollBehavior: 'contain',
                           touchAction: 'pan-y',
@@ -224,7 +224,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                           onClick={() => handleLocationSelect(currentLocation)}
                         >
                           {currentLocation.isNearest && (
-                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs flex items-center">
+                            <div className="absolute -top-2 left-4 bg-green-100 text-green-800 px-2 py-0.5 rounded-sm text-xs font-medium flex items-center z-10 shadow-sm">
                               <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
                               Nearest available outlet
                             </div>
