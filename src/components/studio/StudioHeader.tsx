@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -131,6 +132,10 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     setDrawerOpen(false);
   };
   
+  const handleViewAllReviews = () => {
+    navigate(`/studio/${name.toLowerCase().replace(/\s+/g, '-')}/reviews`);
+  };
+  
   return (
     <div className="animate-fade-in">
       <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden" style={{ maxHeight: '280px' }}>
@@ -181,7 +186,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                   <Star size={14} className="fill-white text-white mr-1" />
                   <span>{rating}</span>
                 </div>
-                <a href="#" className="text-xs text-blue-500 mt-1">See all review</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); handleViewAllReviews(); }} className="text-xs text-blue-500 mt-1">See all reviews</a>
               </div>
             </div>
             
