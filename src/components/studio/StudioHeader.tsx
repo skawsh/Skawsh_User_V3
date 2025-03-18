@@ -116,9 +116,11 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
             {/* Studio Name */}
             <h1 className="text-2xl font-bold text-center mb-2">{name}</h1>
             
-            {/* Operating Hours */}
-            <p className="text-center font-medium mb-1">Operating Hours</p>
-            <p className="text-center mb-3">{getOpeningHours()}</p>
+            {/* Operating Hours - Modified to show label on left and hours on right */}
+            <div className="flex justify-between items-center mb-3">
+              <p className="font-medium">Operating Hours</p>
+              <p>{getOpeningHours()}</p>
+            </div>
             
             {/* Rating Badge */}
             <div className="flex justify-between items-center">
