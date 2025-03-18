@@ -153,7 +153,10 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
+      <DialogContent 
+        className="max-w-[80%] w-[80%] p-0 gap-0 rounded-xl h-[40vh] 
+                   fixed bottom-4 right-4 top-auto transform-none"
+      >
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
             {service.name}
@@ -168,7 +171,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </DialogClose>
         </div>
         
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(40vh - 120px)' }}>
           <div>
             <label htmlFor="weight" className="text-sm font-medium block mb-2">
               {unit === 'sft' ? 'Area (SFT)' : 'Weight (KG)'}
@@ -217,7 +220,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 )}
               </div>
               
-              <div className="space-y-4 max-h-[240px] overflow-y-auto no-scrollbar">
+              <div className="space-y-4 max-h-[120px] overflow-y-auto no-scrollbar">
                 {clothingItems.map((item, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <span className="text-gray-700">{item.name}</span>
@@ -239,7 +242,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           )}
         </div>
         
-        <div className="p-4 pt-0">
+        <div className="p-4 pt-0 mt-auto">
           <Button 
             className={cn(
               "w-full h-12 rounded-lg text-white", 
