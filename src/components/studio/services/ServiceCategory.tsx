@@ -28,7 +28,7 @@ interface ServiceCategoryProps {
   onServiceIncrease: (service: Service) => void;
   onServiceDecrease: (service: Service) => void;
   onServiceClick: (service: Service) => void;
-  categoryRef: React.RefObject<HTMLDivElement>;
+  categoryRef: ((element: HTMLDivElement | null) => void) | React.RefObject<HTMLDivElement>;
 }
 
 const ServiceCategory: React.FC<ServiceCategoryProps> = ({
@@ -45,8 +45,13 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
   onServiceClick,
   categoryRef
 }) => {
+  // Check if categoryRef is a function or a RefObject and use it accordingly
+  const refProp = typeof categoryRef === 'function' 
+    ? { ref: categoryRef } 
+    : { ref: categoryRef };
+
   return (
-    <div ref={categoryRef}>
+    <div {...refProp}>
       <div className="flex items-center gap-2 mb-4">
         {icon}
         <h2 className="text-lg font-bold">{title}</h2>

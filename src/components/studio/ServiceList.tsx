@@ -211,17 +211,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setSelectedTab(value);
   };
 
-  const scrollToCategory = (categoryTitle: string) => {
-    const element = categoryRefs.current[categoryTitle];
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-    setPopoverOpen(false);
+  const setCategoryRef = (categoryTitle: string, element: HTMLDivElement | null) => {
+    categoryRefs.current[categoryTitle] = element;
   };
-  
+
   const handleOpenServicePopup = (service: Service) => {
     if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
       setSelectedService(service);
@@ -503,7 +496,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   onServiceIncrease={handleIncreaseWeight}
                   onServiceDecrease={handleDecreaseWeight}
                   onServiceClick={handleCardClick}
-                  categoryRef={el => categoryRefs.current[category.title] = el}
+                  categoryRef={(el) => setCategoryRef(category.title, el)}
                 />
               ))}
             </div>
@@ -525,7 +518,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   onServiceIncrease={handleIncreaseWeight}
                   onServiceDecrease={handleDecreaseWeight}
                   onServiceClick={handleCardClick}
-                  categoryRef={el => categoryRefs.current[category.title] = el}
+                  categoryRef={(el) => setCategoryRef(category.title, el)}
                 />
               ))}
             </div>
