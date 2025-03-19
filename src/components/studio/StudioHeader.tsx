@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Drawer, DrawerContent, DrawerClose, DrawerTrigger } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 interface StudioHeaderProps {
   name: string;
   image: string;
@@ -17,6 +17,7 @@ interface StudioHeaderProps {
   description?: string;
   onBackClick?: () => void;
 }
+
 interface LocationOption {
   name: string;
   area: string;
@@ -27,6 +28,7 @@ interface LocationOption {
   isNearest?: boolean;
   isClosedForDelivery?: boolean;
 }
+
 const StudioHeader: React.FC<StudioHeaderProps> = ({
   name,
   image,
@@ -38,7 +40,9 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   onBackClick
 }) => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const currentLocation: LocationOption = {
     name: "Tolichowki",
     area: "Hyderabad",
@@ -48,6 +52,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     isCurrent: true,
     isNearest: true
   };
+
   const otherLocations: LocationOption[] = [{
     name: "Mehdipatnam",
     area: "Hyderabad",
@@ -74,6 +79,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     distance: "11.2 km",
     isClosedForDelivery: true
   }];
+
   const getOpeningHours = () => {
     const timeMappings: Record<string, string> = {
       "1-2 days": "09:00 AM - 08:00 PM",
@@ -84,6 +90,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     };
     return timeMappings[deliveryTime] || deliveryTime;
   };
+
   const handleBackClick = () => {
     if (onBackClick) {
       onBackClick();
@@ -91,6 +98,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       navigate(-1);
     }
   };
+
   const handleShareStudio = () => {
     if (navigator.share) {
       navigator.share({
@@ -103,19 +111,24 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       alert('Link copied to clipboard!');
     }
   };
+
   const handleAboutStudio = () => {
-    alert(`About ${name}: ${description || 'No description available.'}`);
+    navigate(`/studio/${id}/about`);
   };
+
   const handleReportStudio = () => {
     alert(`Thank you for your feedback. ${name} has been reported.`);
   };
+
   const handleLocationSelect = (location: LocationOption) => {
     console.log(`Selected location: ${location.name}, ${location.area}`);
     setDrawerOpen(false);
   };
+
   const handleViewAllReviews = () => {
     navigate(`/studio/${name.toLowerCase().replace(/\s+/g, '-')}/reviews`);
   };
+
   return <div className="animate-fade-in">
       <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden" style={{
       maxHeight: '280px'
@@ -136,7 +149,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                 <Share size={16} />
                 <span>Share Studio</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
+              <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2 cursor-pointer">
                 <Info size={16} />
                 <span>About Studio</span>
               </DropdownMenuItem>
@@ -252,4 +265,5 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       </div>
     </div>;
 };
+
 export default StudioHeader;
