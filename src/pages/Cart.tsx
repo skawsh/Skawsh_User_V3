@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -54,6 +54,20 @@ const Cart: React.FC = () => {
   const [isOrderSummaryOpen, setIsOrderSummaryOpen] = useState(false);
   const [flickerActive, setFlickerActive] = useState(false);
   const [couponCode, setCouponCode] = useState('');
+  const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const scrollY = window.scrollY;
+        setIsHeaderSticky(scrollY > 10);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
@@ -473,28 +487,43 @@ const Cart: React.FC = () => {
     }
   }, []);
 
-  return <Layout>
-      <div className="max-w-md mx-auto pb-24 bg-gray-50 min-h-screen">
-        <div className="bg-white p-4 sticky top-0 z-10 flex items-center justify-between border-b">
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="rounded-full" aria-label="Go back">
-              <ChevronLeft size={24} />
-            </button>
-            <h1 className="text-lg font-medium">Your Sack</h1>
+  return (
+    <Layout hideFooter={true}>
+      <div className="max-w-md mx-auto pb-4 bg-gray-50 min-h-screen">
+        <div 
+          ref={headerRef}
+          className={`bg-white border-b z-50 transition-all duration-300 ${
+            isHeaderSticky ? 'fixed top-0 left-0 right-0 shadow-md' : ''
+          }`}
+        >
+          <div className="max-w-md mx-auto flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <button onClick={() => navigate(-1)} className="rounded-full" aria-label="Go back">
+                <ChevronLeft size={24} />
+              </button>
+              <h1 className="text-lg font-medium">Your Sack</h1>
+            </div>
+            {cartItems.length > 0 && (
+              <button onClick={() => handleRemoveItem('all')} className="text-red-500" aria-label="Clear cart">
+                <Trash2 size={20} />
+              </button>
+            )}
           </div>
-          {cartItems.length > 0 && <button onClick={() => handleRemoveItem('all')} className="text-red-500" aria-label="Clear cart">
-              <Trash2 size={20} />
-            </button>}
         </div>
         
-        {cartItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+        {isHeaderSticky && <div className="h-16"></div>}
+        
+        {cartItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 text-center p-4">
             <ShoppingBag size={48} className="text-gray-300 mb-4" />
             <h2 className="text-lg font-medium text-gray-700 mb-2">Your Sack is Empty</h2>
             <p className="text-gray-500 mb-4">Add laundry services to your sack to get started.</p>
             <Link to="/" className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition-colors">
               Browse Studios <ChevronRight size={16} />
             </Link>
-          </div> : <div className="flex flex-col">
+          </div>
+        ) : (
+          <div className="flex flex-col">
             <div className="bg-white p-4 mb-2">
               <div className="flex gap-3">
                 <MapPin size={18} className="text-blue-500 mt-1" />
@@ -522,22 +551,26 @@ const Cart: React.FC = () => {
                 </div>
               </div>
 
-              {Object.entries(groupedCartItems).map(([category, subCategories]) => <div key={category} className="mb-6">
+              {Object.entries(groupedCartItems).map(([category, subCategories]) => (
+                <div key={category} className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     {getCategoryIcon(category)}
                     <span className="font-medium">{category}</span>
                   </div>
                   
-                  {Object.entries(subCategories).map(([subCategory, items]) => <div key={`${category}-${subCategory}`} className="pl-6 mb-4">
+                  {Object.entries(subCategories).map(([subCategory, items]) => (
+                    <div key={`${category}-${subCategory}`} className="pl-6 mb-4">
                       {subCategory !== 'default' && <p className="text-sm font-medium text-gray-700 mb-2">{subCategory}</p>}
                       {items.map(item => renderCartItemWithDetails(item))}
-                    </div>)}
-                </div>)}
+                    </div>
+                  ))}
+                </div>
+              ))}
               
               <div className="mt-6 pt-4 border-t">
                 <Collapsible className="w-full border border-gray-200 rounded-lg overflow-hidden" open={isOrderSummaryOpen} onOpenChange={open => {
-              setIsOrderSummaryOpen(open);
-            }}>
+                  setIsOrderSummaryOpen(open);
+                }}>
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white">
                     <div className="flex items-center gap-3">
                       <File size={20} className="text-gray-700" />
@@ -700,14 +733,16 @@ const Cart: React.FC = () => {
               </div>
             </div>
             
-            <div className="px-4 mt-4">
+            <div className="px-4 mt-4 mb-4">
               <Button onClick={() => navigate('/checkout')} className="w-full text-md flex items-center justify-center gap-2 py-3">
                 Proceed to Checkout <ChevronRight size={16} />
               </Button>
             </div>
-          </div>}
+          </div>
+        )}
       </div>
-    </Layout>;
+    </Layout>
+  );
 };
 
 export default Cart;

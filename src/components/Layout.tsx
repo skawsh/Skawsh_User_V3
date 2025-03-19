@@ -15,6 +15,8 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
   
   // Check if current path is a studio profile page
   const isStudioProfilePage = location.pathname.includes('/studio/');
+  // Check if current path is the cart page
+  const isCartPage = location.pathname === '/cart';
   
   useEffect(() => {
     const handleScroll = () => {
@@ -48,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
         {children}
       </main>
       
-      {!isStudioProfilePage && !hideFooter && (
+      {!isStudioProfilePage && !isCartPage && !hideFooter && (
         <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-500 ease-in-out transform ${
           isVisible ? 'translate-y-0' : 'translate-y-full'
         }`}>
