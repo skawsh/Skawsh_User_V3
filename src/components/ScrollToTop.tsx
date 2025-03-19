@@ -21,23 +21,34 @@ const ScrollToTop = () => {
     };
     
     window.addEventListener('scroll', saveScrollPosition);
-    return () => window.removeEventListener('scroll', saveScrollPosition);
+    
+    // Also save position right before unmounting this route
+    return () => {
+      scrollPositions.current[pathname] = window.scrollY;
+      window.removeEventListener('scroll', saveScrollPosition);
+    };
   }, [pathname]);
   
   // Handle scroll behavior when pathname changes
   useEffect(() => {
-    if (navigationType === 'POP') {
-      // User is navigating back - restore previous scroll position
-      const savedPosition = scrollPositions.current[pathname];
-      if (savedPosition !== undefined) {
-        setTimeout(() => {
-          window.scrollTo(0, savedPosition);
-        }, 0);
+    // Wait for any DOM updates to complete
+    const timeoutId = setTimeout(() => {
+      if (navigationType === 'POP') {
+        // User is navigating back - restore previous scroll position
+        const savedPosition = scrollPositions.current[pathname];
+        if (savedPosition !== undefined) {
+          window.scrollTo({
+            top: savedPosition,
+            behavior: 'auto' // Use 'auto' instead of 'smooth' for immediate positioning
+          });
+        }
+      } else {
+        // User is navigating to a new page - scroll to top
+        window.scrollTo(0, 0);
       }
-    } else {
-      // User is navigating to a new page - scroll to top
-      window.scrollTo(0, 0);
-    }
+    }, 100); // Increased timeout to ensure DOM is fully rendered
+    
+    return () => clearTimeout(timeoutId);
   }, [pathname, navigationType]);
 
   return null;
