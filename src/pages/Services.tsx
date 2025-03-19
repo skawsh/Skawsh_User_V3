@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useNavigate } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
 import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronDown, Footprints, WashingMachine } from 'lucide-react';
