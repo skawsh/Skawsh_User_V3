@@ -14,16 +14,17 @@ const Profile: React.FC = () => {
 
   return (
     <Layout>
-      <div className="section-container pb-10">
-        <div className="flex items-center justify-between mb-4">
+      <div className="section-container bg-gradient-to-b from-primary-50 to-white min-h-screen">
+        <div className="flex items-center justify-between mb-6">
           <button 
             onClick={handleBack}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-full hover:bg-white/80 transition-colors"
+            aria-label="Go back"
           >
             <ArrowLeft size={20} className="text-gray-700" />
           </button>
           <button className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors">
-            <span className="text-sm">Logout</span>
+            <span className="text-sm font-medium">Logout</span>
           </button>
         </div>
         <ProfileInfo />
