@@ -59,35 +59,11 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
     
   const subCategoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
-  useEffect(() => {
-    if (!onSubCategoryInView || !subCategories) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const subcategoryTitle = entry.target.getAttribute('data-subcategory');
-          if (subcategoryTitle) {
-            onSubCategoryInView(subcategoryTitle, entry.isIntersecting);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "-80px 0px 0px 0px" }
-    );
-    
-    // Observe all subcategory elements
-    Object.values(subCategoryRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-    
-    return () => observer.disconnect();
-  }, [onSubCategoryInView, subCategories]);
+  // Remove the useEffect for intersection observer since we don't need it anymore
 
   return (
-    <div {...refProp} className={cn("mb-8", isSticky && "pt-16")}>
-      <div className={cn(
-        "flex items-center gap-2 mb-5 px-1",
-        isSticky && "fixed top-[56px] z-30 bg-white/95 backdrop-blur-sm shadow-sm left-0 w-full py-3 px-4 border-b"
-      )}>
+    <div {...refProp} className="mb-8">
+      <div className="flex items-center gap-2 mb-5 px-1">
         <div className="text-primary-600">
           {icon}
         </div>
@@ -103,18 +79,11 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
               ref={(el) => subCategoryRefs.current[subCategory.title] = el}
               data-subcategory={subCategory.title}
             >
-              <div className={cn(
-                "flex items-center gap-2 mb-4 px-1",
-                isSticky && activeStickySubCategory === subCategory.title && 
-                "fixed top-[105px] z-20 bg-white/90 backdrop-blur-sm shadow-sm left-0 w-full py-2 px-4 border-b"
-              )}>
+              <div className="flex items-center gap-2 mb-4 px-1">
                 <div className="text-blue-600">
                   {subCategory.icon}
                 </div>
                 <h3 className="text-md font-semibold text-gray-700 truncate">
-                  {isSticky && activeStickySubCategory === subCategory.title && (
-                    <span className="text-gray-500 mr-1">{title} /</span>
-                  )}
                   {subCategory.title}
                 </h3>
               </div>
