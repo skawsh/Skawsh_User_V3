@@ -568,6 +568,20 @@ const Cart: React.FC = () => {
               ))}
               
               <div className="mt-6 pt-4 border-t">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag size={16} className="text-blue-500" />
+                  <h3 className="font-medium">Apply Coupon</h3>
+                </div>
+                
+                <div className="flex gap-2 mb-4">
+                  <input type="text" value={couponCode} onChange={e => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 px-3 py-2 border rounded-md text-sm" />
+                  <button onClick={handleApplyCoupon} className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm">
+                    Apply
+                  </button>
+                </div>
+              </div>
+              
+              <div className="mt-4">
                 <Collapsible className="w-full border border-gray-200 rounded-lg overflow-hidden" open={isOrderSummaryOpen} onOpenChange={open => {
                   setIsOrderSummaryOpen(open);
                 }}>
@@ -717,20 +731,6 @@ const Cart: React.FC = () => {
                   </p>
                 </div>
               )}
-            </div>
-            
-            <div className="bg-white p-4 mb-2">
-              <div className="flex items-center gap-2 mb-3">
-                <Tag size={16} className="text-blue-500" />
-                <h3 className="font-medium">Apply Coupon</h3>
-              </div>
-              
-              <div className="flex gap-2">
-                <input type="text" value={couponCode} onChange={e => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 px-3 py-2 border rounded-md text-sm" />
-                <button onClick={handleApplyCoupon} className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm">
-                  Apply
-                </button>
-              </div>
             </div>
             
             <div className="px-4 mt-4 mb-4">
