@@ -176,7 +176,7 @@ const Home: React.FC = () => {
 
   return <Layout>
     <div className="section-container p-0">
-      <div className="bg-gradient-to-r from-[#03a7ca] to-white via-[#03a7ca] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl" style={{background: 'linear-gradient(323deg, rgba(3,167,202,1) 52%, rgba(255,255,255,1) 88%)'}}>
+      <div className="px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl" style={{backgroundImage: 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)'}}>
         <LocationBar />
         <SearchBar />
         <PromotionSlider banners={banners} />
