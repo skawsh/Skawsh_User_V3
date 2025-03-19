@@ -6,6 +6,7 @@ import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
+
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
@@ -13,6 +14,7 @@ const Home: React.FC = () => {
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleScroll = () => {
       const servicesRow = servicesRowRef.current;
@@ -37,11 +39,13 @@ const Home: React.FC = () => {
     });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isSticky]);
+
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {
       setStickyHeight(servicesRowRef.current.offsetHeight);
     }
   }, []);
+
   const services = [{
     id: '1',
     title: 'Wash & Fold',
@@ -79,9 +83,10 @@ const Home: React.FC = () => {
     title: 'Business Attire',
     icon: <Briefcase size={24} />
   }];
+
   const studios = [{
     id: '1',
-    name: 'Pristine Laundry',
+    name: 'Busy Bee',
     image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.8,
     deliveryTime: '1-2 days',
@@ -90,7 +95,7 @@ const Home: React.FC = () => {
     promoted: true
   }, {
     id: '2',
-    name: 'Fresh Fabrics',
+    name: 'U clean',
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.6,
     deliveryTime: 'Same Day',
@@ -99,7 +104,7 @@ const Home: React.FC = () => {
     promoted: false
   }, {
     id: '3',
-    name: 'Luxury Laundromat',
+    name: 'Tumble Dry',
     image: 'https://images.unsplash.com/photo-1521656693074-0ef32e80a5d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.9,
     deliveryTime: '1 day',
@@ -108,7 +113,7 @@ const Home: React.FC = () => {
     promoted: true
   }, {
     id: '4',
-    name: 'Quick Wash',
+    name: 'Fabrico',
     image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 4.3,
     deliveryTime: '3-4 hours',
@@ -126,7 +131,7 @@ const Home: React.FC = () => {
     promoted: false
   }, {
     id: '6',
-    name: 'Premium Wash',
+    name: 'Mycloth',
     image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
     rating: 5.0,
     deliveryTime: '1-2 days',
@@ -134,6 +139,7 @@ const Home: React.FC = () => {
     workingHours: '7 AM - 10 PM',
     promoted: true
   }];
+
   const banners = [{
     id: '1',
     title: 'Premium Care',
@@ -167,6 +173,7 @@ const Home: React.FC = () => {
     textColor: 'text-gray-800',
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
   }];
+
   return <Layout>
     <div className="section-container p-0">
       <div className="bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl">
@@ -222,11 +229,13 @@ const Home: React.FC = () => {
     </div>
   </Layout>;
 };
+
 interface FilterButtonProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
 }
+
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   label,
@@ -237,4 +246,5 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       {label}
     </button>;
 };
+
 export default Home;
