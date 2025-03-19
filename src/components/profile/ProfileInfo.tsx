@@ -1,7 +1,8 @@
 
 import React from 'react';
-import GlassCard from '../ui-elements/GlassCard';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
 import { 
   LogOut, 
   Calendar, 
@@ -14,53 +15,105 @@ import {
   HelpCircle, 
   Pencil, 
   Phone, 
-  Mail 
+  Mail,
+  User
 } from 'lucide-react';
 
 const ProfileInfo: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleMenuItem = (path: string) => {
+    // Navigate to the respective path
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    // For now, just redirect to home
+    navigate('/');
+  };
+
   return (
     <div className="animate-fade-in">
-      <div className="bg-white rounded-lg shadow-sm mb-4 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border-2 border-primary-100">
-              <AvatarImage src="/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png" alt="Raksha sha" />
-              <AvatarFallback className="bg-primary-100 text-primary-500">RS</AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-lg font-semibold">Raksha sha</h1>
-              <div className="flex items-center gap-1 text-gray-500 text-sm">
-                <Phone size={14} />
-                <span>9876123540</span>
-              </div>
-              <div className="flex items-center gap-1 text-gray-500 text-sm">
-                <Mail size={14} />
-                <span>kavyasri@gmail.com</span>
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-16 w-16 border-2 border-primary-100">
+                <AvatarImage src="/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png" alt="Raksha sha" />
+                <AvatarFallback className="bg-primary-100 text-primary-500">
+                  <User size={24} />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-lg font-semibold">Raksha sha</h1>
+                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                  <Phone size={14} />
+                  <span>9876123540</span>
+                </div>
+                <div className="flex items-center gap-1 text-gray-500 text-sm">
+                  <Mail size={14} />
+                  <span>kavyasri@gmail.com</span>
+                </div>
               </div>
             </div>
+            <button className="text-gray-500 hover:text-primary-500 transition-colors">
+              <Pencil size={20} />
+            </button>
           </div>
-          <button className="text-gray-500 hover:text-primary-500 transition-colors">
-            <Pencil size={20} />
-          </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       
       <div className="space-y-3">
-        <ProfileMenuItem icon={<Calendar size={18} />} title="My Activities" />
-        <ProfileMenuItem icon={<MapPin size={18} />} title="Addresses" />
-        <ProfileMenuItem icon={<CreditCard size={18} />} title="Payments and Refund" />
-        <ProfileMenuItem icon={<Settings size={18} />} title="Settings" />
-        <ProfileMenuItem icon={<MessageSquare size={18} />} title="Send Feedback" />
-        <ProfileMenuItem icon={<Users size={18} />} title="Refer" />
-        <ProfileMenuItem icon={<Building size={18} />} title="Skawsh for Studio" />
-        <ProfileMenuItem icon={<HelpCircle size={18} />} title="Support" />
+        <ProfileMenuItem 
+          icon={<Calendar size={18} />} 
+          title="My Activities" 
+          onClick={() => handleMenuItem('/activities')} 
+        />
+        <ProfileMenuItem 
+          icon={<MapPin size={18} />} 
+          title="Addresses" 
+          onClick={() => handleMenuItem('/addresses')} 
+        />
+        <ProfileMenuItem 
+          icon={<CreditCard size={18} />} 
+          title="Payments and Refund" 
+          onClick={() => handleMenuItem('/payments')} 
+        />
+        <ProfileMenuItem 
+          icon={<Settings size={18} />} 
+          title="Settings" 
+          onClick={() => handleMenuItem('/settings')} 
+        />
+        <ProfileMenuItem 
+          icon={<MessageSquare size={18} />} 
+          title="Send Feedback" 
+          onClick={() => handleMenuItem('/feedback')} 
+        />
+        <ProfileMenuItem 
+          icon={<Users size={18} />} 
+          title="Refer" 
+          onClick={() => handleMenuItem('/refer')} 
+        />
+        <ProfileMenuItem 
+          icon={<Building size={18} />} 
+          title="Skawsh for Studio" 
+          onClick={() => handleMenuItem('/studio')} 
+        />
+        <ProfileMenuItem 
+          icon={<HelpCircle size={18} />} 
+          title="Support" 
+          onClick={() => handleMenuItem('/support')} 
+        />
         
-        <button 
-          className="w-full bg-white rounded-lg shadow-sm p-4 flex items-center gap-3 text-red-500 hover:bg-gray-50 transition-colors"
+        <Card 
+          className="cursor-pointer hover:bg-gray-50 transition-colors"
+          onClick={handleLogout}
         >
-          <LogOut size={18} />
-          <span>Logout</span>
-        </button>
+          <CardContent className="p-4 flex items-center gap-3 text-red-500">
+            <LogOut size={18} />
+            <span>Logout</span>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
@@ -69,16 +122,22 @@ const ProfileInfo: React.FC = () => {
 interface ProfileMenuItemProps {
   icon: React.ReactNode;
   title: string;
+  onClick: () => void;
 }
 
-const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ icon, title }) => {
+const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ icon, title, onClick }) => {
   return (
-    <GlassCard className="p-4 hover:bg-gray-50 transition-colors">
-      <div className="flex items-center gap-3">
-        <div className="text-gray-500">{icon}</div>
-        <span className="text-gray-700">{title}</span>
-      </div>
-    </GlassCard>
+    <Card 
+      className="cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={onClick}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center gap-3">
+          <div className="text-gray-500">{icon}</div>
+          <span className="text-gray-700">{title}</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
