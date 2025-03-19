@@ -1,82 +1,83 @@
 
 import React from 'react';
 import GlassCard from '../ui-elements/GlassCard';
-import { Mail, Phone, MapPin, CreditCard, Clock, HelpCircle, LogOut, ChevronRight } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  LogOut, 
+  Calendar, 
+  MapPin, 
+  CreditCard, 
+  Settings, 
+  MessageSquare, 
+  Users, 
+  Building, 
+  HelpCircle, 
+  Pencil, 
+  Phone, 
+  Mail 
+} from 'lucide-react';
 
 const ProfileInfo: React.FC = () => {
   return (
     <div className="animate-fade-in">
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-primary-400 to-primary-600 flex items-center justify-center mb-4 text-white text-2xl font-semibold border-4 border-white shadow-xl">
-          JS
-        </div>
-        <h1 className="text-xl font-semibold">John Smith</h1>
-        <p className="text-gray-500">john.smith@example.com</p>
-      </div>
-      
-      <div className="space-y-4">
-        <GlassCard className="p-4" interactive={false}>
-          <h2 className="font-medium text-gray-800 mb-3">Personal Information</h2>
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 text-gray-600">
-              <Mail size={18} className="text-primary-500" />
-              <span>john.smith@example.com</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Phone size={18} className="text-primary-500" />
-              <span>+1 (555) 123-4567</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <MapPin size={18} className="text-primary-500" />
-              <span>123 Main St, New York, NY</span>
+      <div className="bg-white rounded-lg shadow-sm mb-4 p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-4">
+            <Avatar className="h-16 w-16 border-2 border-primary-100">
+              <AvatarImage src="/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png" alt="Raksha sha" />
+              <AvatarFallback className="bg-primary-100 text-primary-500">RS</AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-lg font-semibold">Raksha sha</h1>
+              <div className="flex items-center gap-1 text-gray-500 text-sm">
+                <Phone size={14} />
+                <span>9876123540</span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 text-sm">
+                <Mail size={14} />
+                <span>kavyasri@gmail.com</span>
+              </div>
             </div>
           </div>
-        </GlassCard>
+          <button className="text-gray-500 hover:text-primary-500 transition-colors">
+            <Pencil size={20} />
+          </button>
+        </div>
+      </div>
+      
+      <div className="space-y-3">
+        <ProfileMenuItem icon={<Calendar size={18} />} title="My Activities" />
+        <ProfileMenuItem icon={<MapPin size={18} />} title="Addresses" />
+        <ProfileMenuItem icon={<CreditCard size={18} />} title="Payments and Refund" />
+        <ProfileMenuItem icon={<Settings size={18} />} title="Settings" />
+        <ProfileMenuItem icon={<MessageSquare size={18} />} title="Send Feedback" />
+        <ProfileMenuItem icon={<Users size={18} />} title="Refer" />
+        <ProfileMenuItem icon={<Building size={18} />} title="Skawsh for Studio" />
+        <ProfileMenuItem icon={<HelpCircle size={18} />} title="Support" />
         
-        <ProfileSection 
-          title="Payment Methods" 
-          icon={<CreditCard size={18} />} 
-          linkText="Manage Payment Options"
-        />
-        
-        <ProfileSection 
-          title="Order History" 
-          icon={<Clock size={18} />} 
-          linkText="View Past Orders"
-        />
-        
-        <ProfileSection 
-          title="Help & Support" 
-          icon={<HelpCircle size={18} />} 
-          linkText="Get Help"
-        />
-        
-        <GlassCard className="p-4 text-red-500 flex items-center justify-center gap-2">
+        <button 
+          className="w-full bg-white rounded-lg shadow-sm p-4 flex items-center gap-3 text-red-500 hover:bg-gray-50 transition-colors"
+        >
           <LogOut size={18} />
-          <span className="font-medium">Log Out</span>
-        </GlassCard>
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );
 };
 
-interface ProfileSectionProps {
-  title: string;
+interface ProfileMenuItemProps {
   icon: React.ReactNode;
-  linkText: string;
+  title: string;
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ title, icon, linkText }) => {
+const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ icon, title }) => {
   return (
-    <GlassCard className="p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="text-primary-500">{icon}</div>
-          <span className="font-medium text-gray-800">{title}</span>
-        </div>
-        <ChevronRight className="text-gray-400" size={18} />
+    <GlassCard className="p-4 hover:bg-gray-50 transition-colors">
+      <div className="flex items-center gap-3">
+        <div className="text-gray-500">{icon}</div>
+        <span className="text-gray-700">{title}</span>
       </div>
-      <p className="mt-1 text-sm text-primary-500 font-medium">{linkText}</p>
     </GlassCard>
   );
 };
