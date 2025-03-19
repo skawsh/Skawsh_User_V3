@@ -690,3 +690,76 @@ const Cart: React.FC = () => {
                             className={cn(
                               "transition-transform duration-200 text-gray-500", 
                               isOrderSummaryOpen ? "transform rotate-180" : ""
+                            )}
+                          />
+                        </div>
+                      </CardContent>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent>
+                      <CardContent className="p-4 pt-0">
+                        <div className="space-y-3 mt-2 mb-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">Item Subtotal</span>
+                            <span className="font-medium">{formatIndianRupee(subtotal)}</span>
+                          </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">Delivery Fee</span>
+                            <span className="font-medium">{formatIndianRupee(deliveryFee)}</span>
+                          </div>
+                          
+                          <div className="pt-2 border-t border-gray-100">
+                            <div className="flex justify-between items-center text-sm">
+                              <div className="flex items-center gap-1">
+                                <span className="text-gray-600">GST (18% on Items)</span>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Info size={14} className="text-gray-400 cursor-help" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs">18% GST applied on laundry services</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                              <span className="font-medium">{formatIndianRupee(subtotalGST)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm mt-1">
+                              <span className="text-gray-600">GST (5% on Delivery)</span>
+                              <span className="font-medium">{formatIndianRupee(deliveryGST)}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="pt-2 border-t border-gray-100">
+                            <div className="flex justify-between items-center font-medium">
+                              <span>Total Amount</span>
+                              <span className="text-primary-700 text-lg">{formatIndianRupee(total)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
+                
+                <div className="sticky bottom-4 pt-4">
+                  <button 
+                    className={`w-full bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white py-3 px-4 rounded-lg shadow-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${isOrderSummaryOpen ? 'mb-4' : ''}`}
+                    onClick={() => navigate('/checkout')}
+                  >
+                    <Package size={18} />
+                    <span>Proceed to Checkout</span>
+                    <span className="ml-1">{formatIndianRupee(total)}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+};
+
+export default Cart;
