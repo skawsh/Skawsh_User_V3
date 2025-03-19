@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -8,6 +9,7 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 // Helper function to format currency in Indian Rupee format
 export const formatIndianRupee = (amount: number): string => {
@@ -26,6 +28,7 @@ const StudioProfile: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [washType, setWashType] = useState<"standard" | "express">("standard");
 
   // Use console log to debug the route params
   console.log("Studio ID from URL:", id);
@@ -102,6 +105,12 @@ const StudioProfile: React.FC = () => {
         studioId: studio.id
       }
     });
+  };
+
+  const handleWashTypeChange = (value: string) => {
+    if (value === "standard" || value === "express") {
+      setWashType(value);
+    }
   };
 
   // This would normally come from an API using the ID from the URL
@@ -204,6 +213,38 @@ const StudioProfile: React.FC = () => {
         />
         
         <div className="section-container relative">
+          <div className="px-4 mb-4">
+            <div className="w-full overflow-hidden border border-gray-300 rounded-xl">
+              <ToggleGroup 
+                type="single" 
+                value={washType} 
+                onValueChange={handleWashTypeChange} 
+                className="w-full grid grid-cols-2 rounded-xl p-0"
+              >
+                <ToggleGroupItem 
+                  value="standard" 
+                  className={`h-16 rounded-r-none rounded-l-xl ${
+                    washType === "standard" 
+                      ? "bg-blue-500 text-white" 
+                      : "bg-gray-200 text-gray-500"
+                  } flex items-center justify-center text-xl font-bold transition-colors duration-200`}
+                >
+                  Standard Wash
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="express" 
+                  className={`h-16 rounded-l-none rounded-r-xl ${
+                    washType === "express" 
+                      ? "bg-amber-400 text-white" 
+                      : "bg-gray-200 text-gray-500"
+                  } flex items-center justify-center text-xl font-bold transition-colors duration-200`}
+                >
+                  Express Wash
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </div>
+          
           <ServiceList 
             services={services} 
             isScrolled={isScrolled} 
