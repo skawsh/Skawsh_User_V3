@@ -33,11 +33,11 @@ const StudioCard: React.FC<StudioCardProps> = ({
   const isBusyBee = name.toLowerCase().includes('busy bee');
   const busyBeeLogo = '/lovable-uploads/a8759ba1-6d44-45aa-94db-16cabd041845.png';
   
-  // Check if the image is a logo
-  const isLogo = image.includes('lovable-uploads') || isBusyBee;
-  
   // Use the custom Busy Bee logo if it's Busy Bee studio
   const displayImage = isBusyBee ? busyBeeLogo : image;
+  
+  // Check if the image is a logo (either it's in uploads folder or it's the Busy Bee logo)
+  const isLogo = displayImage.includes('lovable-uploads');
   
   return (
     <Link 
