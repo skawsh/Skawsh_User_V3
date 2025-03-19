@@ -1,23 +1,15 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../components/Layout';
-import StudioCard from '../components/home/StudioCard';
-import { useParams, useLocation } from 'react-router-dom';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from '@/components/ui/pagination';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const StudiosByService: React.FC = () => {
   const { serviceId } = useParams<{ serviceId: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const serviceName = location.state?.serviceName || 'Service';
   
   // Mock data for studios offering this service
@@ -26,101 +18,112 @@ const StudiosByService: React.FC = () => {
     {
       id: '1',
       name: 'Busy Bee',
-      image: '/lovable-uploads/6050892e-ca31-4f41-9899-4970d59197a0.png',
+      logo: '/lovable-uploads/714e7b82-be66-4441-afee-0f7b49945d57.png',
       rating: 4.8,
-      deliveryTime: '1-2 days',
-      distance: '1.2 km',
-      workingHours: '9 AM - 8 PM',
+      workingHours: '09:00 AM - 08:00 PM',
+      distance: '4.1 km',
+      location: 'Tolichowki',
       promoted: true
     },
     {
       id: '2',
-      name: 'U clean',
-      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      name: 'U Clean',
+      logo: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
       rating: 4.6,
-      deliveryTime: 'Same Day',
-      distance: '0.8 km',
-      workingHours: '8 AM - 9 PM',
-      promoted: false
-    },
-    {
-      id: '3',
-      name: 'Tumble Dry',
-      image: 'https://images.unsplash.com/photo-1521656693074-0ef32e80a5d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.9,
-      deliveryTime: '1 day',
-      distance: '2.5 km',
-      workingHours: '10 AM - 7 PM',
-      promoted: true
-    },
-    {
-      id: '4',
-      name: 'Fabrico',
-      image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.3,
-      deliveryTime: '3-4 hours',
-      distance: '3.1 km',
-      workingHours: '24 hours',
+      workingHours: '09:00 AM - 08:00 PM',
+      distance: '4.1 km',
+      location: 'Tolichowki',
       promoted: false
     }
   ];
 
+  useEffect(() => {
+    // If no state was passed (direct URL access), try to extract service name from serviceId
+    if (!location.state?.serviceName && serviceId) {
+      const formattedServiceName = serviceId
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      document.title = `Studios offering ${formattedServiceName}`;
+    }
+  }, [serviceId, location.state]);
+
   return (
     <Layout>
-      <div className="section-container pb-10">
-        <div className="flex items-center gap-3 mb-4">
-          <Link to={location.state?.from || '/'} className="bg-gray-100 p-2 rounded-full">
-            <ChevronLeft size={20} className="text-gray-600" />
-          </Link>
-          <h1 className="text-2xl font-semibold animate-fade-in">
-            Studios offering <Badge variant="outline" className="ml-1">{serviceName}</Badge>
-          </h1>
+      <div className="max-w-md mx-auto bg-white min-h-screen">
+        <div className="p-4 border-b shadow-sm">
+          <div className="flex items-center gap-2">
+            <Link to={location.state?.from || '/'} 
+                 className="rounded-full p-2 hover:bg-gray-100 transition-colors">
+              <ChevronLeft size={22} className="text-gray-700" />
+            </Link>
+            <h1 className="text-2xl font-bold text-center flex-1 pr-8">Studios</h1>
+          </div>
+          
+          <p className="text-center text-gray-600 mt-2">
+            We found {studios.length} studios that offer {serviceName} services
+          </p>
         </div>
         
-        <p className="text-gray-500 mb-6 animate-fade-in">
-          We found {studios.length} laundry studios that offer {serviceName} services in your area.
-        </p>
-        
-        <div className="space-y-4 mx-0 px-0 animate-fade-in">
-          {studios.map((studio, index) => (
+        <div className="p-4 space-y-4">
+          {studios.map((studio) => (
             <StudioCard 
               key={studio.id} 
-              id={studio.id} 
-              name={studio.name} 
-              image={studio.image} 
-              rating={studio.rating} 
-              deliveryTime={studio.deliveryTime} 
-              distance={studio.distance} 
-              workingHours={studio.workingHours} 
-              index={index} 
-              promoted={studio.promoted} 
+              studio={studio} 
+              onClick={() => navigate(`/studio/${studio.id}`)}
             />
           ))}
         </div>
-        
-        <div className="mt-6">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">2</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
       </div>
     </Layout>
+  );
+};
+
+interface StudioProps {
+  studio: {
+    id: string;
+    name: string;
+    logo: string;
+    rating: number;
+    workingHours: string;
+    distance: string;
+    location: string;
+  };
+  onClick: () => void;
+}
+
+const StudioCard: React.FC<StudioProps> = ({ studio, onClick }) => {
+  return (
+    <div className="border rounded-xl overflow-hidden shadow-sm" onClick={onClick}>
+      <div className="border-b p-3 flex justify-center bg-white">
+        <img 
+          src={studio.logo} 
+          alt={studio.name} 
+          className="h-16 object-contain"
+        />
+      </div>
+      
+      <div className="p-4 bg-white">
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-semibold">{studio.name}</h3>
+          <div className="flex items-center bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            ★ {studio.rating}
+            <span className="ml-1 text-xs underline font-normal">See all reviews</span>
+          </div>
+        </div>
+        
+        <div className="text-gray-600 text-sm mt-1">
+          <p><span className="font-medium">Operating Hours</span></p>
+          <p>{studio.workingHours}</p>
+        </div>
+        
+        <div className="flex items-center mt-2 text-sm text-blue-500">
+          <span>{studio.distance} - {studio.location}</span>
+          <ChevronLeft size={16} className="transform rotate-270 ml-1" />
+        </div>
+      </div>
+    </div>
   );
 };
 
