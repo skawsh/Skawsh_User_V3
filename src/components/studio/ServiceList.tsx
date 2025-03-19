@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Menu } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -50,19 +49,26 @@ interface ServiceListProps {
   isScrolled?: boolean;
   onCartUpdate?: (count: number) => void;
   studioId?: string;
+  activeCategoryTitle?: string | null;
+  onCategoryInView?: (category: string, inView: boolean) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({
   services,
   isScrolled = false,
   onCartUpdate,
-  studioId = '1'
+  studioId = '1',
+  activeCategoryTitle,
+  onCategoryInView
 }) => {
   const [selectedTab, setSelectedTab] = useState<string>("standard");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isTabsSticky, setIsTabsSticky] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(null);
+  const [activeSubCategories, setActiveSubCategories] = useState<Record<string, string | null>>({});
+  
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -421,6 +427,52 @@ const ServiceList: React.FC<ServiceListProps> = ({
     };
   }, [isTabsSticky]);
 
+  useEffect(() => {
+    if (!onCategoryInView) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const categoryTitle = entry.target.getAttribute('data-category');
+          if (categoryTitle) {
+            const index = categories.findIndex(cat => cat.title === categoryTitle);
+            
+            if (entry.isIntersecting) {
+              setActiveCategoryIndex(index);
+              onCategoryInView(categoryTitle, true);
+            } else if (activeCategoryIndex === index) {
+              setActiveCategoryIndex(null);
+            }
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "-80px 0px 0px 0px" }
+    );
+
+    Object.entries(categoryRefs.current).forEach(([title, ref]) => {
+      if (ref) {
+        ref.setAttribute('data-category', title);
+        observer.observe(ref);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [categories, onCategoryInView, activeCategoryIndex]);
+
+  const handleSubCategoryInView = (categoryTitle: string, subCategoryTitle: string, inView: boolean) => {
+    if (inView) {
+      setActiveSubCategories(prev => ({
+        ...prev,
+        [categoryTitle]: subCategoryTitle
+      }));
+    } else if (activeSubCategories[categoryTitle] === subCategoryTitle) {
+      setActiveSubCategories(prev => ({
+        ...prev,
+        [categoryTitle]: null
+      }));
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -541,6 +593,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   onServiceDecrease={handleDecreaseWeight}
                   onServiceClick={handleCardClick}
                   categoryRef={(el) => setCategoryRef(category.title, el)}
+                  isSticky={activeCategoryTitle === category.title}
+                  activeStickySubCategory={activeSubCategories[category.title] || null}
+                  onSubCategoryInView={(subcategory, inView) => 
+                    handleSubCategoryInView(category.title, subcategory, inView)
+                  }
                 />
               ))}
             </div>
@@ -563,6 +620,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
                   onServiceDecrease={handleDecreaseWeight}
                   onServiceClick={handleCardClick}
                   categoryRef={(el) => setCategoryRef(category.title, el)}
+                  isSticky={activeCategoryTitle === category.title}
+                  activeStickySubCategory={activeSubCategories[category.title] || null}
+                  onSubCategoryInView={(subcategory, inView) => 
+                    handleSubCategoryInView(category.title, subcategory, inView)
+                  }
                 />
               ))}
             </div>
@@ -599,3 +661,4 @@ const ServiceList: React.FC<ServiceListProps> = ({
 };
 
 export default ServiceList;
+

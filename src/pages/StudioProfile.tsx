@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -26,6 +25,7 @@ const StudioProfile: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [activeCategoryTitle, setActiveCategoryTitle] = useState<string | null>(null);
 
   // Use console log to debug the route params
   console.log("Studio ID from URL:", id);
@@ -102,6 +102,12 @@ const StudioProfile: React.FC = () => {
         studioId: studio.id
       }
     });
+  };
+
+  const handleCategoryInView = (categoryTitle: string, inView: boolean) => {
+    if (inView) {
+      setActiveCategoryTitle(categoryTitle);
+    }
   };
 
   // This would normally come from an API using the ID from the URL
@@ -208,7 +214,9 @@ const StudioProfile: React.FC = () => {
             services={services} 
             isScrolled={isScrolled} 
             onCartUpdate={handleCartUpdate} 
-            studioId={studio.id} 
+            studioId={studio.id}
+            activeCategoryTitle={activeCategoryTitle}
+            onCategoryInView={handleCategoryInView}
           />
         </div>
 
