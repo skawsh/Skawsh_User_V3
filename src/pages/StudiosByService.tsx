@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
