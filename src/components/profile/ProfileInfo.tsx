@@ -35,7 +35,7 @@ const ProfileInfo: React.FC = () => {
   return (
     <div className="animate-fade-in space-y-6">
       <Card className="overflow-hidden shadow-md border-none">
-        <CardContent className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
+        <CardContent className="pt-1 pb-6 px-6 bg-gradient-to-r from-primary-100 to-primary-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
               <Avatar className="h-20 w-20 border-2 border-white shadow-md">
