@@ -14,15 +14,12 @@ import ServiceCard from '../components/home/ServiceCard';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from '@/components/ui/input';
-
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
 };
-
 const formatDecimal = (value: number): number => {
   return Math.round(value * 10) / 10;
 };
-
 interface CartItem {
   serviceId: string;
   serviceName: string;
@@ -38,7 +35,6 @@ interface CartItem {
   serviceCategory?: string;
   serviceSubCategory?: string;
 }
-
 const Cart: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +52,6 @@ const Cart: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -64,11 +59,11 @@ const Cart: React.FC = () => {
         setIsHeaderSticky(scrollY > 10);
       }
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, {
+      passive: true
+    });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
@@ -108,11 +103,9 @@ const Cart: React.FC = () => {
       }
     }
   }, [studioId]);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   useEffect(() => {
     let flickerTimer: NodeJS.Timeout;
     if (isOrderSummaryOpen) {
@@ -127,7 +120,6 @@ const Cart: React.FC = () => {
       if (flickerTimer) clearInterval(flickerTimer);
     };
   }, [isOrderSummaryOpen]);
-
   const services = [{
     id: 'wash-fold-1',
     title: 'Wash & Fold',
@@ -218,7 +210,6 @@ const Cart: React.FC = () => {
     studioId: studioId || '',
     serviceCategory: 'Additional Services'
   }];
-
   const serviceCategories = Array.from(new Set(cartItems.map(item => item.serviceCategory)));
   const groupedCartItems = cartItems.reduce((acc: {
     [key: string]: {
@@ -236,19 +227,16 @@ const Cart: React.FC = () => {
     acc[item.serviceCategory][subCategoryKey].push(item);
     return acc;
   }, {});
-
   const subtotal = cartItems.reduce((total, item) => {
     const itemPrice = item.price || 0;
     const itemQuantity = item.quantity || item.weight || 1;
     return total + itemPrice * itemQuantity;
   }, 0);
-
   const deliveryFee = 49;
   const subtotalGST = subtotal * 0.18; // 18% GST on subtotal
   const deliveryGST = deliveryFee * 0.05; // 5% GST on delivery fee
   const totalGST = subtotalGST + deliveryGST;
   const total = subtotal + deliveryFee + totalGST;
-
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     const formattedQuantity = formatDecimal(newQuantity);
     if (formattedQuantity <= 0) {
@@ -268,7 +256,6 @@ const Cart: React.FC = () => {
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
   };
-
   const handleRemoveItem = (itemId: string) => {
     if (itemId === 'all') {
       setCartItems([]);
@@ -287,7 +274,6 @@ const Cart: React.FC = () => {
       description: "The item has been removed from your cart"
     });
   };
-
   const handleAddService = (service: any) => {
     const existingItemIndex = cartItems.findIndex(item => item.serviceId === service.id);
     if (existingItemIndex !== -1) {
@@ -334,7 +320,6 @@ const Cart: React.FC = () => {
       description: `${service.title} has been added to your cart`
     });
   };
-
   const handleApplyCoupon = () => {
     if (couponCode.trim()) {
       toast({
@@ -344,7 +329,6 @@ const Cart: React.FC = () => {
       // Logic to apply coupon would go here
     }
   };
-
   const renderCartItemWithDetails = (item: CartItem) => {
     const quantity = item.weight ? formatDecimal(item.weight) : item.quantity || 1;
     const unitLabel = item.weight ? 'KG' : item.serviceCategory === 'Shoe Laundry Services' ? 'Pair' : 'Item';
@@ -418,7 +402,6 @@ const Cart: React.FC = () => {
         </div>
       </div>;
   };
-
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Core Laundry Services':
@@ -431,7 +414,6 @@ const Cart: React.FC = () => {
         return <Tag size={16} className="text-white bg-blue-600 rounded-full p-0.5" />;
     }
   };
-
   const addInstruction = () => {
     if (newInstruction.trim()) {
       if (editingIndex !== null) {
@@ -444,38 +426,32 @@ const Cart: React.FC = () => {
         // Add new instruction
         setSpecialInstructions([...specialInstructions, newInstruction]);
       }
-      
       setNewInstruction('');
-      
+
       // Save to localStorage
       localStorage.setItem('specialInstructions', JSON.stringify([...specialInstructions, newInstruction]));
-      
       toast({
         title: editingIndex !== null ? "Instruction updated" : "Instruction added",
         description: editingIndex !== null ? "Your special instruction has been updated" : "Your special instruction has been added"
       });
     }
   };
-
   const editInstruction = (index: number) => {
     setNewInstruction(specialInstructions[index]);
     setEditingIndex(index);
     setShowInstructionsInput(true);
   };
-
   const removeInstruction = (index: number) => {
     const updatedInstructions = specialInstructions.filter((_, i) => i !== index);
     setSpecialInstructions(updatedInstructions);
-    
+
     // Save to localStorage
     localStorage.setItem('specialInstructions', JSON.stringify(updatedInstructions));
-    
     toast({
       title: "Instruction removed",
       description: "Your special instruction has been removed"
     });
   };
-
   useEffect(() => {
     const savedInstructions = localStorage.getItem('specialInstructions');
     if (savedInstructions) {
@@ -486,16 +462,9 @@ const Cart: React.FC = () => {
       }
     }
   }, []);
-
-  return (
-    <Layout hideFooter={true}>
+  return <Layout hideFooter={true}>
       <div className="max-w-md mx-auto pb-4 bg-gray-50 min-h-screen">
-        <div 
-          ref={headerRef}
-          className={`bg-white border-b z-50 transition-all duration-300 ${
-            isHeaderSticky ? 'fixed top-0 left-0 right-0 shadow-md' : ''
-          }`}
-        >
+        <div ref={headerRef} className={`bg-white border-b z-50 transition-all duration-300 ${isHeaderSticky ? 'fixed top-0 left-0 right-0 shadow-md' : ''}`}>
           <div className="max-w-md mx-auto flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <button onClick={() => navigate(-1)} className="rounded-full hover:bg-gray-100 p-1 transition-colors" aria-label="Go back">
@@ -503,18 +472,15 @@ const Cart: React.FC = () => {
               </button>
               <h1 className="text-lg font-medium">Your Sack</h1>
             </div>
-            {cartItems.length > 0 && (
-              <button onClick={() => handleRemoveItem('all')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors" aria-label="Clear cart">
+            {cartItems.length > 0 && <button onClick={() => handleRemoveItem('all')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors" aria-label="Clear cart">
                 <Trash2 size={20} />
-              </button>
-            )}
+              </button>}
           </div>
         </div>
         
         {isHeaderSticky && <div className="h-16"></div>}
         
-        {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+        {cartItems.length === 0 ? <div className="flex flex-col items-center justify-center h-64 text-center p-4">
             <div className="bg-blue-50 rounded-full p-4 mb-4">
               <ShoppingBag size={48} className="text-blue-500" />
             </div>
@@ -523,9 +489,7 @@ const Cart: React.FC = () => {
             <Link to="/" className="bg-blue-600 text-white px-6 py-2.5 rounded-md flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
               Browse Studios <ChevronRight size={16} />
             </Link>
-          </div>
-        ) : (
-          <div className="flex flex-col">
+          </div> : <div className="flex flex-col">
             <div className="bg-white p-4 mb-2 shadow-sm">
               <div className="flex gap-3">
                 <div className="bg-blue-50 rounded-full p-1.5">
@@ -549,27 +513,21 @@ const Cart: React.FC = () => {
               <div className="bg-amber-50 rounded-md p-3 mb-4 border border-amber-100">
                 <div className="flex items-start gap-2">
                   <AlertTriangle size={16} className="mt-0.5 flex-shrink-0 text-amber-600" />
-                  <p className="text-xs text-amber-700">
-                    Price may vary depending on the weight and clothing category during pickup of your order
-                  </p>
+                  <p className="text-xs text-amber-700">Price may vary depending on the weight and clothing items during pickup of your order</p>
                 </div>
               </div>
 
-              {Object.entries(groupedCartItems).map(([category, subCategories]) => (
-                <div key={category} className="mb-6">
+              {Object.entries(groupedCartItems).map(([category, subCategories]) => <div key={category} className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     {getCategoryIcon(category)}
                     <span className="font-medium text-gray-800">{category}</span>
                   </div>
                   
-                  {Object.entries(subCategories).map(([subCategory, items]) => (
-                    <div key={`${category}-${subCategory}`} className="pl-6 mb-4">
+                  {Object.entries(subCategories).map(([subCategory, items]) => <div key={`${category}-${subCategory}`} className="pl-6 mb-4">
                       {subCategory !== 'default' && <p className="text-sm font-medium text-gray-700 mb-2">{subCategory}</p>}
                       {items.map(item => renderCartItemWithDetails(item))}
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    </div>)}
+                </div>)}
               
               <div className="mt-6 pt-4 border-t">
                 <div className="flex items-center gap-2 mb-3">
@@ -577,72 +535,46 @@ const Cart: React.FC = () => {
                     <File size={16} className="text-blue-600" />
                   </div>
                   <h3 className="font-medium text-gray-800">Special Instructions</h3>
-                  <button 
-                    onClick={() => {
-                      setShowInstructionsInput(!showInstructionsInput);
-                      if (!showInstructionsInput) {
-                        setNewInstruction('');
-                        setEditingIndex(null);
-                      }
-                    }} 
-                    className="text-blue-600 text-sm font-medium flex items-center gap-1 ml-auto"
-                  >
+                  <button onClick={() => {
+                setShowInstructionsInput(!showInstructionsInput);
+                if (!showInstructionsInput) {
+                  setNewInstruction('');
+                  setEditingIndex(null);
+                }
+              }} className="text-blue-600 text-sm font-medium flex items-center gap-1 ml-auto">
                     {showInstructionsInput ? 'Hide' : 'Add'}
                     {!showInstructionsInput && <PlusCircle size={14} />}
                   </button>
                 </div>
                 
-                {specialInstructions.length > 0 && (
-                  <div className="mb-4 space-y-2">
-                    {specialInstructions.map((instruction, index) => (
-                      <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-md border border-gray-100">
+                {specialInstructions.length > 0 && <div className="mb-4 space-y-2">
+                    {specialInstructions.map((instruction, index) => <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-md border border-gray-100">
                         <div className="flex items-start gap-2">
                           <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
                           <p className="text-sm text-gray-700">{instruction}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => editInstruction(index)} 
-                            className="text-gray-500 hover:text-blue-500 p-1 rounded hover:bg-gray-100"
-                            aria-label="Edit instruction"
-                          >
+                          <button onClick={() => editInstruction(index)} className="text-gray-500 hover:text-blue-500 p-1 rounded hover:bg-gray-100" aria-label="Edit instruction">
                             <Edit size={14} />
                           </button>
-                          <button 
-                            onClick={() => removeInstruction(index)} 
-                            className="text-gray-500 hover:text-red-500 p-1 rounded hover:bg-gray-100"
-                            aria-label="Remove instruction"
-                          >
+                          <button onClick={() => removeInstruction(index)} className="text-gray-500 hover:text-red-500 p-1 rounded hover:bg-gray-100" aria-label="Remove instruction">
                             <Trash2 size={14} />
                           </button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      </div>)}
+                  </div>}
                 
-                {showInstructionsInput && (
-                  <div className="space-y-2 mb-4">
+                {showInstructionsInput && <div className="space-y-2 mb-4">
                     <div className="flex gap-2">
-                      <Input
-                        value={newInstruction}
-                        onChange={(e) => setNewInstruction(e.target.value)}
-                        placeholder="Add any special instructions for your order..."
-                        className="flex-1"
-                      />
-                      <Button 
-                        onClick={addInstruction} 
-                        disabled={!newInstruction.trim()} 
-                        className="bg-blue-600 text-white px-3 py-2 rounded-md flex-shrink-0"
-                      >
+                      <Input value={newInstruction} onChange={e => setNewInstruction(e.target.value)} placeholder="Add any special instructions for your order..." className="flex-1" />
+                      <Button onClick={addInstruction} disabled={!newInstruction.trim()} className="bg-blue-600 text-white px-3 py-2 rounded-md flex-shrink-0">
                         {editingIndex !== null ? 'Update' : 'Add'}
                       </Button>
                     </div>
                     <p className="text-xs text-gray-500">
                       Examples: "Handle with care", "Contact before delivery", "Fragile items inside"
                     </p>
-                  </div>
-                )}
+                  </div>}
                 
                 <div className="mt-4 border-t pt-4">
                   <div className="flex items-center gap-2 mb-3">
@@ -653,17 +585,8 @@ const Cart: React.FC = () => {
                   </div>
                   
                   <div className="flex gap-2 mb-4">
-                    <input 
-                      type="text" 
-                      value={couponCode} 
-                      onChange={e => setCouponCode(e.target.value)} 
-                      placeholder="Enter coupon code" 
-                      className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                    <button 
-                      onClick={handleApplyCoupon} 
-                      className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700 transition-colors shadow-sm"
-                    >
+                    <input type="text" value={couponCode} onChange={e => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                    <button onClick={handleApplyCoupon} className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700 transition-colors shadow-sm">
                       Apply
                     </button>
                   </div>
@@ -672,8 +595,8 @@ const Cart: React.FC = () => {
               
               <div className="mt-4">
                 <Collapsible className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm" open={isOrderSummaryOpen} onOpenChange={open => {
-                  setIsOrderSummaryOpen(open);
-                }}>
+              setIsOrderSummaryOpen(open);
+            }}>
                   <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white hover:bg-gray-50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="bg-gray-100 rounded-full p-1.5">
@@ -755,11 +678,8 @@ const Cart: React.FC = () => {
                 Proceed to Checkout <ChevronRight size={16} />
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Cart;
