@@ -5,9 +5,10 @@ import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
 
 type LayoutProps = {
   children: React.ReactNode;
+  hideFooter?: boolean;
 };
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -47,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       
-      {!isStudioProfilePage && (
+      {!isStudioProfilePage && !hideFooter && (
         <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-500 ease-in-out transform ${
           isVisible ? 'translate-y-0' : 'translate-y-full'
         }`}>

@@ -13,9 +13,9 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <Layout hideFooter={true}>
       <div className="section-container bg-gradient-to-b from-primary-50 to-white min-h-screen">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-2">
           <button 
             onClick={handleBack}
             className="p-2 rounded-full hover:bg-white/80 transition-colors"
