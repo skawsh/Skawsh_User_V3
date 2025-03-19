@@ -48,47 +48,47 @@ const Home: React.FC = () => {
 
   const services = [
     {
-      id: '1',
+      id: 'wash-fold',
       title: 'Wash & Fold',
       image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
-      id: '2',
+      id: 'dry-clean',
       title: 'Dry Clean',
       image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
-      id: '3',
+      id: 'iron-only',
       title: 'Iron Only',
       image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
     },
     {
-      id: '4',
+      id: 'shoe-laundry',
       title: 'Shoe Laundry',
       icon: <Footprints size={24} />
     },
     {
-      id: '5',
+      id: 'stain-removal',
       title: 'Stain Removal',
       icon: <Palette size={24} />
     },
     {
-      id: '6',
+      id: 'express-service',
       title: 'Express Service',
       icon: <Clock size={24} />
     },
     {
-      id: '7',
+      id: 'premium-care',
       title: 'Premium Care',
       icon: <Medal size={24} />
     },
     {
-      id: '8',
+      id: 'home-textiles',
       title: 'Home Textiles',
       icon: <HomeIcon size={24} />
     },
     {
-      id: '9',
+      id: 'business-attire',
       title: 'Business Attire',
       icon: <Briefcase size={24} />
     }
@@ -218,7 +218,7 @@ const Home: React.FC = () => {
         }}>
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
             <div className="flex gap-3 pb-1.5 min-w-max px-[10px]">
-              {services.map((service, index) => <ServiceCard key={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
+              {services.map((service, index) => <ServiceCard key={service.id} id={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
             </div>
           </div>
         </div>

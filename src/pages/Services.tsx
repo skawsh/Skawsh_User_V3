@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useNavigate } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
 import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronDown, Footprints, WashingMachine } from 'lucide-react';
@@ -11,6 +10,7 @@ const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredServices, setFilteredServices] = useState<ServiceCategory[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const navigate = useNavigate();
   
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => 
@@ -18,6 +18,15 @@ const Services: React.FC = () => {
         ? prev.filter(id => id !== categoryId) 
         : [...prev, categoryId]
     );
+  };
+
+  const handleSubserviceClick = (categoryName: string, subService: SubService) => {
+    navigate(`/services/${subService.id}`, {
+      state: {
+        serviceName: `${subService.name}`,
+        from: '/services'
+      }
+    });
   };
   
   const services: ServiceCategory[] = [
@@ -184,7 +193,6 @@ const Services: React.FC = () => {
     }
   ];
 
-  // Helper function to get placeholder image for subservices
   const getSubserviceImage = (serviceId: string, subserviceId: string): string => {
     if (serviceId === 'core-laundry') {
       if (subserviceId === 'wash-fold') {
@@ -207,12 +215,10 @@ const Services: React.FC = () => {
     } else {
       const query = searchQuery.toLowerCase();
       const filtered = services.filter(category => {
-        // Check if category name matches
         if (category.name.toLowerCase().includes(query)) {
           return true;
         }
         
-        // Check if any subservice matches
         const hasMatchingSubservice = category.subServices.some(
           subservice => 
             subservice.name.toLowerCase().includes(query) || 
@@ -226,10 +232,8 @@ const Services: React.FC = () => {
     }
   }, [searchQuery]);
 
-  // Initialize filtered services with all services
   useEffect(() => {
     setFilteredServices(services);
-    // Initially expand the first category
     if (services.length > 0) {
       setExpandedCategories([services[0].id]);
     }
@@ -292,7 +296,11 @@ const Services: React.FC = () => {
                 {expandedCategories.includes(category.id) && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-4 pl-4 pr-4">
                     {category.subServices.map((subService) => (
-                      <div key={subService.id} className="flex flex-col items-center">
+                      <div 
+                        key={subService.id} 
+                        className="flex flex-col items-center cursor-pointer"
+                        onClick={() => handleSubserviceClick(category.name, subService)}
+                      >
                         <div className="relative w-32 h-32 mb-3 shadow-md rounded-full overflow-hidden">
                           <img 
                             src={getSubserviceImage(category.id, subService.id)} 

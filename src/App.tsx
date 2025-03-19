@@ -14,6 +14,7 @@ import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
+import StudiosByService from "./pages/StudiosByService";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/studio/:id/about" element={<StudioAbout />} />
           <Route path="/studio/:studioId/reviews" element={<StudioReviews />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/:serviceId" element={<StudiosByService />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />

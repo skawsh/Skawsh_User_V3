@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
 
 interface ServiceCardProps {
@@ -14,6 +14,7 @@ interface ServiceCardProps {
   showPrice?: boolean;
   price?: number;
   onClick?: () => void;
+  id?: string;
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -26,11 +27,26 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   showTitle = true,
   showPrice = false,
   price,
-  onClick
+  onClick,
+  id
 }) => {
+  const navigate = useNavigate();
   const formatIndianRupee = (amount: number | undefined): string => {
     if (!amount) return '';
     return `₹${amount.toFixed(0)}`;
+  };
+
+  const handleServiceClick = () => {
+    // Convert title to a URL-friendly string for the serviceId
+    const serviceId = title.toLowerCase().replace(/\s+/g, '-');
+    
+    // Navigate to the new page with service details
+    navigate(`/services/${id || serviceId}`, {
+      state: { 
+        serviceName: title,
+        from: window.location.pathname
+      }
+    });
   };
 
   const content = (
@@ -64,9 +80,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   }
 
   return (
-    <Link to="/services" className="transition-all duration-500 ease-in-out">
+    <div 
+      className="transition-all duration-500 ease-in-out cursor-pointer" 
+      onClick={handleServiceClick}
+    >
       {content}
-    </Link>
+    </div>
   );
 };
 
