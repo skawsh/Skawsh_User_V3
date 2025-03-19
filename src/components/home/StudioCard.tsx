@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Heart, Star, Clock, MapPin } from 'lucide-react';
+import { Heart, Star, Clock, MapPin, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Card } from '@/components/ui/card';
 
 interface StudioCardProps {
@@ -29,84 +28,80 @@ const StudioCard: React.FC<StudioCardProps> = ({
   index,
   promoted = false
 }) => {
-  // Check if the studio is Busy Bee to use the custom logo
-  const isBusyBee = name.toLowerCase().includes('busy bee');
-  
-  // Custom styling and content for Busy Bee
-  if (isBusyBee) {
-    return (
-      <Link 
-        to={`/studio/${id}`} 
-        style={{
-          animationDelay: `${200 + index * 100}ms`
-        }} 
-        className="animate-fade-in block px-[14px]"
-      >
-        <Card className="overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-          {/* Custom Busy Bee header with logo */}
-          <div className="relative">
-            <AspectRatio ratio={16 / 9} className="w-full">
-              <div className="h-full w-full bg-white flex items-center justify-center p-4">
-                <div className="flex flex-col items-center justify-center w-full">
-                  <img 
-                    src="/lovable-uploads/95b97c87-0963-424b-ad2b-400d1104bfd2.png" 
-                    alt="Busy Bees" 
-                    className="max-h-full max-w-full object-contain" 
-                  />
-                </div>
-              </div>
-            </AspectRatio>
-            
-            {promoted && (
-              <Badge 
-                variant="default" 
-                className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-400 text-white border-0 shadow-sm"
-              >
-                Promoted
-              </Badge>
-            )}
+  // Determine logo content based on studio name
+  let logoContent;
+
+  if (name === 'Busy Bee') {
+    logoContent = (
+      <div className="w-full h-full flex justify-center items-center bg-white py-3">
+        <div className="text-center">
+          <div className="text-[#004165] font-bold text-2xl flex items-center justify-center">
+            BUSY<span className="text-[#87CEEB] mx-1">B</span>EES
           </div>
-          
-          {/* Content section styled to match the attachment */}
-          <div className="p-3 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-gray-800 truncate pr-2 text-lg">Busy Bee</h3>
-                <button className="bg-white/80 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 shadow-sm">
-                  <Heart size={16} className="text-gray-600" />
-                </button>
-              </div>
-              
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-sm text-gray-700 font-medium">{rating || "4.8"}</span>
-              </div>
-            </div>
-            
-            <div className="space-y-1.5 mt-1">
-              <div className="flex flex-wrap gap-x-3 gap-y-1.5">
-                {distance && (
-                  <div className="flex items-center gap-1.5 text-gray-500">
-                    <MapPin size={14} />
-                    <span className="text-xs">{distance}</span>
-                  </div>
-                )}
-                
-                {workingHours && (
-                  <div className="flex items-center gap-1.5 text-gray-500">
-                    <Clock size={14} />
-                    <span className="text-xs">{workingHours}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+          <div className="text-[#004165] text-xs mt-1">≡ Fresh Clothes Fresh Life ≡</div>
+        </div>
+      </div>
+    );
+  } else if (name === 'U clean') {
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex items-center">
+          <div className="bg-[#50C878] text-white h-10 w-8 flex items-center justify-center rounded-sm text-xl font-bold mr-2">U</div>
+          <div className="flex flex-col">
+            <span className="text-[#50C878] font-bold text-xl leading-tight">Clean</span>
+            <span className="text-gray-600 text-xs">We Love Laundry</span>
           </div>
-        </Card>
-      </Link>
+        </div>
+      </div>
+    );
+  } else if (name === 'Tumble Dry') {
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex flex-col items-center">
+          <span className="text-purple-700 font-bold text-2xl">Tumble Dry</span>
+          <span className="text-gray-600 text-xs">Perfectly Cleaned, Every Time</span>
+        </div>
+      </div>
+    );
+  } else if (name === 'Fabrico') {
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex flex-col items-center">
+          <span className="text-blue-600 font-bold text-2xl">Fabrico</span>
+          <span className="text-gray-600 text-xs">Fabric Care Specialists</span>
+        </div>
+      </div>
+    );
+  } else if (name === 'Eco Clean') {
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex flex-col items-center">
+          <span className="text-green-600 font-bold text-2xl">Eco Clean</span>
+          <span className="text-gray-600 text-xs">Environmentally Friendly Cleaning</span>
+        </div>
+      </div>
+    );
+  } else if (name === 'Mycloth') {
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex flex-col items-center">
+          <span className="text-orange-500 font-bold text-2xl">Mycloth</span>
+          <span className="text-gray-600 text-xs">Your Garments, Our Passion</span>
+        </div>
+      </div>
+    );
+  } else {
+    // Default logo for any other studio
+    logoContent = (
+      <div className="w-full h-full flex items-center justify-center bg-white py-3">
+        <div className="flex flex-col items-center">
+          <span className="text-gray-800 font-bold text-2xl">{name}</span>
+          <span className="text-gray-600 text-xs">Professional Laundry Services</span>
+        </div>
+      </div>
     );
   }
-  
-  // For all other studios, use the original card design
+
   return (
     <Link 
       to={`/studio/${id}`} 
@@ -116,27 +111,9 @@ const StudioCard: React.FC<StudioCardProps> = ({
       className="animate-fade-in block px-[14px]"
     >
       <Card className="overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
-        {/* Image section - top */}
-        <div className="relative">
-          <AspectRatio ratio={16 / 9} className="w-full">
-            <div 
-              className={cn(
-                "h-full w-full bg-cover bg-center",
-                image.includes('lovable-uploads') && "flex items-center justify-center bg-white p-4"
-              )}
-              style={{
-                backgroundImage: image.includes('lovable-uploads') ? 'none' : `url(${image})`
-              }}
-            >
-              {image.includes('lovable-uploads') && (
-                <img 
-                  src={image} 
-                  alt={name} 
-                  className="max-h-full max-w-full object-contain" 
-                />
-              )}
-            </div>
-          </AspectRatio>
+        {/* Logo/Header Section */}
+        <div className="border-b relative">
+          {logoContent}
           
           {promoted && (
             <Badge 
@@ -148,38 +125,42 @@ const StudioCard: React.FC<StudioCardProps> = ({
           )}
         </div>
         
-        {/* Content section - bottom */}
-        <div className="p-3 flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-gray-800 truncate pr-2 text-lg">{name}</h3>
-              <button className="bg-white/80 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 shadow-sm">
-                <Heart size={16} className="text-gray-600" />
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <Star size={14} className={cn("text-gray-400", rating && "fill-yellow-400 text-yellow-400")} />
-              <span className="text-sm text-gray-700 font-medium">{rating || "New"}</span>
-            </div>
+        {/* Details Section */}
+        <div className="p-3">
+          {/* Studio Name */}
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="font-bold text-gray-800 truncate pr-2 text-lg">{name}</h3>
+            <button className="bg-white/80 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 shadow-sm">
+              <Heart size={16} className="text-gray-600" />
+            </button>
           </div>
           
-          <div className="space-y-1.5 mt-1">
-            <div className="flex flex-wrap gap-x-3 gap-y-1.5">
-              {distance && (
-                <div className="flex items-center gap-1.5 text-gray-500">
-                  <MapPin size={14} />
-                  <span className="text-xs">{distance}</span>
-                </div>
-              )}
-              
-              {workingHours && (
-                <div className="flex items-center gap-1.5 text-gray-500">
-                  <Clock size={14} />
-                  <span className="text-xs">{workingHours}</span>
-                </div>
-              )}
+          {/* Operating Hours */}
+          {workingHours && (
+            <div className="mt-1">
+              <p className="text-sm font-medium">Operating Hours</p>
+              <p className="text-sm text-gray-600">{workingHours}</p>
             </div>
+          )}
+          
+          {/* Rating & Location */}
+          <div className="flex justify-between items-center mt-2">
+            {distance && (
+              <div className="flex items-center text-blue-500 text-sm">
+                <span>{distance}</span>
+                <ChevronDown size={16} className="ml-1" />
+              </div>
+            )}
+            
+            {rating && (
+              <div className="flex items-center">
+                <div className="bg-green-500 text-white px-2 py-0.5 rounded-full flex items-center">
+                  <span className="text-xs mr-1">★</span>
+                  <span className="text-xs font-bold">{rating}</span>
+                </div>
+                <span className="text-xs text-blue-500 underline ml-1">Reviews</span>
+              </div>
+            )}
           </div>
         </div>
       </Card>
