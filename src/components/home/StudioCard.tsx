@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Card } from '@/components/ui/card';
 
 interface StudioCardProps {
   id: string;
@@ -28,6 +29,9 @@ const StudioCard: React.FC<StudioCardProps> = ({
   index,
   promoted = false
 }) => {
+  // Check if the image is a logo (like Busy Bee's logo)
+  const isLogo = image.includes('lovable-uploads');
+  
   return (
     <Link 
       to={`/studio/${id}`} 
@@ -36,16 +40,27 @@ const StudioCard: React.FC<StudioCardProps> = ({
       }} 
       className="animate-fade-in block px-[14px]"
     >
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+      <Card className="overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
         {/* Image section - top */}
         <div className="relative">
           <AspectRatio ratio={16 / 9} className="w-full">
             <div 
-              className="h-full w-full bg-cover bg-center" 
+              className={cn(
+                "h-full w-full bg-cover bg-center",
+                isLogo && "flex items-center justify-center bg-white p-4"
+              )}
               style={{
-                backgroundImage: `url(${image})`
+                backgroundImage: isLogo ? 'none' : `url(${image})`
               }}
-            />
+            >
+              {isLogo && (
+                <img 
+                  src={image} 
+                  alt={name} 
+                  className="max-h-full max-w-full object-contain" 
+                />
+              )}
+            </div>
           </AspectRatio>
           
           {promoted && (
@@ -92,7 +107,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
             </div>
           </div>
         </div>
-      </div>
+      </Card>
     </Link>
   );
 };
