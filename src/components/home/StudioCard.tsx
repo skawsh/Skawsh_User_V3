@@ -29,8 +29,15 @@ const StudioCard: React.FC<StudioCardProps> = ({
   index,
   promoted = false
 }) => {
-  // Check if the image is a logo (like Busy Bee's logo)
-  const isLogo = image.includes('lovable-uploads');
+  // Check if the studio is Busy Bee to use the custom logo
+  const isBusyBee = name.toLowerCase().includes('busy bee');
+  const busyBeeLogo = '/lovable-uploads/a8759ba1-6d44-45aa-94db-16cabd041845.png';
+  
+  // Check if the image is a logo
+  const isLogo = image.includes('lovable-uploads') || isBusyBee;
+  
+  // Use the custom Busy Bee logo if it's Busy Bee studio
+  const displayImage = isBusyBee ? busyBeeLogo : image;
   
   return (
     <Link 
@@ -50,12 +57,12 @@ const StudioCard: React.FC<StudioCardProps> = ({
                 isLogo && "flex items-center justify-center bg-white p-4"
               )}
               style={{
-                backgroundImage: isLogo ? 'none' : `url(${image})`
+                backgroundImage: isLogo ? 'none' : `url(${displayImage})`
               }}
             >
               {isLogo && (
                 <img 
-                  src={image} 
+                  src={displayImage} 
                   alt={name} 
                   className="max-h-full max-w-full object-contain" 
                 />
