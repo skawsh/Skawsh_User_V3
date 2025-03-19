@@ -498,13 +498,13 @@ const Cart: React.FC = () => {
         >
           <div className="max-w-md mx-auto flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-              <button onClick={() => navigate(-1)} className="rounded-full" aria-label="Go back">
+              <button onClick={() => navigate(-1)} className="rounded-full hover:bg-gray-100 p-1 transition-colors" aria-label="Go back">
                 <ChevronLeft size={24} />
               </button>
               <h1 className="text-lg font-medium">Your Sack</h1>
             </div>
             {cartItems.length > 0 && (
-              <button onClick={() => handleRemoveItem('all')} className="text-red-500" aria-label="Clear cart">
+              <button onClick={() => handleRemoveItem('all')} className="text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors" aria-label="Clear cart">
                 <Trash2 size={20} />
               </button>
             )}
@@ -515,22 +515,26 @@ const Cart: React.FC = () => {
         
         {cartItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center p-4">
-            <ShoppingBag size={48} className="text-gray-300 mb-4" />
-            <h2 className="text-lg font-medium text-gray-700 mb-2">Your Sack is Empty</h2>
-            <p className="text-gray-500 mb-4">Add laundry services to your sack to get started.</p>
-            <Link to="/" className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700 transition-colors">
+            <div className="bg-blue-50 rounded-full p-4 mb-4">
+              <ShoppingBag size={48} className="text-blue-500" />
+            </div>
+            <h2 className="text-lg font-medium text-gray-800 mb-2">Your Sack is Empty</h2>
+            <p className="text-gray-500 mb-6">Add laundry services to your sack to get started.</p>
+            <Link to="/" className="bg-blue-600 text-white px-6 py-2.5 rounded-md flex items-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
               Browse Studios <ChevronRight size={16} />
             </Link>
           </div>
         ) : (
           <div className="flex flex-col">
-            <div className="bg-white p-4 mb-2">
+            <div className="bg-white p-4 mb-2 shadow-sm">
               <div className="flex gap-3">
-                <MapPin size={18} className="text-blue-500 mt-1" />
-                <div>
+                <div className="bg-blue-50 rounded-full p-1.5">
+                  <MapPin size={18} className="text-blue-600" />
+                </div>
+                <div className="flex-1">
                   <div className="flex items-center justify-between w-full">
-                    <p className="font-medium text-gray-700">Address</p>
-                    <button className="text-blue-500 text-sm">Change</button>
+                    <p className="font-medium text-gray-800">Delivery Address</p>
+                    <button className="text-blue-600 text-sm font-medium hover:text-blue-700">Change</button>
                   </div>
                   <p className="text-sm text-gray-600 mt-1">
                     123 Main Street, Apartment 4B, New York, NY 10001
@@ -539,12 +543,12 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-4 mb-2">
-              <h2 className="font-medium text-lg mb-2">Review your order</h2>
+            <div className="bg-white p-4 mb-2 shadow-sm">
+              <h2 className="font-medium text-lg mb-3 text-gray-800">Review your order</h2>
               
-              <div className="bg-amber-50 rounded-md p-3 mb-3">
+              <div className="bg-amber-50 rounded-md p-3 mb-4 border border-amber-100">
                 <div className="flex items-start gap-2">
-                  <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-amber-600" />
+                  <AlertTriangle size={16} className="mt-0.5 flex-shrink-0 text-amber-600" />
                   <p className="text-xs text-amber-700">
                     Price may vary depending on the weight and clothing category during pickup of your order
                   </p>
@@ -555,7 +559,7 @@ const Cart: React.FC = () => {
                 <div key={category} className="mb-6">
                   <div className="flex items-center gap-2 mb-3">
                     {getCategoryIcon(category)}
-                    <span className="font-medium">{category}</span>
+                    <span className="font-medium text-gray-800">{category}</span>
                   </div>
                   
                   {Object.entries(subCategories).map(([subCategory, items]) => (
@@ -569,34 +573,121 @@ const Cart: React.FC = () => {
               
               <div className="mt-6 pt-4 border-t">
                 <div className="flex items-center gap-2 mb-3">
-                  <Tag size={16} className="text-blue-500" />
-                  <h3 className="font-medium">Apply Coupon</h3>
+                  <div className="bg-blue-50 rounded-full p-1">
+                    <File size={16} className="text-blue-600" />
+                  </div>
+                  <h3 className="font-medium text-gray-800">Special Instructions</h3>
+                  <button 
+                    onClick={() => {
+                      setShowInstructionsInput(!showInstructionsInput);
+                      if (!showInstructionsInput) {
+                        setNewInstruction('');
+                        setEditingIndex(null);
+                      }
+                    }} 
+                    className="text-blue-600 text-sm font-medium flex items-center gap-1 ml-auto"
+                  >
+                    {showInstructionsInput ? 'Hide' : 'Add'}
+                    {!showInstructionsInput && <PlusCircle size={14} />}
+                  </button>
                 </div>
                 
-                <div className="flex gap-2 mb-4">
-                  <input type="text" value={couponCode} onChange={e => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 px-3 py-2 border rounded-md text-sm" />
-                  <button onClick={handleApplyCoupon} className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm">
-                    Apply
-                  </button>
+                {specialInstructions.length > 0 && (
+                  <div className="mb-4 space-y-2">
+                    {specialInstructions.map((instruction, index) => (
+                      <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-md border border-gray-100">
+                        <div className="flex items-start gap-2">
+                          <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-gray-700">{instruction}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => editInstruction(index)} 
+                            className="text-gray-500 hover:text-blue-500 p-1 rounded hover:bg-gray-100"
+                            aria-label="Edit instruction"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button 
+                            onClick={() => removeInstruction(index)} 
+                            className="text-gray-500 hover:text-red-500 p-1 rounded hover:bg-gray-100"
+                            aria-label="Remove instruction"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {showInstructionsInput && (
+                  <div className="space-y-2 mb-4">
+                    <div className="flex gap-2">
+                      <Input
+                        value={newInstruction}
+                        onChange={(e) => setNewInstruction(e.target.value)}
+                        placeholder="Add any special instructions for your order..."
+                        className="flex-1"
+                      />
+                      <Button 
+                        onClick={addInstruction} 
+                        disabled={!newInstruction.trim()} 
+                        className="bg-blue-600 text-white px-3 py-2 rounded-md flex-shrink-0"
+                      >
+                        {editingIndex !== null ? 'Update' : 'Add'}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Examples: "Handle with care", "Contact before delivery", "Fragile items inside"
+                    </p>
+                  </div>
+                )}
+                
+                <div className="mt-4 border-t pt-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="bg-purple-50 rounded-full p-1">
+                      <Tag size={16} className="text-purple-600" />
+                    </div>
+                    <h3 className="font-medium text-gray-800">Apply Coupon</h3>
+                  </div>
+                  
+                  <div className="flex gap-2 mb-4">
+                    <input 
+                      type="text" 
+                      value={couponCode} 
+                      onChange={e => setCouponCode(e.target.value)} 
+                      placeholder="Enter coupon code" 
+                      className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <button 
+                      onClick={handleApplyCoupon} 
+                      className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700 transition-colors shadow-sm"
+                    >
+                      Apply
+                    </button>
+                  </div>
                 </div>
               </div>
               
               <div className="mt-4">
-                <Collapsible className="w-full border border-gray-200 rounded-lg overflow-hidden" open={isOrderSummaryOpen} onOpenChange={open => {
+                <Collapsible className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm" open={isOrderSummaryOpen} onOpenChange={open => {
                   setIsOrderSummaryOpen(open);
                 }}>
-                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white">
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-white hover:bg-gray-50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <File size={20} className="text-gray-700" />
+                      <div className="bg-gray-100 rounded-full p-1.5">
+                        <File size={18} className="text-gray-700" />
+                      </div>
                       <div>
-                        <h3 className="text-lg font-medium">Estimated Bill ₹{total.toFixed(0)}</h3>
+                        <h3 className="text-lg font-medium text-gray-800">Estimated Bill ₹{total.toFixed(0)}</h3>
                         <p className="text-xs text-gray-500">Incl. taxes and charges</p>
                       </div>
                     </div>
-                    <ChevronDown size={20} className={cn("transition-transform duration-200", isOrderSummaryOpen ? "transform rotate-180" : "")} />
+                    <ChevronDown size={20} className={cn("transition-transform duration-200 text-gray-500", isOrderSummaryOpen ? "transform rotate-180" : "")} />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="p-4 bg-gray-50">
-                    <div className="bg-amber-50 rounded-md p-3 mb-3">
+                    <div className="bg-amber-50 rounded-md p-3 mb-3 border border-amber-100">
                       <div className="flex items-start gap-2">
                         <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-amber-700" />
                         <p className={`text-xs text-amber-700 ${flickerActive ? 'flicker-effect' : ''}`}>
@@ -659,82 +750,8 @@ const Cart: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-white p-4 mb-2">
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <File size={16} className="text-blue-500" />
-                  <h3 className="font-medium">Special Instructions</h3>
-                </div>
-                <button 
-                  onClick={() => {
-                    setShowInstructionsInput(!showInstructionsInput);
-                    if (!showInstructionsInput) {
-                      setNewInstruction('');
-                      setEditingIndex(null);
-                    }
-                  }} 
-                  className="text-blue-500 text-sm flex items-center gap-1"
-                >
-                  {showInstructionsInput ? 'Hide' : 'Add'}
-                  {!showInstructionsInput && <PlusCircle size={14} />}
-                </button>
-              </div>
-              
-              {specialInstructions.length > 0 && (
-                <div className="mb-4 space-y-2">
-                  {specialInstructions.map((instruction, index) => (
-                    <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-md">
-                      <div className="flex items-start gap-2">
-                        <Info size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">{instruction}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => editInstruction(index)} 
-                          className="text-gray-500 hover:text-blue-500"
-                          aria-label="Edit instruction"
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button 
-                          onClick={() => removeInstruction(index)} 
-                          className="text-gray-500 hover:text-red-500"
-                          aria-label="Remove instruction"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {showInstructionsInput && (
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      value={newInstruction}
-                      onChange={(e) => setNewInstruction(e.target.value)}
-                      placeholder="Add any special instructions for your order..."
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={addInstruction} 
-                      disabled={!newInstruction.trim()} 
-                      className="bg-blue-600 text-white px-3 py-2 rounded-md flex-shrink-0"
-                    >
-                      {editingIndex !== null ? 'Update' : 'Add'}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    Examples: "Handle with care", "Contact before delivery", "Fragile items inside"
-                  </p>
-                </div>
-              )}
-            </div>
-            
-            <div className="px-4 mt-4 mb-4">
-              <Button onClick={() => navigate('/checkout')} className="w-full text-md flex items-center justify-center gap-2 py-3">
+            <div className="px-4 mt-6 mb-4">
+              <Button onClick={() => navigate('/checkout')} className="w-full text-md flex items-center justify-center gap-2 py-3 shadow-md hover:shadow-lg transition-shadow">
                 Proceed to Checkout <ChevronRight size={16} />
               </Button>
             </div>
