@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -130,17 +131,17 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   };
 
   return <div className="animate-fade-in">
-      <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden" style={{
+      <div className="relative bg-gray-200 w-full rounded-xl overflow-hidden shadow-md" style={{
       maxHeight: '280px'
     }}>
         <div className="flex justify-between items-center p-4">
-          <button ref={backButtonRef} onClick={handleBackClick} className="text-gray-700">
+          <button ref={backButtonRef} onClick={handleBackClick} className="text-gray-700 bg-white/80 p-2 rounded-full hover:bg-white/90 transition-all shadow-sm">
             <ChevronLeft size={24} />
           </button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="text-gray-700">
+              <button className="text-gray-700 bg-white/80 p-2 rounded-full hover:bg-white/90 transition-all shadow-sm">
                 <MoreVertical size={20} />
               </button>
             </DropdownMenuTrigger>
@@ -162,32 +163,32 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
         
         <div className="mx-auto px-4 pb-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-white rounded-xl p-4 shadow-md border border-gray-50">
             <h1 className="text-2xl font-bold text-left mb-2">{name}</h1>
             
             <div className="flex justify-between items-start mt-2">
               <div className="mt-2">
-                <p className="font-medium">Operating Hours</p>
+                <p className="font-medium text-gray-800">Operating Hours</p>
                 <p className="text-gray-600">{getOpeningHours()}</p>
               </div>
               
               <div className="flex flex-col items-end">
-                <div className="bg-green-500 text-white px-2 py-0.5 rounded flex items-center">
+                <div className="bg-green-500 text-white px-2 py-0.5 rounded-md flex items-center shadow-sm">
                   <Star size={14} className="fill-white text-white mr-1" />
-                  <span>{rating}</span>
+                  <span className="font-medium">{rating}</span>
                 </div>
                 <a href="#" onClick={e => {
                 e.preventDefault();
                 handleViewAllReviews();
-              }} className="text-xs text-blue-500 mt-1">See all reviews</a>
+              }} className="text-xs text-blue-600 mt-1 font-medium">See all reviews</a>
               </div>
             </div>
             
-            <div className="flex justify-between items-center mt-2">
+            <div className="flex justify-between items-center mt-3">
               <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
                 <DrawerTrigger asChild>
-                  <div className="flex items-center gap-1 cursor-pointer">
-                    <span className="text-sm">{currentLocation.distance} - {currentLocation.name}</span>
+                  <div className="flex items-center gap-1 cursor-pointer bg-blue-50 px-3 py-1.5 rounded-full hover:bg-blue-100 transition-colors">
+                    <span className="text-sm text-blue-700 font-medium">{currentLocation.distance} - {currentLocation.name}</span>
                     <ChevronDown size={16} className="text-blue-500" />
                   </div>
                 </DrawerTrigger>
@@ -199,7 +200,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
                       </DrawerClose>
                     </div>
                     
-                    <div className="bg-gradient-to-b from-amber-700/90 to-amber-800/90 pt-14 pb-8 px-6 text-center">
+                    <div className="bg-gradient-to-b from-amber-600 to-amber-700 pt-14 pb-8 px-6 text-center">
                       <p className="text-white/80 text-sm mb-1">All delivery outlets for</p>
                       <h2 className="text-2xl font-bold text-white">{name}</h2>
                     </div>
@@ -257,10 +258,10 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-2 pb-0 bg-white">
+      <div className="px-4 py-3 pb-2 bg-white">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <Input placeholder="Search services in this studio..." className="pl-10 bg-gray-50 border-gray-200 rounded-full" />
+          <Input placeholder="Search services in this studio..." className="pl-10 bg-gray-50 border-gray-200 rounded-full shadow-sm" />
         </div>
       </div>
     </div>;

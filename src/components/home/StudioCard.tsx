@@ -36,7 +36,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
       }} 
       className="animate-fade-in block px-[14px]"
     >
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+      <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
         {/* Image section - top */}
         <div className="relative">
           <AspectRatio ratio={16 / 9} className="w-full">
@@ -51,7 +51,7 @@ const StudioCard: React.FC<StudioCardProps> = ({
           {promoted && (
             <Badge 
               variant="default" 
-              className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-400 text-white border-0"
+              className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-400 text-white border-0 shadow-sm"
             >
               Promoted
             </Badge>
@@ -63,14 +63,14 @@ const StudioCard: React.FC<StudioCardProps> = ({
           <div>
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-bold text-gray-800 truncate pr-2 text-lg">{name}</h3>
-              <button className="bg-white/80 p-1 rounded-full hover:bg-white transition-colors duration-200 flex-shrink-0">
+              <button className="bg-white/80 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 shadow-sm">
                 <Heart size={16} className="text-gray-600" />
               </button>
             </div>
             
             <div className="flex items-center gap-1.5 mb-1.5">
               <Star size={14} className={cn("text-gray-400", rating && "fill-yellow-400 text-yellow-400")} />
-              <span className="text-sm text-gray-700">{rating || "New"}</span>
+              <span className="text-sm text-gray-700 font-medium">{rating || "New"}</span>
             </div>
           </div>
           

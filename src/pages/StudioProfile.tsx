@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
-import Button from '../components/ui-elements/Button';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -156,20 +156,20 @@ const StudioProfile: React.FC = () => {
 
   return (
     <Layout>
-      <div className="no-scrollbar">
+      <div className="no-scrollbar bg-gray-50/50">
         {isScrolled && (
           <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
-                <button onClick={handleBackClick} className="mr-3 p-1 rounded-full text-gray-700 bg-gray-100/70">
-                  <ChevronLeft size={24} />
+                <button onClick={handleBackClick} className="mr-3 p-1.5 rounded-full text-gray-700 bg-gray-100/70 hover:bg-gray-200/80 transition-all">
+                  <ChevronLeft size={22} />
                 </button>
                 <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
               </div>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded-full hover:bg-gray-100 bg-gray-100/70">
+                  <button className="p-1.5 rounded-full hover:bg-gray-100 bg-gray-100/70">
                     <MoreVertical size={20} />
                   </button>
                 </DropdownMenuTrigger>
@@ -203,7 +203,7 @@ const StudioProfile: React.FC = () => {
           onBackClick={handleBackClick} 
         />
         
-        <div className="section-container relative">
+        <div className="section-container relative pb-20">
           <ServiceList 
             services={services} 
             isScrolled={isScrolled} 

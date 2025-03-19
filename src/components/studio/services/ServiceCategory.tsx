@@ -51,19 +51,23 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
     : { ref: categoryRef };
 
   return (
-    <div {...refProp}>
-      <div className="flex items-center gap-2 mb-4">
-        {icon}
-        <h2 className="text-lg font-bold">{title}</h2>
+    <div {...refProp} className="mb-8">
+      <div className="flex items-center gap-2 mb-5 px-1">
+        <div className="text-primary-600">
+          {icon}
+        </div>
+        <h2 className="text-lg font-bold text-gray-800">{title}</h2>
       </div>
 
       {subCategories ? (
         <div className="space-y-8">
           {subCategories.map((subCategory, subIdx) => (
             <div key={subIdx} className="ml-2">
-              <div className="flex items-center gap-2 mb-3">
-                {subCategory.icon}
-                <h3 className="text-md font-semibold">{subCategory.title}</h3>
+              <div className="flex items-center gap-2 mb-4 px-1">
+                <div className="text-blue-600">
+                  {subCategory.icon}
+                </div>
+                <h3 className="text-md font-semibold text-gray-700">{subCategory.title}</h3>
               </div>
               
               <div className="space-y-4">

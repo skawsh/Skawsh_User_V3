@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
 import { Card } from "@/components/ui/card";
@@ -42,31 +43,31 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       return <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />;
     } else if (service.name.includes('Iron')) {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <Clock size={20} className="text-gray-500" />
         </div>
       );
     } else if (service.name.includes('Shoe') || service.name.includes('shoe') || service.name.includes('Sneaker') || service.name.includes('Sandal') || service.name.includes('Canvas') || service.name.includes('Leather') || service.name.includes('Heel')) {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <Footprints size={20} className="text-gray-500" />
         </div>
       );
     } else if (service.name.includes('Shirt') || service.name.includes('T-shirt') || service.name.includes('Top')) {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <Shirt size={20} className="text-gray-500" />
         </div>
       );
     } else if (service.name.includes('Pant')) {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <Shirt size={20} className="text-gray-500" />
         </div>
       );
     } else {
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
           <ShoppingBag size={20} className="text-gray-500" />
         </div>
       );
@@ -81,7 +82,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             variant="default" 
             size="sm"
             className={cn(
-              "rounded-l-full rounded-r-none",
+              "rounded-l-full rounded-r-none shadow-sm",
               tabType === "standard" 
                 ? "bg-blue-600 hover:bg-blue-700" 
                 : "bg-orange-500 hover:bg-orange-600"
@@ -94,7 +95,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             <Minus size={16} />
           </Button>
           <span className={cn(
-            "px-2 py-1 text-sm font-medium", 
+            "px-3 py-1 text-sm font-medium", 
             tabType === "standard" ? "bg-blue-600" : "bg-orange-500",
             "text-white"
           )}>
@@ -106,7 +107,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             variant="default" 
             size="sm"
             className={cn(
-              "rounded-l-none rounded-r-full",
+              "rounded-l-none rounded-r-full shadow-sm",
               tabType === "standard" 
                 ? "bg-blue-600 hover:bg-blue-700" 
                 : "bg-orange-500 hover:bg-orange-600"
@@ -126,7 +127,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
           variant="default" 
           size="sm"
           className={cn(
-            "rounded-full",
+            "rounded-full shadow-sm",
             tabType === "standard" 
               ? "bg-blue-600 hover:bg-blue-700" 
               : "bg-orange-500 hover:bg-orange-600"
@@ -145,16 +146,16 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   return (
     <div 
       data-service-name={service.name}
-      className="bg-white rounded-lg shadow-sm p-4 cursor-pointer transition-all duration-200 hover:shadow-md"
+      className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200"
       onClick={() => onClick(service)}
     >
       <div className="flex justify-between items-center">
         <div className="flex gap-3">
-          <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+          <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden shadow-sm">
             {getServiceIcon()}
           </div>
           <div>
-            <h3 className="font-medium">{service.name}</h3>
+            <h3 className="font-medium text-gray-800">{service.name}</h3>
             <div className="flex items-center gap-1">
               <span className="text-primary font-semibold">
                 ₹{price.toFixed(0)}
@@ -165,7 +166,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
                 <span className="text-xs text-gray-500">4.8</span>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{service.description}</p>
+            <p className="text-xs text-gray-500 mt-1 line-clamp-2">{service.description}</p>
           </div>
         </div>
         
