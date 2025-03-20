@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SackFooterProps {
   itemCount: number;
@@ -13,6 +14,7 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uniqueServiceCount, setUniqueServiceCount] = useState(itemCount);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     // Load cart items and count unique services
@@ -64,16 +66,21 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-50"
-      style={{ transform: 'translateZ(0)' }}
+      className="fixed bottom-0 left-0 right-0 z-50 will-change-transform"
+      style={{ 
+        transform: 'translateZ(0)',
+        // Add safe area inset for iOS devices
+        paddingBottom: 'env(safe-area-inset-bottom, 0.5rem)'
+      }}
     >
       <div className="max-w-lg mx-auto px-4 pb-4">
         <button
           onClick={handleGoToCart}
           className={cn(
             "w-full flex items-center justify-between py-3 px-5 rounded-xl shadow-md",
-            "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200",
-            "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            "bg-[#92E3A9] hover:bg-[#83d699] active:bg-[#79c88e] transition-colors duration-200",
+            "transform hover:scale-[1.02] active:scale-[0.98] transition-transform",
+            isMobile ? "touch-manipulation" : ""
           )}
         >
           <span className="text-[#403E43] font-semibold">

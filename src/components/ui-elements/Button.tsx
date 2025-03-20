@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -21,6 +22,8 @@ const Button: React.FC<ButtonProps> = ({
   className,
   ...props
 }) => {
+  const isMobile = useIsMobile();
+  
   const variantClasses = {
     primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700',
     secondary: 'bg-secondary text-primary hover:bg-opacity-80 active:bg-opacity-70',
@@ -29,9 +32,9 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const sizeClasses = {
-    sm: 'text-sm py-1.5 px-3',
-    md: 'text-base py-2 px-4',
-    lg: 'text-lg py-2.5 px-5'
+    sm: isMobile ? 'text-sm py-2 px-3.5' : 'text-sm py-1.5 px-3',
+    md: isMobile ? 'text-base py-2.5 px-5' : 'text-base py-2 px-4',
+    lg: isMobile ? 'text-lg py-3 px-6' : 'text-lg py-2.5 px-5'
   };
 
   return (
@@ -42,6 +45,7 @@ const Button: React.FC<ButtonProps> = ({
         variantClasses[variant],
         sizeClasses[size],
         fullWidth ? 'w-full' : '',
+        isMobile ? 'touch-manipulation' : '',
         className
       )}
       {...props}
