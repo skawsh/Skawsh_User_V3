@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, Trash2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShoppingBag } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 interface SackFooterProps {
@@ -11,6 +11,7 @@ interface SackFooterProps {
 
 const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [uniqueServiceCount, setUniqueServiceCount] = useState(itemCount);
   
   useEffect(() => {
@@ -52,9 +53,11 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   if (uniqueServiceCount === 0) return null;
 
   const handleGoToCart = () => {
+    // Use navigate with state and replace to properly handle back navigation
     navigate('/cart', {
       state: {
-        studioId: studioId
+        studioId: studioId,
+        previousPath: location.pathname
       }
     });
   };

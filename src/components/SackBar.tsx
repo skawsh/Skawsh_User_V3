@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -26,6 +25,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [uniqueServiceCount, setUniqueServiceCount] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   
   useEffect(() => {
     // Load cart items from localStorage
@@ -47,9 +47,14 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           
           console.log('Cart items loaded:', parsedItems);
           console.log('Unique service count:', uniqueServices.size);
+        } else {
+          setCartItems([]);
+          setUniqueServiceCount(0);
         }
       } catch (error) {
         console.error('Error loading cart items:', error);
+        setCartItems([]);
+        setUniqueServiceCount(0);
       }
     };
     
@@ -68,7 +73,11 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   if (cartItems.length === 0) return null;
   
   const handleViewSack = () => {
-    navigate('/cart');
+    navigate('/cart', {
+      state: {
+        previousPath: location.pathname
+      }
+    });
   };
   
   const handleClearSack = () => {

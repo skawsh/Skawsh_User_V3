@@ -13,12 +13,19 @@ const ScrollToTop = () => {
   
   // Store scroll positions for each path
   const scrollPositions = useRef<Record<string, number>>({});
+  const initialRender = useRef(true);
   
   // Save scroll position before location changes
   useEffect(() => {
     const saveScrollPosition = () => {
       scrollPositions.current[pathname] = window.scrollY;
     };
+    
+    // Don't save position on initial render
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
     
     window.addEventListener('scroll', saveScrollPosition);
     
@@ -31,6 +38,11 @@ const ScrollToTop = () => {
   
   // Handle scroll behavior when pathname changes
   useEffect(() => {
+    // Skip first render
+    if (initialRender.current) {
+      return;
+    }
+    
     // Wait for any DOM updates to complete
     const timeoutId = setTimeout(() => {
       if (navigationType === 'POP') {
@@ -46,7 +58,7 @@ const ScrollToTop = () => {
         // User is navigating to a new page - scroll to top
         window.scrollTo(0, 0);
       }
-    }, 100); // Increased timeout to ensure DOM is fully rendered
+    }, 100); // Short timeout to ensure DOM is fully rendered
     
     return () => clearTimeout(timeoutId);
   }, [pathname, navigationType]);
