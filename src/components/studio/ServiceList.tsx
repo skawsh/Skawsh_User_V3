@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Clock, Menu } from 'lucide-react';
+import { Clock, Menu, X } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -8,6 +8,9 @@ import { useLocation } from 'react-router-dom';
 import CategoryList from './categories/CategoryList';
 import ServiceCategory from './services/ServiceCategory';
 import { ShoppingBag, Shirt, Footprints, Bookmark } from 'lucide-react';
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 interface Service {
   id: string;
@@ -28,6 +31,7 @@ interface CartItem {
     name: string;
     quantity: number;
   }[];
+  washType?: string;
 }
 
 interface SubCategory {
@@ -62,6 +66,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [isTabsSticky, setIsTabsSticky] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [mixedServicesDialogOpen, setMixedServicesDialogOpen] = useState(false);
+  const [pendingService, setPendingService] = useState<Service | null>(null);
   const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -292,6 +298,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   const handleOpenServicePopup = (service: Service) => {
+    // Check if there are already items in cart with a different wash type
+    const existingWashType = getExistingWashType();
+    const currentWashType = selectedTab;
+    
+    if (existingWashType && existingWashType !== currentWashType) {
+      // Store pending service and show dialog
+      setPendingService(service);
+      setMixedServicesDialogOpen(true);
+      return;
+    }
+    
     if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
       setSelectedService(service);
     } else {
@@ -323,34 +340,67 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   }, []);
   
+  // Helper function to determine the wash type of existing cart items
+  const getExistingWashType = (): string | null => {
+    // Check if there are any items in cart
+    if (cartItems.length === 0) return null;
+    
+    // Go through metadata or price to determine the wash type
+    // We'll use a simple heuristic: if any price is 1.5x the base price, it's express
+    const expressItemExists = cartItems.some(item => {
+      // If the item has metadata indicating express
+      if (item.washType === "express") return true;
+      
+      // Or if the price indicates it's likely an express item (50% markup)
+      const baseServices = [...updatedCoreServices, ...accessoriesServices, ...shoeServices];
+      const matchingService = baseServices.find(s => s.id === item.serviceId);
+      if (matchingService) {
+        const basePrice = matchingService.price;
+        const priceRatio = item.price / basePrice;
+        return Math.abs(priceRatio - 1.5) < 0.1; // If price ratio is close to 1.5x
+      }
+      return false;
+    });
+    
+    return expressItemExists ? "express" : "standard";
+  };
+
   const handleAddToCart = (orderDetails: any) => {
     const roundedWeight = orderDetails.weight ? Math.round(orderDetails.weight * 10) / 10 : 0;
     
     setCartItems(prev => {
       const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
       
+      // Add wash type to the item metadata
+      const updatedOrderDetails = {
+        ...orderDetails,
+        washType: selectedTab // Add wash type
+      };
+      
       let updatedItems;
       if (existingItemIndex >= 0) {
         const newItems = [...prev];
         newItems[existingItemIndex] = {
-          serviceId: orderDetails.serviceId,
-          serviceName: orderDetails.serviceName,
+          serviceId: updatedOrderDetails.serviceId,
+          serviceName: updatedOrderDetails.serviceName,
           weight: roundedWeight,
-          price: Math.round(orderDetails.price * 100) / 100,
-          quantity: orderDetails.quantity,
+          price: Math.round(updatedOrderDetails.price * 100) / 100,
+          quantity: updatedOrderDetails.quantity,
           studioId: studioId,
-          items: orderDetails.items
+          items: updatedOrderDetails.items,
+          washType: updatedOrderDetails.washType
         };
         updatedItems = newItems;
       } else {
         updatedItems = [...prev, {
-          serviceId: orderDetails.serviceId,
-          serviceName: orderDetails.serviceName,
+          serviceId: updatedOrderDetails.serviceId,
+          serviceName: updatedOrderDetails.serviceName,
           weight: roundedWeight,
-          price: Math.round(orderDetails.price * 100) / 100,
-          quantity: orderDetails.quantity,
+          price: Math.round(updatedOrderDetails.price * 100) / 100,
+          quantity: updatedOrderDetails.quantity,
           studioId: studioId,
-          items: orderDetails.items
+          items: updatedOrderDetails.items,
+          washType: updatedOrderDetails.washType
         }];
       }
       
@@ -376,6 +426,17 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   const handleIncreaseWeight = (service: Service) => {
+    // Check if there are already items in cart with a different wash type
+    const existingWashType = getExistingWashType();
+    const currentWashType = selectedTab;
+    
+    if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
+      // Store pending service and show dialog
+      setPendingService(service);
+      setMixedServicesDialogOpen(true);
+      return;
+    }
+    
     if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
       const currentWeight = getServiceWeight(service.id) || 0;
       const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
@@ -453,7 +514,77 @@ const ServiceList: React.FC<ServiceListProps> = ({
         setSelectedService(service);
       }
     } else {
+      // Check if there are already items in cart with a different wash type
+      const existingWashType = getExistingWashType();
+      const currentWashType = selectedTab;
+      
+      if (existingWashType && existingWashType !== currentWashType) {
+        // Store pending service and show dialog
+        setPendingService(service);
+        setMixedServicesDialogOpen(true);
+        return;
+      }
+      
       handleOpenServicePopup(service);
+    }
+  };
+  
+  // Handler for switching to standard wash
+  const handleSwitchToStandard = () => {
+    if (pendingService) {
+      setSelectedTab("standard");
+      
+      // After switching tab, process the service
+      setTimeout(() => {
+        if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
+          setSelectedService(pendingService);
+        } else {
+          handleAddToCart({
+            serviceId: pendingService.id,
+            serviceName: pendingService.name,
+            quantity: 1,
+            price: pendingService.price, // Standard price
+            studioId: studioId,
+            items: []
+          });
+        }
+        
+        setPendingService(null);
+        setMixedServicesDialogOpen(false);
+        
+        toast({
+          title: "Switched to Standard Wash",
+          description: "All items will be delivered together"
+        });
+      }, 300); // Small delay to let the tab change animation complete
+    }
+  };
+  
+  // Handler for continuing with mixed wash types
+  const handleContinueMixedTypes = () => {
+    if (pendingService) {
+      // Process the service with current tab
+      if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
+        setSelectedService(pendingService);
+      } else {
+        const price = selectedTab === "express" ? pendingService.price * 1.5 : pendingService.price;
+        handleAddToCart({
+          serviceId: pendingService.id,
+          serviceName: pendingService.name,
+          quantity: 1,
+          price: price,
+          studioId: studioId,
+          items: []
+        });
+      }
+      
+      setPendingService(null);
+      setMixedServicesDialogOpen(false);
+      
+      toast({
+        title: "Multiple delivery types selected",
+        description: "Your items will be delivered separately"
+      });
     }
   };
 
@@ -494,7 +625,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       ref={tabsWrapperRef}
     >
       <div ref={tabsRef} className="transition-all duration-300">
-        <Tabs defaultValue="standard" onValueChange={handleTabChange}>
+        <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
           {isTabsSticky && (
             <div 
               className="h-0 overflow-hidden" 
@@ -661,6 +792,37 @@ const ServiceList: React.FC<ServiceListProps> = ({
           isExpress={selectedTab === "express"}
         />
       )}
+      
+      {/* Mixed Services Warning Dialog */}
+      <Dialog open={mixedServicesDialogOpen} onOpenChange={setMixedServicesDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+          <DialogTitle className="text-center text-lg font-semibold pt-2">
+            Different Delivery Types
+          </DialogTitle>
+          <DialogDescription className="text-center py-4">
+            You selected different wash types that require separate deliveries. Please continue or Switch to Standard wash for Single delivery
+          </DialogDescription>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center mt-2">
+            <Button 
+              variant="outline" 
+              onClick={handleSwitchToStandard}
+              className="border-blue-500 text-blue-500 hover:bg-blue-50"
+            >
+              Switch to Standard
+            </Button>
+            <Button 
+              onClick={handleContinueMixedTypes}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Continue
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
