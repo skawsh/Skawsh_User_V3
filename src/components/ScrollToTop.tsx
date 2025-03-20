@@ -14,6 +14,7 @@ const ScrollToTop = () => {
   // Store scroll positions for each path
   const scrollPositions = useRef<Record<string, number>>({});
   const initialRender = useRef(true);
+  const lastNavigationType = useRef(navigationType);
   
   // Save scroll position before location changes
   useEffect(() => {
@@ -42,6 +43,9 @@ const ScrollToTop = () => {
     if (initialRender.current) {
       return;
     }
+    
+    // Save navigation type for reference
+    lastNavigationType.current = navigationType;
     
     // Wait for any DOM updates to complete
     const timeoutId = setTimeout(() => {

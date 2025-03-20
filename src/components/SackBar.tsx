@@ -28,7 +28,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const location = useLocation();
   
   useEffect(() => {
-    // Load cart items from localStorage
     const loadCartItems = () => {
       try {
         const storedItems = localStorage.getItem('cartItems');
@@ -36,7 +35,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           const parsedItems = JSON.parse(storedItems);
           setCartItems(parsedItems);
           
-          // Count unique services by serviceId
           const uniqueServices = new Set();
           parsedItems.forEach((item: any) => {
             if (item.serviceId) {
@@ -60,7 +58,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     
     loadCartItems();
     
-    // Add event listener for storage changes
     window.addEventListener('storage', loadCartItems);
     document.addEventListener('cartUpdated', loadCartItems);
     
@@ -75,7 +72,8 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const handleViewSack = () => {
     navigate('/cart', {
       state: {
-        previousPath: location.pathname
+        previousPath: location.pathname,
+        studioId: cartItems[0]?.studioId || null
       }
     });
   };
@@ -83,14 +81,13 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const handleClearSack = () => {
     localStorage.removeItem('cartItems');
     setCartItems([]);
-    setIsDialogOpen(false); // Close dialog after clearing
-    // Dispatch event to notify other components
+    setIsDialogOpen(false);
     document.dispatchEvent(new Event('cartUpdated'));
   };
   
   const studioInfo = cartItems[0]?.studioId ? {
     id: cartItems[0].studioId,
-    name: 'Busy Bee' // This would ideally come from a context or be fetched based on studioId
+    name: 'Busy Bee'
   } : null;
   
   return (
