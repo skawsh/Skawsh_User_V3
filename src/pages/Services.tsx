@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import GlassCard from '../components/ui-elements/GlassCard';
 import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronDown, Footprints, WashingMachine } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar } from "@/components/ui/avatar";
 
 const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -243,8 +244,8 @@ const Services: React.FC = () => {
 
   return (
     <Layout>
-      <div className="section-container pb-10">
-        <h1 className="text-2xl font-semibold mb-4 pt-2 animate-fade-in">Our Services</h1>
+      <div className="section-container pb-10 bg-gradient-to-b from-primary-50 to-white min-h-screen">
+        <h1 className="text-2xl font-semibold mb-4 pt-6 animate-fade-in text-gray-800">Our Services</h1>
         
         <div className="mb-6 relative animate-fade-in">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -253,7 +254,7 @@ const Services: React.FC = () => {
           <Input 
             type="text"
             placeholder="Search services..." 
-            className="pl-10 bg-gray-50 border-gray-200"
+            className="pl-10 bg-white border-gray-200 shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -261,9 +262,11 @@ const Services: React.FC = () => {
         
         <div className="space-y-8 animate-fade-in">
           {filteredServices.length === 0 ? (
-            <div className="text-center py-10 text-gray-500">
-              No services found matching "{searchQuery}"
-            </div>
+            <Card className="text-center py-10 text-gray-500 border-none shadow-sm">
+              <CardContent>
+                No services found matching "{searchQuery}"
+              </CardContent>
+            </Card>
           ) : (
             filteredServices.map((category, index) => (
               <div 
@@ -274,15 +277,15 @@ const Services: React.FC = () => {
                 )}
                 style={{ animationDelay: `${index * 75}ms` }}
               >
-                <div className="mb-3">
+                <Card className="mb-4 overflow-hidden border-none shadow-sm">
                   <div 
-                    className="bg-gray-100 p-4 rounded-lg flex items-center justify-between cursor-pointer"
+                    className="bg-white p-4 rounded-lg flex items-center justify-between cursor-pointer"
                     onClick={() => toggleCategory(category.id)}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-white p-3 flex items-center justify-center shadow-sm">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-12 w-12 bg-primary-50 text-primary-500 border-none">
                         {category.icon}
-                      </div>
+                      </Avatar>
                       <h3 className="font-semibold text-gray-800 text-xl">{category.name}</h3>
                     </div>
                     <ChevronDown 
@@ -293,25 +296,31 @@ const Services: React.FC = () => {
                       )}
                     />
                   </div>
-                </div>
+                </Card>
                 
                 {expandedCategories.includes(category.id) && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-4 pl-4 pr-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
                     {category.subServices.map((subService) => (
-                      <div 
+                      <Card 
                         key={subService.id} 
-                        className="flex flex-col items-center cursor-pointer"
+                        className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all cursor-pointer bg-white hover:bg-gradient-to-br hover:from-primary-50 hover:to-white"
                         onClick={() => handleSubserviceClick(category.name, subService)}
                       >
-                        <div className="relative w-32 h-32 mb-3 shadow-md rounded-full overflow-hidden">
-                          <img 
-                            src={getSubserviceImage(category.id, subService.id)} 
-                            alt={subService.name} 
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <h4 className="font-medium text-gray-800 text-center">{subService.name}</h4>
-                      </div>
+                        <CardContent className="p-3">
+                          <div className="flex flex-col items-center">
+                            <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-sm">
+                              <img 
+                                src={getSubserviceImage(category.id, subService.id)} 
+                                alt={subService.name} 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <Badge variant="outline" className="font-medium text-gray-800 bg-white shadow-sm border-gray-100">
+                              {subService.name}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}
