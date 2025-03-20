@@ -58,7 +58,7 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
         {children}
       </main>
       
-      {shouldShowSackBar && <SackBar />}
+      {shouldShowSackBar && <SackBar isVisible={isVisible} />}
       
       {shouldShowBottomNav && (
         <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-40 transition-all duration-500 ease-in-out transform ${

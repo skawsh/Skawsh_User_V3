@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 
 interface SackBarProps {
   className?: string;
+  isVisible?: boolean;
 }
 
-const SackBar: React.FC<SackBarProps> = ({ className }) => {
+const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const navigate = useNavigate();
   
@@ -61,7 +62,8 @@ const SackBar: React.FC<SackBarProps> = ({ className }) => {
   return (
     <div 
       className={cn(
-        "fixed bottom-16 left-0 right-0 z-40 px-4 pb-2",
+        "fixed bottom-16 left-0 right-0 z-40 px-4 pb-2 transition-all duration-500 ease-in-out",
+        isVisible ? 'translate-y-0' : 'translate-y-full',
         className
       )}
     >
