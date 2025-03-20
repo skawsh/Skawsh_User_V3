@@ -532,6 +532,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
   // Handler for switching to standard wash
   const handleSwitchToStandard = () => {
     if (pendingService) {
+      // Remove all Express wash items from the cart
+      const updatedItems = cartItems.filter(item => item.washType !== "express");
+      setCartItems(updatedItems);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+      
+      // Dispatch custom event for components listening to cart updates
+      document.dispatchEvent(new Event('cartUpdated'));
+      
       setSelectedTab("standard");
       
       // After switching tab, process the service
@@ -554,7 +562,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         
         toast({
           title: "Switched to Standard Wash",
-          description: "All items will be delivered together"
+          description: "Express items removed. All items will be delivered together."
         });
       }, 300); // Small delay to let the tab change animation complete
     }
