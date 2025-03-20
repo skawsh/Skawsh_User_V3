@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Clock, Menu } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,7 +7,7 @@ import ServiceOrderPopup from './ServiceOrderPopup';
 import { useLocation } from 'react-router-dom';
 import CategoryList from './categories/CategoryList';
 import ServiceCategory from './services/ServiceCategory';
-import { ShoppingBag, Shirt, Footprints } from 'lucide-react';
+import { ShoppingBag, Shirt, Footprints, Bookmark } from 'lucide-react';
 
 interface Service {
   id: string;
@@ -86,7 +85,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   const updatedCoreServices = [...coreServices, washAndIronService];
 
-  // Express wash services - new implementation
   const expressWashServices: Service[] = [
     {
       id: 'express-wash-fold-1',
@@ -101,6 +99,39 @@ const ServiceList: React.FC<ServiceListProps> = ({
       description: 'Express washing with professional ironing for a crisp finish.',
       price: 149,
       unit: 'per kg'
+    }
+  ];
+
+  const accessoriesServices: Service[] = [
+    {
+      id: 'acc-handkerchief',
+      name: 'Hand Kerchief',
+      description: 'Gentle cleaning for handkerchiefs with perfect finishing.',
+      price: 25
+    },
+    {
+      id: 'acc-tie',
+      name: 'Tie',
+      description: 'Professional cleaning for ties, preserving color and texture.',
+      price: 45
+    },
+    {
+      id: 'acc-cap',
+      name: 'Cap',
+      description: 'Thorough cleaning for caps without affecting their shape.',
+      price: 50
+    },
+    {
+      id: 'acc-gloves',
+      name: 'Gloves',
+      description: 'Specialized cleaning for all types of gloves.',
+      price: 35
+    },
+    {
+      id: 'acc-shawl',
+      name: 'Shawl',
+      description: 'Deep cleaning for shawls with gentle care for delicate fabrics.',
+      price: 75
     }
   ];
 
@@ -216,13 +247,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   ];
 
-  // Express wash categories - completely different from standard categories
   const expressCategories: ServiceCategory[] = [
     {
       title: "Core Laundry Services",
       icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
       services: expressWashServices,
       count: expressWashServices.length
+    },
+    {
+      title: "Accessories",
+      icon: <Bookmark size={16} className="text-white bg-purple-700 rounded-full" />,
+      services: accessoriesServices,
+      count: accessoriesServices.length
     }
   ];
 
