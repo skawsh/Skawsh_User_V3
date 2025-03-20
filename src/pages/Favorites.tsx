@@ -1,44 +1,66 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
 import { Star, Clock, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+// Define types for our favorites
+interface FavoriteStudio {
+  id: string;
+  name: string;
+  image: string;
+  rating?: number;
+  deliveryTime?: string;
+}
+
+interface FavoriteService {
+  id: string;
+  studioId: string;
+  studioName: string;
+  name: string;
+  price: string;
+}
+
+// Try to get favorites from localStorage or use empty arrays
+const getFavoritesFromStorage = () => {
+  try {
+    const studios = localStorage.getItem('favoriteStudios');
+    const services = localStorage.getItem('favoriteServices');
+    return {
+      studios: studios ? JSON.parse(studios) : [],
+      services: services ? JSON.parse(services) : []
+    };
+  } catch (error) {
+    console.error('Error reading favorites from localStorage:', error);
+    return { studios: [], services: [] };
+  }
+};
+
 const Favorites: React.FC = () => {
-  const favoriteStudios = [
-    {
-      id: '1',
-      name: 'Pristine Laundry',
-      image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.8,
-      deliveryTime: '1-2 days'
-    },
-    {
-      id: '2',
-      name: 'Fresh & Clean Co.',
-      image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
-      rating: 4.6,
-      deliveryTime: 'Same day'
-    }
-  ];
+  const [favoriteStudios, setFavoriteStudios] = useState<FavoriteStudio[]>([]);
+  const [favoriteServices, setFavoriteServices] = useState<FavoriteService[]>([]);
   
-  const favoriteServices = [
-    {
-      id: '1',
-      studioId: '1',
-      studioName: 'Pristine Laundry',
-      name: 'Premium Dry Cleaning',
-      price: '$8.99 per item'
-    },
-    {
-      id: '2',
-      studioId: '2',
-      studioName: 'Fresh & Clean Co.',
-      name: 'Express Wash & Fold',
-      price: '$3.49 per lb'
-    }
-  ];
+  useEffect(() => {
+    // Load favorites from localStorage on component mount
+    const { studios, services } = getFavoritesFromStorage();
+    setFavoriteStudios(studios);
+    setFavoriteServices(services);
+  }, []);
+  
+  // Remove studio from favorites
+  const removeStudioFromFavorites = (studioId: string) => {
+    const updatedFavorites = favoriteStudios.filter(studio => studio.id !== studioId);
+    setFavoriteStudios(updatedFavorites);
+    localStorage.setItem('favoriteStudios', JSON.stringify(updatedFavorites));
+  };
+  
+  // Remove service from favorites
+  const removeServiceFromFavorites = (serviceId: string) => {
+    const updatedFavorites = favoriteServices.filter(service => service.id !== serviceId);
+    setFavoriteServices(updatedFavorites);
+    localStorage.setItem('favoriteServices', JSON.stringify(updatedFavorites));
+  };
   
   return (
     <Layout>
@@ -76,17 +98,27 @@ const Favorites: React.FC = () => {
                         <div className="flex-1 p-3 flex flex-col justify-between">
                           <div>
                             <h3 className="font-medium text-gray-800">{studio.name}</h3>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Star size={14} className="fill-yellow-400 text-yellow-400" />
-                              <span className="text-sm text-gray-700">{studio.rating}</span>
+                            {studio.rating && (
+                              <div className="flex items-center gap-1 mt-1">
+                                <Star size={14} className="fill-yellow-400 text-yellow-400" />
+                                <span className="text-sm text-gray-700">{studio.rating}</span>
+                              </div>
+                            )}
+                          </div>
+                          {studio.deliveryTime && (
+                            <div className="flex items-center gap-1 text-gray-500 self-end">
+                              <Clock size={14} />
+                              <span className="text-xs">{studio.deliveryTime}</span>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-1 text-gray-500 self-end">
-                            <Clock size={14} />
-                            <span className="text-xs">{studio.deliveryTime}</span>
-                          </div>
+                          )}
                         </div>
-                        <button className="p-3 text-red-500">
+                        <button 
+                          className="p-3 text-red-500"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            removeStudioFromFavorites(studio.id);
+                          }}
+                        >
                           <Heart size={20} className="fill-red-500" />
                         </button>
                       </GlassCard>
@@ -112,7 +144,13 @@ const Favorites: React.FC = () => {
                             <p className="text-sm text-gray-500 mb-1">From: {service.studioName}</p>
                             <div className="text-primary-500 font-semibold">{service.price}</div>
                           </div>
-                          <button className="p-1 text-red-500">
+                          <button 
+                            className="p-1 text-red-500"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              removeServiceFromFavorites(service.id);
+                            }}
+                          >
                             <Heart size={20} className="fill-red-500" />
                           </button>
                         </div>

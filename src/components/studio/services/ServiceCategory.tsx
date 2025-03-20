@@ -33,6 +33,8 @@ interface ServiceCategoryProps {
   isSticky?: boolean;
   activeStickySubCategory?: string | null;
   onSubCategoryInView?: (subcategory: string, inView: boolean) => void;
+  studioId?: string;
+  studioName?: string;
 }
 
 const ServiceCategory: React.FC<ServiceCategoryProps> = ({
@@ -50,7 +52,9 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
   categoryRef,
   isSticky = false,
   activeStickySubCategory = null,
-  onSubCategoryInView
+  onSubCategoryInView,
+  studioId = '',
+  studioName = ''
 }) => {
   // Check if categoryRef is a function or a RefObject and use it accordingly
   const refProp = typeof categoryRef === 'function' 
@@ -59,8 +63,6 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
     
   const subCategoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
-  // Remove the useEffect for intersection observer since we don't need it anymore
-
   return (
     <div {...refProp} className="mb-8">
       <div className="flex items-center gap-2 mb-5 px-1">
@@ -100,6 +102,8 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
                     onIncrease={onServiceIncrease}
                     onDecrease={onServiceDecrease}
                     onClick={onServiceClick}
+                    studioId={studioId}
+                    studioName={studioName}
                   />
                 ))}
               </div>
@@ -119,6 +123,8 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
               onIncrease={onServiceIncrease}
               onDecrease={onServiceDecrease}
               onClick={onServiceClick}
+              studioId={studioId}
+              studioName={studioName}
             />
           ))}
         </div>

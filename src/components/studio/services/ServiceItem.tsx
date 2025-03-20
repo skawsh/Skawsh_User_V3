@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus, Heart } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,8 @@ interface ServiceItemProps {
   onIncrease: (service: Service) => void;
   onDecrease: (service: Service) => void;
   onClick: (service: Service) => void;
+  studioId?: string;
+  studioName?: string;
 }
 
 const ServiceItem: React.FC<ServiceItemProps> = ({
@@ -33,12 +35,74 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   onAdd,
   onIncrease,
   onDecrease,
-  onClick
+  onClick,
+  studioId = '',
+  studioName = ''
 }) => {
   const isMobile = useIsMobile();
   const price = tabType === "express" ? service.price * 1.5 : service.price;
   const hasWeight = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
   const isInCart = weight !== null || quantity !== null;
+  
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Check if this service is already in favorites
+  useEffect(() => {
+    try {
+      const storedServices = localStorage.getItem('favoriteServices');
+      if (storedServices) {
+        const services = JSON.parse(storedServices);
+        const isAlreadyFavorite = services.some((s: { id: string }) => s.id === service.id);
+        setIsFavorite(isAlreadyFavorite);
+      }
+    } catch (error) {
+      console.error('Error checking favorite services:', error);
+    }
+  }, [service.id]);
+  
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsAnimating(true);
+    
+    try {
+      const newFavoriteStatus = !isFavorite;
+      setIsFavorite(newFavoriteStatus);
+      
+      // Get current favorites
+      const storedServices = localStorage.getItem('favoriteServices') || '[]';
+      const services = JSON.parse(storedServices);
+      
+      if (newFavoriteStatus) {
+        // Add to favorites
+        if (!services.some((s: { id: string }) => s.id === service.id)) {
+          services.push({
+            id: service.id,
+            studioId,
+            studioName,
+            name: service.name,
+            price: `₹${price.toFixed(0)}${service.unit ? ` ${service.unit}` : ''}`
+          });
+        }
+      } else {
+        // Remove from favorites
+        const updatedServices = services.filter((s: { id: string }) => s.id !== service.id);
+        localStorage.setItem('favoriteServices', JSON.stringify(updatedServices));
+      }
+      
+      // Save updated favorites
+      if (newFavoriteStatus) {
+        localStorage.setItem('favoriteServices', JSON.stringify(services));
+      }
+    } catch (error) {
+      console.error('Error updating favorite services:', error);
+    }
+    
+    // Remove animation after it completes
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 600);
+  };
   
   const getServiceIcon = () => {
     if (service.name.includes('Fold')) {
@@ -134,9 +198,21 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   return (
     <div 
       data-service-name={service.name}
-      className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200"
+      className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 relative"
       onClick={() => onClick(service)}
     >
+      {/* Add favorite button */}
+      <button
+        className={`absolute top-2 right-2 p-1.5 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors duration-200 z-10 ${isAnimating ? 'animate-bounce-once' : ''}`}
+        onClick={toggleFavorite}
+        aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
+      >
+        <Heart 
+          size={16} 
+          className={`transition-all duration-300 transform ${isAnimating ? 'scale-125' : ''} ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
+        />
+      </button>
+      
       <div className="flex justify-between items-center">
         <div className="flex gap-3">
           <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden shadow-sm">
