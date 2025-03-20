@@ -11,10 +11,18 @@ const LocationBar: React.FC = () => {
     navigate('/profile');
   };
 
+  const handleLocationClick = () => {
+    navigate('/addresses');
+  };
+
   return (
     <div className="animate-fade-in pt-4">
       <div className="flex items-center justify-between mb-0 mt-2">
-        <div className="flex items-center">
+        <div 
+          className="flex items-center cursor-pointer" 
+          onClick={handleLocationClick}
+          aria-label="Go to addresses"
+        >
           <MapPin size={34} className="text-white mr-2" />
           <div>
             <div className="text-xl font-bold text-white flex items-center">
