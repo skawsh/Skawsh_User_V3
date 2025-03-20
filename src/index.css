@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -80,13 +79,6 @@
   html, body {
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
-    /* Add touch optimization */
-    touch-action: manipulation;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    /* Add overscroll behavior for iOS bounce effect and momentum scrolling */
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
   }
   
   html::-webkit-scrollbar, body::-webkit-scrollbar {
@@ -122,32 +114,6 @@
     font-weight: 500 !important;
     letter-spacing: 0.01em !important;
   }
-  
-  /* Mobile optimizations */
-  .tap-highlight-none {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  .touch-callout-none {
-    -webkit-touch-callout: none;
-  }
-  
-  /* Add safe area insets for iOS */
-  .safe-area-inset-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  
-  .safe-area-inset-top {
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-  
-  /* Hardware acceleration for smooth animations */
-  .hardware-accelerated {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-    will-change: transform;
-  }
 }
 
 @layer base {
@@ -155,23 +121,12 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground no-scrollbar tap-highlight-none touch-callout-none;
+    @apply bg-background text-foreground no-scrollbar;
   }
   
   /* Apply no-scrollbar to common scrollable elements */
   .scrollable-content {
     @apply no-scrollbar;
-  }
-  
-  /* Mobile-first button optimizations */
-  button, a {
-    @apply tap-highlight-none touch-callout-none;
-  }
-  
-  /* Improve input elements on mobile */
-  input, select, textarea {
-    @apply appearance-none;
-    font-size: 16px; /* Prevents iOS zoom on focus */
   }
 }
 
@@ -254,27 +209,4 @@
 
 .glass {
   @apply backdrop-blur-lg bg-white/80;
-}
-
-/* Add viewport meta tag for responsiveness */
-@media (max-width: 640px) {
-  html {
-    font-size: 15px; /* Slightly smaller base font on small mobile devices */
-  }
-  
-  /* Optimize tap targets for mobile */
-  .mobile-tap-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
-/* Reduce motion for users with that preference */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }

@@ -59,36 +59,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
     
   const subCategoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
-  // Add back the intersection observer for subcategories
-  useEffect(() => {
-    if (!onSubCategoryInView || !subCategories) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          const subcategoryTitle = entry.target.getAttribute('data-subcategory');
-          if (subcategoryTitle) {
-            onSubCategoryInView(subcategoryTitle, entry.isIntersecting);
-          }
-        });
-      },
-      {
-        rootMargin: '-10% 0px -80% 0px',
-        threshold: 0
-      }
-    );
-    
-    // Observe each subcategory
-    Object.entries(subCategoryRefs.current).forEach(([title, element]) => {
-      if (element) {
-        observer.observe(element);
-      }
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, [subCategories, onSubCategoryInView]);
+  // Remove the useEffect for intersection observer since we don't need it anymore
 
   return (
     <div {...refProp} className="mb-8">
@@ -104,10 +75,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
           {subCategories.map((subCategory, subIdx) => (
             <div 
               key={subIdx} 
-              className={cn(
-                "ml-2",
-                activeStickySubCategory === subCategory.title ? "scroll-mt-20" : ""
-              )}
+              className="ml-2" 
               ref={(el) => subCategoryRefs.current[subCategory.title] = el}
               data-subcategory={subCategory.title}
             >

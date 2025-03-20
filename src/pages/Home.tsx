@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
 import SearchBar from '../components/home/SearchBar';
@@ -16,40 +16,39 @@ const Home: React.FC = () => {
   const studiosRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
 
-  const handleScroll = useCallback(() => {
-    const servicesRow = servicesRowRef.current;
-    const invisibleDivider = dividerRef.current;
-    
-    if (invisibleDivider && servicesRow) {
-      const dividerPosition = invisibleDivider.getBoundingClientRect().top;
-      const shouldStick = dividerPosition <= 0;
-
-      if (shouldStick && !isSticky) {
-        setStickyHeight(servicesRow.offsetHeight);
-        requestAnimationFrame(() => {
-          setIsSticky(true);
-        });
-      } else if (!shouldStick && isSticky) {
-        requestAnimationFrame(() => {
-          setIsSticky(false);
-        });
-      }
-    }
-  }, [isSticky]);
-
   useEffect(() => {
+    const handleScroll = () => {
+      const servicesRow = servicesRowRef.current;
+      const invisibleDivider = dividerRef.current;
+      if (invisibleDivider && servicesRow) {
+        const dividerPosition = invisibleDivider.getBoundingClientRect().top;
+        const shouldStick = dividerPosition <= 0;
+
+        if (shouldStick && !isSticky) {
+          setStickyHeight(servicesRow.offsetHeight);
+          requestAnimationFrame(() => {
+            setIsSticky(true);
+          });
+        } else if (!shouldStick && isSticky) {
+          requestAnimationFrame(() => {
+            setIsSticky(false);
+          });
+        }
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  }, [isSticky]);
 
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {
       setStickyHeight(servicesRowRef.current.offsetHeight);
     }
-  }, [stickyHeight]);
+  }, []);
 
   const services = [{
     id: 'wash-fold',
@@ -202,16 +201,9 @@ const Home: React.FC = () => {
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
-        <div 
-          id="services-row" 
-          ref={servicesRowRef} 
-          className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b hardware-accelerated' : 'bg-transparent'}`} 
-          style={{
-            transform: isSticky ? 'translateZ(0)' : 'none',
-            willChange: isSticky ? 'transform' : 'auto',
-            transition: 'transform 0.2s ease, opacity 0.2s ease'
-          }}
-        >
+        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} style={{
+          transition: 'transform 0.2s ease, opacity 0.2s ease'
+        }}>
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
             <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-transparent">
               {services.map((service, index) => <ServiceCard key={service.id} id={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
