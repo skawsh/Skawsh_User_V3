@@ -7,6 +7,7 @@ import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
+
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [stickyHeight, setStickyHeight] = useState(0);
@@ -14,6 +15,7 @@ const Home: React.FC = () => {
   const dividerRef = useRef<HTMLDivElement>(null);
   const studiosRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleScroll = () => {
       const servicesRow = servicesRowRef.current;
@@ -21,6 +23,7 @@ const Home: React.FC = () => {
       if (invisibleDivider && servicesRow) {
         const dividerPosition = invisibleDivider.getBoundingClientRect().top;
         const shouldStick = dividerPosition <= 0;
+
         if (shouldStick && !isSticky) {
           setStickyHeight(servicesRow.offsetHeight);
           requestAnimationFrame(() => {
@@ -33,16 +36,20 @@ const Home: React.FC = () => {
         }
       }
     };
+
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isSticky]);
+
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {
       setStickyHeight(servicesRowRef.current.offsetHeight);
     }
   }, []);
+
   const services = [{
     id: 'wash-fold',
     title: 'Wash & Fold',
@@ -80,6 +87,7 @@ const Home: React.FC = () => {
     title: 'Business Attire',
     icon: <Briefcase size={24} />
   }];
+
   const studios = [{
     id: '1',
     name: 'Busy Bee',
@@ -135,6 +143,7 @@ const Home: React.FC = () => {
     workingHours: '7 AM - 10 PM',
     promoted: true
   }];
+
   const banners = [{
     id: '1',
     title: 'Premium Care',
@@ -168,6 +177,7 @@ const Home: React.FC = () => {
     textColor: 'text-gray-800',
     image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
   }];
+
   return <Layout>
     <div className="section-container p-0 bg-gradient-to-b from-primary-50 to-white">
       <div className="px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl" style={{
@@ -182,7 +192,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       
-      <div ref={servicesRef} className="pb-1 -mx-4 px-[5px]">
+      <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-primary-50 to-white">
         <Card className="border-none shadow-none bg-transparent mb-2">
           <CardContent className="p-0 pt-2 px-[15px]">
             <h2 className="section-title mb-2 font-bold text-lg">Explore Services</h2>
@@ -191,7 +201,7 @@ const Home: React.FC = () => {
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
-        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-white'} will-change-transform`} style={{
+        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} style={{
           transition: 'transform 0.2s ease, opacity 0.2s ease'
         }}>
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
@@ -233,11 +243,13 @@ const Home: React.FC = () => {
     </div>
   </Layout>;
 };
+
 interface FilterButtonProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
 }
+
 const FilterButton: React.FC<FilterButtonProps> = ({
   icon,
   label,
@@ -248,4 +260,5 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       {label}
     </button>;
 };
+
 export default Home;
