@@ -531,18 +531,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   // Handler for switching to standard wash
   const handleSwitchToStandard = () => {
+    // Remove all Express wash items from the cart
+    const updatedItems = cartItems.filter(item => item.washType !== "express");
+    setCartItems(updatedItems);
+    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    // Dispatch custom event for components listening to cart updates
+    document.dispatchEvent(new Event('cartUpdated'));
+    
+    setSelectedTab("standard");
+    
+    // Process the pending service if it exists
     if (pendingService) {
-      // Remove all Express wash items from the cart
-      const updatedItems = cartItems.filter(item => item.washType !== "express");
-      setCartItems(updatedItems);
-      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-      
-      // Dispatch custom event for components listening to cart updates
-      document.dispatchEvent(new Event('cartUpdated'));
-      
-      setSelectedTab("standard");
-      
-      // After switching tab, process the service
       setTimeout(() => {
         if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
           setSelectedService(pendingService);
@@ -565,6 +565,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
           description: "Express items removed. All items will be delivered together."
         });
       }, 300); // Small delay to let the tab change animation complete
+    } else {
+      // If there's no pending service, just close the dialog
+      setMixedServicesDialogOpen(false);
+      
+      toast({
+        title: "Switched to Standard Wash",
+        description: "Express items removed. All items will be delivered together."
+      });
     }
   };
   
