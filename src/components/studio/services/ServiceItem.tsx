@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Service {
   id: string;
@@ -34,6 +34,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   onDecrease,
   onClick
 }) => {
+  const isMobile = useIsMobile();
   const price = tabType === "express" ? service.price * 1.5 : service.price;
   const hasWeight = service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'));
   const isInCart = weight !== null || quantity !== null;
@@ -78,47 +79,33 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
     if (isInCart) {
       return (
         <div className="flex items-center">
-          <Button 
-            variant="default" 
-            size="sm"
-            className={cn(
-              "rounded-l-full rounded-r-none shadow-sm",
-              tabType === "standard" 
-                ? "bg-blue-600 hover:bg-blue-700" 
-                : "bg-orange-500 hover:bg-orange-600"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDecrease(service);
-            }}
-          >
-            <Minus size={16} />
-          </Button>
-          <span className={cn(
-            "px-3 py-1 text-sm font-medium", 
-            tabType === "standard" ? "bg-blue-600" : "bg-orange-500",
-            "text-white"
-          )}>
-            {hasWeight 
-              ? (weight || 0).toFixed(1) 
-              : quantity || 0}
-          </span>
-          <Button 
-            variant="default" 
-            size="sm"
-            className={cn(
-              "rounded-l-none rounded-r-full shadow-sm",
-              tabType === "standard" 
-                ? "bg-blue-600 hover:bg-blue-700" 
-                : "bg-orange-500 hover:bg-orange-600"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              onIncrease(service);
-            }}
-          >
-            <Plus size={16} />
-          </Button>
+          <div className="bg-blue-500 rounded-full flex items-center overflow-hidden">
+            <button 
+              className="h-9 w-12 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDecrease(service);
+              }}
+            >
+              <Minus size={18} />
+            </button>
+            
+            <div className="px-2 flex items-center justify-center text-white font-medium min-w-12 text-center">
+              {hasWeight 
+                ? (weight || 0).toFixed(1) 
+                : quantity || 0}
+            </div>
+            
+            <button 
+              className="h-9 w-12 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
+              onClick={(e) => {
+                e.stopPropagation();
+                onIncrease(service);
+              }}
+            >
+              <Plus size={18} />
+            </button>
+          </div>
         </div>
       );
     } else {

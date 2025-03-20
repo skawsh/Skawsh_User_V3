@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'quantity';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   icon?: React.ReactNode;
@@ -25,7 +25,8 @@ const Button: React.FC<ButtonProps> = ({
     primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700',
     secondary: 'bg-secondary text-primary hover:bg-opacity-80 active:bg-opacity-70',
     outline: 'bg-transparent border border-primary-500 text-primary-500 hover:bg-primary-50 active:bg-primary-100',
-    ghost: 'bg-transparent text-primary-500 hover:bg-primary-50 active:bg-primary-100'
+    ghost: 'bg-transparent text-primary-500 hover:bg-primary-50 active:bg-primary-100',
+    quantity: 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
   };
 
   const sizeClasses = {
