@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Trash2, Check, X } from 'lucide-react';
@@ -94,12 +95,12 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     <div 
       className={cn(
         "fixed bottom-16 left-0 right-0 z-40 px-4 pb-2 transition-all duration-500 ease-in-out",
-        isVisible ? 'translate-y-0' : 'translate-y-full',
+        isVisible ? 'translate-y-0 animate-fade-in' : 'translate-y-full',
         className
       )}
     >
       <div className="max-w-lg mx-auto">
-        <div className="bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3">
+        <div className="bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
               <img 
@@ -126,7 +127,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={handleViewSack}
-              className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center"
+              className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center hover:bg-[#83d699] transition-colors"
             >
               <span>View Sack</span>
               <span>{uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}</span>
@@ -134,11 +135,11 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             
             <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <AlertDialogTrigger asChild>
-                <button className="p-2">
+                <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
                   <Trash2 size={24} className="text-red-500" />
                 </button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-xl">
+              <AlertDialogContent className="rounded-xl animate-scale-in">
                 <div className="flex justify-end">
                   <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
                     <X size={18} />

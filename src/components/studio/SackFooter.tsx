@@ -72,7 +72,8 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           onClick={handleGoToCart}
           className={cn(
             "w-full flex items-center justify-between py-3 px-5 rounded-xl shadow-md",
-            "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200"
+            "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200",
+            "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
           )}
         >
           <span className="text-[#403E43] font-semibold">

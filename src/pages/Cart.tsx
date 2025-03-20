@@ -143,9 +143,13 @@ const Cart: React.FC = () => {
     const updatedItems = cartItems.filter(item => item.serviceId !== id);
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+    
+    // Dispatch custom event for components listening to cart updates
+    document.dispatchEvent(new Event('cartUpdated'));
+    
     toast({
       title: "Item removed",
-      description: "Item has been removed from your cart.",
+      description: "Item has been removed from your sack.",
       duration: 2000,
     });
   };
@@ -161,7 +165,6 @@ const Cart: React.FC = () => {
       return;
     }
     
-    // For demo purposes, just show a success message
     toast({
       title: "Coupon applied",
       description: "Your coupon has been applied successfully.",
@@ -185,7 +188,6 @@ const Cart: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
-    // Implementation would depend on your checkout flow
     navigate('/checkout', { state: { cartItems } });
     toast({
       title: "Proceeding to checkout",
@@ -195,19 +197,22 @@ const Cart: React.FC = () => {
   };
 
   const handleClearCart = () => {
-    if (window.confirm("Are you sure you want to clear your cart?")) {
+    if (window.confirm("Are you sure you want to clear your sack?")) {
       setCartItems([]);
       localStorage.setItem('cartItems', JSON.stringify([]));
+      
+      // Dispatch custom event for components listening to cart updates
+      document.dispatchEvent(new Event('cartUpdated'));
+      
       toast({
-        title: "Cart cleared",
-        description: "All items have been removed from your cart.",
+        title: "Sack cleared",
+        description: "All items have been removed from your sack.",
         duration: 2000,
       });
     }
   };
 
   const handleChangeAddress = () => {
-    // This would typically navigate to an address selection/edit page
     toast({
       title: "Change address",
       description: "This would open the address selection page.",
@@ -241,39 +246,49 @@ const Cart: React.FC = () => {
         <div
           ref={headerRef}
           className={cn(
-            "flex items-center justify-between p-4 bg-white transition-all",
-            isHeaderSticky ? "fixed top-0 left-0 right-0 z-10 shadow-md" : ""
+            "flex items-center justify-between p-4 bg-white transition-all duration-300",
+            isHeaderSticky ? "fixed top-0 left-0 right-0 z-10 shadow-md animate-slide-in" : ""
           )}
         >
           <div className="flex items-center">
-            <button onClick={handleBackNavigation} className="mr-3">
+            <button onClick={handleBackNavigation} className="mr-3 hover:bg-gray-100 p-2 rounded-full transition-colors">
               <ChevronLeft size={24} className="text-gray-800" />
             </button>
-            <h1 className="text-lg font-medium">Your Sack</h1>
+            <h1 className="text-xl font-semibold text-gray-800">Your Sack</h1>
           </div>
           
           {cartItems.length > 0 && (
-            <button onClick={handleClearCart} className="text-red-500">
+            <button 
+              onClick={handleClearCart} 
+              className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+              aria-label="Clear sack"
+            >
               <Trash2 size={20} />
             </button>
           )}
         </div>
         
         {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-8 mt-10">
-            <ShoppingBag size={64} className="text-gray-400 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Your sack is empty</h2>
-            <p className="text-gray-500 text-center mb-6">
-              Add some services to your sack to proceed with checkout
-            </p>
-            <Button onClick={() => navigate('/services')} className="bg-blue-600">
-              Browse Services
-            </Button>
+          <div className="flex flex-col items-center justify-center p-8 mt-16 animate-fade-in">
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 w-full max-w-md">
+              <ShoppingBag size={64} className="text-gray-300 mb-4 mx-auto" />
+              <h2 className="text-xl font-semibold mb-2 text-center">Your sack is empty</h2>
+              <p className="text-gray-500 text-center mb-6">
+                Add some services to your sack to proceed with checkout
+              </p>
+              <Button 
+                onClick={() => navigate('/services')} 
+                className="bg-[#92E3A9] hover:bg-[#83d699] text-gray-800 w-full"
+                fullWidth
+              >
+                Browse Services
+              </Button>
+            </div>
           </div>
         ) : (
-          <div className="px-4 pt-3 pb-24">
+          <div className="px-4 pt-3 pb-24 max-w-3xl mx-auto">
             {/* Delivery Address Section */}
-            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+            <div className="bg-blue-50 p-4 rounded-xl mb-4 animate-fade-in shadow-sm border border-blue-100">
               <div className="flex justify-between items-center">
                 <div className="flex items-start">
                   <MapPin size={20} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
@@ -284,7 +299,7 @@ const Cart: React.FC = () => {
                 </div>
                 <button 
                   onClick={handleChangeAddress}
-                  className="text-blue-600 text-sm font-medium"
+                  className="text-blue-600 text-sm font-medium hover:underline"
                 >
                   Change
                 </button>
@@ -292,11 +307,11 @@ const Cart: React.FC = () => {
             </div>
 
             {/* Order Review Section */}
-            <div className="mb-4">
-              <h2 className="text-lg font-medium mb-2">Review your order</h2>
+            <div className="mb-4 animate-fade-in" style={{animationDelay: "100ms"}}>
+              <h2 className="text-lg font-semibold mb-3 text-gray-800">Review your order</h2>
               
               {/* Warning message */}
-              <div className="bg-yellow-50 p-3 rounded-lg mb-4 flex items-start">
+              <div className="bg-yellow-50 p-3 rounded-xl mb-4 flex items-start shadow-sm border border-yellow-100">
                 <AlertTriangle size={18} className="text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-gray-700">
                   Price may vary depending on the weight and clothing items during pickup of your order.
@@ -304,8 +319,8 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Items List */}
-              {Object.entries(groupedItems).map(([category, items]) => (
-                <div key={category} className="mb-4">
+              {Object.entries(groupedItems).map(([category, items], categoryIndex) => (
+                <div key={category} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
                   <div className="flex items-center mb-2">
                     {category === 'Dry Cleaning Services' && (
                       <Shirt size={18} className="text-gray-700 mr-2" />
@@ -316,7 +331,7 @@ const Cart: React.FC = () => {
                     {category === 'Shoe Laundry Services' && (
                       <Footprints size={18} className="text-gray-700 mr-2" />
                     )}
-                    <h3 className="font-medium text-gray-800">{category}</h3>
+                    <h3 className="font-semibold text-gray-800">{category}</h3>
                   </div>
                   
                   {/* Sub-categories if they exist */}
@@ -332,40 +347,43 @@ const Cart: React.FC = () => {
                     </div>
                   )}
                   
-                  <div className="space-y-3 pl-0">
-                    {items.map((item) => (
-                      <div key={item.serviceId} className="ml-6">
+                  <div className="space-y-3">
+                    {items.map((item, itemIndex) => (
+                      <div key={item.serviceId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in" style={{animationDelay: `${200 + itemIndex * 50}ms`}}>
                         <div className="mb-1">
-                          <h4 className="font-medium">{item.serviceName}</h4>
+                          <h4 className="font-medium text-gray-800">{item.serviceName}</h4>
                           <div className="flex justify-between items-center text-sm text-gray-600">
                             <span>{item.quantity} Item × {formatIndianRupee(item.price)}</span>
                             <span className="font-medium text-gray-800">{formatIndianRupee(item.price * (item.quantity || 1))}</span>
                           </div>
-                          <div className="text-xs text-gray-500 mb-2">
-                            <Clock size={12} className="inline mr-1" /> 36h Standard Delivery
+                          <div className="text-xs text-gray-500 mb-2 flex items-center">
+                            <Clock size={12} className="inline mr-1" /> <span>36h Standard Delivery</span>
                           </div>
                         </div>
                         
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center border border-gray-300 rounded-md">
+                          <div className="flex items-center border border-gray-200 rounded-full overflow-hidden shadow-sm">
                             <button 
-                              className="px-2 py-1 text-gray-600"
+                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
                               onClick={() => handleQuantityChange(item.serviceId, (item.quantity || 1) - 1)}
+                              aria-label="Decrease quantity"
                             >
                               <Minus size={16} />
                             </button>
-                            <span className="px-3 py-1 border-x border-gray-300">{item.quantity || 1}</span>
+                            <span className="px-3 py-1 border-x border-gray-200 bg-white">{item.quantity || 1}</span>
                             <button 
-                              className="px-2 py-1 text-gray-600"
+                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
                               onClick={() => handleQuantityChange(item.serviceId, (item.quantity || 1) + 1)}
+                              aria-label="Increase quantity"
                             >
                               <Plus size={16} />
                             </button>
                           </div>
                           
                           <button 
-                            className="text-red-500"
+                            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                             onClick={() => handleRemoveItem(item.serviceId)}
+                            aria-label="Remove item"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -377,7 +395,7 @@ const Cart: React.FC = () => {
               ))}
               
               {/* Special Instructions */}
-              <div className="bg-blue-50 p-4 rounded-lg mb-4">
+              <div className="bg-blue-50 p-4 rounded-xl mb-4 shadow-sm border border-blue-100 animate-fade-in" style={{animationDelay: "350ms"}}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <File size={18} className="text-blue-600 mr-2" />
@@ -386,7 +404,7 @@ const Cart: React.FC = () => {
                   {!showInstructionsInput && (
                     <button 
                       onClick={handleAddSpecialInstructions}
-                      className="text-blue-600 text-sm font-medium"
+                      className="text-blue-600 text-sm font-medium hover:underline"
                     >
                       Add
                     </button>
@@ -399,7 +417,7 @@ const Cart: React.FC = () => {
                       placeholder="Add any special instructions for your order..."
                       value={specialInstructions}
                       onChange={(e) => setSpecialInstructions(e.target.value)}
-                      className="w-full mb-2"
+                      className="w-full mb-2 border-blue-200 focus:border-blue-300 rounded-lg"
                     />
                     <div className="flex justify-end">
                       <Button 
@@ -414,14 +432,14 @@ const Cart: React.FC = () => {
                 )}
                 
                 {!showInstructionsInput && specialInstructions && (
-                  <div className="mt-2 text-sm text-gray-600">
+                  <div className="mt-2 text-sm text-gray-600 bg-white p-3 rounded-lg border border-blue-100">
                     {specialInstructions}
                   </div>
                 )}
               </div>
               
               {/* Apply Coupon */}
-              <div className="bg-purple-50 p-4 rounded-lg mb-4">
+              <div className="bg-purple-50 p-4 rounded-xl mb-4 shadow-sm border border-purple-100 animate-fade-in" style={{animationDelay: "400ms"}}>
                 <div className="flex items-center mb-2">
                   <Tag size={18} className="text-purple-600 mr-2" />
                   <span className="font-medium text-gray-700">Apply Coupon</span>
@@ -431,11 +449,11 @@ const Cart: React.FC = () => {
                     placeholder="Enter coupon code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 border-purple-200 focus:border-purple-300 rounded-lg"
                   />
                   <Button 
                     onClick={handleApplyCoupon}
-                    className="bg-blue-600"
+                    className="bg-purple-600 hover:bg-purple-700"
                   >
                     Apply
                   </Button>
@@ -443,19 +461,19 @@ const Cart: React.FC = () => {
               </div>
               
               {/* Estimated Bill */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden mb-4">
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm animate-fade-in" style={{animationDelay: "450ms"}}>
                 <Collapsible open={showEstimatedDetails} onOpenChange={setShowEstimatedDetails}>
-                  <CollapsibleTrigger className="flex justify-between items-center w-full px-4 py-3 text-left">
+                  <CollapsibleTrigger className="flex justify-between items-center w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors">
                     <div>
-                      <h3 className="font-medium text-gray-800">Estimated Bill {formatIndianRupee(total)}</h3>
+                      <h3 className="font-semibold text-gray-800">Estimated Bill {formatIndianRupee(total)}</h3>
                       <p className="text-xs text-gray-500">Incl. taxes and charges</p>
                     </div>
                     <ChevronDown 
                       size={20} 
-                      className={`transition-transform duration-200 ${showEstimatedDetails ? 'rotate-180' : ''}`}
+                      className={`transition-transform duration-300 ${showEstimatedDetails ? 'rotate-180' : ''} text-gray-500`}
                     />
                   </CollapsibleTrigger>
-                  <CollapsibleContent>
+                  <CollapsibleContent className="animate-slide-in">
                     <div className="px-4 pb-3 pt-1 space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
@@ -484,14 +502,17 @@ const Cart: React.FC = () => {
         
         {/* Fixed checkout button at bottom */}
         {cartItems.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-            <Button 
-              onClick={handleProceedToCheckout}
-              className="w-full bg-blue-600"
-              icon={<Package size={18} />}
-            >
-              Proceed to Checkout {formatIndianRupee(total)}
-            </Button>
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg animate-slide-in" style={{animationDelay: "500ms"}}>
+            <div className="max-w-3xl mx-auto">
+              <Button 
+                onClick={handleProceedToCheckout}
+                className="w-full bg-[#92E3A9] text-gray-800 hover:bg-[#83d699] font-semibold text-base py-3"
+                icon={<Package size={18} />}
+                fullWidth
+              >
+                Proceed to Checkout {formatIndianRupee(total)}
+              </Button>
+            </div>
           </div>
         )}
       </div>

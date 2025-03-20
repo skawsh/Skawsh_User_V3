@@ -37,7 +37,8 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        'rounded-full font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]',
+        'rounded-full font-medium transition-all duration-200 flex items-center justify-center gap-2',
+        'active:scale-[0.98] shadow-sm hover:shadow transform hover:translate-y-[-1px]',
         variantClasses[variant],
         sizeClasses[size],
         fullWidth ? 'w-full' : '',
