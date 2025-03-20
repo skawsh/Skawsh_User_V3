@@ -58,12 +58,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
       }
     });
   };
-  
-  const handleClearCart = () => {
-    localStorage.removeItem('cartItems');
-    // Dispatch event to notify other components
-    document.dispatchEvent(new Event('cartUpdated'));
-  };
 
   return (
     <div 
