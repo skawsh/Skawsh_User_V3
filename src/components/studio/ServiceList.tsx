@@ -298,12 +298,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   const handleOpenServicePopup = (service: Service) => {
-    // Check if there are already items in cart with a different wash type
     const existingWashType = getExistingWashType();
     const currentWashType = selectedTab;
     
     if (existingWashType && existingWashType !== currentWashType) {
-      // Store pending service and show dialog
       setPendingService(service);
       setMixedServicesDialogOpen(true);
       return;
@@ -340,24 +338,18 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   }, []);
   
-  // Helper function to determine the wash type of existing cart items
   const getExistingWashType = (): string | null => {
-    // Check if there are any items in cart
     if (cartItems.length === 0) return null;
     
-    // Go through metadata or price to determine the wash type
-    // We'll use a simple heuristic: if any price is 1.5x the base price, it's express
     const expressItemExists = cartItems.some(item => {
-      // If the item has metadata indicating express
       if (item.washType === "express") return true;
       
-      // Or if the price indicates it's likely an express item (50% markup)
       const baseServices = [...updatedCoreServices, ...accessoriesServices, ...shoeServices];
       const matchingService = baseServices.find(s => s.id === item.serviceId);
       if (matchingService) {
         const basePrice = matchingService.price;
         const priceRatio = item.price / basePrice;
-        return Math.abs(priceRatio - 1.5) < 0.1; // If price ratio is close to 1.5x
+        return Math.abs(priceRatio - 1.5) < 0.1;
       }
       return false;
     });
@@ -371,10 +363,9 @@ const ServiceList: React.FC<ServiceListProps> = ({
     setCartItems(prev => {
       const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
       
-      // Add wash type to the item metadata
       const updatedOrderDetails = {
         ...orderDetails,
-        washType: selectedTab // Add wash type
+        washType: selectedTab
       };
       
       let updatedItems;
@@ -426,12 +417,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
   };
 
   const handleIncreaseWeight = (service: Service) => {
-    // Check if there are already items in cart with a different wash type
     const existingWashType = getExistingWashType();
     const currentWashType = selectedTab;
     
     if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
-      // Store pending service and show dialog
       setPendingService(service);
       setMixedServicesDialogOpen(true);
       return;
@@ -514,12 +503,10 @@ const ServiceList: React.FC<ServiceListProps> = ({
         setSelectedService(service);
       }
     } else {
-      // Check if there are already items in cart with a different wash type
       const existingWashType = getExistingWashType();
       const currentWashType = selectedTab;
       
       if (existingWashType && existingWashType !== currentWashType) {
-        // Store pending service and show dialog
         setPendingService(service);
         setMixedServicesDialogOpen(true);
         return;
@@ -529,23 +516,14 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   };
   
-  // Handler for switching to standard wash
   const handleSwitchToStandard = () => {
-    // Remove all Express wash items from the cart
     const updatedItems = cartItems.filter(item => item.washType !== "express");
     setCartItems(updatedItems);
     localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    
-    // Dispatch custom event for components listening to cart updates
     document.dispatchEvent(new Event('cartUpdated'));
-    
-    // Switch to standard tab
     setSelectedTab("standard");
-    
-    // Close the dialog without showing any popup message
     setMixedServicesDialogOpen(false);
     
-    // Process the pending service if it exists
     if (pendingService) {
       setTimeout(() => {
         if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
@@ -555,21 +533,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
             serviceId: pendingService.id,
             serviceName: pendingService.name,
             quantity: 1,
-            price: pendingService.price, // Standard price
+            price: pendingService.price,
             studioId: studioId,
             items: []
           });
         }
         
         setPendingService(null);
-      }, 300); // Small delay to let the tab change animation complete
+      }, 300);
     }
   };
   
-  // Handler for continuing with mixed wash types
   const handleContinueMixedTypes = () => {
     if (pendingService) {
-      // Process the service with current tab
       if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
         setSelectedService(pendingService);
       } else {
@@ -799,7 +775,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
         />
       )}
       
-      {/* Mixed Services Warning Dialog */}
       <Dialog open={mixedServicesDialogOpen} onOpenChange={setMixedServicesDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
