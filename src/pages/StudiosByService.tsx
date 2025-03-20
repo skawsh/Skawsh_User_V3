@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronDown } from 'lucide-react';
@@ -12,6 +11,8 @@ const StudiosByService: React.FC = () => {
   const navigate = useNavigate();
   const serviceName = location.state?.serviceName || 'Service';
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerHeightRef = useRef<number>(0);
   
   // Mock data for studios offering this service
   // In a real app, you would fetch this data based on the serviceId
@@ -89,6 +90,11 @@ const StudiosByService: React.FC = () => {
       document.title = `Studios offering ${formattedServiceName}`;
     }
 
+    // Store initial header height
+    if (headerRef.current) {
+      headerHeightRef.current = headerRef.current.offsetHeight;
+    }
+
     // Add scroll event listener to handle sticky header
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -98,7 +104,7 @@ const StudiosByService: React.FC = () => {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -116,10 +122,17 @@ const StudiosByService: React.FC = () => {
     <Layout>
       <div className="max-w-md mx-auto bg-white min-h-screen">
         {/* Header with border - now sticky when scrolling */}
-        <div className={cn(
-          "border-b transition-all duration-200 bg-white",
-          isHeaderSticky ? "fixed top-0 left-0 right-0 z-50 shadow-sm" : ""
-        )}>
+        <div 
+          ref={headerRef}
+          className={cn(
+            "border-b transition-all duration-200 bg-white hardware-accelerated",
+            isHeaderSticky ? "fixed top-0 left-0 right-0 z-50 shadow-sm" : ""
+          )}
+          style={{
+            transform: 'translateZ(0)',
+            willChange: 'transform'
+          }}
+        >
           {/* Top header with back button and title */}
           <div className="flex items-center p-4 max-w-md mx-auto">
             <Link to={location.state?.from || '/'} 
@@ -131,7 +144,7 @@ const StudiosByService: React.FC = () => {
         </div>
         
         {/* Spacer for when header is sticky */}
-        {isHeaderSticky && <div className="h-[56px]"></div>}
+        {isHeaderSticky && <div style={{ height: `${headerHeightRef.current}px` }} aria-hidden="true"></div>}
         
         {/* Studios list with info text about number of found studios */}
         <div className="p-4 space-y-4">

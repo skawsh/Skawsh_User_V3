@@ -27,6 +27,8 @@ const StudioProfile: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   // Use console log to debug the route params
   console.log("Studio ID from URL:", id);
@@ -36,15 +38,22 @@ const StudioProfile: React.FC = () => {
   }, [location]);
 
   useEffect(() => {
+    // Set initial header height
+    if (headerRef.current) {
+      setHeaderHeight(headerRef.current.offsetHeight);
+    }
+
     const handleScroll = () => {
       if (backButtonRef.current) {
         const backButtonPosition = backButtonRef.current.getBoundingClientRect().top;
         setIsScrolled(backButtonPosition < 0);
       }
     };
+    
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -171,7 +180,13 @@ const StudioProfile: React.FC = () => {
     <Layout hideFooter={cartCount > 0}>
       <div className="no-scrollbar bg-gray-50/50">
         {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+          <div 
+            className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in hardware-accelerated"
+            style={{ 
+              transform: 'translateZ(0)',
+              willChange: 'transform'
+            }}
+          >
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center">
                 <button onClick={handleBackClick} className="mr-3 p-1.5 rounded-full text-gray-700 bg-gray-100/70 hover:bg-gray-200/80 transition-all">
@@ -205,16 +220,20 @@ const StudioProfile: React.FC = () => {
           </div>
         )}
         
-        <StudioHeader 
-          name={studio.name} 
-          image={studio.image} 
-          rating={studio.rating} 
-          reviewCount={studio.reviewCount} 
-          deliveryTime={studio.deliveryTime} 
-          backButtonRef={backButtonRef} 
-          description={studio.description} 
-          onBackClick={handleBackClick} 
-        />
+        <div ref={headerRef}>
+          <StudioHeader 
+            name={studio.name} 
+            image={studio.image} 
+            rating={studio.rating} 
+            reviewCount={studio.reviewCount} 
+            deliveryTime={studio.deliveryTime} 
+            backButtonRef={backButtonRef} 
+            description={studio.description} 
+            onBackClick={handleBackClick} 
+          />
+        </div>
+        
+        {isScrolled && <div style={{ height: `${headerHeight}px` }} aria-hidden="true" />}
         
         <div className="section-container relative pb-20">
           <ServiceList 

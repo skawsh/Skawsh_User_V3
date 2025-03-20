@@ -66,8 +66,8 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
     
-    if (currentScrollY < lastScrollY) {
-      // Scrolling up
+    if (currentScrollY < lastScrollY || currentScrollY <= 10) {
+      // Scrolling up or at the top
       setIsVisible(true);
     } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
       // Scrolling down and not at the top
@@ -104,10 +104,12 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
       
       {shouldShowBottomNav && (
         <nav 
-          className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-40 transition-all duration-500 ease-in-out transform ${
+          className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-40 hardware-accelerated transition-all duration-500 ease-in-out transform ${
             isVisible ? 'translate-y-0' : 'translate-y-full'
           }`}
           style={{
+            transform: isVisible ? 'translateZ(0)' : 'translate3d(0, 100%, 0)',
+            willChange: 'transform',
             // Add safe area inset for iOS devices
             paddingBottom: 'env(safe-area-inset-bottom, 0px)'
           }}
