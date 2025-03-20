@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface ServiceCardProps {
   icon: React.ReactNode;
@@ -54,16 +55,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       animationDelay: `${150 + index * 75}ms`
     }}>
       <div className="relative">
-        <div className="p-2 mb-1.5 w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-500 ease-in-out bg-blue-100 px-[6px] py-[6px] rounded-full">
-          {image ? 
-            <img src={image} alt={title} className="w-full h-full object-cover rounded-full" /> : 
-            <div className="text-primary-500">{icon}</div>
-          }
-        </div>
+        <Avatar className={`w-14 h-14 mb-1.5 transition-all duration-500 ease-in-out ${isSticky ? 'border border-white/20' : 'shadow-sm'}`}>
+          {image ? (
+            <AvatarImage src={image} alt={title} className="object-cover" />
+          ) : (
+            <AvatarFallback className={`${isSticky ? 'bg-white/10 text-white' : 'bg-primary-100 text-primary-500'}`}>
+              {icon}
+            </AvatarFallback>
+          )}
+        </Avatar>
         {onClick && (
           <button 
             onClick={onClick}
-            className="absolute -right-1 -bottom-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-blue-700"
+            className="absolute -right-1 -bottom-1 bg-primary-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-primary-600 transition-colors"
             aria-label={`Add ${title}`}
           >
             <PlusCircle size={14} />
@@ -71,7 +75,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         )}
       </div>
       {showTitle && <h3 className={`text-xs font-bold mt-1 ${isSticky ? 'text-white' : 'text-gray-800'} transition-colors duration-300`}>{title}</h3>}
-      {showPrice && price && <span className="text-xs text-blue-600 font-medium mt-0.5">{formatIndianRupee(price)}</span>}
+      {showPrice && price && <span className="text-xs text-primary-500 font-medium mt-0.5">{formatIndianRupee(price)}</span>}
     </div>
   );
 
@@ -81,7 +85,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
   return (
     <div 
-      className="transition-all duration-500 ease-in-out cursor-pointer" 
+      className="transition-all duration-500 ease-in-out cursor-pointer hover:scale-105" 
       onClick={handleServiceClick}
     >
       {content}

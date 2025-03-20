@@ -2,6 +2,7 @@
 import React from 'react';
 import { MapPin, ChevronDown, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const LocationBar: React.FC = () => {
   const navigate = useNavigate();
@@ -25,12 +26,14 @@ const LocationBar: React.FC = () => {
             </div>
           </div>
         </div>
-        <div 
-          className="h-10 w-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-primary-100 transition-colors"
+        <Avatar 
+          className="h-10 w-10 bg-white cursor-pointer hover:bg-primary-100 transition-colors"
           onClick={handleProfileClick}
         >
-          <User size={20} className="text-primary-500" />
-        </div>
+          <AvatarFallback className="text-primary-500">
+            <User size={20} />
+          </AvatarFallback>
+        </Avatar>
       </div>
     </div>
   );

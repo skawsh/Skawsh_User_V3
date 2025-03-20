@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import LocationBar from '../components/home/LocationBar';
@@ -6,6 +7,7 @@ import PromotionSlider from '../components/home/PromotionSlider';
 import ServiceCard from '../components/home/ServiceCard';
 import StudioCard from '../components/home/StudioCard';
 import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
 
 const Home: React.FC = () => {
   const [isSticky, setIsSticky] = useState(false);
@@ -197,7 +199,7 @@ const Home: React.FC = () => {
   ];
 
   return <Layout>
-    <div className="section-container p-0">
+    <div className="section-container p-0 bg-gradient-to-b from-primary-50 to-white">
       <div className="px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl" style={{backgroundImage: 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)'}}>
         <LocationBar />
         <SearchBar />
@@ -209,7 +211,11 @@ const Home: React.FC = () => {
       </div>
       
       <div ref={servicesRef} className="pb-1 -mx-4 px-[5px]">
-        <h2 className="section-title mb-2 pt-2 font-bold text-lg px-[15px]">Explore Services</h2>
+        <Card className="border-none shadow-none bg-transparent mb-2">
+          <CardContent className="p-0 pt-2 px-[15px]">
+            <h2 className="section-title mb-2 font-bold text-lg">Explore Services</h2>
+          </CardContent>
+        </Card>
         
         <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
         
@@ -234,7 +240,11 @@ const Home: React.FC = () => {
         zIndex: 0,
         marginTop: '15px'
       }} className="mb-10 my-[14px] -mx-4 px-[5px]">
-        <h2 className="section-title mb-4 font-bold text-lg px-[15px]">Explore Studios</h2>
+        <Card className="border-none shadow-none bg-transparent mb-2">
+          <CardContent className="p-0 px-[15px]">
+            <h2 className="section-title mb-4 font-bold text-lg">Explore Studios</h2>
+          </CardContent>
+        </Card>
         
         <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px]">
           <FilterButton icon={<MapPin size={14} />} label="Nearby" />
@@ -244,7 +254,7 @@ const Home: React.FC = () => {
           <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
         </div>
         
-        <div className="space-y-4 mx-0 px-0">
+        <div className="space-y-4 mx-0 px-2">
           {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} distance={studio.distance} workingHours={studio.workingHours} index={index} promoted={studio.promoted} />)}
         </div>
       </div>
@@ -263,7 +273,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   label,
   active = false
 }) => {
-  return <button className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs whitespace-nowrap ${active ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+  return <button className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs whitespace-nowrap transition-colors duration-200 ${active ? 'bg-primary-500 text-white' : 'bg-white text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-50'}`}>
       {icon}
       {label}
     </button>;
