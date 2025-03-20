@@ -119,15 +119,21 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
                   <Trash2 size={24} className="text-red-500" />
                 </button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-xl">
+              <AlertDialogContent className="rounded-xl relative">
+                <button 
+                  onClick={() => setIsDialogOpen(false)}
+                  className="absolute right-4 top-4 p-1 rounded-full hover:bg-gray-100"
+                >
+                  <X size={18} />
+                </button>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clear Sack</AlertDialogTitle>
                   <AlertDialogDescription>
                     Are you sure you want to clear your sack? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter className="mt-4">
-                  <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
+                <AlertDialogFooter className="mt-4 flex flex-row justify-end space-x-3">
+                  <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium mt-0">
                     <X className="mr-1 h-4 w-4" /> No
                   </AlertDialogCancel>
                   <AlertDialogAction 
