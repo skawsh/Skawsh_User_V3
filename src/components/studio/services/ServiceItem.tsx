@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus, Heart } from 'lucide-react';
 import { Card } from "@/components/ui/card";
@@ -47,7 +46,6 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Check if this service is already in favorites
   useEffect(() => {
     try {
       const storedServices = localStorage.getItem('favoriteServices');
@@ -69,12 +67,10 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       const newFavoriteStatus = !isFavorite;
       setIsFavorite(newFavoriteStatus);
       
-      // Get current favorites
       const storedServices = localStorage.getItem('favoriteServices') || '[]';
       const services = JSON.parse(storedServices);
       
       if (newFavoriteStatus) {
-        // Add to favorites
         if (!services.some((s: { id: string }) => s.id === service.id)) {
           services.push({
             id: service.id,
@@ -85,12 +81,10 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
           });
         }
       } else {
-        // Remove from favorites
         const updatedServices = services.filter((s: { id: string }) => s.id !== service.id);
         localStorage.setItem('favoriteServices', JSON.stringify(updatedServices));
       }
       
-      // Save updated favorites
       if (newFavoriteStatus) {
         localStorage.setItem('favoriteServices', JSON.stringify(services));
       }
@@ -98,7 +92,6 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       console.error('Error updating favorite services:', error);
     }
     
-    // Remove animation after it completes
     setTimeout(() => {
       setIsAnimating(false);
     }, 600);
@@ -201,7 +194,6 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 relative"
       onClick={() => onClick(service)}
     >
-      {/* Add favorite button */}
       <button
         className={`absolute top-2 right-2 p-1.5 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors duration-200 z-10 ${isAnimating ? 'animate-bounce-once' : ''}`}
         onClick={toggleFavorite}

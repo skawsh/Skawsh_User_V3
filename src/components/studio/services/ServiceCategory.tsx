@@ -66,7 +66,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
   return (
     <div {...refProp} className="mb-8">
       <div className="flex items-center gap-2 mb-5 px-1">
-        <div className="text-primary-600">
+        <div className="text-indigo-600 bg-indigo-50 p-2 rounded-full">
           {icon}
         </div>
         <h2 className="text-lg font-bold text-gray-800 truncate">{title}</h2>
@@ -82,7 +82,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
               data-subcategory={subCategory.title}
             >
               <div className="flex items-center gap-2 mb-4 px-1">
-                <div className="text-blue-600">
+                <div className="text-purple-600 bg-purple-50 p-1.5 rounded-full">
                   {subCategory.icon}
                 </div>
                 <h3 className="text-md font-semibold text-gray-700 truncate">
@@ -90,7 +90,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
                 </h3>
               </div>
               
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {subCategory.services.map(service => (
                   <ServiceItem
                     key={service.id}
@@ -111,7 +111,7 @@ const ServiceCategory: React.FC<ServiceCategoryProps> = ({
           ))}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {services.map(service => (
             <ServiceItem
               key={service.id}

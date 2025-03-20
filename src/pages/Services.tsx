@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronDown, Footprints, WashingMachine } from 'lucide-react';
+import { Shirt, Wind, Droplets, TimerReset, Zap, Search, ChevronDown, Footprints, WashingMachine, Heart } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +13,21 @@ const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredServices, setFilteredServices] = useState<ServiceCategory[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteService[]>([]);
   const navigate = useNavigate();
+  
+  // Load favorites from localStorage
+  useEffect(() => {
+    try {
+      const storedServices = localStorage.getItem('favoriteServices');
+      if (storedServices) {
+        const services = JSON.parse(storedServices);
+        setFavorites(services);
+      }
+    } catch (error) {
+      console.error('Error loading favorite services:', error);
+    }
+  }, []);
   
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => 
@@ -30,6 +44,77 @@ const Services: React.FC = () => {
         from: '/services'
       }
     });
+  };
+  
+  const toggleFavorite = (e: React.MouseEvent, subService: SubService, categoryName: string) => {
+    e.stopPropagation();
+    
+    try {
+      // Check if this service is already favorite
+      const serviceId = `${categoryName.toLowerCase().replace(/\s+/g, '-')}-${subService.id}`;
+      const isFavorite = favorites.some(fav => fav.id === serviceId);
+      
+      // Get current favorites from localStorage
+      const storedServices = localStorage.getItem('favoriteServices') || '[]';
+      const services = JSON.parse(storedServices);
+      
+      if (isFavorite) {
+        // Remove from favorites
+        const updatedServices = services.filter((s: FavoriteService) => s.id !== serviceId);
+        localStorage.setItem('favoriteServices', JSON.stringify(updatedServices));
+        setFavorites(updatedServices);
+      } else {
+        // Add to favorites
+        const newFavorite: FavoriteService = {
+          id: serviceId,
+          studioId: "",
+          studioName: "",
+          name: subService.name,
+          price: `₹${getServiceBasePrice(subService)}`
+        };
+        
+        services.push(newFavorite);
+        localStorage.setItem('favoriteServices', JSON.stringify(services));
+        setFavorites(services);
+      }
+    } catch (error) {
+      console.error('Error updating favorite services:', error);
+    }
+  };
+  
+  // Helper function to get a price for a service (for demonstration)
+  const getServiceBasePrice = (service: SubService): string => {
+    // This would be replaced with real pricing logic in a production app
+    const priceMap: Record<string, string> = {
+      'wash-fold': '199',
+      'wash-iron': '249',
+      'daily-wear': '299',
+      'ethnic-wear': '399',
+      'winter-wear': '499',
+      'miscellaneous': '349',
+      'stain-removal': '249',
+      'odor-removal': '199',
+      'calf-boots': '349',
+      'heels': '299',
+      'high-boots': '399',
+      'sandals': '249',
+      'shoe-boots': '349',
+      'canvas-sports': '329',
+      'leather-formal': '399',
+      'regular-wash-fold': '199',
+      'premium-wash-fold': '299',
+      'basic-ironing': '149',
+      'full-outfit-pressing': '249',
+      'same-day-service': '399',
+      'rush-hour-service': '499',
+    };
+    
+    return priceMap[service.id] || '199';
+  };
+  
+  const isServiceFavorite = (categoryName: string, subServiceId: string): boolean => {
+    const serviceId = `${categoryName.toLowerCase().replace(/\s+/g, '-')}-${subServiceId}`;
+    return favorites.some(fav => fav.id === serviceId);
   };
   
   const services: ServiceCategory[] = [
@@ -244,17 +329,17 @@ const Services: React.FC = () => {
 
   return (
     <Layout>
-      <div className="section-container pb-10 bg-gradient-to-b from-primary-50 to-white min-h-screen">
-        <h1 className="text-2xl font-semibold mb-4 pt-6 animate-fade-in text-gray-800">Our Services</h1>
+      <div className="section-container pb-10 min-h-screen bg-gradient-to-b from-purple-50 to-white">
+        <h1 className="text-3xl font-bold mb-6 pt-6 animate-fade-in text-gray-800">Our Services</h1>
         
-        <div className="mb-6 relative animate-fade-in">
+        <div className="mb-8 relative animate-fade-in">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search size={18} className="text-gray-400" />
           </div>
           <Input 
             type="text"
             placeholder="Search services..." 
-            className="pl-10 bg-white border-gray-200 shadow-sm"
+            className="pl-10 bg-white border-gray-200 rounded-full shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -277,23 +362,23 @@ const Services: React.FC = () => {
                 )}
                 style={{ animationDelay: `${index * 75}ms` }}
               >
-                <Card className="mb-4 overflow-hidden border-none shadow-sm">
+                <Card className="mb-4 overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow">
                   <div 
-                    className="bg-white p-4 rounded-lg flex items-center justify-between cursor-pointer"
+                    className="bg-gradient-to-r from-purple-100 to-indigo-50 p-5 rounded-lg flex items-center justify-between cursor-pointer"
                     onClick={() => toggleCategory(category.id)}
                   >
                     <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12 bg-primary-50 text-primary-500 border-none flex items-center justify-center">
-                        <AvatarFallback className="flex items-center justify-center bg-primary-50">
+                      <Avatar className="h-14 w-14 bg-gradient-to-br from-indigo-400 to-purple-500 text-white border-none flex items-center justify-center shadow-md">
+                        <AvatarFallback className="flex items-center justify-center bg-gradient-to-br from-indigo-400 to-purple-500">
                           {category.icon}
                         </AvatarFallback>
                       </Avatar>
-                      <h3 className="font-semibold text-gray-800 text-xl">{category.name}</h3>
+                      <h3 className="font-bold text-gray-800 text-xl">{category.name}</h3>
                     </div>
                     <ChevronDown 
                       size={24} 
                       className={cn(
-                        "text-gray-400 transition-transform duration-300",
+                        "text-indigo-500 transition-transform duration-300",
                         expandedCategories.includes(category.id) ? "transform rotate-180" : ""
                       )}
                     />
@@ -301,29 +386,51 @@ const Services: React.FC = () => {
                 </Card>
                 
                 {expandedCategories.includes(category.id) && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">
-                    {category.subServices.map((subService) => (
-                      <Card 
-                        key={subService.id} 
-                        className="overflow-hidden border-none shadow-sm hover:shadow-md transition-all cursor-pointer bg-white hover:bg-gradient-to-br hover:from-primary-50 hover:to-white"
-                        onClick={() => handleSubserviceClick(category.name, subService)}
-                      >
-                        <CardContent className="p-3">
-                          <div className="flex flex-col items-center">
-                            <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-sm flex items-center justify-center">
-                              <img 
-                                src={getSubserviceImage(category.id, subService.id)} 
-                                alt={subService.name} 
-                                className="w-full h-full object-cover"
-                              />
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                    {category.subServices.map((subService) => {
+                      const isFavorite = isServiceFavorite(category.id, subService.id);
+                      
+                      return (
+                        <Card 
+                          key={subService.id} 
+                          className="group overflow-hidden border-none shadow-sm hover:shadow-lg transition-all cursor-pointer bg-white hover:translate-y-[-2px]"
+                          onClick={() => handleSubserviceClick(category.name, subService)}
+                        >
+                          <CardContent className="p-0">
+                            <div className="flex flex-col items-center">
+                              <div className="w-full h-28 overflow-hidden relative">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10"></div>
+                                <img 
+                                  src={getSubserviceImage(category.id, subService.id)} 
+                                  alt={subService.name} 
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <button
+                                  onClick={(e) => toggleFavorite(e, subService, category.id)}
+                                  className={`absolute top-2 right-2 p-1.5 rounded-full bg-white/80 shadow-sm hover:bg-white transition-all duration-200 z-20 ${isFavorite ? 'animate-bounce-once' : ''}`}
+                                  aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
+                                >
+                                  <Heart 
+                                    size={16} 
+                                    className={`transition-all duration-300 transform ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
+                                  />
+                                </button>
+                              </div>
+                              <div className="w-full p-3">
+                                <h4 className="font-semibold text-gray-800 mb-1">{subService.name}</h4>
+                                <p className="text-xs text-gray-500 line-clamp-2 mb-2">{subService.description}</p>
+                                <div className="flex items-center justify-between">
+                                  <Badge variant="outline" className="font-medium text-indigo-600 bg-indigo-50 border-indigo-100">
+                                    ₹{getServiceBasePrice(subService)}
+                                  </Badge>
+                                  <span className="text-xs text-gray-400">2.5k+ orders</span>
+                                </div>
+                              </div>
                             </div>
-                            <Badge variant="outline" className="font-medium text-gray-800 bg-white shadow-sm border-gray-100">
-                              {subService.name}
-                            </Badge>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -347,6 +454,14 @@ interface ServiceCategory {
   icon: React.ReactNode;
   description: string;
   subServices: SubService[];
+}
+
+interface FavoriteService {
+  id: string;
+  studioId: string;
+  studioName: string;
+  name: string;
+  price: string;
 }
 
 export default Services;
