@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown } from 'lucide-react';
@@ -229,6 +230,50 @@ const Cart: React.FC = () => {
     studioId: studioId || '',
     serviceCategory: 'Additional Services'
   }];
+  
+  // Example implementation of rendering the Cart component
+  return (
+    <Layout>
+      <div className="cart-container">
+        <div
+          ref={headerRef}
+          className={cn(
+            "flex items-center justify-between p-4 bg-white transition-all",
+            isHeaderSticky ? "fixed top-0 left-0 right-0 z-10 shadow-md" : ""
+          )}
+        >
+          <button onClick={handleBackNavigation} className="flex items-center text-gray-800">
+            <ChevronLeft className="mr-1" size={24} />
+            <span>Back</span>
+          </button>
+          <h1 className="text-xl font-bold">Your Sack</h1>
+          <div className="w-6"></div>
+        </div>
+        
+        {cartItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-8 mt-10">
+            <ShoppingBag size={64} className="text-gray-400 mb-4" />
+            <h2 className="text-xl font-semibold mb-2">Your sack is empty</h2>
+            <p className="text-gray-500 text-center mb-6">
+              Add some services to your sack to proceed with checkout
+            </p>
+            <Button onClick={() => navigate('/services')} className="bg-primary-500">
+              Browse Services
+            </Button>
+          </div>
+        ) : (
+          <div className="p-4">
+            {/* Cart items would be rendered here */}
+            <div className="mt-6">
+              <Button onClick={() => console.log('Proceeding to checkout')} className="w-full bg-primary-500">
+                Proceed to Checkout
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
+};
 
-
-
+export default Cart;
