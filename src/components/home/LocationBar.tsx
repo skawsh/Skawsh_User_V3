@@ -1,18 +1,20 @@
 
 import React from 'react';
 import { MapPin, ChevronDown, User } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const LocationBar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleProfileClick = () => {
     navigate('/profile');
   };
 
   const handleLocationClick = () => {
-    navigate('/addresses');
+    // Pass current path as state when navigating to addresses
+    navigate('/addresses', { state: { from: location.pathname } });
   };
 
   return (

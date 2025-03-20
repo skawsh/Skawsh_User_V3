@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { ArrowLeft, MapPin, Pencil } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import Button from "@/components/ui-elements/Button";
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,6 +15,8 @@ interface AddressItem {
 
 const Addresses: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
   const [addresses, setAddresses] = React.useState<AddressItem[]>([
     {
       id: '1',
@@ -32,18 +33,22 @@ const Addresses: React.FC = () => {
   ]);
 
   const handleBack = () => {
-    navigate('/profile');
+    const fromPath = location.state?.from;
+    
+    if (fromPath === '/') {
+      navigate('/');
+    } else {
+      navigate('/profile');
+    }
   };
 
   const handleAddAddress = () => {
-    // This would typically open a form modal or navigate to an add address page
     console.log('Add new address');
   };
 
   return (
     <Layout hideFooter={true}>
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Sticky header */}
         <div className="sticky top-0 z-10 bg-gray-50 border-b border-gray-200">
           <div className="flex items-center gap-3 py-3 px-4">
             <button 
@@ -57,7 +62,6 @@ const Addresses: React.FC = () => {
           </div>
         </div>
 
-        {/* Scrollable content */}
         <ScrollArea className="flex-1">
           <div className="section-container pt-4">
             <div className="space-y-3 mb-6">
