@@ -86,6 +86,24 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   const updatedCoreServices = [...coreServices, washAndIronService];
 
+  // Express wash services - new implementation
+  const expressWashServices: Service[] = [
+    {
+      id: 'express-wash-fold-1',
+      name: 'Wash & Fold',
+      description: 'Express washing and folding service for quick turnaround.',
+      price: 99,
+      unit: 'per kg'
+    },
+    {
+      id: 'express-wash-iron-1',
+      name: 'Wash & Iron',
+      description: 'Express washing with professional ironing for a crisp finish.',
+      price: 149,
+      unit: 'per kg'
+    }
+  ];
+
   const dryCleaningSubCategories: SubCategory[] = [
     {
       title: "Upper Wear",
@@ -195,6 +213,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
       icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
       services: shoeServices,
       count: 11
+    }
+  ];
+
+  // Express wash categories - completely different from standard categories
+  const expressCategories: ServiceCategory[] = [
+    {
+      title: "Core Laundry Services",
+      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
+      services: expressWashServices,
+      count: expressWashServices.length
     }
   ];
 
@@ -548,7 +576,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
           <TabsContent value="express">
             <div className="space-y-8">
-              {categories.map((category, idx) => (
+              {expressCategories.map((category, idx) => (
                 <ServiceCategory
                   key={idx}
                   title={category.title}
@@ -582,7 +610,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       {popoverOpen && (
         <CategoryList
-          categories={categories}
+          categories={selectedTab === "standard" ? categories : expressCategories}
           onCategorySelect={scrollToCategory}
           onClose={() => setPopoverOpen(false)}
         />
