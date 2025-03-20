@@ -801,7 +801,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
             <span className="sr-only">Close</span>
           </DialogClose>
           <DialogTitle className="text-center text-lg font-semibold pt-2">
-            Different Delivery Types
+            {getExistingWashType() === "express" ? "Standard & Express Wash" : "Express & Standard Wash"}
           </DialogTitle>
           <DialogDescription className="text-center py-4">
             You selected different wash types that require separate deliveries. Please continue or Switch to Standard wash for Single delivery
