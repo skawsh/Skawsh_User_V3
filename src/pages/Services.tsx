@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -283,8 +283,10 @@ const Services: React.FC = () => {
                     onClick={() => toggleCategory(category.id)}
                   >
                     <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12 bg-primary-50 text-primary-500 border-none">
-                        {category.icon}
+                      <Avatar className="h-12 w-12 bg-primary-50 text-primary-500 border-none flex items-center justify-center">
+                        <AvatarFallback className="flex items-center justify-center bg-primary-50">
+                          {category.icon}
+                        </AvatarFallback>
                       </Avatar>
                       <h3 className="font-semibold text-gray-800 text-xl">{category.name}</h3>
                     </div>
@@ -308,7 +310,7 @@ const Services: React.FC = () => {
                       >
                         <CardContent className="p-3">
                           <div className="flex flex-col items-center">
-                            <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-sm">
+                            <div className="w-20 h-20 rounded-full overflow-hidden mb-3 border-2 border-white shadow-sm flex items-center justify-center">
                               <img 
                                 src={getSubserviceImage(category.id, subService.id)} 
                                 alt={subService.name} 
