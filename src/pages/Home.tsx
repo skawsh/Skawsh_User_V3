@@ -195,7 +195,7 @@ const Home: React.FC = () => {
           transition: 'transform 0.2s ease, opacity 0.2s ease'
         }}>
           <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
-            <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-slate-100">
+            <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-transparent">
               {services.map((service, index) => <ServiceCard key={service.id} id={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
             </div>
           </div>
