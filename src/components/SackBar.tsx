@@ -23,6 +23,7 @@ interface SackBarProps {
 
 const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [uniqueServiceCount, setUniqueServiceCount] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   
@@ -34,7 +35,18 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
         if (storedItems) {
           const parsedItems = JSON.parse(storedItems);
           setCartItems(parsedItems);
+          
+          // Count unique services by serviceId
+          const uniqueServices = new Set();
+          parsedItems.forEach((item: any) => {
+            if (item.serviceId) {
+              uniqueServices.add(item.serviceId);
+            }
+          });
+          setUniqueServiceCount(uniqueServices.size);
+          
           console.log('Cart items loaded:', parsedItems);
+          console.log('Unique service count:', uniqueServices.size);
         }
       } catch (error) {
         console.error('Error loading cart items:', error);
@@ -62,6 +74,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const handleClearSack = () => {
     localStorage.removeItem('cartItems');
     setCartItems([]);
+    setIsDialogOpen(false); // Close dialog after clearing
     // Dispatch event to notify other components
     document.dispatchEvent(new Event('cartUpdated'));
   };
@@ -110,7 +123,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
               className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center"
             >
               <span>View Sack</span>
-              <span>{cartItems.length} {cartItems.length === 1 ? 'Service' : 'Services'}</span>
+              <span>{uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}</span>
             </button>
             
             <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -120,13 +133,18 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
                 </button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-xl">
+                <div className="flex justify-end">
+                  <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
+                    <X size={18} />
+                  </AlertDialogCancel>
+                </div>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clear Sack</AlertDialogTitle>
                   <AlertDialogDescription>
                     Are you sure you want to clear your sack? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter className="mt-4">
+                <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
                   <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
                     <X className="mr-1 h-4 w-4" /> No
                   </AlertDialogCancel>

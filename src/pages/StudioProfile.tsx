@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
@@ -47,18 +48,38 @@ const StudioProfile: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Load initial cart count on mount
+  // Load initial cart count on mount and count unique services
   useEffect(() => {
-    const storedCartItems = localStorage.getItem('cartItems');
-    if (storedCartItems) {
-      try {
-        const parsedItems = JSON.parse(storedCartItems);
-        const studioSpecificItems = parsedItems.filter((item: any) => !studio.id || item.studioId === studio.id);
-        setCartCount(studioSpecificItems.length);
-      } catch (error) {
-        console.error('Error parsing cart items:', error);
+    const countUniqueServices = () => {
+      const storedCartItems = localStorage.getItem('cartItems');
+      if (storedCartItems) {
+        try {
+          const parsedItems = JSON.parse(storedCartItems);
+          const studioSpecificItems = parsedItems.filter((item: any) => !studio.id || item.studioId === studio.id);
+          
+          // Count unique services by serviceId
+          const uniqueServices = new Set();
+          studioSpecificItems.forEach((item: any) => {
+            if (item.serviceId) {
+              uniqueServices.add(item.serviceId);
+            }
+          });
+          
+          setCartCount(uniqueServices.size);
+        } catch (error) {
+          console.error('Error parsing cart items:', error);
+        }
       }
-    }
+    };
+    
+    countUniqueServices();
+    
+    // Listen for cart updates
+    document.addEventListener('cartUpdated', countUniqueServices);
+    
+    return () => {
+      document.removeEventListener('cartUpdated', countUniqueServices);
+    };
   }, []);
 
   const handleBackClick = () => {

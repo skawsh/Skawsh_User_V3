@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -11,8 +11,45 @@ interface SackFooterProps {
 
 const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const navigate = useNavigate();
+  const [uniqueServiceCount, setUniqueServiceCount] = useState(itemCount);
+  
+  useEffect(() => {
+    // Load cart items and count unique services
+    const countUniqueServices = () => {
+      try {
+        const storedItems = localStorage.getItem('cartItems');
+        if (storedItems) {
+          const parsedItems = JSON.parse(storedItems);
+          const studioItems = parsedItems.filter((item: any) => item.studioId === studioId);
+          
+          // Count unique services by serviceId
+          const uniqueServices = new Set();
+          studioItems.forEach((item: any) => {
+            if (item.serviceId) {
+              uniqueServices.add(item.serviceId);
+            }
+          });
+          setUniqueServiceCount(uniqueServices.size);
+        } else {
+          setUniqueServiceCount(0);
+        }
+      } catch (error) {
+        console.error('Error counting unique services:', error);
+        setUniqueServiceCount(itemCount); // Fallback to the prop value
+      }
+    };
+    
+    countUniqueServices();
+    
+    // Listen for cart updates
+    document.addEventListener('cartUpdated', countUniqueServices);
+    
+    return () => {
+      document.removeEventListener('cartUpdated', countUniqueServices);
+    };
+  }, [studioId, itemCount]);
 
-  if (itemCount === 0) return null;
+  if (uniqueServiceCount === 0) return null;
 
   const handleGoToCart = () => {
     navigate('/cart', {
@@ -42,7 +79,7 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           )}
         >
           <span className="text-[#403E43] font-semibold">
-            {itemCount} {itemCount === 1 ? 'Service' : 'Services'} added
+            {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
           </span>
           <div className="flex items-center gap-2">
             <ShoppingBag size={20} className="text-white" />
