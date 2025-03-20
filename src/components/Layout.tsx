@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
+import SackBar from './SackBar';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -17,6 +18,8 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
   const isStudioProfilePage = location.pathname.includes('/studio/');
   // Check if current path is the cart page
   const isCartPage = location.pathname === '/cart';
+  // Check if current path is the profile page
+  const isProfilePage = location.pathname === '/profile';
   
   useEffect(() => {
     const handleScroll = () => {
@@ -45,12 +48,17 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
   };
   
   const shouldShowBottomNav = !isStudioProfilePage && !isCartPage && !hideFooter;
+  
+  // Only show SackBar on pages other than studio profile, profile, and cart
+  const shouldShowSackBar = !isStudioProfilePage && !isProfilePage && !isCartPage && !hideFooter;
 
   return (
     <div className="min-h-screen flex flex-col pb-16 overflow-hidden bg-primary-50">
       <main className="flex-1 page-transition-enter bg-white">
         {children}
       </main>
+      
+      {shouldShowSackBar && <SackBar />}
       
       {shouldShowBottomNav && (
         <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-40 transition-all duration-500 ease-in-out transform ${

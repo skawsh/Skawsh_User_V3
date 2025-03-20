@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +20,12 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
         studioId: studioId
       }
     });
+  };
+  
+  const handleClearCart = () => {
+    localStorage.removeItem('cartItems');
+    // Dispatch event to notify other components
+    document.dispatchEvent(new Event('cartUpdated'));
   };
 
   return (
