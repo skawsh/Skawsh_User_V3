@@ -539,7 +539,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
     // Dispatch custom event for components listening to cart updates
     document.dispatchEvent(new Event('cartUpdated'));
     
+    // Switch to standard tab
     setSelectedTab("standard");
+    
+    // Close the dialog without showing any popup message
+    setMixedServicesDialogOpen(false);
     
     // Process the pending service if it exists
     if (pendingService) {
@@ -558,21 +562,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
         }
         
         setPendingService(null);
-        setMixedServicesDialogOpen(false);
-        
-        toast({
-          title: "Switched to Standard Wash",
-          description: "Express items removed. All items will be delivered together."
-        });
       }, 300); // Small delay to let the tab change animation complete
-    } else {
-      // If there's no pending service, just close the dialog
-      setMixedServicesDialogOpen(false);
-      
-      toast({
-        title: "Switched to Standard Wash",
-        description: "Express items removed. All items will be delivered together."
-      });
     }
   };
   
