@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { Heart, Star, Clock, MapPin, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
-import { useToast } from "@/components/ui/use-toast";
 
 interface StudioCardProps {
   id: string;
@@ -28,8 +26,8 @@ const StudioCard: React.FC<StudioCardProps> = ({
   workingHours,
   index,
 }) => {
-  const { toast } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Determine logo content based on studio name
   let logoContent;
@@ -107,14 +105,13 @@ const StudioCard: React.FC<StudioCardProps> = ({
 
   const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent navigation to studio page
+    setIsAnimating(true);
     setIsFavorite(!isFavorite);
     
-    toast({
-      description: isFavorite 
-        ? `${name} removed from your Washlist` 
-        : `${name} added to your Washlist`,
-      duration: 2000,
-    });
+    // Remove animation class after animation completes
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 600); // Animation duration
   };
 
   return (
@@ -132,12 +129,12 @@ const StudioCard: React.FC<StudioCardProps> = ({
           
           <button 
             onClick={handleFavoriteClick}
-            className={`absolute top-2 right-2 p-2 rounded-full bg-white/80 shadow-sm hover:bg-gray-100 transition-colors duration-200 z-10`}
+            className={`absolute top-2 right-2 p-2 rounded-full bg-white/80 shadow-sm hover:bg-gray-100 transition-colors duration-200 z-10 ${isAnimating ? 'animate-bounce-once' : ''}`}
             aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
           >
             <Heart 
               size={18} 
-              className={`${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
+              className={`transition-all duration-300 transform ${isAnimating ? 'scale-125' : ''} ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
             />
           </button>
         </div>
