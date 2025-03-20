@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, Star, Clock, MapPin, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
+import { useToast } from "@/components/ui/use-toast";
 
 interface StudioCardProps {
   id: string;
@@ -26,8 +27,10 @@ const StudioCard: React.FC<StudioCardProps> = ({
   distance,
   workingHours,
   index,
-  promoted = false
 }) => {
+  const { toast } = useToast();
+  const [isFavorite, setIsFavorite] = useState(false);
+
   // Determine logo content based on studio name
   let logoContent;
 
@@ -102,6 +105,18 @@ const StudioCard: React.FC<StudioCardProps> = ({
     );
   }
 
+  const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent navigation to studio page
+    setIsFavorite(!isFavorite);
+    
+    toast({
+      description: isFavorite 
+        ? `${name} removed from your Washlist` 
+        : `${name} added to your Washlist`,
+      duration: 2000,
+    });
+  };
+
   return (
     <Link 
       to={`/studio/${id}`} 
@@ -115,14 +130,16 @@ const StudioCard: React.FC<StudioCardProps> = ({
         <div className="border-b relative">
           {logoContent}
           
-          {promoted && (
-            <Badge 
-              variant="default" 
-              className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-400 text-white border-0 shadow-sm"
-            >
-              Promoted
-            </Badge>
-          )}
+          <button 
+            onClick={handleFavoriteClick}
+            className={`absolute top-2 right-2 p-2 rounded-full bg-white/80 shadow-sm hover:bg-gray-100 transition-colors duration-200 z-10`}
+            aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
+          >
+            <Heart 
+              size={18} 
+              className={`${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
+            />
+          </button>
         </div>
         
         {/* Details Section */}
@@ -130,9 +147,6 @@ const StudioCard: React.FC<StudioCardProps> = ({
           {/* Studio Name */}
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-gray-800 truncate pr-2 text-lg">{name}</h3>
-            <button className="bg-white/80 p-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 shadow-sm">
-              <Heart size={16} className="text-gray-600" />
-            </button>
           </div>
           
           {/* Operating Hours */}
