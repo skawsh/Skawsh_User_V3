@@ -64,6 +64,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     setCartItems([]);
     // Dispatch event to notify other components
     document.dispatchEvent(new Event('cartUpdated'));
+    setIsDialogOpen(false);
   };
   
   const studioInfo = cartItems[0]?.studioId ? {
