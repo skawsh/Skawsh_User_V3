@@ -1,9 +1,20 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SackBarProps {
   className?: string;
@@ -12,6 +23,7 @@ interface SackBarProps {
 
 const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -101,12 +113,32 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
               <span>{cartItems.length} {cartItems.length === 1 ? 'Service' : 'Services'}</span>
             </button>
             
-            <button
-              onClick={handleClearSack}
-              className="p-2"
-            >
-              <Trash2 size={24} className="text-red-500" />
-            </button>
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <button className="p-2">
+                  <Trash2 size={24} className="text-red-500" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-xl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Clear Sack</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to clear your sack? This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-4">
+                  <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
+                    <X className="mr-1 h-4 w-4" /> No
+                  </AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleClearSack}
+                    className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
+                  >
+                    <Check className="mr-1 h-4 w-4" /> Yes
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </div>
