@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = ({
     secondary: 'bg-secondary text-primary hover:bg-opacity-80 active:bg-opacity-70',
     outline: 'bg-transparent border border-primary-500 text-primary-500 hover:bg-primary-50 active:bg-primary-100',
     ghost: 'bg-transparent text-primary-500 hover:bg-primary-50 active:bg-primary-100',
-    quantity: 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
+    quantity: 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 text-sm'
   };
 
   const sizeClasses = {

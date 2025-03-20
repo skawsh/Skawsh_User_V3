@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star, ShoppingBag, Clock, Footprints, Shirt, Plus, Minus } from 'lucide-react';
 import { Card } from "@/components/ui/card";
@@ -81,29 +82,29 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
         <div className="flex items-center">
           <div className="bg-blue-500 rounded-full flex items-center overflow-hidden">
             <button 
-              className="h-9 w-12 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
+              className="h-7 w-9 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 onDecrease(service);
               }}
             >
-              <Minus size={18} />
+              <Minus size={14} />
             </button>
             
-            <div className="px-2 flex items-center justify-center text-white font-medium min-w-12 text-center">
+            <div className="px-1.5 flex items-center justify-center text-white font-medium min-w-8 text-center text-sm">
               {hasWeight 
                 ? (weight || 0).toFixed(1) 
                 : quantity || 0}
             </div>
             
             <button 
-              className="h-9 w-12 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
+              className="h-7 w-9 flex items-center justify-center text-white hover:bg-blue-600 focus:outline-none"
               onClick={(e) => {
                 e.stopPropagation();
                 onIncrease(service);
               }}
             >
-              <Plus size={18} />
+              <Plus size={14} />
             </button>
           </div>
         </div>
@@ -114,7 +115,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
           variant="default" 
           size="sm"
           className={cn(
-            "rounded-full shadow-sm",
+            "rounded-full shadow-sm text-xs py-1 px-2.5",
             tabType === "standard" 
               ? "bg-blue-600 hover:bg-blue-700" 
               : "bg-orange-500 hover:bg-orange-600"
@@ -124,7 +125,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
             onAdd(service);
           }}
         >
-          <Plus size={16} className="mr-1" /> Add
+          <Plus size={14} className="mr-0.5" /> Add
         </Button>
       );
     }
