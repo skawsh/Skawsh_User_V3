@@ -44,14 +44,16 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
     return location.pathname === path;
   };
   
+  const shouldShowBottomNav = !isStudioProfilePage && !isCartPage && !hideFooter;
+
   return (
     <div className="min-h-screen flex flex-col pb-16 overflow-hidden bg-primary-50">
       <main className="flex-1 page-transition-enter bg-white">
         {children}
       </main>
       
-      {!isStudioProfilePage && !isCartPage && !hideFooter && (
-        <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-50 transition-all duration-500 ease-in-out transform ${
+      {shouldShowBottomNav && (
+        <nav className={`fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-lg glass z-40 transition-all duration-500 ease-in-out transform ${
           isVisible ? 'translate-y-0' : 'translate-y-full'
         }`}>
           <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">

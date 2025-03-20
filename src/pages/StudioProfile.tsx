@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
+import SackFooter from '../components/studio/SackFooter';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -95,14 +96,6 @@ const StudioProfile: React.FC = () => {
     setCartCount(count);
   };
 
-  const handleGoToCart = () => {
-    navigate('/cart', {
-      state: {
-        studioId: studio.id
-      }
-    });
-  };
-
   // This would normally come from an API using the ID from the URL
   // For now, we'll use hardcoded data but acknowledge that the ID exists
   const studio = {
@@ -154,7 +147,7 @@ const StudioProfile: React.FC = () => {
   ];
 
   return (
-    <Layout>
+    <Layout hideFooter={cartCount > 0}>
       <div className="no-scrollbar bg-gray-50/50">
         {isScrolled && (
           <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
@@ -211,19 +204,11 @@ const StudioProfile: React.FC = () => {
           />
         </div>
 
-        {cartCount > 0 && (
-          <div 
-            onClick={handleGoToCart} 
-            className="fixed bottom-24 left-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary-500 text-white flex items-center justify-center cursor-pointer hover:bg-primary-600 transition-all duration-300 animate-bounce-once py-0 px-0 mx-0 my-[-65px]"
-          >
-            <div className="relative">
-              <ShoppingBag size={20} />
-              <Badge variant="default" className="absolute -top-2 -right-2 bg-red-500 text-white border-2 border-white">
-                {cartCount}
-              </Badge>
-            </div>
-          </div>
-        )}
+        {/* Sack Footer */}
+        <SackFooter 
+          itemCount={cartCount} 
+          studioId={studio.id} 
+        />
       </div>
     </Layout>
   );
