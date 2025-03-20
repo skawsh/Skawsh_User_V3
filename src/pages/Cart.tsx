@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown } from 'lucide-react';
@@ -230,8 +229,21 @@ const Cart: React.FC = () => {
     studioId: studioId || '',
     serviceCategory: 'Additional Services'
   }];
-  
-  // Example implementation of rendering the Cart component
+
+  const groupedItems = cartItems.reduce((acc: Record<string, CartItem[]>, item) => {
+    const category = item.serviceCategory || 'Uncategorized';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(item);
+    return acc;
+  }, {});
+
+  const totalPrice = cartItems.reduce((sum, item) => {
+    const itemPrice = item.price * (item.quantity || 1);
+    return sum + itemPrice;
+  }, 0);
+
   return (
     <Layout>
       <div className="cart-container">
@@ -262,8 +274,87 @@ const Cart: React.FC = () => {
             </Button>
           </div>
         ) : (
-          <div className="p-4">
-            {/* Cart items would be rendered here */}
+          <div className="p-4 pb-20">
+            {Object.keys(groupedItems).map((category) => (
+              <div key={category} className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">{category}</h2>
+                <div className="space-y-3">
+                  {groupedItems[category].map((item) => (
+                    <Card key={item.serviceId} className="overflow-hidden">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="font-medium">{item.serviceName}</h3>
+                            {item.serviceSubCategory && (
+                              <p className="text-sm text-gray-500">{item.serviceSubCategory}</p>
+                            )}
+                            <div className="flex items-center mt-1">
+                              <span className="font-semibold">{formatIndianRupee(item.price)}</span>
+                              {item.quantity && (
+                                <span className="text-sm text-gray-500 ml-2">
+                                  × {item.quantity} = {formatIndianRupee(item.price * item.quantity)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center border rounded-full overflow-hidden">
+                              <button 
+                                className="px-2 py-1 bg-gray-100"
+                                onClick={() => {
+                                  console.log('Decrease quantity', item.serviceId);
+                                }}
+                              >
+                                <Minus size={16} />
+                              </button>
+                              <span className="px-3">{item.quantity || 1}</span>
+                              <button 
+                                className="px-2 py-1 bg-gray-100"
+                                onClick={() => {
+                                  console.log('Increase quantity', item.serviceId);
+                                }}
+                              >
+                                <Plus size={16} />
+                              </button>
+                            </div>
+                            
+                            <button 
+                              className="text-red-500"
+                              onClick={() => {
+                                console.log('Remove item', item.serviceId);
+                              }}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
+            
+            <div className="mt-6 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+              <h2 className="text-lg font-semibold mb-3">Order Summary</h2>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span>{formatIndianRupee(totalPrice)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Delivery Fee</span>
+                  <span>₹49</span>
+                </div>
+                <Separator className="my-2" />
+                <div className="flex justify-between font-semibold">
+                  <span>Total</span>
+                  <span>{formatIndianRupee(totalPrice + 49)}</span>
+                </div>
+              </div>
+            </div>
+            
             <div className="mt-6">
               <Button onClick={() => console.log('Proceeding to checkout')} className="w-full bg-primary-500">
                 Proceed to Checkout
