@@ -27,9 +27,13 @@ import { useQueryClient } from '@tanstack/react-query';
 
 interface OrderCardProps {
   order: Order;
+  onCancelComplete?: () => void;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ 
+  order,
+  onCancelComplete 
+}) => {
   const { toast } = useToast();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -43,7 +47,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     try {
       await cancelOrder(order.id);
       
-      // Close the dialog immediately
+      // Close the dialog immediately before any other operations
       setShowCancelDialog(false);
       
       // Show success toast
@@ -53,8 +57,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         duration: 3000, // Auto dismiss after 3 seconds
       });
       
-      // Invalidate queries after successful cancellation
+      // Invalidate queries to refresh the order list
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      
+      // Call the optional callback to help reset focus at the parent level
+      if (onCancelComplete) {
+        onCancelComplete();
+      }
     } catch (error) {
       console.error("Error cancelling order:", error);
       toast({
@@ -64,22 +73,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         duration: 3000,
       });
     } finally {
-      // Always close the dialog and reset cancelling state
+      // Always ensure dialog is closed and state is reset
       setShowCancelDialog(false);
       setIsCancelling(false);
       
-      // Reset focus to a non-editable element (the card) after modal closes
-      setTimeout(() => {
-        // Clear any focus that might cause cursor to appear
-        if (document.activeElement instanceof HTMLElement) {
-          document.activeElement.blur();
-        }
-        
-        // Focus on the card container which isn't a text field
-        if (cardRef.current) {
-          cardRef.current.focus();
-        }
-      }, 10);
+      // Explicitly blur any focused element to prevent blinking cursor
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
     }
   };
 
@@ -90,17 +91,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const handleCloseDialog = () => {
     setShowCancelDialog(false);
     
-    // Clear any focus that might cause cursor to appear
-    setTimeout(() => {
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-      
-      // Focus on the card container which isn't a text field
-      if (cardRef.current) {
-        cardRef.current.focus();
-      }
-    }, 10);
+    // Explicitly blur any focused element
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   };
 
   const isPendingPayment = order.status === 'pending_payment';
@@ -177,56 +171,59 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </div>
       </Card>
 
-      <AlertDialog 
-        open={showCancelDialog} 
-        onOpenChange={handleCloseDialog}
-      >
-        <AlertDialogContent 
-          className="rounded-lg" 
-          tabIndex={-1}
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              handleCloseDialog();
-            }
-          }}
+      {/* Only render the AlertDialog when showCancelDialog is true */}
+      {showCancelDialog && (
+        <AlertDialog 
+          open={showCancelDialog} 
+          onOpenChange={handleCloseDialog}
         >
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Order</AlertDialogTitle>
-            <AlertDialogDescription>
-              Do you want to cancel this order? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel 
-              className="rounded-full"
-              disabled={isCancelling}
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+          <AlertDialogContent 
+            className="rounded-lg" 
+            tabIndex={-1}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
                 handleCloseDialog();
-              }}
-              tabIndex={0}
-            >
-              No
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCancelOrder();
-              }}
-              disabled={isCancelling}
-              className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
-              type="button"
-              tabIndex={0}
-            >
-              {isCancelling ? 'Cancelling...' : 'Yes'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              }
+            }}
+          >
+            <AlertDialogHeader>
+              <AlertDialogTitle>Cancel Order</AlertDialogTitle>
+              <AlertDialogDescription>
+                Do you want to cancel this order? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel 
+                className="rounded-full"
+                disabled={isCancelling}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCloseDialog();
+                }}
+                tabIndex={0}
+              >
+                No
+              </AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCancelOrder();
+                }}
+                disabled={isCancelling}
+                className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
+                type="button"
+                tabIndex={0}
+              >
+                {isCancelling ? 'Cancelling...' : 'Yes'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </>
   );
 };

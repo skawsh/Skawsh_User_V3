@@ -1,4 +1,3 @@
-
 import { Order } from '@/types/order';
 
 // Mock data for orders
@@ -155,33 +154,30 @@ export const getOrderById = async (id: string): Promise<Order> => {
   });
 };
 
-// Cancel an order - optimized for immediate response
+// Cancel an order - optimized with immediate response and no delay
 export const cancelOrder = async (id: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-      const orderIndex = orders.findIndex((order: Order) => order.id === id);
-      
-      if (orderIndex === -1) {
-        reject(new Error('Order not found'));
-        return;
-      }
-      
-      // Update the order status
-      orders[orderIndex] = { 
-        ...orders[orderIndex], 
-        status: 'cancelled', 
-        updatedAt: new Date().toISOString() 
-      };
-      
-      // Save updated orders to sessionStorage
-      sessionStorage.setItem('orders', JSON.stringify(orders));
-      
-      // Resolve immediately to avoid UI freeze
-      resolve();
-    } catch (error) {
-      console.error("Error in cancelOrder:", error);
-      reject(error);
+  try {
+    const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+    const orderIndex = orders.findIndex((order: Order) => order.id === id);
+    
+    if (orderIndex === -1) {
+      throw new Error('Order not found');
     }
-  });
+    
+    // Update the order status immediately
+    orders[orderIndex] = { 
+      ...orders[orderIndex], 
+      status: 'cancelled', 
+      updatedAt: new Date().toISOString() 
+    };
+    
+    // Save updated orders to sessionStorage
+    sessionStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Resolve immediately - no artificial delay to ensure UI updates instantly
+    return Promise.resolve();
+  } catch (error) {
+    console.error("Error in cancelOrder:", error);
+    return Promise.reject(error);
+  }
 };
