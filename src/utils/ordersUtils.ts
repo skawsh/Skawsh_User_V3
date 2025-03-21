@@ -1,5 +1,6 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { toast } from "sonner";
 
 export interface Order {
   id: string;
@@ -12,6 +13,7 @@ export interface Order {
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
 
+  // Load mock orders only once on initial mount
   useEffect(() => {
     const mockOrders: Order[] = [{
       id: '1',
@@ -41,12 +43,16 @@ export const useOrders = () => {
     setOrders(mockOrders);
   }, []);
 
-  // Simple and safe method to remove an order by ID
-  const handleCancelOrder = (orderId: string) => {
-    // Create a new array without the canceled order
-    const updatedOrders = orders.filter(order => order.id !== orderId);
-    setOrders(updatedOrders);
-  };
+  // Handle order cancellation using functional update pattern
+  const handleCancelOrder = useCallback((orderId: string) => {
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.filter(order => order.id !== orderId);
+      return updatedOrders;
+    });
+    
+    // Show success message for the operation
+    toast.success("Order removed successfully");
+  }, []);
 
   return {
     orders,

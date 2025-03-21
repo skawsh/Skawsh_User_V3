@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import OrdersHeader from '../components/orders/OrdersHeader';
 import OrderTabs from '../components/orders/OrderTabs';
 import { useOrders } from '../utils/ordersUtils';
+import { Toaster } from '../components/ui/sonner';
 
 const OrdersPage: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -45,11 +46,6 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  // Handle order cancellation - just pass through to the utility function
-  const onCancelOrder = (orderId: string) => {
-    handleCancelOrder(orderId);
-  };
-
   // Filter orders based on search query
   const filteredOrders = orders.filter(order => 
     order.studioName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -73,8 +69,10 @@ const OrdersPage: React.FC = () => {
           ongoingOrders={ongoingOrders}
           completedOrders={completedOrders}
           isSpecialCode={isSpecialCode}
-          onCancelOrder={onCancelOrder}
+          onCancelOrder={handleCancelOrder}
         />
+        
+        <Toaster position="top-center" />
       </div>
     </Layout>
   );
