@@ -23,6 +23,14 @@ const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isSpecialCode, setIsSpecialCode] = useState(false);
   
+  // Check for special code from localStorage on mount
+  useEffect(() => {
+    const specialCode = localStorage.getItem('specialCode');
+    if (specialCode === 'true') {
+      setIsSpecialCode(true);
+    }
+  }, []);
+  
   // Mock orders data - in a real app, you would fetch this from an API
   useEffect(() => {
     // Simulate loading orders from localStorage or an API
@@ -74,6 +82,13 @@ const OrdersPage: React.FC = () => {
   const handleBack = () => {
     navigate('/profile');
   };
+
+  // Clear special code when leaving the page
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('specialCode');
+    };
+  }, []);
 
   // Check for special search code
   useEffect(() => {
@@ -255,6 +270,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, i
           <Button 
             onClick={handlePayNow}
             className={`${isSpecialCode ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'} text-white border-none shadow-md px-4`}
+            disabled={!isSpecialCode}
           >
             Pay Now
           </Button>
