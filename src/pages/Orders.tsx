@@ -1,11 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Search, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Search, ShoppingBag, MoreVertical, Edit, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Input } from '../components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import { Card, CardContent } from '../components/ui/card';
 import Button from '../components/ui-elements/Button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu';
+import { toast } from "sonner";
 
 interface Order {
   id: string;
@@ -153,15 +156,29 @@ const OrderCard: React.FC<OrderCardProps> = ({
   isSpecialCode
 }) => {
   const navigate = useNavigate();
+  
   const handleViewMenu = () => {
     navigate('/studio/1');
   };
+  
   const handleViewDetails = () => {
     console.log('View order details');
   };
+  
   const handlePayNow = () => {
     console.log('Pay now for order');
   };
+  
+  const handleCancelOrder = () => {
+    toast.success("Order cancellation requested");
+    console.log('Cancel order');
+  };
+  
+  const handleEditOrder = () => {
+    toast.success("Redirecting to edit order");
+    console.log('Edit order');
+  };
+  
   return <Card className="border rounded-lg overflow-hidden shadow-sm">
       <div className="flex items-center justify-between p-3 border-b">
         <div className="flex items-center gap-3">
@@ -176,7 +193,26 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </button>
           </div>
         </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-2 rounded-full hover:bg-gray-100">
+              <MoreVertical size={20} className="text-gray-500" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-white">
+            <DropdownMenuItem onClick={handleEditOrder} className="cursor-pointer">
+              <Edit size={16} className="mr-2 text-blue-500" />
+              <span>Edit Order</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleCancelOrder} className="cursor-pointer">
+              <X size={16} className="mr-2 text-red-500" />
+              <span>Cancel Order</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+      
       <CardContent className="p-3 flex items-center justify-between">
         <Button variant="outline" onClick={handleViewDetails} className="bg-blue-500 text-white hover:bg-blue-600 border-none shadow-md px-4">
           View Details
