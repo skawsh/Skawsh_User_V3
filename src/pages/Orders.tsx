@@ -35,6 +35,10 @@ const Orders = () => {
 
   const handleTabChange = useCallback((value: string) => {
     setActiveTab(value);
+    // Remove any potential focus from elements when changing tabs
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }, []);
 
   return (
@@ -68,7 +72,7 @@ const Orders = () => {
           ) : (
             <>
               <TabsContent value="ongoing" className="mt-0">
-                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1}>
+                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1} data-avoid-focus="true">
                   {isRefetching && (
                     <div className="absolute top-2 right-2">
                       <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
@@ -82,7 +86,7 @@ const Orders = () => {
               </TabsContent>
               
               <TabsContent value="history" className="mt-0">
-                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1}>
+                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1} data-avoid-focus="true">
                   {isRefetching && (
                     <div className="absolute top-2 right-2">
                       <Loader2 className="h-4 w-4 animate-spin text-primary-500" />

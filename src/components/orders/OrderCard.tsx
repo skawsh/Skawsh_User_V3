@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -34,6 +34,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const queryClient = useQueryClient();
+  const cardRef = useRef<HTMLDivElement>(null);
   
   const handleCancelOrder = async () => {
     if (isCancelling) return;
@@ -66,7 +67,40 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       // Always close the dialog and reset cancelling state
       setShowCancelDialog(false);
       setIsCancelling(false);
+      
+      // Reset focus to a non-editable element (the card) after modal closes
+      setTimeout(() => {
+        // Clear any focus that might cause cursor to appear
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        
+        // Focus on the card container which isn't a text field
+        if (cardRef.current) {
+          cardRef.current.focus();
+        }
+      }, 10);
     }
+  };
+
+  const handleOpenDialog = () => {
+    setShowCancelDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setShowCancelDialog(false);
+    
+    // Clear any focus that might cause cursor to appear
+    setTimeout(() => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      
+      // Focus on the card container which isn't a text field
+      if (cardRef.current) {
+        cardRef.current.focus();
+      }
+    }, 10);
   };
 
   const isPendingPayment = order.status === 'pending_payment';
@@ -74,7 +108,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   return (
     <>
-      <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+      <Card 
+        className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+        ref={cardRef}
+        tabIndex={-1}
+      >
         <div className="p-4">
           <div className="flex justify-between items-start">
             <div>
@@ -87,14 +125,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-8 w-8" type="button">
                   <MoreVertical className="h-4 w-4" />
                   <span className="sr-only">More options</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
-                  onClick={() => setShowCancelDialog(true)}
+                  onClick={handleOpenDialog}
                   disabled={!isOngoing || isCancelling}
                   className="text-red-500 focus:text-red-500"
                 >
@@ -141,9 +179,18 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       <AlertDialog 
         open={showCancelDialog} 
-        onOpenChange={setShowCancelDialog}
+        onOpenChange={handleCloseDialog}
       >
-        <AlertDialogContent className="rounded-lg" tabIndex={-1}>
+        <AlertDialogContent 
+          className="rounded-lg" 
+          tabIndex={-1}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              handleCloseDialog();
+            }
+          }}
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Order</AlertDialogTitle>
             <AlertDialogDescription>
@@ -157,19 +204,23 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                setShowCancelDialog(false);
+                e.stopPropagation();
+                handleCloseDialog();
               }}
+              tabIndex={0}
             >
               No
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 handleCancelOrder();
               }}
               disabled={isCancelling}
               className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
               type="button"
+              tabIndex={0}
             >
               {isCancelling ? 'Cancelling...' : 'Yes'}
             </AlertDialogAction>

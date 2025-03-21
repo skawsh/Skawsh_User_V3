@@ -128,68 +128,60 @@ export const fetchOrders = async (): Promise<Order[]> => {
   initializeOrders();
   
   return new Promise((resolve) => {
-    // Simulate network delay
-    setTimeout(() => {
-      try {
-        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-        resolve(orders);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-        resolve([]);
-      }
-    }, 300); // Reduced delay for better responsiveness
+    try {
+      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+      resolve(orders);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      resolve([]);
+    }
   });
 };
 
 // Get a single order by ID
 export const getOrderById = async (id: string): Promise<Order> => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-        const order = orders.find((o: Order) => o.id === id);
-        if (order) {
-          resolve(order);
-        } else {
-          reject(new Error('Order not found'));
-        }
-      } catch (error) {
-        reject(error);
+    try {
+      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+      const order = orders.find((o: Order) => o.id === id);
+      if (order) {
+        resolve(order);
+      } else {
+        reject(new Error('Order not found'));
       }
-    }, 100); // Reduced delay for better UX
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 
 // Cancel an order - optimized for immediate response
 export const cancelOrder = async (id: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // Short timeout to simulate network but stay responsive
-    setTimeout(() => {
-      try {
-        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-        const orderIndex = orders.findIndex((order: Order) => order.id === id);
-        
-        if (orderIndex === -1) {
-          reject(new Error('Order not found'));
-          return;
-        }
-        
-        // Update the order status
-        orders[orderIndex] = { 
-          ...orders[orderIndex], 
-          status: 'cancelled', 
-          updatedAt: new Date().toISOString() 
-        };
-        
-        // Save updated orders to sessionStorage
-        sessionStorage.setItem('orders', JSON.stringify(orders));
-        
-        // Resolve immediately to avoid UI freeze
-        resolve();
-      } catch (error) {
-        console.error("Error in cancelOrder:", error);
-        reject(error);
+    try {
+      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+      const orderIndex = orders.findIndex((order: Order) => order.id === id);
+      
+      if (orderIndex === -1) {
+        reject(new Error('Order not found'));
+        return;
       }
-    }, 50); // Very short delay for immediate response
+      
+      // Update the order status
+      orders[orderIndex] = { 
+        ...orders[orderIndex], 
+        status: 'cancelled', 
+        updatedAt: new Date().toISOString() 
+      };
+      
+      // Save updated orders to sessionStorage
+      sessionStorage.setItem('orders', JSON.stringify(orders));
+      
+      // Resolve immediately to avoid UI freeze
+      resolve();
+    } catch (error) {
+      console.error("Error in cancelOrder:", error);
+      reject(error);
+    }
   });
 };
