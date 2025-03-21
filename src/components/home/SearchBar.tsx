@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const SearchBar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,7 +37,15 @@ const SearchBar: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button type="submit" className="hidden">Search</button>
+          <Button 
+            type="submit" 
+            size="icon" 
+            variant="ghost" 
+            className="p-0 h-8 w-8 hover:bg-primary-100/50 text-primary-500"
+          >
+            <Search size={18} />
+            <span className="sr-only">Search</span>
+          </Button>
         </div>
       </form>
     </div>
