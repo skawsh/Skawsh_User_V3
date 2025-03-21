@@ -6,6 +6,7 @@ import { Input } from '../components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
 import { Card, CardContent } from '../components/ui/card';
 import Button from '../components/ui-elements/Button';
+
 interface Order {
   id: string;
   studioName: string;
@@ -13,6 +14,7 @@ interface Order {
   amount: number;
   status: 'ongoing' | 'completed';
 }
+
 const OrdersPage: React.FC = () => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,7 +22,6 @@ const OrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isSpecialCode, setIsSpecialCode] = useState(false);
 
-  // Check for special code from localStorage on mount
   useEffect(() => {
     const specialCode = localStorage.getItem('specialCode');
     if (specialCode === 'true') {
@@ -28,7 +29,6 @@ const OrdersPage: React.FC = () => {
     }
   }, []);
 
-  // Mock orders data - in a real app, you would fetch this from an API
   useEffect(() => {
     const mockOrders: Order[] = [{
       id: '1',
@@ -58,7 +58,6 @@ const OrdersPage: React.FC = () => {
     setOrders(mockOrders);
   }, []);
 
-  // Track scroll position
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -67,18 +66,17 @@ const OrdersPage: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   const handleBack = () => {
     navigate('/profile');
   };
 
-  // Clear special code when leaving the page
   useEffect(() => {
     return () => {
       localStorage.removeItem('specialCode');
     };
   }, []);
 
-  // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery === '27102001') {
@@ -87,15 +85,13 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  // Filter orders based on search query
   const filteredOrders = orders.filter(order => order.studioName.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  // Get ongoing and completed orders
   const ongoingOrders = filteredOrders.filter(order => order.status === 'ongoing');
   const completedOrders = filteredOrders.filter(order => order.status === 'completed');
-  return <Layout hideFooter={true}>
+
+  return <Layout>
       <div className="section-container bg-gradient-to-b from-primary-50 to-white min-h-screen">
-        {/* Sticky header that appears when scrolled */}
         {isScrolled && <div className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 shadow-sm py-2 px-4 flex items-center">
             <button onClick={handleBack} className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-3" aria-label="Go back to profile">
               <ArrowLeft size={20} className="text-gray-700" />
@@ -142,12 +138,14 @@ const OrdersPage: React.FC = () => {
       </div>
     </Layout>;
 };
+
 interface OrderCardProps {
   studioName: string;
   studioLogo: string;
   isCompleted?: boolean;
   isSpecialCode?: boolean;
 }
+
 const OrderCard: React.FC<OrderCardProps> = ({
   studioName,
   studioLogo,
@@ -156,15 +154,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const handleViewMenu = () => {
-    // Navigate to studio page (this would need the actual studio ID in a real app)
     navigate('/studio/1');
   };
   const handleViewDetails = () => {
-    // In a real app, this would navigate to order details page
     console.log('View order details');
   };
   const handlePayNow = () => {
-    // In a real app, this would navigate to payment page
     console.log('Pay now for order');
   };
   return <Card className="border rounded-lg overflow-hidden shadow-sm">
@@ -195,4 +190,5 @@ const OrderCard: React.FC<OrderCardProps> = ({
       </CardContent>
     </Card>;
 };
+
 export default OrdersPage;
