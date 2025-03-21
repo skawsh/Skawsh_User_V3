@@ -10,7 +10,7 @@ const OrdersPage: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSpecialCode, setIsSpecialCode] = useState(false);
-  const { orders, setOrders, handleCancelOrder } = useOrders();
+  const { orders, handleCancelOrder } = useOrders();
 
   // Check for special code in localStorage
   useEffect(() => {
@@ -40,16 +40,15 @@ const OrdersPage: React.FC = () => {
   // Handle search form submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery === '27102002') { // Changed from 27102001 to 27102002
+    if (searchQuery === '27102002') {
       setIsSpecialCode(true);
       localStorage.setItem('specialCode', 'true');
     }
   };
 
-  // Handle order cancellation
+  // Handle order cancellation - updated to not depend on a return value
   const onCancelOrder = (orderId: string) => {
-    const updatedOrders = handleCancelOrder(orderId);
-    setOrders(updatedOrders);
+    handleCancelOrder(orderId);
     toast.success("Order has been canceled");
   };
 

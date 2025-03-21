@@ -38,7 +38,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
     console.log('Pay now for order');
   };
   
-  const handleCancelOrder = () => {
+  // Updated to safely handle cancel
+  const handleCancelOrder = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Call the parent handler to update state properly
     onCancelOrder(id);
   };
   
