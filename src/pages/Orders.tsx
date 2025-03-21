@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Search, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +32,6 @@ const OrdersPage: React.FC = () => {
   
   // Mock orders data - in a real app, you would fetch this from an API
   useEffect(() => {
-    // Simulate loading orders from localStorage or an API
     const mockOrders: Order[] = [
       {
         id: '1',
@@ -90,15 +88,13 @@ const OrdersPage: React.FC = () => {
     };
   }, []);
 
-  // Check for special search code
-  useEffect(() => {
-    setIsSpecialCode(searchQuery === '27102001');
-  }, [searchQuery]);
-
   // Handle search submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSpecialCode(searchQuery === '27102001');
+    if (searchQuery === '27102001') {
+      setIsSpecialCode(true);
+      localStorage.setItem('specialCode', 'true');
+    }
   };
 
   // Filter orders based on search query
@@ -176,7 +172,6 @@ const OrdersPage: React.FC = () => {
                   key={order.id}
                   studioName={order.studioName}
                   studioLogo={order.studioLogo}
-                  amount={order.amount}
                   isSpecialCode={isSpecialCode}
                 />
               ))
@@ -195,7 +190,6 @@ const OrdersPage: React.FC = () => {
                   key={order.id}
                   studioName={order.studioName}
                   studioLogo={order.studioLogo}
-                  amount={order.amount}
                   isCompleted
                   isSpecialCode={isSpecialCode}
                 />
@@ -211,12 +205,11 @@ const OrdersPage: React.FC = () => {
 interface OrderCardProps {
   studioName: string;
   studioLogo: string;
-  amount: number;
   isCompleted?: boolean;
   isSpecialCode?: boolean;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, isCompleted, isSpecialCode }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, isCompleted, isSpecialCode }) => {
   const navigate = useNavigate();
   
   const handleViewMenu = () => {
@@ -269,7 +262,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, i
         {!isCompleted && (
           <Button 
             onClick={handlePayNow}
-            className={`${isSpecialCode ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'} text-white border-none shadow-md px-4`}
+            className={isSpecialCode ? "bg-green-500 hover:bg-green-600 text-white border-none shadow-md px-4" : "bg-gray-500 hover:bg-gray-600 text-white border-none shadow-md px-4"}
             disabled={!isSpecialCode}
           >
             Pay Now
