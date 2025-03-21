@@ -24,7 +24,7 @@ const ReferFriends: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 50);
+      setIsScrolled(scrollPosition > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -92,6 +92,20 @@ const ReferFriends: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
+        {/* Sticky header that appears when scrolled */}
+        {isScrolled && (
+          <div className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 shadow-sm py-2 px-4 flex items-center">
+            <button 
+              onClick={handleBack}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-3"
+              aria-label="Go back to profile"
+            >
+              <ArrowLeft size={20} className="text-gray-700" />
+            </button>
+            <span className="font-medium text-gray-800">Refer Friends</span>
+          </div>
+        )}
+        
         <div className={`sticky top-0 z-10 bg-white ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-200`}>
           <div className="flex items-center mb-4 px-4 py-3">
             <button 
