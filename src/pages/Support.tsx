@@ -1,15 +1,26 @@
 
 import React from 'react';
-import { ArrowLeft, Mail, Phone, MessageCircle, FileQuestion, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Mail, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Card, CardContent } from '../components/ui/card';
 import { Separator } from '../components/ui/separator';
-import { Button } from '../components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Support: React.FC = () => {
   const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = React.useState(false);
+
+  // Track scroll position
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleBack = () => {
     navigate('/profile');
@@ -19,9 +30,6 @@ const Support: React.FC = () => {
     switch (method) {
       case 'email':
         window.location.href = 'mailto:support@skawsh.com';
-        break;
-      case 'phone':
-        window.location.href = 'tel:+918888888888';
         break;
       case 'chat':
         // This would typically open a chat window
@@ -58,8 +66,8 @@ const Support: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
-        <div className="sticky top-0 pt-2 z-10 bg-white">
-          <div className="flex items-center mb-6">
+        <div className={`sticky top-0 pt-2 z-10 bg-white shadow-sm ${isScrolled ? 'shadow-md' : ''}`}>
+          <div className="flex items-center mb-6 px-4">
             <button 
               onClick={handleBack}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"
@@ -70,10 +78,10 @@ const Support: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 px-4">
           <div>
             <h2 className="text-lg font-medium text-gray-700 mb-3">Contact Us</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <Card 
                 className="border-none shadow-sm hover:shadow-md cursor-pointer transition-all"
                 onClick={() => handleContactMethod('email')}
@@ -91,21 +99,6 @@ const Support: React.FC = () => {
               
               <Card 
                 className="border-none shadow-sm hover:shadow-md cursor-pointer transition-all"
-                onClick={() => handleContactMethod('phone')}
-              >
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="p-2 rounded-full bg-primary-50">
-                    <Phone size={20} className="text-primary-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Phone Support</h3>
-                    <p className="text-xs text-gray-500">+91 8888 888 888</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="border-none shadow-sm hover:shadow-md cursor-pointer transition-all"
                 onClick={() => handleContactMethod('chat')}
               >
                 <CardContent className="p-4 flex items-center gap-4">
@@ -115,21 +108,6 @@ const Support: React.FC = () => {
                   <div>
                     <h3 className="font-medium">Live Chat</h3>
                     <p className="text-xs text-gray-500">Chat with our support team</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card 
-                className="border-none shadow-sm hover:shadow-md cursor-pointer transition-all"
-                onClick={() => window.open('/faq', '_blank')}
-              >
-                <CardContent className="p-4 flex items-center gap-4">
-                  <div className="p-2 rounded-full bg-primary-50">
-                    <FileQuestion size={20} className="text-primary-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Help Center</h3>
-                    <p className="text-xs text-gray-500">Browse our knowledge base</p>
                   </div>
                 </CardContent>
               </Card>
@@ -152,17 +130,6 @@ const Support: React.FC = () => {
                 </AccordionItem>
               ))}
             </Accordion>
-          </div>
-          
-          <div className="pt-4">
-            <Button 
-              variant="outline" 
-              className="w-full flex items-center justify-center gap-2"
-              onClick={() => window.open('https://skawsh.com/help', '_blank')}
-            >
-              Visit Full Help Center
-              <ExternalLink size={16} />
-            </Button>
           </div>
         </div>
       </div>

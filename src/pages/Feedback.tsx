@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -15,6 +15,18 @@ const Feedback: React.FC = () => {
   const [message, setMessage] = useState('');
   const [rating, setRating] = useState('satisfied');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleBack = () => {
     navigate('/profile');
@@ -49,8 +61,8 @@ const Feedback: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
-        <div className="sticky top-0 pt-2 z-10 bg-white">
-          <div className="flex items-center mb-6">
+        <div className={`sticky top-0 pt-2 z-10 bg-white ${isScrolled ? 'shadow-md' : ''}`}>
+          <div className="flex items-center mb-6 px-4">
             <button 
               onClick={handleBack}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"
@@ -61,7 +73,7 @@ const Feedback: React.FC = () => {
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 px-4">
           <div className="space-y-4">
             <h2 className="text-lg font-medium text-gray-700">How satisfied are you with Skawsh?</h2>
             <RadioGroup 

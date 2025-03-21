@@ -14,10 +14,22 @@ const ReferFriends: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   
   // Example referral code
   const referralCode = "SKAWSH2025";
   const referralLink = `https://skawsh.com/join?ref=${referralCode}`;
+
+  // Track scroll position
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleBack = () => {
     navigate('/profile');
@@ -77,17 +89,11 @@ const ReferFriends: React.FC = () => {
     }, 1500);
   };
 
-  const rewards = [
-    { title: "Friend signs up", description: "Your friend gets ₹100 off their first order", amount: "₹0" },
-    { title: "First order", description: "When your friend places their first order", amount: "₹100" },
-    { title: "Subsequent orders", description: "For each of their next 3 orders", amount: "₹50" }
-  ];
-
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
-        <div className="sticky top-0 pt-2 z-10 bg-white">
-          <div className="flex items-center mb-4">
+        <div className={`sticky top-0 pt-2 z-10 bg-white ${isScrolled ? 'shadow-md' : ''}`}>
+          <div className="flex items-center mb-4 px-4">
             <button 
               onClick={handleBack}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"
@@ -98,7 +104,7 @@ const ReferFriends: React.FC = () => {
           </div>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-6 px-4">
           <Card className="overflow-hidden border-none shadow-md">
             <CardContent className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
               <h2 className="text-lg font-semibold text-gray-800 mb-2">Invite friends & earn rewards</h2>
@@ -148,25 +154,6 @@ const ReferFriends: React.FC = () => {
                 {isSending ? "Sending..." : "Invite"}
               </Button>
             </form>
-          </div>
-          
-          <div className="space-y-3">
-            <h2 className="text-lg font-medium text-gray-700">How you earn</h2>
-            <div className="space-y-3">
-              {rewards.map((reward, index) => (
-                <Card key={index} className="border-none shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-medium text-gray-800">{reward.title}</h3>
-                        <p className="text-xs text-gray-500">{reward.description}</p>
-                      </div>
-                      <div className="text-lg font-bold text-primary-600">{reward.amount}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </div>
         </div>
       </div>
