@@ -17,7 +17,9 @@ import {
   Phone, 
   Mail,
   User,
-  ShoppingBag
+  ShoppingBag,
+  Heart,
+  ClipboardList
 } from 'lucide-react';
 
 const ProfileInfo: React.FC = () => {
@@ -68,10 +70,16 @@ const ProfileInfo: React.FC = () => {
         <h2 className="text-lg font-medium text-gray-700 mb-1 px-1">Account</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <ProfileMenuItem 
-            icon={<ShoppingBag size={18} className="text-primary-500" />} 
+            icon={<ClipboardList size={18} className="text-primary-500" />} 
             title="Orders" 
             description="View your past and ongoing orders"
             onClick={() => handleMenuItem('/orders')} 
+          />
+          <ProfileMenuItem 
+            icon={<Heart size={18} className="text-primary-500" />} 
+            title="Washlist" 
+            description="Your favorite studios and services"
+            onClick={() => handleMenuItem('/favorites')} 
           />
           <ProfileMenuItem 
             icon={<MapPin size={18} className="text-primary-500" />} 

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Layers, Heart, ShoppingBag } from 'lucide-react';
+import { Home, Layers, ShoppingBag, ClipboardList } from 'lucide-react';
 import SackBar from './SackBar';
 
 type LayoutProps = {
@@ -78,10 +78,10 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
               isActive={isActive("/services")}
             />
             <NavItem 
-              to="/favorites" 
-              icon={<Heart size={20} />} 
-              label="Washlist" 
-              isActive={isActive("/favorites")}
+              to="/orders" 
+              icon={<ClipboardList size={20} />} 
+              label="Orders" 
+              isActive={isActive("/orders")}
             />
             <NavItem 
               to="/cart" 
