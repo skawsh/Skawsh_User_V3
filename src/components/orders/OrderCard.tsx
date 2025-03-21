@@ -71,7 +71,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
     setShowDeleteDialog(false);
   };
   
-  const handleEditOrder = () => {
+  const handleEditOrder = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     toast.success("Redirecting to edit order");
     console.log('Edit order');
   };

@@ -42,9 +42,8 @@ export const useOrders = () => {
   }, []);
 
   const handleCancelOrder = (orderId: string) => {
-    // Safely update orders by creating a new array
+    // Safely update orders by creating a new array without the canceled/deleted order
     setOrders((prevOrders) => prevOrders.filter(order => order.id !== orderId));
-    // Don't return anything here as it's not needed and can cause issues
   };
 
   return {
