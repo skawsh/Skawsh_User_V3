@@ -20,8 +20,9 @@ const Orders = () => {
   } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
-    refetchOnWindowFocus: true,
-    staleTime: 3000, // 3 seconds
+    refetchOnWindowFocus: false, // Prevent automatic refetch on window focus which can disrupt user
+    staleTime: 5000, // 5 seconds
+    refetchInterval: false, // Disable automatic refetching at intervals
   });
 
   const ongoingOrders = orders.filter(order => 
@@ -41,7 +42,12 @@ const Orders = () => {
       <div className="px-4 py-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-4">My Orders</h1>
         
-        <Tabs defaultValue="ongoing" className="w-full" onValueChange={handleTabChange}>
+        <Tabs 
+          defaultValue="ongoing" 
+          className="w-full" 
+          onValueChange={handleTabChange}
+          value={activeTab}
+        >
           <TabsList className="grid w-full grid-cols-2 mb-4">
             <TabsTrigger value="ongoing" className="rounded-full">
               Ongoing Orders {ongoingOrders.length > 0 && `(${ongoingOrders.length})`}
@@ -62,12 +68,12 @@ const Orders = () => {
           ) : (
             <>
               <TabsContent value="ongoing" className="mt-0">
-                <ScrollArea className="h-[calc(100vh-200px)]">
-                  {isRefetching ? (
+                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1}>
+                  {isRefetching && (
                     <div className="absolute top-2 right-2">
                       <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
                     </div>
-                  ) : null}
+                  )}
                   <OrderList 
                     orders={ongoingOrders}
                     emptyMessage="You don't have any ongoing orders."
@@ -76,12 +82,12 @@ const Orders = () => {
               </TabsContent>
               
               <TabsContent value="history" className="mt-0">
-                <ScrollArea className="h-[calc(100vh-200px)]">
-                  {isRefetching ? (
+                <ScrollArea className="h-[calc(100vh-200px)]" tabIndex={-1}>
+                  {isRefetching && (
                     <div className="absolute top-2 right-2">
                       <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
                     </div>
-                  ) : null}
+                  )}
                   <OrderList 
                     orders={historyOrders}
                     emptyMessage="You don't have any order history yet."

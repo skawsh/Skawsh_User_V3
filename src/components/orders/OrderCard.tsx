@@ -42,7 +42,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     try {
       await cancelOrder(order.id);
       
-      // Close the modal immediately
+      // Close the dialog immediately
       setShowCancelDialog(false);
       
       // Show success toast
@@ -52,7 +52,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         duration: 3000, // Auto dismiss after 3 seconds
       });
       
-      // Invalidate and refetch orders
+      // Invalidate queries after successful cancellation
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     } catch (error) {
       console.error("Error cancelling order:", error);
@@ -62,9 +62,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         variant: "destructive",
         duration: 3000,
       });
-      // Make sure to close the dialog even on error
-      setShowCancelDialog(false);
     } finally {
+      // Always close the dialog and reset cancelling state
+      setShowCancelDialog(false);
       setIsCancelling(false);
     }
   };
@@ -141,13 +141,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
       <AlertDialog 
         open={showCancelDialog} 
-        onOpenChange={(isOpen) => {
-          if (!isCancelling) {
-            setShowCancelDialog(isOpen);
-          }
-        }}
+        onOpenChange={setShowCancelDialog}
       >
-        <AlertDialogContent className="rounded-lg">
+        <AlertDialogContent className="rounded-lg" tabIndex={-1}>
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Order</AlertDialogTitle>
             <AlertDialogDescription>
@@ -158,9 +154,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             <AlertDialogCancel 
               className="rounded-full"
               disabled={isCancelling}
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 setShowCancelDialog(false);
               }}
             >
@@ -169,11 +165,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             <AlertDialogAction 
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 handleCancelOrder();
               }}
               disabled={isCancelling}
               className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
+              type="button"
             >
               {isCancelling ? 'Cancelling...' : 'Yes'}
             </AlertDialogAction>

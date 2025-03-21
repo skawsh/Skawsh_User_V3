@@ -94,7 +94,7 @@ export const fetchOrders = async (): Promise<Order[]> => {
         console.error("Error fetching orders:", error);
         resolve([]);
       }
-    }, 600);
+    }, 300); // Reduced delay for better responsiveness
   });
 };
 
@@ -113,14 +113,14 @@ export const getOrderById = async (id: string): Promise<Order> => {
       } catch (error) {
         reject(error);
       }
-    }, 300);
+    }, 100); // Reduced delay for better UX
   });
 };
 
-// Cancel an order - improved to not block UI thread
+// Cancel an order - optimized for immediate response
 export const cancelOrder = async (id: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    // Short timeout to ensure UI can update first
+    // Short timeout to simulate network but stay responsive
     setTimeout(() => {
       try {
         const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
@@ -147,6 +147,6 @@ export const cancelOrder = async (id: string): Promise<void> => {
         console.error("Error in cancelOrder:", error);
         reject(error);
       }
-    }, 100); // Very short delay to not block UI
+    }, 50); // Very short delay for immediate response
   });
 };
