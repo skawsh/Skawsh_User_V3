@@ -72,8 +72,7 @@ const mockOrders: Order[] = [
   }
 ];
 
-// We're using sessionStorage to persist orders between page reloads
-// Initial setup of mock data in session storage
+// Initialize orders in sessionStorage
 const initializeOrders = () => {
   const existingOrders = sessionStorage.getItem('orders');
   if (!existingOrders) {
@@ -82,58 +81,73 @@ const initializeOrders = () => {
 };
 
 // Fetch all orders
-export const fetchOrders = (): Promise<Order[]> => {
+export const fetchOrders = async (): Promise<Order[]> => {
   initializeOrders();
+  
   return new Promise((resolve) => {
+    // Simulate network delay
     setTimeout(() => {
-      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-      resolve(orders);
-    }, 500); // Simulate network delay
+      try {
+        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+        resolve(orders);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        resolve([]);
+      }
+    }, 600);
   });
 };
 
 // Get a single order by ID
-export const getOrderById = (id: string): Promise<Order> => {
+export const getOrderById = async (id: string): Promise<Order> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-      const order = orders.find((o: Order) => o.id === id);
-      if (order) {
-        resolve(order);
-      } else {
-        reject(new Error('Order not found'));
+      try {
+        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+        const order = orders.find((o: Order) => o.id === id);
+        if (order) {
+          resolve(order);
+        } else {
+          reject(new Error('Order not found'));
+        }
+      } catch (error) {
+        reject(error);
       }
     }, 300);
   });
 };
 
 // Cancel an order
-export const cancelOrder = (id: string): Promise<void> => {
+export const cancelOrder = async (id: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       try {
         const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-        const updatedOrders = orders.map((order: Order) => {
-          if (order.id === id) {
-            return { ...order, status: 'cancelled', updatedAt: new Date().toISOString() };
-          }
-          return order;
-        });
+        const orderIndex = orders.findIndex((order: Order) => order.id === id);
         
-        sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
+        if (orderIndex === -1) {
+          reject(new Error('Order not found'));
+          return;
+        }
         
-        // Dispatch a custom event to notify components that orders have been updated
-        window.dispatchEvent(new CustomEvent('ordersUpdated'));
+        // Update the order status
+        orders[orderIndex] = { 
+          ...orders[orderIndex], 
+          status: 'cancelled', 
+          updatedAt: new Date().toISOString() 
+        };
         
-        // Add a small delay before resolving to prevent UI jank
+        // Save updated orders to sessionStorage
+        sessionStorage.setItem('orders', JSON.stringify(orders));
+        
+        // Add a small delay before resolving to simulate network
         setTimeout(() => {
           resolve();
-        }, 300);
+        }, 500);
       } catch (error) {
+        console.error("Error in cancelOrder:", error);
         reject(error);
       }
-    }, 500); // Simulate network delay
+    }, 300);
   });
 };
-
-// Update the App.tsx to include the Orders route

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Layout from '@/components/Layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,17 +11,28 @@ import { Loader2 } from 'lucide-react';
 const Orders = () => {
   const [activeTab, setActiveTab] = useState('ongoing');
   
-  const { data: orders, isLoading, error } = useQuery({
+  const { 
+    data: orders = [], 
+    isLoading, 
+    error 
+  } = useQuery({
     queryKey: ['orders'],
-    queryFn: fetchOrders
+    queryFn: fetchOrders,
+    refetchOnWindowFocus: false,
+    staleTime: 10000, // 10 seconds
   });
 
-  const ongoingOrders = orders?.filter(order => order.status !== 'completed' && order.status !== 'cancelled') || [];
-  const historyOrders = orders?.filter(order => order.status === 'completed' || order.status === 'cancelled') || [];
+  const ongoingOrders = orders.filter(order => 
+    order.status !== 'completed' && order.status !== 'cancelled'
+  );
+  
+  const historyOrders = orders.filter(order => 
+    order.status === 'completed' || order.status === 'cancelled'
+  );
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = useCallback((value: string) => {
     setActiveTab(value);
-  };
+  }, []);
 
   return (
     <Layout>
@@ -30,8 +41,12 @@ const Orders = () => {
         
         <Tabs defaultValue="ongoing" className="w-full" onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="ongoing" className="rounded-full">Ongoing Orders</TabsTrigger>
-            <TabsTrigger value="history" className="rounded-full">History</TabsTrigger>
+            <TabsTrigger value="ongoing" className="rounded-full">
+              Ongoing Orders {ongoingOrders.length > 0 && `(${ongoingOrders.length})`}
+            </TabsTrigger>
+            <TabsTrigger value="history" className="rounded-full">
+              History {historyOrders.length > 0 && `(${historyOrders.length})`}
+            </TabsTrigger>
           </TabsList>
           
           {isLoading ? (
@@ -39,32 +54,26 @@ const Orders = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
             </div>
           ) : error ? (
-            <div className="text-center text-red-500 p-4">
+            <div className="text-center text-red-500 p-4 rounded-lg border border-red-200 bg-red-50">
               Failed to load orders. Please try again.
             </div>
           ) : (
             <>
               <TabsContent value="ongoing" className="mt-0">
                 <ScrollArea className="h-[calc(100vh-200px)]">
-                  {ongoingOrders.length === 0 ? (
-                    <div className="text-center text-gray-500 p-8">
-                      You don't have any ongoing orders.
-                    </div>
-                  ) : (
-                    <OrderList orders={ongoingOrders} />
-                  )}
+                  <OrderList 
+                    orders={ongoingOrders}
+                    emptyMessage="You don't have any ongoing orders."
+                  />
                 </ScrollArea>
               </TabsContent>
               
               <TabsContent value="history" className="mt-0">
                 <ScrollArea className="h-[calc(100vh-200px)]">
-                  {historyOrders.length === 0 ? (
-                    <div className="text-center text-gray-500 p-8">
-                      You don't have any order history yet.
-                    </div>
-                  ) : (
-                    <OrderList orders={historyOrders} />
-                  )}
+                  <OrderList 
+                    orders={historyOrders}
+                    emptyMessage="You don't have any order history yet."
+                  />
                 </ScrollArea>
               </TabsContent>
             </>

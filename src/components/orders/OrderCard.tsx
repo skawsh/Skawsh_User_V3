@@ -23,6 +23,7 @@ import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
 import { cancelOrder } from '@/utils/ordersUtils';
 import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface OrderCardProps {
   order: Order;
@@ -31,15 +32,21 @@ interface OrderCardProps {
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const { toast } = useToast();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const queryClient = useQueryClient();
   
   const handleCancelOrder = async () => {
+    if (isCancelling) return;
+    
+    setIsCancelling(true);
     try {
       await cancelOrder(order.id);
       toast({
         title: "Order cancelled",
         description: "Your order has been cancelled successfully.",
       });
-      setShowCancelDialog(false);
+      // Invalidate and refetch orders
+      queryClient.invalidateQueries({ queryKey: ['orders'] });
     } catch (error) {
       console.error("Error cancelling order:", error);
       toast({
@@ -47,6 +54,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         description: "Failed to cancel order. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setShowCancelDialog(false);
+      setIsCancelling(false);
     }
   };
 
@@ -76,7 +86,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
                   onClick={() => setShowCancelDialog(true)}
-                  disabled={!isOngoing}
+                  disabled={!isOngoing || isCancelling}
                   className="text-red-500 focus:text-red-500"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -121,20 +131,33 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       </Card>
 
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Order</AlertDialogTitle>
             <AlertDialogDescription>
-              Do you want to cancel the order? This action cannot be undone.
+              Do you want to cancel this order? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">No</AlertDialogCancel>
+            <AlertDialogCancel 
+              className="rounded-full"
+              disabled={isCancelling}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowCancelDialog(false);
+              }}
+            >
+              No
+            </AlertDialogCancel>
             <AlertDialogAction 
-              onClick={handleCancelOrder}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCancelOrder();
+              }}
+              disabled={isCancelling}
               className="rounded-full bg-green-500 hover:bg-green-600"
             >
-              Yes
+              {isCancelling ? 'Cancelling...' : 'Yes'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
