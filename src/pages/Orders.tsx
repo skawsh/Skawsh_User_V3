@@ -68,6 +68,7 @@ const Orders = () => {
         ref={mainContainerRef}
         tabIndex={-1}
         data-testid="orders-container"
+        onClick={resetFocus} // Reset focus when clicking anywhere on the container
       >
         <h1 className="text-2xl font-bold mb-4">My Orders</h1>
         

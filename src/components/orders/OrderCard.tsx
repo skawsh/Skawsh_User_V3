@@ -2,16 +2,6 @@
 import React, { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,9 +11,7 @@ import {
 import { ChevronRight, MoreVertical, Trash2, PenLine } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
-import { cancelOrder } from '@/utils/ordersUtils';
-import { useToast } from '@/hooks/use-toast';
-import { useQueryClient } from '@tanstack/react-query';
+import CancelOrderModal from './CancelOrderModal';
 
 interface OrderCardProps {
   order: Order;
@@ -34,56 +22,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onCancelComplete 
 }) => {
-  const { toast } = useToast();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [isCancelling, setIsCancelling] = useState(false);
-  const queryClient = useQueryClient();
   const cardRef = useRef<HTMLDivElement>(null);
   
-  const handleCancelOrder = async () => {
-    if (isCancelling) return;
-    
-    setIsCancelling(true);
-    try {
-      await cancelOrder(order.id);
-      
-      // Close the dialog immediately before any other operations
-      setShowCancelDialog(false);
-      
-      // Show success toast
-      toast({
-        title: "Order cancelled",
-        description: "Your order has been cancelled successfully.",
-        duration: 3000, // Auto dismiss after 3 seconds
-      });
-      
-      // Invalidate queries to refresh the order list
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      
-      // Call the optional callback to help reset focus at the parent level
-      if (onCancelComplete) {
-        onCancelComplete();
-      }
-    } catch (error) {
-      console.error("Error cancelling order:", error);
-      toast({
-        title: "Error",
-        description: "Failed to cancel order. Please try again.",
-        variant: "destructive",
-        duration: 3000,
-      });
-    } finally {
-      // Always ensure dialog is closed and state is reset
-      setShowCancelDialog(false);
-      setIsCancelling(false);
-      
-      // Explicitly blur any focused element to prevent blinking cursor
-      if (document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
-      }
-    }
-  };
-
   const handleOpenDialog = () => {
     setShowCancelDialog(true);
   };
@@ -94,6 +35,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
     // Explicitly blur any focused element
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
+    
+    // Call the optional callback to help reset focus at the parent level
+    if (onCancelComplete) {
+      onCancelComplete();
     }
   };
 
@@ -127,7 +73,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
                   onClick={handleOpenDialog}
-                  disabled={!isOngoing || isCancelling}
+                  disabled={!isOngoing}
                   className="text-red-500 focus:text-red-500"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -171,58 +117,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
       </Card>
 
-      {/* Only render the AlertDialog when showCancelDialog is true */}
+      {/* Only render CancelOrderModal when showCancelDialog is true */}
       {showCancelDialog && (
-        <AlertDialog 
-          open={showCancelDialog} 
-          onOpenChange={handleCloseDialog}
-        >
-          <AlertDialogContent 
-            className="rounded-lg" 
-            tabIndex={-1}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                handleCloseDialog();
-              }
-            }}
-          >
-            <AlertDialogHeader>
-              <AlertDialogTitle>Cancel Order</AlertDialogTitle>
-              <AlertDialogDescription>
-                Do you want to cancel this order? This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel 
-                className="rounded-full"
-                disabled={isCancelling}
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleCloseDialog();
-                }}
-                tabIndex={0}
-              >
-                No
-              </AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleCancelOrder();
-                }}
-                disabled={isCancelling}
-                className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
-                type="button"
-                tabIndex={0}
-              >
-                {isCancelling ? 'Cancelling...' : 'Yes'}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <CancelOrderModal
+          orderId={order.id}
+          onClose={handleCloseDialog}
+          onCancelSuccess={onCancelComplete}
+        />
       )}
     </>
   );
