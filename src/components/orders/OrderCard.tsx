@@ -5,7 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/card';
 import Button from '../../components/ui-elements/Button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../components/ui/alert-dialog';
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from '../../components/ui/alert-dialog';
 import { toast } from "sonner";
 
 interface OrderCardProps {
@@ -26,7 +35,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onCancelOrder
 }) => {
   const navigate = useNavigate();
-  // State to control the confirmation dialogs
+  
+  // State for confirmation dialogs - separate from any DOM operations
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
@@ -42,7 +52,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
     console.log('Pay now for order');
   };
   
-  // Open the appropriate confirmation dialog based on order status
+  // Function to open confirmation dialog
   const openConfirmationDialog = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -54,24 +64,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
   
-  // Handle order cancellation or deletion after confirmation
+  // Simplified confirmation action - close dialog first, then handle order removal
   const confirmAction = () => {
-    // Close the dialogs first to prevent DOM issues
+    // Close the dialog first
     setShowCancelDialog(false);
     setShowDeleteDialog(false);
     
-    // Wait for dialog to close before updating state
+    // Use a slight delay to ensure dialog is fully closed before state updates
     setTimeout(() => {
-      // Call the parent handler to update state properly
+      // Call the cancellation function
       onCancelOrder(id);
       
-      // Show the appropriate toast message based on order status
+      // Show success message
       if (isCompleted) {
         toast.success("Order has been deleted from history");
       } else {
         toast.success("Order has been canceled");
       }
-    }, 100);
+    }, 150);
   };
   
   const handleEditOrder = (e: React.MouseEvent) => {
@@ -145,7 +155,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </CardContent>
       </Card>
 
-      {/* Cancel Order Confirmation Dialog */}
+      {/* Cancel Order Dialog - Separate from the main component rendering flow */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -163,7 +173,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Order Confirmation Dialog */}
+      {/* Delete Order Dialog - Separate from the main component rendering flow */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

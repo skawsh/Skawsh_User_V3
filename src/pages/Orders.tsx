@@ -45,9 +45,8 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  // Handle order cancellation
+  // Handle order cancellation - just pass through to the utility function
   const onCancelOrder = (orderId: string) => {
-    // Just pass the orderId to the utility function
     handleCancelOrder(orderId);
   };
 

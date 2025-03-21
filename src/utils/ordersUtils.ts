@@ -41,15 +41,11 @@ export const useOrders = () => {
     setOrders(mockOrders);
   }, []);
 
+  // Simple and safe method to remove an order by ID
   const handleCancelOrder = (orderId: string) => {
-    try {
-      // Safely update orders by creating a new array without the canceled/deleted order
-      setOrders((prevOrders) => {
-        return prevOrders.filter(order => order.id !== orderId);
-      });
-    } catch (error) {
-      console.error("Error removing order:", error);
-    }
+    // Create a new array without the canceled order
+    const updatedOrders = orders.filter(order => order.id !== orderId);
+    setOrders(updatedOrders);
   };
 
   return {
