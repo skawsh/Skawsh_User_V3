@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -8,16 +8,19 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchOrders } from '@/utils/ordersUtils';
 import { Loader2 } from 'lucide-react';
 import { Toaster } from '@/components/ui/toaster';
+import { useToast } from '@/hooks/use-toast';
 
 const Orders = () => {
   const [activeTab, setActiveTab] = useState('ongoing');
   const mainContainerRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
   
   const { 
     data: orders = [], 
     isLoading, 
     error,
-    isRefetching
+    isRefetching,
+    refetch
   } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
@@ -59,6 +62,20 @@ const Orders = () => {
       mainContainerRef.current.focus();
     }
   }, []);
+
+  const handleDeleteComplete = useCallback(() => {
+    // Refetch orders to update the list
+    refetch();
+    
+    // Show a toast notification
+    toast({
+      title: "Order deleted",
+      description: "The order has been removed from your history.",
+    });
+    
+    // Reset focus to avoid cursor issues
+    resetFocus();
+  }, [refetch, toast, resetFocus]);
 
   return (
     <Layout>
@@ -115,6 +132,7 @@ const Orders = () => {
                   <OrderList 
                     orders={ongoingOrders}
                     emptyMessage="You don't have any ongoing orders."
+                    onDeleteComplete={handleDeleteComplete}
                   />
                 </ScrollArea>
               </TabsContent>
@@ -134,6 +152,7 @@ const Orders = () => {
                   <OrderList 
                     orders={historyOrders}
                     emptyMessage="You don't have any order history yet."
+                    onDeleteComplete={handleDeleteComplete}
                   />
                 </ScrollArea>
               </TabsContent>

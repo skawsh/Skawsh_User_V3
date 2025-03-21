@@ -8,21 +8,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronRight, MoreVertical, Trash2, PenLine } from 'lucide-react';
+import { ChevronRight, MoreVertical, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface OrderCardProps {
   order: Order;
   onCancelComplete?: () => void;
+  onDeleteComplete?: () => void;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ 
   order,
-  onCancelComplete 
+  onCancelComplete,
+  onDeleteComplete
 }) => {
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -47,8 +60,36 @@ const OrderCard: React.FC<OrderCardProps> = ({
     }
   };
 
+  const openDeleteDialog = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteOrder = () => {
+    // Get current orders from sessionStorage
+    const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+    
+    // Filter out the deleted order
+    const updatedOrders = orders.filter((o: Order) => o.id !== order.id);
+    
+    // Update sessionStorage
+    sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
+    
+    // Close dialog
+    closeDeleteDialog();
+    
+    // Callback to refresh the list
+    if (onDeleteComplete) {
+      onDeleteComplete();
+    }
+  };
+
   const isPendingPayment = order.status === 'pending_payment';
   const isOngoing = order.status !== 'completed' && order.status !== 'cancelled';
+  const isHistory = order.status === 'completed' || order.status === 'cancelled';
 
   return (
     <>
@@ -75,18 +116,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem 
-                  onClick={openCancelModal}
-                  disabled={!isOngoing}
-                  className="text-red-500 focus:text-red-500"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Cancel Order
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <PenLine className="mr-2 h-4 w-4" />
-                  Edit Order
-                </DropdownMenuItem>
+                {isHistory ? (
+                  <DropdownMenuItem 
+                    onClick={openDeleteDialog}
+                    className="text-red-500 focus:text-red-500"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Order
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem 
+                    onClick={openCancelModal}
+                    disabled={!isOngoing}
+                    className="text-red-500 focus:text-red-500"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Cancel Order
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -136,6 +183,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
           onCancelSuccess={onCancelComplete}
         />
       )}
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Order</AlertDialogTitle>
+            <AlertDialogDescription>
+              Do you want to delete this order from your history?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={closeDeleteDialog}>No</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteOrder} className="bg-red-500 hover:bg-red-600">
+              Yes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

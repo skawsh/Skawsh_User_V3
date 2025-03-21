@@ -6,11 +6,13 @@ import { Order } from '@/types/order';
 interface OrderListProps {
   orders: Order[];
   emptyMessage?: string;
+  onDeleteComplete?: () => void;
 }
 
 const OrderList: React.FC<OrderListProps> = ({ 
   orders, 
-  emptyMessage = "You don't have any orders." 
+  emptyMessage = "You don't have any orders.",
+  onDeleteComplete
 }) => {
   // Create a reference to the list container for focus management
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -47,6 +49,7 @@ const OrderList: React.FC<OrderListProps> = ({
           key={order.id} 
           order={order} 
           onCancelComplete={handleCancelComplete}
+          onDeleteComplete={onDeleteComplete}
         />
       ))}
     </div>
