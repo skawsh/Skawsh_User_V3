@@ -14,7 +14,7 @@ const Orders: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   
-  useEffect(() => {
+  const loadOrders = () => {
     // Get orders based on active tab
     const status = activeTab === 'ongoing' 
       ? ['pending', 'confirmed', 'in-progress'] 
@@ -34,28 +34,19 @@ const Orders: React.FC = () => {
     }
     
     setOrders(filteredOrders);
+  };
+  
+  useEffect(() => {
+    loadOrders();
     
     // Listen for order updates
     const handleOrdersUpdated = () => {
-      // Re-fetch orders when update event is triggered
-      let updatedOrders: Order[] = [];
-      status.forEach(stat => {
-        updatedOrders = [...updatedOrders, ...getOrdersByStatus(stat as any)];
-      });
-      
-      if (searchTerm.trim()) {
-        updatedOrders = updatedOrders.filter(order => 
-          order.studioName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.items.some(item => item.serviceName.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-      }
-      
-      setOrders(updatedOrders);
+      loadOrders();
     };
     
-    document.addEventListener('ordersUpdated', handleOrdersUpdated);
+    window.addEventListener('ordersUpdated', handleOrdersUpdated);
     return () => {
-      document.removeEventListener('ordersUpdated', handleOrdersUpdated);
+      window.removeEventListener('ordersUpdated', handleOrdersUpdated);
     };
   }, [activeTab, searchTerm]);
 

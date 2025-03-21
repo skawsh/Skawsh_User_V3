@@ -122,7 +122,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       </Card>
 
       {/* Cancel Order Confirmation Dialog */}
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+      <AlertDialog 
+        open={showCancelDialog} 
+        onOpenChange={(open) => {
+          setShowCancelDialog(open);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Order</AlertDialogTitle>
@@ -132,7 +137,13 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmCancelOrder} className="bg-destructive text-destructive-foreground">
+            <AlertDialogAction 
+              onClick={(e) => {
+                e.preventDefault();
+                confirmCancelOrder();
+              }} 
+              className="bg-destructive text-destructive-foreground"
+            >
               Yes
             </AlertDialogAction>
           </AlertDialogFooter>

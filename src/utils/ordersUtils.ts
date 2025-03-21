@@ -128,7 +128,7 @@ export const getOrdersByStatus = (status: OrderStatus | 'all'): Order[] => {
 const saveOrders = (orders: Order[]) => {
   localStorage.setItem('orders', JSON.stringify(orders));
   // Dispatch an event that orders have been updated
-  document.dispatchEvent(new CustomEvent('ordersUpdated'));
+  window.dispatchEvent(new CustomEvent('ordersUpdated'));
 };
 
 // Cancel an order
@@ -144,10 +144,13 @@ export const cancelOrder = (orderId: string): boolean => {
       orders[orderIndex].status = 'cancelled';
       saveOrders(orders);
       
-      toast({
-        title: "Order Cancelled",
-        description: "Your order has been successfully cancelled."
-      });
+      // Use setTimeout to ensure the UI updates properly
+      setTimeout(() => {
+        toast({
+          title: "Order Cancelled",
+          description: "Your order has been successfully cancelled."
+        });
+      }, 100);
       
       return true;
     }
