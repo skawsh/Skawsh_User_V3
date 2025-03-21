@@ -31,27 +31,27 @@ const generateMockOrders = (): Order[] => {
     {
       id: "ord-001",
       studioId: "studio-1",
-      studioName: "Busy Bee",
+      studioName: "Lakme Salon",
       studioImage: "/lovable-uploads/95b97c87-0963-424b-ad2b-400d1104bfd2.png",
       items: [
-        { id: "item-1", serviceName: "Haircut & Style", quantity: 1, price: 200 },
-        { id: "item-2", serviceName: "Hair Spa", quantity: 1, price: 96 }
+        { id: "item-1", serviceName: "Haircut & Style", quantity: 1, price: 500 },
+        { id: "item-2", serviceName: "Hair Spa", quantity: 1, price: 1200 }
       ],
       status: "pending",
-      totalAmount: 296,
+      totalAmount: 1700,
       orderDate: "2025-03-15T10:30:00",
       scheduledDate: "2025-03-22T14:00:00"
     },
     {
       id: "ord-002",
       studioId: "studio-2",
-      studioName: "U Clean",
+      studioName: "Enrich Salon",
       studioImage: "/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png",
       items: [
-        { id: "item-3", serviceName: "Full House Cleaning", quantity: 1, price: 356 }
+        { id: "item-3", serviceName: "Full Body Massage", quantity: 1, price: 2000 }
       ],
       status: "confirmed",
-      totalAmount: 356,
+      totalAmount: 2000,
       orderDate: "2025-03-10T15:45:00",
       scheduledDate: "2025-03-18T11:30:00"
     },

@@ -1,66 +1,167 @@
 
 import React from 'react';
-import { User, Settings, MapPin, Package, Heart, MessageSquare, Users, HelpCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  LogOut, 
+  MapPin, 
+  Settings, 
+  MessageSquare, 
+  Users, 
+  Building, 
+  HelpCircle, 
+  Pencil, 
+  Phone, 
+  Mail,
+  User,
+  Heart,
+  ClipboardList
+} from 'lucide-react';
 
-const ProfileInfo = () => {
-  const profileMenuItems = [
-    { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
-    { icon: <MapPin size={20} />, label: 'Addresses', path: '/addresses' },
-    { icon: <Package size={20} />, label: 'Your Orders', path: '/orders' },
-    { icon: <Heart size={20} />, label: 'Favorites', path: '/favorites' },
-    { icon: <MessageSquare size={20} />, label: 'Feedback', path: '/feedback' },
-    { icon: <Users size={20} />, label: 'Refer Friends', path: '/refer' },
-    { icon: <HelpCircle size={20} />, label: 'Help & Support', path: '/support' },
-  ];
+const ProfileInfo: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleMenuItem = (path: string) => {
+    // Navigate to the respective path
+    navigate(path);
+  };
+
+  const handleLogout = () => {
+    // For now, just redirect to home
+    navigate('/');
+  };
 
   return (
-    <div className="space-y-8 pb-8">
-      {/* Profile header */}
-      <div className="flex items-center gap-4 p-4">
-        <div className="bg-gray-100 rounded-full p-4">
-          <User size={40} className="text-gray-600" />
-        </div>
-        <div>
-          <h2 className="text-xl font-semibold">Guest User</h2>
-          <p className="text-gray-500">+91 98765 43210</p>
-        </div>
-      </div>
-
-      {/* Menu items */}
-      <div className="grid divide-y divide-gray-100">
-        {profileMenuItems.map((item, index) => (
-          <Link
-            key={index}
-            to={item.path}
-            className="flex items-center justify-between p-4 hover:bg-gray-50"
-          >
-            <div className="flex items-center gap-3">
-              <div className="text-primary-500">{item.icon}</div>
-              <span>{item.label}</span>
+    <div className="animate-fade-in space-y-6">
+      <Card className="overflow-hidden shadow-md border-none">
+        <CardContent className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <Avatar className="h-20 w-20 border-2 border-white shadow-md">
+                <AvatarImage src="/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png" alt="Raksha sha" />
+                <AvatarFallback className="bg-primary-100 text-primary-500">
+                  <User size={32} />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-800">Raksha sha</h1>
+                <div className="flex items-center gap-2 text-gray-600 mt-1">
+                  <Phone size={14} className="text-primary-500" />
+                  <span className="text-sm">9876123540</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600 mt-1">
+                  <Mail size={14} className="text-primary-500" />
+                  <span className="text-sm">kavyasri@gmail.com</span>
+                </div>
+              </div>
             </div>
-            <div className="text-gray-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <button className="text-primary-500 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-white/50">
+              <Pencil size={20} />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <div className="grid grid-cols-1 gap-4">
+        <h2 className="text-lg font-medium text-gray-700 mb-1 px-1">Account</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ProfileMenuItem 
+            icon={<ClipboardList size={18} className="text-primary-500" />} 
+            title="Orders" 
+            description="View your past and ongoing orders"
+            onClick={() => handleMenuItem('/orders')} 
+          />
+          <ProfileMenuItem 
+            icon={<Heart size={18} className="text-primary-500" />} 
+            title="Washlist" 
+            description="Your favorite studios and services"
+            onClick={() => handleMenuItem('/favorites')} 
+          />
+          <ProfileMenuItem 
+            icon={<MapPin size={18} className="text-primary-500" />} 
+            title="Addresses" 
+            description="Manage your saved addresses"
+            onClick={() => handleMenuItem('/addresses')} 
+          />
+          <ProfileMenuItem 
+            icon={<Settings size={18} className="text-primary-500" />} 
+            title="Settings" 
+            description="Manage your account settings"
+            onClick={() => handleMenuItem('/settings')} 
+          />
+        </div>
+        
+        <h2 className="text-lg font-medium text-gray-700 mt-4 mb-1 px-1">Support & More</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <ProfileMenuItem 
+            icon={<MessageSquare size={18} className="text-primary-500" />} 
+            title="Send Feedback" 
+            description="Help us improve our services"
+            onClick={() => handleMenuItem('/feedback')} 
+          />
+          <ProfileMenuItem 
+            icon={<Users size={18} className="text-primary-500" />} 
+            title="Refer Friends" 
+            description="Invite friends and earn rewards"
+            onClick={() => handleMenuItem('/refer')} 
+          />
+          <ProfileMenuItem 
+            icon={<Building size={18} className="text-primary-500" />} 
+            title="Skawsh for Studio" 
+            description="Partner with us for your business"
+            onClick={() => handleMenuItem('/studio')} 
+          />
+          <ProfileMenuItem 
+            icon={<HelpCircle size={18} className="text-primary-500" />} 
+            title="Support" 
+            description="Get help with your queries"
+            onClick={() => handleMenuItem('/support')} 
+          />
+        </div>
+        
+        <Card 
+          className="mt-4 cursor-pointer transition-colors overflow-hidden bg-gradient-to-r from-red-50 to-white hover:from-red-100 hover:to-red-50 border-none shadow-sm"
+          onClick={handleLogout}
+        >
+          <CardContent className="p-4 flex items-center gap-3 text-red-500">
+            <div className="p-2 rounded-full bg-red-100">
+              <LogOut size={18} />
             </div>
-          </Link>
-        ))}
-      </div>
-
-      <div className="px-4">
-        <button className="text-red-500 font-medium">Log Out</button>
+            <div>
+              <span className="font-medium">Logout</span>
+              <p className="text-xs text-gray-500">Sign out from your account</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
+  );
+};
+
+interface ProfileMenuItemProps {
+  icon: React.ReactNode;
+  title: string;
+  description?: string;
+  onClick: () => void;
+}
+
+const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({ icon, title, description, onClick }) => {
+  return (
+    <Card 
+      className="cursor-pointer transition-all hover:shadow-md border-none shadow-sm bg-white hover:bg-gradient-to-br hover:from-primary-50 hover:to-white"
+      onClick={onClick}
+    >
+      <CardContent className="p-4">
+        <div className="flex items-center gap-4">
+          <div className="p-2 rounded-full bg-primary-50">{icon}</div>
+          <div className="flex-1">
+            <span className="font-medium text-gray-800">{title}</span>
+            {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
