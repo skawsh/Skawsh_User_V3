@@ -22,22 +22,19 @@ const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onCancelComplete 
 }) => {
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  const handleOpenDialog = () => {
-    setShowCancelDialog(true);
+  const openCancelModal = () => {
+    setShowCancelModal(true);
   };
 
-  const handleCloseDialog = () => {
-    setShowCancelDialog(false);
-    
-    // Explicitly blur any focused element
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    // Explicitly blur any focused element to remove any lingering cursor
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    
-    // Call the optional callback to help reset focus at the parent level
     if (onCancelComplete) {
       onCancelComplete();
     }
@@ -72,7 +69,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem 
-                  onClick={handleOpenDialog}
+                  onClick={openCancelModal}
                   disabled={!isOngoing}
                   className="text-red-500 focus:text-red-500"
                 >
@@ -117,11 +114,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
       </Card>
 
-      {/* Only render CancelOrderModal when showCancelDialog is true */}
-      {showCancelDialog && (
+      {/* Only render CancelOrderModal when showCancelModal is true */}
+      {showCancelModal && (
         <CancelOrderModal
           orderId={order.id}
-          onClose={handleCloseDialog}
+          onClose={closeCancelModal}
           onCancelSuccess={onCancelComplete}
         />
       )}
