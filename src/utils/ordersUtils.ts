@@ -69,6 +69,49 @@ const mockOrders: Order[] = [
     status: 'cancelled',
     createdAt: new Date(2023, 9, 10).toISOString(),
     updatedAt: new Date(2023, 9, 11).toISOString(),
+  },
+  // New ongoing orders
+  {
+    id: 'newest-order-12345',
+    studioId: '6',
+    studioName: 'Royal Laundry',
+    userId: 'user1',
+    services: [
+      { id: 's8', name: 'Delicate Wash', price: 299, quantity: 2 },
+      { id: 's9', name: 'Express Service', price: 150, quantity: 1 },
+    ],
+    totalAmount: 748,
+    status: 'pending',
+    createdAt: new Date().toISOString(), // Today
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'pickup-ready-54321',
+    studioId: '7',
+    studioName: 'QuickWash Pro',
+    userId: 'user1',
+    services: [
+      { id: 's10', name: 'Bedsheet Cleaning', price: 399, quantity: 1 },
+      { id: 's11', name: 'Curtain Wash', price: 499, quantity: 1 },
+    ],
+    totalAmount: 898,
+    status: 'ready',
+    createdAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    updatedAt: new Date(Date.now() - 43200000).toISOString(), // 12 hours ago
+  },
+  {
+    id: 'premium-service-789',
+    studioId: '8',
+    studioName: 'Elite Cleaners',
+    userId: 'user1',
+    services: [
+      { id: 's12', name: 'Suit Cleaning', price: 599, quantity: 1 },
+      { id: 's13', name: 'Shoe Cleaning', price: 349, quantity: 1 },
+    ],
+    totalAmount: 948,
+    status: 'processing',
+    createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+    updatedAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
   }
 ];
 
