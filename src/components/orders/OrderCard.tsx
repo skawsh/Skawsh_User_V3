@@ -3,7 +3,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Order } from '@/utils/ordersUtils';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, MoreVertical } from 'lucide-react';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import { Button } from "@/components/ui/button";
 
 interface OrderCardProps {
   order: Order;
@@ -41,6 +48,36 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             <h3 className="font-bold text-lg">{order.studioName}</h3>
           </div>
         </div>
+        
+        {/* More options button */}
+        <ContextMenu>
+          <ContextMenuTrigger>
+            <Button 
+              variant="ghost" 
+              className="h-8 w-8 p-0" 
+              aria-label="More options"
+            >
+              <MoreVertical size={20} />
+            </Button>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem onClick={handleViewStudio}>
+              View Studio
+            </ContextMenuItem>
+            <ContextMenuItem onClick={handleViewDetails}>
+              Order Details
+            </ContextMenuItem>
+            {isPending && (
+              <ContextMenuItem>
+                Cancel Order
+              </ContextMenuItem>
+            )}
+          </ContextMenuContent>
+        </ContextMenu>
+      </div>
+      
+      {/* View menu button - moved below studio name */}
+      <div className="px-3 py-2 border-b border-gray-200">
         <button 
           onClick={handleViewStudio}
           className="flex items-center text-primary-500 text-sm font-medium"
