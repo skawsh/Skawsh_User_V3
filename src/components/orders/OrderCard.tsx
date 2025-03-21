@@ -5,11 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Order, cancelOrder } from '@/utils/ordersUtils';
 import { ChevronRight, MoreVertical } from 'lucide-react';
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -71,8 +71,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </div>
           
           {/* More options button */}
-          <ContextMenu>
-            <ContextMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
                 className="h-8 w-8 p-0" 
@@ -80,16 +80,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               >
                 <MoreVertical size={20} />
               </Button>
-            </ContextMenuTrigger>
-            <ContextMenuContent>
-              <ContextMenuItem disabled>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem disabled>
                 Edit Order
-              </ContextMenuItem>
-              <ContextMenuItem onClick={handleCancelOrder}>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCancelOrder}>
                 Cancel Order
-              </ContextMenuItem>
-            </ContextMenuContent>
-          </ContextMenu>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         {/* View menu button - moved below studio name */}
