@@ -88,6 +88,13 @@ const OrdersPage: React.FC = () => {
     }
   };
 
+  const handleCancelOrder = (orderId: string) => {
+    // Filter out the canceled order
+    const updatedOrders = orders.filter(order => order.id !== orderId);
+    setOrders(updatedOrders);
+    toast.success("Order has been canceled");
+  };
+
   const filteredOrders = orders.filter(order => order.studioName.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const ongoingOrders = filteredOrders.filter(order => order.status === 'ongoing');
@@ -128,14 +135,29 @@ const OrdersPage: React.FC = () => {
             {ongoingOrders.length === 0 ? <div className="text-center py-8">
                 <ShoppingBag size={48} className="mx-auto text-gray-300 mb-3" />
                 <p className="text-gray-500">No ongoing orders</p>
-              </div> : ongoingOrders.map(order => <OrderCard key={order.id} studioName={order.studioName} studioLogo={order.studioLogo} isSpecialCode={isSpecialCode} />)}
+              </div> : ongoingOrders.map(order => <OrderCard 
+                key={order.id} 
+                id={order.id} 
+                studioName={order.studioName} 
+                studioLogo={order.studioLogo} 
+                isSpecialCode={isSpecialCode} 
+                onCancelOrder={handleCancelOrder}
+              />)}
           </TabsContent>
           
           <TabsContent value="history" className="space-y-3 mt-0">
             {completedOrders.length === 0 ? <div className="text-center py-8">
                 <ShoppingBag size={48} className="mx-auto text-gray-300 mb-3" />
                 <p className="text-gray-500">No order history</p>
-              </div> : completedOrders.map(order => <OrderCard key={order.id} studioName={order.studioName} studioLogo={order.studioLogo} isCompleted isSpecialCode={isSpecialCode} />)}
+              </div> : completedOrders.map(order => <OrderCard 
+                key={order.id} 
+                id={order.id}
+                studioName={order.studioName} 
+                studioLogo={order.studioLogo} 
+                isCompleted 
+                isSpecialCode={isSpecialCode}
+                onCancelOrder={handleCancelOrder} 
+              />)}
           </TabsContent>
         </Tabs>
       </div>
@@ -143,17 +165,21 @@ const OrdersPage: React.FC = () => {
 };
 
 interface OrderCardProps {
+  id: string;
   studioName: string;
   studioLogo: string;
   isCompleted?: boolean;
   isSpecialCode?: boolean;
+  onCancelOrder: (orderId: string) => void;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({
+  id,
   studioName,
   studioLogo,
   isCompleted,
-  isSpecialCode
+  isSpecialCode,
+  onCancelOrder
 }) => {
   const navigate = useNavigate();
   
@@ -170,8 +196,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   };
   
   const handleCancelOrder = () => {
-    toast.success("Order cancellation requested");
-    console.log('Cancel order');
+    onCancelOrder(id);
   };
   
   const handleEditOrder = () => {
@@ -201,8 +226,12 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white">
-            <DropdownMenuItem onClick={handleEditOrder} className="cursor-pointer">
-              <Edit size={16} className="mr-2 text-blue-500" />
+            <DropdownMenuItem 
+              onClick={handleEditOrder} 
+              className={`${isSpecialCode ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+              disabled={!isSpecialCode}
+            >
+              <Edit size={16} className={`mr-2 ${isSpecialCode ? 'text-blue-500' : 'text-gray-400'}`} />
               <span>Edit Order</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleCancelOrder} className="cursor-pointer">
