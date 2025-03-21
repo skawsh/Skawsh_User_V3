@@ -21,6 +21,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Feedback from "./pages/Feedback";
 import ReferFriends from "./pages/ReferFriends";
 import Support from "./pages/Support";
+import Orders from "./pages/Orders";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient({
@@ -55,7 +56,7 @@ const App = () => (
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/refer" element={<ReferFriends />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/orders" element={<Navigate to="/profile" replace />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
