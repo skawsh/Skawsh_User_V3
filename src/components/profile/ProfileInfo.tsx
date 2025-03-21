@@ -5,9 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   LogOut, 
-  Calendar, 
   MapPin, 
-  CreditCard, 
   Settings, 
   MessageSquare, 
   Users, 
@@ -17,7 +15,6 @@ import {
   Phone, 
   Mail,
   User,
-  ShoppingBag,
   Heart,
   ClipboardList
 } from 'lucide-react';
@@ -86,12 +83,6 @@ const ProfileInfo: React.FC = () => {
             title="Addresses" 
             description="Manage your saved addresses"
             onClick={() => handleMenuItem('/addresses')} 
-          />
-          <ProfileMenuItem 
-            icon={<CreditCard size={18} className="text-primary-500" />} 
-            title="Payments and Refund" 
-            description="View payment history and refund status"
-            onClick={() => handleMenuItem('/payments')} 
           />
           <ProfileMenuItem 
             icon={<Settings size={18} className="text-primary-500" />} 
