@@ -56,19 +56,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
   
   // Handle order cancellation or deletion after confirmation
   const confirmAction = () => {
-    // Call the parent handler to update state properly
-    onCancelOrder(id);
-    
-    // Show the appropriate toast message based on order status
-    if (isCompleted) {
-      toast.success("Order has been deleted from history");
-    } else {
-      toast.success("Order has been canceled");
-    }
-    
-    // Close the dialogs
+    // Close the dialogs first to prevent DOM issues
     setShowCancelDialog(false);
     setShowDeleteDialog(false);
+    
+    // Wait for dialog to close before updating state
+    setTimeout(() => {
+      // Call the parent handler to update state properly
+      onCancelOrder(id);
+      
+      // Show the appropriate toast message based on order status
+      if (isCompleted) {
+        toast.success("Order has been deleted from history");
+      } else {
+        toast.success("Order has been canceled");
+      }
+    }, 100);
   };
   
   const handleEditOrder = (e: React.MouseEvent) => {

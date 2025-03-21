@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { toast } from "sonner";
 import OrdersHeader from '../components/orders/OrdersHeader';
 import OrderTabs from '../components/orders/OrderTabs';
-import { useOrders, Order } from '../utils/ordersUtils';
+import { useOrders } from '../utils/ordersUtils';
 
 const OrdersPage: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -46,10 +45,10 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  // Handle order cancellation - updated to not depend on a return value
+  // Handle order cancellation
   const onCancelOrder = (orderId: string) => {
+    // Just pass the orderId to the utility function
     handleCancelOrder(orderId);
-    toast.success("Order has been canceled");
   };
 
   // Filter orders based on search query
