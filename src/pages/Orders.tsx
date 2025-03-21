@@ -7,6 +7,7 @@ import OrderList from '@/components/orders/OrderList';
 import { useQuery } from '@tanstack/react-query';
 import { fetchOrders } from '@/utils/ordersUtils';
 import { Loader2 } from 'lucide-react';
+import { Toaster } from '@/components/ui/toaster';
 
 const Orders = () => {
   const [activeTab, setActiveTab] = useState('ongoing');
@@ -14,12 +15,13 @@ const Orders = () => {
   const { 
     data: orders = [], 
     isLoading, 
-    error 
+    error,
+    isRefetching
   } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
-    refetchOnWindowFocus: false,
-    staleTime: 10000, // 10 seconds
+    refetchOnWindowFocus: true,
+    staleTime: 3000, // 3 seconds
   });
 
   const ongoingOrders = orders.filter(order => 
@@ -61,6 +63,11 @@ const Orders = () => {
             <>
               <TabsContent value="ongoing" className="mt-0">
                 <ScrollArea className="h-[calc(100vh-200px)]">
+                  {isRefetching ? (
+                    <div className="absolute top-2 right-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                    </div>
+                  ) : null}
                   <OrderList 
                     orders={ongoingOrders}
                     emptyMessage="You don't have any ongoing orders."
@@ -70,6 +77,11 @@ const Orders = () => {
               
               <TabsContent value="history" className="mt-0">
                 <ScrollArea className="h-[calc(100vh-200px)]">
+                  {isRefetching ? (
+                    <div className="absolute top-2 right-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary-500" />
+                    </div>
+                  ) : null}
                   <OrderList 
                     orders={historyOrders}
                     emptyMessage="You don't have any order history yet."
@@ -80,6 +92,7 @@ const Orders = () => {
           )}
         </Tabs>
       </div>
+      <Toaster />
     </Layout>
   );
 };

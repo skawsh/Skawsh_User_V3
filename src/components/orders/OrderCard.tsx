@@ -41,10 +41,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     setIsCancelling(true);
     try {
       await cancelOrder(order.id);
+      
+      // Close the modal immediately
+      setShowCancelDialog(false);
+      
+      // Show success toast
       toast({
         title: "Order cancelled",
         description: "Your order has been cancelled successfully.",
+        duration: 3000, // Auto dismiss after 3 seconds
       });
+      
       // Invalidate and refetch orders
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     } catch (error) {
@@ -53,9 +60,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         title: "Error",
         description: "Failed to cancel order. Please try again.",
         variant: "destructive",
+        duration: 3000,
       });
-    } finally {
+      // Make sure to close the dialog even on error
       setShowCancelDialog(false);
+    } finally {
       setIsCancelling(false);
     }
   };
@@ -130,7 +139,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </div>
       </Card>
 
-      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+      <AlertDialog 
+        open={showCancelDialog} 
+        onOpenChange={(isOpen) => {
+          if (!isCancelling) {
+            setShowCancelDialog(isOpen);
+          }
+        }}
+      >
         <AlertDialogContent className="rounded-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Order</AlertDialogTitle>
@@ -143,6 +159,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               className="rounded-full"
               disabled={isCancelling}
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 setShowCancelDialog(false);
               }}
@@ -151,11 +168,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 handleCancelOrder();
               }}
               disabled={isCancelling}
-              className="rounded-full bg-green-500 hover:bg-green-600"
+              className="rounded-full bg-green-500 hover:bg-green-600 transition-colors"
             >
               {isCancelling ? 'Cancelling...' : 'Yes'}
             </AlertDialogAction>

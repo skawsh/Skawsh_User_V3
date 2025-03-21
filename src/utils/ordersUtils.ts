@@ -117,9 +117,10 @@ export const getOrderById = async (id: string): Promise<Order> => {
   });
 };
 
-// Cancel an order
+// Cancel an order - improved to not block UI thread
 export const cancelOrder = async (id: string): Promise<void> => {
   return new Promise((resolve, reject) => {
+    // Short timeout to ensure UI can update first
     setTimeout(() => {
       try {
         const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
@@ -140,14 +141,12 @@ export const cancelOrder = async (id: string): Promise<void> => {
         // Save updated orders to sessionStorage
         sessionStorage.setItem('orders', JSON.stringify(orders));
         
-        // Add a small delay before resolving to simulate network
-        setTimeout(() => {
-          resolve();
-        }, 500);
+        // Resolve immediately to avoid UI freeze
+        resolve();
       } catch (error) {
         console.error("Error in cancelOrder:", error);
         reject(error);
       }
-    }, 300);
+    }, 100); // Very short delay to not block UI
   });
 };
