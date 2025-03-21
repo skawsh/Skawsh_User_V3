@@ -21,6 +21,7 @@ const OrdersPage: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isSpecialCode, setIsSpecialCode] = useState(false);
   
   // Mock orders data - in a real app, you would fetch this from an API
   useEffect(() => {
@@ -74,6 +75,17 @@ const OrdersPage: React.FC = () => {
     navigate('/profile');
   };
 
+  // Check for special search code
+  useEffect(() => {
+    setIsSpecialCode(searchQuery === '27102001');
+  }, [searchQuery]);
+
+  // Handle search submission
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSpecialCode(searchQuery === '27102001');
+  };
+
   // Filter orders based on search query
   const filteredOrders = orders.filter(order => 
     order.studioName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -111,7 +123,7 @@ const OrdersPage: React.FC = () => {
           <h1 className="text-xl font-bold text-center flex-1 text-gray-800">Your Orders</h1>
         </div>
         
-        <div className="relative mb-4">
+        <form onSubmit={handleSearch} className="relative mb-4">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           <Input
             className="pl-10 pr-4 py-2 bg-white rounded-full border-gray-200"
@@ -119,7 +131,7 @@ const OrdersPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div>
+        </form>
         
         <Tabs defaultValue="ongoing" className="w-full">
           <TabsList className="w-full grid grid-cols-2 mb-4">
@@ -150,6 +162,7 @@ const OrdersPage: React.FC = () => {
                   studioName={order.studioName}
                   studioLogo={order.studioLogo}
                   amount={order.amount}
+                  isSpecialCode={isSpecialCode}
                 />
               ))
             )}
@@ -169,6 +182,7 @@ const OrdersPage: React.FC = () => {
                   studioLogo={order.studioLogo}
                   amount={order.amount}
                   isCompleted
+                  isSpecialCode={isSpecialCode}
                 />
               ))
             )}
@@ -184,9 +198,10 @@ interface OrderCardProps {
   studioLogo: string;
   amount: number;
   isCompleted?: boolean;
+  isSpecialCode?: boolean;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, isCompleted }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, isCompleted, isSpecialCode }) => {
   const navigate = useNavigate();
   
   const handleViewMenu = () => {
@@ -239,9 +254,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ studioName, studioLogo, amount, i
         {!isCompleted && (
           <Button 
             onClick={handlePayNow}
-            className="bg-green-500 text-white hover:bg-green-600 border-none shadow-md px-4"
+            className={`${isSpecialCode ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-500 hover:bg-gray-600'} text-white border-none shadow-md px-4`}
           >
-            Pay Now ₹{amount}
+            Pay Now
           </Button>
         )}
         
