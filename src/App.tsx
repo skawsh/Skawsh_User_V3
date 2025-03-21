@@ -14,7 +14,6 @@ import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Addresses from "./pages/Addresses";
-import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 import StudiosByService from "./pages/StudiosByService";
@@ -53,10 +52,10 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/addresses" element={<Addresses />} />
-          <Route path="/orders" element={<Orders />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/refer" element={<ReferFriends />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/orders" element={<Navigate to="/profile" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
