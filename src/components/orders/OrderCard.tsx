@@ -85,16 +85,8 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               <ContextMenuItem disabled>
                 Edit Order
               </ContextMenuItem>
-              {isPending && (
-                <ContextMenuItem onClick={handleCancelOrder}>
-                  Cancel Order
-                </ContextMenuItem>
-              )}
-              <ContextMenuItem onClick={handleViewStudio}>
-                View Studio
-              </ContextMenuItem>
-              <ContextMenuItem onClick={handleViewDetails}>
-                Order Details
+              <ContextMenuItem onClick={handleCancelOrder}>
+                Cancel Order
               </ContextMenuItem>
             </ContextMenuContent>
           </ContextMenu>
