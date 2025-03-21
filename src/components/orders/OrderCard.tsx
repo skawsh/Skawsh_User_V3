@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoreVertical, Edit, X } from 'lucide-react';
+import { MoreVertical, Edit, X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/card';
 import Button from '../../components/ui-elements/Button';
@@ -38,13 +38,20 @@ const OrderCard: React.FC<OrderCardProps> = ({
     console.log('Pay now for order');
   };
   
-  // Updated to safely handle cancel
+  // Handle order cancellation or deletion
   const handleCancelOrder = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
     // Call the parent handler to update state properly
     onCancelOrder(id);
+    
+    // Show the appropriate toast message based on order status
+    if (isCompleted) {
+      toast.success("Order has been deleted from history");
+    } else {
+      toast.success("Order has been canceled");
+    }
   };
   
   const handleEditOrder = () => {
@@ -75,18 +82,29 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white">
-            <DropdownMenuItem 
-              onClick={handleEditOrder} 
-              className={`${isSpecialCode ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-              disabled={!isSpecialCode}
-            >
-              <Edit size={16} className={`mr-2 ${isSpecialCode ? 'text-blue-500' : 'text-gray-400'}`} />
-              <span>Edit Order</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleCancelOrder} className="cursor-pointer">
-              <X size={16} className="mr-2 text-red-500" />
-              <span>Cancel Order</span>
-            </DropdownMenuItem>
+            {!isCompleted && (
+              <>
+                <DropdownMenuItem 
+                  onClick={handleEditOrder} 
+                  className={`${isSpecialCode ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                  disabled={!isSpecialCode}
+                >
+                  <Edit size={16} className={`mr-2 ${isSpecialCode ? 'text-blue-500' : 'text-gray-400'}`} />
+                  <span>Edit Order</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCancelOrder} className="cursor-pointer">
+                  <X size={16} className="mr-2 text-red-500" />
+                  <span>Cancel Order</span>
+                </DropdownMenuItem>
+              </>
+            )}
+            
+            {isCompleted && (
+              <DropdownMenuItem onClick={handleCancelOrder} className="cursor-pointer">
+                <Trash2 size={16} className="mr-2 text-red-500" />
+                <span>Delete Order</span>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
