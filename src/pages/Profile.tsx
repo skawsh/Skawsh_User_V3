@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ProfileInfo from '../components/profile/ProfileInfo';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
@@ -25,20 +25,33 @@ const Profile: React.FC = () => {
     navigate('/');
   };
 
+  const handleSettings = () => {
+    navigate('/settings');
+  };
+
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-gradient-to-b from-primary-50 to-white min-h-screen">
         {/* Sticky header that appears when scrolled */}
         {isScrolled && (
-          <div className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 shadow-sm py-2 px-4 flex items-center">
+          <div className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 shadow-sm py-2 px-4 flex items-center justify-between">
+            <div className="flex items-center">
+              <button 
+                onClick={handleBack}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-3"
+                aria-label="Go back to homepage"
+              >
+                <ArrowLeft size={20} className="text-gray-700" />
+              </button>
+              <span className="font-medium text-gray-800">Your Profile</span>
+            </div>
             <button 
-              onClick={handleBack}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-3"
-              aria-label="Go back to homepage"
+              onClick={handleSettings}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Settings"
             >
-              <ArrowLeft size={20} className="text-gray-700" />
+              <Settings size={20} className="text-gray-700" />
             </button>
-            <span className="font-medium text-gray-800">Your Profile</span>
           </div>
         )}
         
@@ -50,9 +63,18 @@ const Profile: React.FC = () => {
           >
             <ArrowLeft size={20} className="text-gray-700" />
           </button>
-          <button className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors">
-            <span className="text-sm font-medium">Logout</span>
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleSettings}
+              className="p-2 rounded-full hover:bg-white/80 transition-colors"
+              aria-label="Settings"
+            >
+              <Settings size={20} className="text-primary-500" />
+            </button>
+            <button className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors">
+              <span className="text-sm font-medium">Logout</span>
+            </button>
+          </div>
         </div>
         <ProfileInfo />
       </div>

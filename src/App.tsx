@@ -12,6 +12,7 @@ import Services from "./pages/Services";
 import Favorites from "./pages/Favorites";
 import Cart from "./pages/Cart";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import Addresses from "./pages/Addresses";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/addresses" element={<Addresses />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
