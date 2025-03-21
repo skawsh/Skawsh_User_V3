@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { ArrowLeft, Search } from 'lucide-react';
@@ -14,7 +14,8 @@ const Orders: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   
-  const loadOrders = () => {
+  // Create a memoized loadOrders function
+  const loadOrders = useCallback(() => {
     // Get orders based on active tab
     const status = activeTab === 'ongoing' 
       ? ['pending', 'confirmed', 'in-progress'] 
@@ -34,9 +35,10 @@ const Orders: React.FC = () => {
     }
     
     setOrders(filteredOrders);
-  };
+  }, [activeTab, searchTerm]);
   
   useEffect(() => {
+    // Initial load of orders
     loadOrders();
     
     // Listen for order updates
@@ -44,11 +46,14 @@ const Orders: React.FC = () => {
       loadOrders();
     };
     
+    // Add event listener
     window.addEventListener('ordersUpdated', handleOrdersUpdated);
+    
+    // Cleanup
     return () => {
       window.removeEventListener('ordersUpdated', handleOrdersUpdated);
     };
-  }, [activeTab, searchTerm]);
+  }, [loadOrders]);
 
   const handleBack = () => {
     navigate(-1);

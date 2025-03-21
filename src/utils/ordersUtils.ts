@@ -124,11 +124,20 @@ export const getOrdersByStatus = (status: OrderStatus | 'all'): Order[] => {
   return orders.filter(order => order.status === status);
 };
 
-// Save orders to local storage
+// Save orders to local storage and notify UI components
 const saveOrders = (orders: Order[]) => {
-  localStorage.setItem('orders', JSON.stringify(orders));
-  // Dispatch an event that orders have been updated
-  window.dispatchEvent(new CustomEvent('ordersUpdated'));
+  try {
+    // Save to localStorage
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Dispatch event after a very short delay to allow React to process state updates
+    setTimeout(() => {
+      const event = new CustomEvent('ordersUpdated');
+      window.dispatchEvent(event);
+    }, 10);
+  } catch (error) {
+    console.error('Error saving orders:', error);
+  }
 };
 
 // Cancel an order
@@ -141,16 +150,19 @@ export const cancelOrder = (orderId: string): boolean => {
     
     // Only pending and confirmed orders can be cancelled
     if (['pending', 'confirmed'].includes(orders[orderIndex].status)) {
+      // Update the order status
       orders[orderIndex].status = 'cancelled';
+      
+      // Save orders and update UI
       saveOrders(orders);
       
-      // Use setTimeout to ensure the UI updates properly
+      // Show toast notification after a short delay
       setTimeout(() => {
         toast({
           title: "Order Cancelled",
           description: "Your order has been successfully cancelled."
         });
-      }, 100);
+      }, 300);
       
       return true;
     }

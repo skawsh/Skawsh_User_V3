@@ -45,7 +45,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   };
 
   const confirmCancelOrder = () => {
-    cancelOrder(order.id);
+    // Call the cancelOrder function and handle the result
+    const success = cancelOrder(order.id);
+    
+    // Always close the dialog, regardless of success
     setShowCancelDialog(false);
   };
   
@@ -124,9 +127,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       {/* Cancel Order Confirmation Dialog */}
       <AlertDialog 
         open={showCancelDialog} 
-        onOpenChange={(open) => {
-          setShowCancelDialog(open);
-        }}
+        onOpenChange={setShowCancelDialog}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
