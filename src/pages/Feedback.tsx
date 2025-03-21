@@ -61,8 +61,8 @@ const Feedback: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
-        <div className={`sticky top-0 pt-2 z-10 bg-white ${isScrolled ? 'shadow-md' : ''}`}>
-          <div className="flex items-center mb-6 px-4">
+        <div className={`sticky top-0 z-10 bg-white ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-200`}>
+          <div className="flex items-center mb-6 px-4 py-3">
             <button 
               onClick={handleBack}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"

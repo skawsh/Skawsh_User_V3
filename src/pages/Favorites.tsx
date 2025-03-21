@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import GlassCard from '../components/ui-elements/GlassCard';
-import { Star, Clock, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Star, Clock, Heart, ArrowLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Define types for our favorites
 interface FavoriteStudio {
@@ -38,14 +38,25 @@ const getFavoritesFromStorage = () => {
 };
 
 const Favorites: React.FC = () => {
+  const navigate = useNavigate();
   const [favoriteStudios, setFavoriteStudios] = useState<FavoriteStudio[]>([]);
   const [favoriteServices, setFavoriteServices] = useState<FavoriteService[]>([]);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   useEffect(() => {
     // Load favorites from localStorage on component mount
     const { studios, services } = getFavoritesFromStorage();
     setFavoriteStudios(studios);
     setFavoriteServices(services);
+    
+    // Track scroll position
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   // Remove studio from favorites
@@ -61,11 +72,25 @@ const Favorites: React.FC = () => {
     setFavoriteServices(updatedFavorites);
     localStorage.setItem('favoriteServices', JSON.stringify(updatedFavorites));
   };
+
+  const handleBack = () => {
+    navigate('/profile');
+  };
   
   return (
     <Layout>
       <div className="section-container pb-10">
-        <h1 className="text-2xl font-semibold mb-6 pt-2 animate-fade-in">Washlist</h1>
+        <div className={`sticky top-0 z-10 bg-white ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-200`}>
+          <div className="flex items-center mb-6 px-4 py-3">
+            <button 
+              onClick={handleBack}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"
+            >
+              <ArrowLeft size={20} className="text-gray-700" />
+            </button>
+            <h1 className="text-xl font-semibold">Washlist</h1>
+          </div>
+        </div>
         
         {favoriteStudios.length === 0 && favoriteServices.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center animate-fade-in">
@@ -82,7 +107,7 @@ const Favorites: React.FC = () => {
         ) : (
           <>
             {favoriteStudios.length > 0 && (
-              <div className="mb-8 animate-fade-in animate-stagger-1">
+              <div className="mb-8 animate-fade-in animate-stagger-1 px-4">
                 <h2 className="text-lg font-semibold mb-4">Favorite Studios</h2>
                 <div className="space-y-4">
                   {favoriteStudios.map((studio, index) => (
@@ -129,7 +154,7 @@ const Favorites: React.FC = () => {
             )}
             
             {favoriteServices.length > 0 && (
-              <div className="animate-fade-in animate-stagger-2">
+              <div className="animate-fade-in animate-stagger-2 px-4">
                 <h2 className="text-lg font-semibold mb-4">Favorite Services</h2>
                 <div className="space-y-4">
                   {favoriteServices.map((service, index) => (

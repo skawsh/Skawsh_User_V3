@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Copy, Share, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -14,14 +14,14 @@ const ReferFriends: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   // Example referral code
   const referralCode = "SKAWSH2025";
   const referralLink = `https://skawsh.com/join?ref=${referralCode}`;
 
   // Track scroll position
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       setIsScrolled(scrollPosition > 50);
@@ -92,8 +92,8 @@ const ReferFriends: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-white min-h-screen">
-        <div className={`sticky top-0 pt-2 z-10 bg-white ${isScrolled ? 'shadow-md' : ''}`}>
-          <div className="flex items-center mb-4 px-4">
+        <div className={`sticky top-0 z-10 bg-white ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-200`}>
+          <div className="flex items-center mb-4 px-4 py-3">
             <button 
               onClick={handleBack}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors mr-2"
