@@ -31,27 +31,27 @@ const generateMockOrders = (): Order[] => {
     {
       id: "ord-001",
       studioId: "studio-1",
-      studioName: "Lakme Salon",
+      studioName: "Busy Bee",
       studioImage: "/lovable-uploads/95b97c87-0963-424b-ad2b-400d1104bfd2.png",
       items: [
-        { id: "item-1", serviceName: "Haircut & Style", quantity: 1, price: 500 },
-        { id: "item-2", serviceName: "Hair Spa", quantity: 1, price: 1200 }
+        { id: "item-1", serviceName: "Haircut & Style", quantity: 1, price: 200 },
+        { id: "item-2", serviceName: "Hair Spa", quantity: 1, price: 96 }
       ],
       status: "pending",
-      totalAmount: 1700,
+      totalAmount: 296,
       orderDate: "2025-03-15T10:30:00",
       scheduledDate: "2025-03-22T14:00:00"
     },
     {
       id: "ord-002",
       studioId: "studio-2",
-      studioName: "Enrich Salon",
+      studioName: "U Clean",
       studioImage: "/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png",
       items: [
-        { id: "item-3", serviceName: "Full Body Massage", quantity: 1, price: 2000 }
+        { id: "item-3", serviceName: "Full House Cleaning", quantity: 1, price: 356 }
       ],
       status: "confirmed",
-      totalAmount: 2000,
+      totalAmount: 356,
       orderDate: "2025-03-10T15:45:00",
       scheduledDate: "2025-03-18T11:30:00"
     },
@@ -124,20 +124,11 @@ export const getOrdersByStatus = (status: OrderStatus | 'all'): Order[] => {
   return orders.filter(order => order.status === status);
 };
 
-// Save orders to local storage and notify UI components
+// Save orders to local storage
 const saveOrders = (orders: Order[]) => {
-  try {
-    // Save to localStorage
-    localStorage.setItem('orders', JSON.stringify(orders));
-    
-    // Dispatch event after a very short delay to allow React to process state updates
-    setTimeout(() => {
-      const event = new CustomEvent('ordersUpdated');
-      window.dispatchEvent(event);
-    }, 10);
-  } catch (error) {
-    console.error('Error saving orders:', error);
-  }
+  localStorage.setItem('orders', JSON.stringify(orders));
+  // Dispatch an event that orders have been updated
+  document.dispatchEvent(new CustomEvent('ordersUpdated'));
 };
 
 // Cancel an order
@@ -150,19 +141,13 @@ export const cancelOrder = (orderId: string): boolean => {
     
     // Only pending and confirmed orders can be cancelled
     if (['pending', 'confirmed'].includes(orders[orderIndex].status)) {
-      // Update the order status
       orders[orderIndex].status = 'cancelled';
-      
-      // Save orders and update UI
       saveOrders(orders);
       
-      // Show toast notification after a short delay
-      setTimeout(() => {
-        toast({
-          title: "Order Cancelled",
-          description: "Your order has been successfully cancelled."
-        });
-      }, 300);
+      toast({
+        title: "Order Cancelled",
+        description: "Your order has been successfully cancelled."
+      });
       
       return true;
     }

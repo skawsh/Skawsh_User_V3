@@ -1,156 +1,180 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from "@/components/ui/card";
-import { Order, cancelOrder } from '@/utils/ordersUtils';
-import { ChevronRight, MoreVertical } from 'lucide-react';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Card,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Building, Clock, Package, X, Trash2 } from 'lucide-react';
+import { 
+  Order, 
+  formatDate, 
+  getStatusColor, 
+  cancelOrder, 
+  deleteOrder 
+} from '@/utils/ordersUtils';
+import { useToast } from '@/components/ui/use-toast';
 
 interface OrderCardProps {
   order: Order;
+  onUpdate: () => void;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ order, onUpdate }) => {
   const navigate = useNavigate();
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleViewStudio = () => {
     navigate(`/studio/${order.studioId}`);
   };
 
-  const handleViewDetails = () => {
-    // For now, just navigate to the studio page
-    // In a real app, this would go to a detailed order view
-    navigate(`/studio/${order.studioId}`);
-  };
-
   const handleCancelOrder = () => {
-    setShowCancelDialog(true);
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    
+    try {
+      if (cancelOrder(order.id)) {
+        setTimeout(() => {
+          onUpdate();
+          setIsLoading(false);
+        }, 300);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to cancel order. Please try again."
+        });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred."
+      });
+      setIsLoading(false);
+    }
   };
 
-  const confirmCancelOrder = () => {
-    // Call the cancelOrder function and handle the result
-    const success = cancelOrder(order.id);
+  const handleDeleteOrder = () => {
+    if (isLoading) return;
     
-    // Always close the dialog, regardless of success
-    setShowCancelDialog(false);
+    setIsLoading(true);
+    
+    try {
+      if (deleteOrder(order.id)) {
+        setTimeout(() => {
+          onUpdate();
+          setIsLoading(false);
+        }, 300);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to delete order. Please try again."
+        });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred."
+      });
+      setIsLoading(false);
+    }
   };
-  
-  const totalAmount = order.totalAmount;
-  const isPending = order.status === 'pending' || order.status === 'confirmed';
 
   return (
-    <>
-      <Card className="overflow-hidden border border-gray-300 rounded-lg">
-        {/* Studio info */}
-        <div className="flex items-center justify-between p-3 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-              {order.studioImage ? (
-                <img src={order.studioImage} alt={order.studioName} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-gray-500 text-xs font-bold">LOGO</span>
-              )}
-            </div>
+    <Card className="overflow-hidden mb-4 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-3">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={order.studioImage} alt={order.studioName} />
+              <AvatarFallback>
+                <Building size={20} />
+              </AvatarFallback>
+            </Avatar>
             <div>
-              <h3 className="font-bold text-lg">{order.studioName}</h3>
+              <h3 className="font-medium text-gray-800">{order.studioName}</h3>
+              <div className="flex items-center gap-1 text-xs text-gray-500">
+                <Clock size={12} />
+                <span>Order placed: {formatDate(order.orderDate)}</span>
+              </div>
             </div>
           </div>
-          
-          {/* More options button */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="h-8 w-8 p-0" 
-                aria-label="More options"
-              >
-                <MoreVertical size={20} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem disabled>
-                Edit Order
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleCancelOrder}>
-                Cancel Order
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+          </div>
         </div>
-        
-        {/* View menu button - moved below studio name */}
-        <div className="px-3 py-2 border-b border-gray-200">
-          <button 
-            onClick={handleViewStudio}
-            className="flex items-center text-primary-500 text-sm font-medium"
-          >
-            View menu <ChevronRight size={16} className="ml-1" />
-          </button>
-        </div>
-        
-        {/* Action buttons */}
-        <div className="flex justify-between p-3 bg-gray-100">
-          <button
-            onClick={handleViewDetails}
-            className="px-4 py-2 bg-primary-500 text-white rounded-md font-medium"
-          >
-            View Details
-          </button>
-          
-          {isPending && (
-            <button
-              className="px-4 py-2 bg-green-500 text-white rounded-md font-medium"
-            >
-              Pay Now<br />₹{totalAmount}
-            </button>
-          )}
-        </div>
-      </Card>
 
-      {/* Cancel Order Confirmation Dialog */}
-      <AlertDialog 
-        open={showCancelDialog} 
-        onOpenChange={setShowCancelDialog}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Order</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to cancel the order?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={(e) => {
-                e.preventDefault();
-                confirmCancelOrder();
-              }} 
-              className="bg-destructive text-destructive-foreground"
-            >
-              Yes
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        <div className="space-y-2 my-3">
+          {order.items.map((item) => (
+            <div key={item.id} className="flex justify-between items-center py-1 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <Package size={16} className="text-primary-400" />
+                <span className="text-sm">{item.serviceName}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-500">x{item.quantity}</span>
+                <span className="text-sm font-medium">₹{item.price}</span>
+              </div>
+            </div>
+          ))}
+
+          {order.scheduledDate && (
+            <div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
+              <Clock size={14} className="text-primary-500" />
+              <span>Scheduled for: {formatDate(order.scheduledDate)}</span>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pt-2 font-medium">
+            <span className="text-gray-600">Total</span>
+            <span className="text-primary-600">₹{order.totalAmount}</span>
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter className="flex justify-between p-4 pt-0 gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex-1 text-gray-600" 
+          onClick={handleViewStudio}
+        >
+          View Studio
+        </Button>
+        
+        {['pending', 'confirmed'].includes(order.status) ? (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 text-red-500 border-red-200 hover:bg-red-50" 
+            onClick={handleCancelOrder}
+            disabled={isLoading}
+          >
+            <X size={16} className="mr-1" /> Cancel
+          </Button>
+        ) : (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex-1 text-red-500 border-red-200 hover:bg-red-50" 
+            onClick={handleDeleteOrder}
+            disabled={isLoading}
+          >
+            <Trash2 size={16} className="mr-1" /> Delete
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 
