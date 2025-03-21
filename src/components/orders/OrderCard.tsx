@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,7 +23,14 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onCancelComplete 
 }) => {
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Check localStorage for the special code when component mounts
+  useEffect(() => {
+    const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
+    setSpecialCodeActivated(hasSpecialCode);
+  }, []);
   
   const openCancelModal = () => {
     setShowCancelModal(true);
@@ -105,9 +112,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 asChild
                 variant="default" 
                 size="sm" 
-                className="rounded-full bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow flex-1"
+                className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${
+                  specialCodeActivated 
+                    ? 'bg-green-500 hover:bg-green-600 text-white' 
+                    : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
+                }`}
+                disabled={!specialCodeActivated}
               >
-                <Link to={`/payment/${order.id}`}>Pay Now ₹{order.totalAmount}</Link>
+                <Link to={specialCodeActivated ? `/payment/${order.id}` : '#'}>
+                  Pay Now ₹{order.totalAmount}
+                </Link>
               </Button>
             )}
           </div>
