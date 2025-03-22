@@ -311,7 +311,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-3 pb-2 bg-white relative z-50">
+      <div className="px-4 py-3 pb-2 bg-white relative" style={{ zIndex: 9999 }}>
         <div className="relative" ref={searchRef}>
           <Input 
             placeholder="Search services in this studio..." 
@@ -325,7 +325,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           </div>
           
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-[9999] mt-1 w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
+            <div className="absolute w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden" style={{ zIndex: 10000 }}>
               <div className="py-1 max-h-60 overflow-y-auto">
                 {filteredSuggestions.map((service) => (
                   <div
