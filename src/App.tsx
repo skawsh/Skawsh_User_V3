@@ -22,6 +22,7 @@ import Feedback from "./pages/Feedback";
 import ReferFriends from "./pages/ReferFriends";
 import Support from "./pages/Support";
 import Orders from "./pages/Orders";
+import OrderDetails from "./pages/OrderDetails";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient({
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/refer" element={<ReferFriends />} />
           <Route path="/support" element={<Support />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/:orderId" element={<OrderDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
