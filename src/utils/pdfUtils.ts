@@ -91,22 +91,31 @@ export const generateInvoicePDF = (order: Order): void => {
   doc.text('Thank you for your business!', pageWidth / 2, finalY + 35, { align: 'center' });
   doc.text('For any queries, please contact support.', pageWidth / 2, finalY + 40, { align: 'center' });
   
-  // Generate a blob and create a download link
-  const pdfBlob = doc.output('blob');
-  const url = URL.createObjectURL(pdfBlob);
-  
-  // Create a temporary link element
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `Invoice-${order.id.substring(0, 8)}.pdf`;
-  
-  // Append to body, click programmatically and remove
-  document.body.appendChild(link);
-  link.click();
-  
-  // Clean up
-  setTimeout(() => {
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }, 100);
+  // Use a more reliable method for PDF blob creation and download
+  try {
+    // Generate PDF blob data
+    const pdfBlob = doc.output('blob');
+    
+    // Create URL for the blob
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    
+    // Create a hidden link element
+    const downloadLink = document.createElement('a');
+    downloadLink.style.display = 'none';
+    downloadLink.href = blobUrl;
+    downloadLink.download = `Invoice-${order.id.substring(0, 8)}.pdf`;
+    
+    // Append to document, trigger click and remove
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    
+    // Clean up resources with a slight delay to ensure download starts
+    setTimeout(() => {
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(blobUrl);
+    }, 200);
+  } catch (error) {
+    console.error('Error creating PDF download:', error);
+    throw new Error('Failed to generate PDF');
+  }
 };

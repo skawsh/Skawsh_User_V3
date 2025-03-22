@@ -82,8 +82,12 @@ const OrderDetails = () => {
     navigate('/orders');
   };
   
-  const handleDownloadInvoice = () => {
+  const handleDownloadInvoice = (e: React.MouseEvent) => {
+    // Prevent default to avoid any navigation
+    e.preventDefault();
+    
     try {
+      // Generate and download the PDF
       generateInvoicePDF(order);
       toast.success('Invoice downloaded successfully');
     } catch (error) {
