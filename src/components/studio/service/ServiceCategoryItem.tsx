@@ -45,7 +45,7 @@ const ServiceCategoryItem: React.FC<ServiceCategoryItemProps> = ({
             <ServiceItem
               key={service.id}
               service={service}
-              isExpress={tabType === "express"}
+              tabType={tabType}
               weight={getServiceWeight(service.id)}
               quantity={getServiceQuantity(service.id)}
               onAdd={() => onServiceAdd(service)}
@@ -69,7 +69,7 @@ const ServiceCategoryItem: React.FC<ServiceCategoryItemProps> = ({
               <ServiceItem
                 key={service.id}
                 service={service}
-                isExpress={tabType === "express"}
+                tabType={tabType}
                 weight={getServiceWeight(service.id)}
                 quantity={getServiceQuantity(service.id)}
                 onAdd={() => onServiceAdd(service)}
