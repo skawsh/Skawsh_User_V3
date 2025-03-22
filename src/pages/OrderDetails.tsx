@@ -9,6 +9,7 @@ import { ArrowLeft, FileText } from 'lucide-react';
 import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
+import { generateInvoicePDF } from '@/utils/pdfUtils';
 import { toast } from 'sonner';
 
 const OrderDetails = () => {
@@ -84,9 +85,16 @@ const OrderDetails = () => {
   const handleDownloadInvoice = (e: React.MouseEvent) => {
     // Prevent default to avoid any navigation
     e.preventDefault();
+    e.stopPropagation();
     
-    // Simply show a toast message
-    toast.success('Invoice has been downloaded successfully');
+    try {
+      // Generate and download the PDF
+      generateInvoicePDF(order);
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      toast.error('Failed to download invoice. Please try again.');
+    }
   };
 
   return (
