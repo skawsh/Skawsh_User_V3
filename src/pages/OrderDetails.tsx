@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -81,11 +82,11 @@ const OrderDetails = () => {
   };
   
   const handleDownloadInvoice = (e: React.MouseEvent) => {
-    // Prevent default to avoid any navigation
+    // Prevent default and stop propagation to avoid any navigation
     e.preventDefault();
     e.stopPropagation();
     
-    // Simply show a toast message
+    // Simply show a toast message without any PDF generation
     toast.success('Invoice downloaded successfully');
   };
 
