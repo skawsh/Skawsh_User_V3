@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -190,9 +191,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
         />
       )}
 
-      {/* Delete confirmation dialog using Dialog from shadcn/ui */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="sm:max-w-[425px]" onInteractOutside={closeDeleteDialog}>
+      {/* Delete confirmation dialog - updated to only close with explicit button actions */}
+      <Dialog 
+        open={showDeleteDialog} 
+        onOpenChange={(open) => {
+          // Only allow the dialog to close when explicitly set to false
+          if (!open) {
+            closeDeleteDialog();
+          }
+        }}
+      >
+        <DialogContent 
+          className="sm:max-w-[425px]"
+          // Remove onInteractOutside to prevent closing when clicking outside
+          onInteractOutside={(e) => {
+            // Prevent the default behavior (which would close the dialog)
+            e.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>Delete Order</DialogTitle>
             <DialogDescription>
