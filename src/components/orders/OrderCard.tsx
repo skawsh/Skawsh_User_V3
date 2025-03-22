@@ -1,33 +1,45 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronRight, MoreVertical, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronRight, MoreVertical, Trash2, Edit } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
 interface OrderCardProps {
   order: Order;
   onCancelComplete?: () => void;
   onDeleteComplete?: () => void;
 }
+
 const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onCancelComplete,
   onDeleteComplete
 }) => {
+  const navigate = useNavigate();
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
+  const [editOrderEnabled, setEditOrderEnabled] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
+    // Check for special codes when component mounts
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
+    const canEditOrder = localStorage.getItem('editOrderEnabled') === 'true';
+    
     setSpecialCodeActivated(hasSpecialCode);
+    setEditOrderEnabled(canEditOrder);
   }, []);
+
   const openCancelModal = () => {
     setShowCancelModal(true);
   };
+
   const closeCancelModal = () => {
     setShowCancelModal(false);
     if (document.activeElement instanceof HTMLElement) {
@@ -37,15 +49,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
       onCancelComplete();
     }
   };
+
   const openDeleteDialog = () => {
     setShowDeleteDialog(true);
   };
+
   const closeDeleteDialog = () => {
     setShowDeleteDialog(false);
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   };
+
   const handleDeleteOrder = () => {
     const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
     const updatedOrders = orders.filter((o: Order) => o.id !== order.id);
@@ -60,9 +75,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
       }
     }, 100);
   };
+
+  const handleEditOrder = () => {
+    // Navigate to the studio sack page with the order ID
+    navigate(`/studio/${order.studioId}?orderId=${order.id}`);
+  };
+
   const isPendingPayment = order.status === 'pending_payment';
   const isOngoing = order.status !== 'completed' && order.status !== 'cancelled';
   const isHistory = order.status === 'completed' || order.status === 'cancelled';
+
   return <>
       <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
         <div className="p-4">
@@ -83,18 +105,33 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {isHistory ? <>
-                    
-                    <DropdownMenuItem className="text-red-500 focus:text-red-500"
-                // This is the non-functional "Delete Order" option
-                >
+                {isHistory ? (
+                  <>
+                    <DropdownMenuItem className="text-red-500 focus:text-red-500">
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete Order (UI Only)
                     </DropdownMenuItem>
-                  </> : <DropdownMenuItem onClick={openCancelModal} disabled={!isOngoing} className="text-red-500 focus:text-red-500">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Cancel Order
-                  </DropdownMenuItem>}
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem 
+                      onClick={handleEditOrder}
+                      disabled={!editOrderEnabled} 
+                      className="text-blue-500 focus:text-blue-500"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Order
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={openCancelModal} 
+                      disabled={!isOngoing} 
+                      className="text-red-500 focus:text-red-500"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Cancel Order
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -147,4 +184,5 @@ const OrderCard: React.FC<OrderCardProps> = ({
       </Dialog>
     </>;
 };
+
 export default OrderCard;
