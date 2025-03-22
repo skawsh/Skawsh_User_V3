@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
@@ -245,6 +244,50 @@ const Cart: React.FC = () => {
   const deliveryFee = subtotal > 0 ? 49 : 0;
   const tax = Math.round(subtotal * 0.05); // Assuming 5% tax
   const total = subtotal + deliveryFee + tax;
+
+  const handlePlaceOrder = () => {
+    // Generate random order ID
+    const orderId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    
+    // Create order object
+    const newOrder = {
+      id: orderId,
+      studioId: studioId || cartItems[0]?.studioId || "default-studio",
+      studioName: cartItems[0]?.studioName || "Laundry Service",
+      items: cartItems.map(item => ({
+        serviceId: item.serviceId,
+        serviceName: item.serviceName,
+        price: item.price,
+        quantity: item.quantity || 1
+      })),
+      status: "pending_payment",
+      paymentStatus: "unpaid",
+      totalAmount: subtotal + deliveryFee + tax,
+      createdAt: new Date().toISOString(),
+      specialInstructions: specialInstructions,
+      address: address.street
+    };
+    
+    // Get existing orders or initialize empty array
+    const existingOrders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+    
+    // Add new order to array
+    existingOrders.push(newOrder);
+    
+    // Save to session storage
+    sessionStorage.setItem('orders', JSON.stringify(existingOrders));
+    
+    // Clear cart
+    localStorage.setItem('cartItems', JSON.stringify([]));
+    
+    // Dispatch custom event for components listening to cart updates
+    document.dispatchEvent(new Event('cartUpdated'));
+    
+    // Navigate to confirmation page
+    navigate('/order-confirmation', {
+      state: { orderId: orderId }
+    });
+  };
 
   return (
     <Layout>
@@ -520,12 +563,12 @@ const Cart: React.FC = () => {
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg animate-slide-in" style={{animationDelay: "500ms"}}>
             <div className="max-w-3xl mx-auto">
               <Button 
-                onClick={handleProceedToCheckout}
+                onClick={handlePlaceOrder}
                 className="w-full bg-[#92E3A9] text-gray-800 hover:bg-[#83d699] font-semibold text-base py-3"
                 icon={<Package size={18} />}
                 fullWidth
               >
-                Proceed to Checkout {formatIndianRupee(total)}
+                Place Order {formatIndianRupee(total)}
               </Button>
             </div>
           </div>
