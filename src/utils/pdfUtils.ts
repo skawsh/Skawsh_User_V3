@@ -1,4 +1,3 @@
-
 import { Order } from '@/types/order';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
