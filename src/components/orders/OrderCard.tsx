@@ -106,12 +106,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isHistory ? (
-                  <>
-                    <DropdownMenuItem onClick={openDeleteDialog} className="text-red-500 focus:text-red-500">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Order
-                    </DropdownMenuItem>
-                  </>
+                  <>{/* Removed the delete option from history section as requested */}</>
                 ) : (
                   <>
                     <DropdownMenuItem 
