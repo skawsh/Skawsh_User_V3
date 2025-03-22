@@ -195,7 +195,7 @@ const Home: React.FC = () => {
       <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-primary-50 to-white">
         <Card className="border-none shadow-none bg-transparent mb-2">
           <CardContent className="p-0 pt-2 px-[15px]">
-            <h2 className="section-title mb-2 font-bold text-lg">Explore Services</h2>
+            <h2 className="section-title mb-2 font-bold text-lg">Explore Laundry Services</h2>
           </CardContent>
         </Card>
         
@@ -224,7 +224,7 @@ const Home: React.FC = () => {
       }} className="mb-10 my-[14px] -mx-4 px-[5px]">
         <Card className="border-none shadow-none bg-transparent mb-2">
           <CardContent className="p-0 px-[15px]">
-            <h2 className="section-title mb-4 font-bold text-lg">Explore Studios</h2>
+            <h2 className="section-title mb-4 font-bold text-lg">Explore Laundry Studios</h2>
           </CardContent>
         </Card>
         
