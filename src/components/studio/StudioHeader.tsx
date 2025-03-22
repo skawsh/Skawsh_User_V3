@@ -310,7 +310,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-3 pb-2 bg-white">
+      <div className="px-4 py-3 pb-2 bg-white relative">
         <div className="relative" ref={searchRef}>
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           <Input 
@@ -322,7 +322,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           />
           
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-40 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
+            <div className="absolute z-[100] mt-1 w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
               <div className="py-1 max-h-60 overflow-y-auto">
                 {filteredSuggestions.map((service) => (
                   <div

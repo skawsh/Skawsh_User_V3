@@ -83,7 +83,7 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-    <div className="mb-4 mt-2 animate-fade-in animate-stagger-1" ref={searchRef}>
+    <div className="mb-4 mt-2 animate-fade-in animate-stagger-1 relative" ref={searchRef}>
       <form onSubmit={handleSubmit}>
         <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm px-4 py-2.5 border border-white/20 transition-all duration-300 hover:shadow-md">
           <input 
@@ -107,7 +107,7 @@ const SearchBar: React.FC = () => {
       </form>
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full max-w-md bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
+        <div className="absolute z-[100] mt-1 w-full max-w-md bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
           <div className="py-1 max-h-60 overflow-y-auto">
             {suggestions.map((suggestion) => (
               <div
