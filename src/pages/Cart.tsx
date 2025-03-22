@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
@@ -12,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import CouponCelebration from '@/components/animations/CouponCelebration';
 
 const formatIndianRupee = (amount: number): string => {
   return `₹${amount.toFixed(0)}`;
@@ -51,6 +51,10 @@ const Cart: React.FC = () => {
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
   const [showEstimatedDetails, setShowEstimatedDetails] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+  const [showCouponCelebration, setShowCouponCelebration] = useState(false);
+  const [discountApplied, setDiscountApplied] = useState(false);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  
   const [address, setAddress] = useState({
     street: location.state?.selectedAddress?.address || '123 Main Street, Apartment 4B',
     city: 'New York',
@@ -173,11 +177,27 @@ const Cart: React.FC = () => {
       return;
     }
     
-    toast({
-      title: "Coupon applied",
-      description: "Your coupon has been applied successfully.",
-      duration: 2000,
-    });
+    if (couponCode.trim().toLowerCase() === "skawsh") {
+      setDiscountPercentage(15);
+      setDiscountApplied(true);
+      setShowCouponCelebration(true);
+      
+      toast({
+        title: "Coupon applied",
+        description: "You got 15% off on your total order value!",
+        duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Coupon applied",
+        description: "Your coupon has been applied successfully.",
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleCouponCelebrationComplete = () => {
+    setShowCouponCelebration(false);
   };
 
   const handleAddSpecialInstructions = () => {
@@ -245,13 +265,14 @@ const Cart: React.FC = () => {
   
   const deliveryFee = subtotal > 0 ? 49 : 0;
   const tax = Math.round(subtotal * 0.05); // Assuming 5% tax
-  const total = subtotal + deliveryFee + tax;
+  
+  const discount = discountApplied ? Math.round(subtotal * (discountPercentage / 100)) : 0;
+  
+  const total = subtotal + deliveryFee + tax - discount;
 
   const handlePlaceOrder = () => {
-    // Generate random order ID
     const orderId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     
-    // Create order object
     const newOrder = {
       id: orderId,
       studioId: studioId || cartItems[0]?.studioId || "default-studio",
@@ -270,25 +291,27 @@ const Cart: React.FC = () => {
       address: address.street
     };
     
-    // Get existing orders or initialize empty array
     const existingOrders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-    
-    // Add new order to array
     existingOrders.push(newOrder);
-    
-    // Save to session storage
     sessionStorage.setItem('orders', JSON.stringify(existingOrders));
     
-    // Clear cart
     localStorage.setItem('cartItems', JSON.stringify([]));
     
-    // Dispatch custom event for components listening to cart updates
     document.dispatchEvent(new Event('cartUpdated'));
     
-    // Navigate to confirmation page
     navigate('/order-confirmation', {
       state: { orderId: orderId }
     });
+  };
+
+  const handleAddMoreServices = () => {
+    if (studioId) {
+      navigate(`/studio/${studioId}`);
+    } else if (cartItems.length > 0 && cartItems[0].studioId) {
+      navigate(`/studio/${cartItems[0].studioId}`);
+    } else {
+      navigate('/services');
+    }
   };
 
   return (
@@ -366,24 +389,24 @@ const Cart: React.FC = () => {
                 </p>
               </div>
 
-              {Object.entries(groupedItems).map(([category, items], categoryIndex) => (
-                <div key={category} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
+              {Object.entries(groupedItems).map((categoryEntry, categoryIndex) => (
+                <div key={categoryEntry[0]} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
                   <div className="flex items-center mb-2">
-                    {category === 'Dry Cleaning Services' && (
+                    {categoryEntry[0] === 'Dry Cleaning Services' && (
                       <Shirt size={18} className="text-gray-700 mr-2" />
                     )}
-                    {category === 'Core Laundry Services' && (
+                    {categoryEntry[0] === 'Core Laundry Services' && (
                       <Package size={18} className="text-gray-700 mr-2" />
                     )}
-                    {category === 'Shoe Laundry Services' && (
+                    {categoryEntry[0] === 'Shoe Laundry Services' && (
                       <Footprints size={18} className="text-gray-700 mr-2" />
                     )}
-                    <h3 className="font-semibold text-gray-800">{category}</h3>
+                    <h3 className="font-semibold text-gray-800">{categoryEntry[0]}</h3>
                   </div>
                   
-                  {items.some(item => item.serviceSubCategory) && (
+                  {categoryEntry[1].some(item => item.serviceSubCategory) && (
                     <div className="pl-6 mb-2">
-                      {Array.from(new Set(items.map(item => item.serviceSubCategory))).map(
+                      {Array.from(new Set(categoryEntry[1].map(item => item.serviceSubCategory))).map(
                         subCategory => subCategory && (
                           <div key={subCategory} className="text-sm text-gray-600 font-medium">
                             {subCategory}
@@ -394,7 +417,7 @@ const Cart: React.FC = () => {
                   )}
                   
                   <div className="space-y-3">
-                    {items.map((item, itemIndex) => (
+                    {categoryEntry[1].map((item, itemIndex) => (
                       <div key={item.serviceId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in" style={{animationDelay: `${200 + itemIndex * 50}ms`}}>
                         <div className="mb-1">
                           <h4 className="font-medium text-gray-800">{item.serviceName}</h4>
@@ -440,7 +463,6 @@ const Cart: React.FC = () => {
                 </div>
               ))}
               
-              {/* Add More Section */}
               <div className="bg-green-50 p-4 rounded-xl mb-4 shadow-sm border border-green-100 animate-fade-in" style={{animationDelay: "300ms"}}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
@@ -448,7 +470,7 @@ const Cart: React.FC = () => {
                     <span className="font-medium text-gray-700">Add More Services</span>
                   </div>
                   <Button 
-                    onClick={() => navigate('/services')}
+                    onClick={handleAddMoreServices}
                     className="bg-green-600 hover:bg-green-700 text-sm px-3 py-1 h-auto"
                     size="sm"
                   >
@@ -520,6 +542,11 @@ const Cart: React.FC = () => {
                     Apply
                   </Button>
                 </div>
+                {discountApplied && (
+                  <div className="mt-2 text-sm text-purple-600 font-medium">
+                    {discountPercentage}% discount applied! You saved {formatIndianRupee(discount)}
+                  </div>
+                )}
               </div>
               
               <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm animate-fade-in" style={{animationDelay: "450ms"}}>
@@ -548,6 +575,12 @@ const Cart: React.FC = () => {
                         <span className="text-gray-600">Tax</span>
                         <span>{formatIndianRupee(tax)}</span>
                       </div>
+                      {discountApplied && (
+                        <div className="flex justify-between text-purple-600">
+                          <span>Discount ({discountPercentage}%)</span>
+                          <span>-{formatIndianRupee(discount)}</span>
+                        </div>
+                      )}
                       <Separator className="my-2" />
                       <div className="flex justify-between font-medium">
                         <span>Total</span>
@@ -575,6 +608,12 @@ const Cart: React.FC = () => {
             </div>
           </div>
         )}
+        
+        <CouponCelebration 
+          isVisible={showCouponCelebration} 
+          onAnimationComplete={handleCouponCelebrationComplete}
+          discountPercentage={discountPercentage}
+        />
       </div>
     </Layout>
   );
