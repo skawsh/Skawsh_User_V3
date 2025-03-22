@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Party, Sparkles, Percent } from 'lucide-react';
+import { Gift, Sparkles, Percent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CouponCelebrationProps {
@@ -42,7 +42,7 @@ const CouponCelebration: React.FC<CouponCelebrationProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
       <div className="relative p-12 bg-white rounded-xl shadow-2xl animate-scale-in text-center">
         <div className="relative flex justify-center mb-4">
-          <Party size={70} className="text-purple-500" />
+          <Gift size={70} className="text-purple-500" />
           <div className="absolute -top-4 -right-4 bg-[#92E3A9] rounded-full p-2 animate-bounce">
             <Percent size={24} className="text-white" />
           </div>
