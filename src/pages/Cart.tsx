@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
@@ -51,7 +50,7 @@ const Cart: React.FC = () => {
   const [showEstimatedDetails, setShowEstimatedDetails] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const [address, setAddress] = useState({
-    street: '123 Main Street, Apartment 4B',
+    street: location.state?.selectedAddress?.address || '123 Main Street, Apartment 4B',
     city: 'New York',
     state: 'NY',
     zipCode: '10001'
@@ -79,6 +78,13 @@ const Cart: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (location.state?.selectedAddress) {
+      setAddress({
+        ...address,
+        street: location.state.selectedAddress.address
+      });
+    }
+    
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
       try {
@@ -117,7 +123,7 @@ const Cart: React.FC = () => {
         setCartItems([]);
       }
     }
-  }, [studioId]);
+  }, [studioId, location.state]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -213,14 +219,14 @@ const Cart: React.FC = () => {
   };
 
   const handleChangeAddress = () => {
-    toast({
-      title: "Change address",
-      description: "This would open the address selection page.",
-      duration: 2000,
+    navigate('/addresses', { 
+      state: { 
+        from: '/cart',
+        returnToCart: true
+      } 
     });
   };
 
-  // Group items by category
   const groupedItems = cartItems.reduce((acc: Record<string, CartItem[]>, item) => {
     const category = item.serviceCategory || 'Uncategorized';
     if (!acc[category]) {
@@ -230,7 +236,6 @@ const Cart: React.FC = () => {
     return acc;
   }, {});
 
-  // Calculate prices
   const subtotal = cartItems.reduce((sum, item) => {
     const itemPrice = item.price * (item.quantity || 1);
     return sum + itemPrice;
@@ -287,14 +292,13 @@ const Cart: React.FC = () => {
           </div>
         ) : (
           <div className="px-4 pt-3 pb-24 max-w-3xl mx-auto">
-            {/* Delivery Address Section */}
             <div className="bg-blue-50 p-4 rounded-xl mb-4 animate-fade-in shadow-sm border border-blue-100">
               <div className="flex justify-between items-center">
                 <div className="flex items-start">
                   <MapPin size={20} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-700">Delivery Address</p>
-                    <p className="text-sm text-gray-600">{address.street}, {address.city}, {address.state} {address.zipCode}</p>
+                    <p className="text-sm text-gray-600">{address.street}</p>
                   </div>
                 </div>
                 <button 
@@ -306,11 +310,9 @@ const Cart: React.FC = () => {
               </div>
             </div>
 
-            {/* Order Review Section */}
             <div className="mb-4 animate-fade-in" style={{animationDelay: "100ms"}}>
               <h2 className="text-lg font-semibold mb-3 text-gray-800">Review your order</h2>
               
-              {/* Warning message */}
               <div className="bg-yellow-50 p-3 rounded-xl mb-4 flex items-start shadow-sm border border-yellow-100">
                 <AlertTriangle size={18} className="text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-gray-700">
@@ -318,7 +320,6 @@ const Cart: React.FC = () => {
                 </p>
               </div>
 
-              {/* Items List */}
               {Object.entries(groupedItems).map(([category, items], categoryIndex) => (
                 <div key={category} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
                   <div className="flex items-center mb-2">
@@ -334,7 +335,6 @@ const Cart: React.FC = () => {
                     <h3 className="font-semibold text-gray-800">{category}</h3>
                   </div>
                   
-                  {/* Sub-categories if they exist */}
                   {items.some(item => item.serviceSubCategory) && (
                     <div className="pl-6 mb-2">
                       {Array.from(new Set(items.map(item => item.serviceSubCategory))).map(
@@ -394,7 +394,6 @@ const Cart: React.FC = () => {
                 </div>
               ))}
               
-              {/* Special Instructions */}
               <div className="bg-blue-50 p-4 rounded-xl mb-4 shadow-sm border border-blue-100 animate-fade-in" style={{animationDelay: "350ms"}}>
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
@@ -438,7 +437,6 @@ const Cart: React.FC = () => {
                 )}
               </div>
               
-              {/* Apply Coupon */}
               <div className="bg-purple-50 p-4 rounded-xl mb-4 shadow-sm border border-purple-100 animate-fade-in" style={{animationDelay: "400ms"}}>
                 <div className="flex items-center mb-2">
                   <Tag size={18} className="text-purple-600 mr-2" />
@@ -460,7 +458,6 @@ const Cart: React.FC = () => {
                 </div>
               </div>
               
-              {/* Estimated Bill */}
               <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm animate-fade-in" style={{animationDelay: "450ms"}}>
                 <Collapsible open={showEstimatedDetails} onOpenChange={setShowEstimatedDetails}>
                   <CollapsibleTrigger className="flex justify-between items-center w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors">
@@ -500,7 +497,6 @@ const Cart: React.FC = () => {
           </div>
         )}
         
-        {/* Fixed checkout button at bottom */}
         {cartItems.length > 0 && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg animate-slide-in" style={{animationDelay: "500ms"}}>
             <div className="max-w-3xl mx-auto">

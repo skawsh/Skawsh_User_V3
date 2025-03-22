@@ -30,6 +30,8 @@ const Addresses: React.FC = () => {
     address: 'Navi Apartments, Plot no 305, Sarover Hills, Madhapur, Telangana, 500003...'
   }]);
 
+  const returnToCart = location.state?.returnToCart || false;
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -42,7 +44,9 @@ const Addresses: React.FC = () => {
 
   const handleBack = () => {
     const fromPath = location.state?.from;
-    if (fromPath === '/') {
+    if (fromPath === '/cart') {
+      navigate('/cart', { state: { previousPath: location.pathname } });
+    } else if (fromPath === '/') {
       navigate('/');
     } else {
       navigate('/profile');
@@ -51,6 +55,17 @@ const Addresses: React.FC = () => {
 
   const handleAddAddress = () => {
     console.log('Add new address');
+  };
+
+  const handleSelectAddress = (address: AddressItem) => {
+    if (returnToCart) {
+      navigate('/cart', { 
+        state: { 
+          selectedAddress: address,
+          previousPath: location.pathname
+        } 
+      });
+    }
   };
 
   return (
@@ -83,7 +98,11 @@ const Addresses: React.FC = () => {
           <div className="section-container pt-4">
             <div className="space-y-3 mb-6">
               {addresses.map(address => (
-                <Card key={address.id} className="border border-gray-200 shadow-sm">
+                <Card 
+                  key={address.id} 
+                  className="border border-gray-200 shadow-sm cursor-pointer hover:border-primary-300 transition-colors"
+                  onClick={() => handleSelectAddress(address)}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex gap-3">
@@ -104,7 +123,13 @@ const Addresses: React.FC = () => {
                           <p className="text-sm text-gray-500 mt-1 pr-6">{address.address}</p>
                         </div>
                       </div>
-                      <button className="text-primary-500 hover:text-primary-600 p-1.5">
+                      <button 
+                        className="text-primary-500 hover:text-primary-600 p-1.5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Edit address functionality would go here
+                        }}
+                      >
                         <Pencil size={18} />
                       </button>
                     </div>
