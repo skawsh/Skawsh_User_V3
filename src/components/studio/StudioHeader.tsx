@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -310,16 +311,18 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-3 pb-2 bg-white relative z-[9999]">
+      <div className="px-4 py-3 pb-2 bg-white relative z-50">
         <div className="relative" ref={searchRef}>
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           <Input 
             placeholder="Search services in this studio..." 
-            className="pl-10 bg-gray-50 border-gray-200 rounded-full shadow-sm" 
+            className="bg-gray-50 border-gray-200 rounded-full shadow-sm pr-10" 
             value={searchTerm}
             onChange={handleSearch}
             onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
           />
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <Search size={18} />
+          </div>
           
           {showSuggestions && filteredSuggestions.length > 0 && (
             <div className="absolute z-[9999] mt-1 w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
