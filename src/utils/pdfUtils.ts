@@ -91,29 +91,9 @@ export const generateInvoicePDF = (order: Order): void => {
   doc.text('Thank you for your business!', pageWidth / 2, finalY + 35, { align: 'center' });
   doc.text('For any queries, please contact support.', pageWidth / 2, finalY + 40, { align: 'center' });
   
-  // Use a more reliable method for PDF blob creation and download
+  // Use jsPDF's built-in save() method to download the PDF directly
   try {
-    // Generate PDF blob data
-    const pdfBlob = doc.output('blob');
-    
-    // Create URL for the blob
-    const blobUrl = URL.createObjectURL(pdfBlob);
-    
-    // Create a hidden link element
-    const downloadLink = document.createElement('a');
-    downloadLink.style.display = 'none';
-    downloadLink.href = blobUrl;
-    downloadLink.download = `Invoice-${order.id.substring(0, 8)}.pdf`;
-    
-    // Append to document, trigger click and remove
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    
-    // Clean up resources with a slight delay to ensure download starts
-    setTimeout(() => {
-      document.body.removeChild(downloadLink);
-      URL.revokeObjectURL(blobUrl);
-    }, 200);
+    doc.save(`Invoice-${order.id.substring(0, 8)}.pdf`);
   } catch (error) {
     console.error('Error creating PDF download:', error);
     throw new Error('Failed to generate PDF');
