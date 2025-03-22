@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,14 @@ import { Card } from '@/components/ui/card';
 import { ArrowLeft, Download, FileText } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
+import OrderSummary from '@/components/orders/OrderSummary';
+import OrderMetaData from '@/components/orders/OrderMetaData';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
 
   // Handle scroll event to show/hide sticky header
@@ -46,7 +50,7 @@ const OrderDetails = () => {
         <Button 
           variant="ghost" 
           className="mb-4" 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/orders')}
         >
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
@@ -75,30 +79,16 @@ const OrderDetails = () => {
   // Format order number
   const orderNumber = `ORD-${order.id.substring(0, 4)}`;
 
+  const handleBackClick = () => {
+    navigate('/orders');
+  };
+
   return (
     <div className="bg-white min-h-screen relative">
-      {/* Sticky header that appears on scroll */}
-      {isHeaderSticky && (
-        <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
-          <div className="max-w-md mx-auto flex justify-between items-center p-4">
-            <Button 
-              variant="ghost" 
-              className="p-0 h-8" 
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="h-5 w-5 mr-1" /> 
-              <span>Order Details</span>
-            </Button>
-            <Button 
-              variant="link" 
-              className="text-red-500 p-0 h-8" 
-              onClick={() => navigate('/support')}
-            >
-              Support
-            </Button>
-          </div>
-        </div>
-      )}
+      <OrderDetailsHeader 
+        isHeaderSticky={isHeaderSticky}
+        onBackClick={handleBackClick}
+      />
 
       <div className="max-w-md mx-auto bg-white p-4">
         {/* Header with back button and support link */}
@@ -106,7 +96,7 @@ const OrderDetails = () => {
           <Button 
             variant="ghost" 
             className="p-0 h-8" 
-            onClick={() => navigate(-1)}
+            onClick={handleBackClick}
           >
             <ArrowLeft className="h-5 w-5 mr-1" /> 
             <span>Order Details</span>
@@ -136,102 +126,17 @@ const OrderDetails = () => {
             <span>Download Invoice</span>
           </Button>
           
-          {/* Removed the delivery status text as requested */}
-          
           {/* Order items section */}
           <h3 className="font-bold mb-2">Your Order</h3>
           
-          {/* Group services by category */}
-          <div className="mb-4">
-            <div className="mb-3">
-              <h4 className="font-semibold">Core Laundry Service</h4>
-              <div className="ml-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <div>
-                    <span>1) Wash & Fold</span>
-                    <div className="text-gray-600 text-xs ml-4">4.3 Kg X ₹49</div>
-                  </div>
-                  <div>₹210.7</div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <div>
-                    <span>2) Wash & Iron</span>
-                    <div className="text-gray-600 text-xs ml-4">2 Kg X ₹79</div>
-                  </div>
-                  <div>₹158</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-3">
-              <h4 className="font-semibold">Dry Cleaning</h4>
-              <div className="ml-2">
-                <div className="flex justify-between text-sm mb-1">
-                  <div>
-                    <span>Upper Wear</span>
-                    <div className="text-gray-600 text-xs ml-4">1 Leather jacket X ₹199</div>
-                  </div>
-                  <div>₹199</div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <div>
-                    <span>&nbsp;</span>
-                    <div className="text-gray-600 text-xs ml-4">2 Designer Saree X ₹499</div>
-                  </div>
-                  <div>₹499</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Price summary */}
-          <div className="border-t border-gray-200 pt-2 mb-2">
-            <div className="flex justify-between text-sm mb-1">
-              <span>Service Total</span>
-              <span>₹1066</span>
-            </div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>Delivery Charges</span>
-              <span>₹50</span>
-            </div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>GST</span>
-              <span>₹194.38</span>
-            </div>
-          </div>
-          
-          {/* Grand total */}
-          <div className="bg-green-50 -mx-4 px-4 py-2 font-bold flex justify-between">
-            <span>Grand Total</span>
-            <span>₹1310.38</span>
-          </div>
+          <OrderSummary />
           
           {/* Order meta details */}
-          <div className="mt-4">
-            <h3 className="font-bold mb-1">Order Details</h3>
-            <div className="text-sm space-y-1">
-              <div className="flex">
-                <span className="w-36 text-gray-600">Order Number:</span>
-                <span>{orderNumber}</span>
-              </div>
-              <div className="flex">
-                <span className="w-36 text-gray-600">Payment mode:</span>
-                <span>Using UPI (₹1310)</span>
-              </div>
-              <div className="flex">
-                <span className="w-36 text-gray-600">Date:</span>
-                <span>22/03/2025 at 03:40 PM</span>
-              </div>
-              <div className="flex">
-                <span className="w-36 text-gray-600">Phone Number:</span>
-                <span>{phoneNumber}</span>
-              </div>
-              <div className="flex">
-                <span className="w-36 text-gray-600">Deliver To:</span>
-                <span>{deliveryAddress}</span>
-              </div>
-            </div>
-          </div>
+          <OrderMetaData 
+            orderNumber={orderNumber}
+            phoneNumber={phoneNumber}
+            deliveryAddress={deliveryAddress}
+          />
         </div>
       </div>
     </div>

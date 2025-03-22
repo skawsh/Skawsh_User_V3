@@ -1,52 +1,18 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Clock, Menu, X } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
-import ServiceOrderPopup from './ServiceOrderPopup';
 import { useLocation } from 'react-router-dom';
-import CategoryList from './categories/CategoryList';
-import ServiceCategory from './services/ServiceCategory';
-import { ShoppingBag, Shirt, Footprints, Bookmark } from 'lucide-react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  unit?: string;
-}
-
-interface CartItem {
-  serviceId: string;
-  serviceName: string;
-  weight?: number;
-  price: number;
-  quantity?: number;
-  studioId?: string;
-  items: {
-    name: string;
-    quantity: number;
-  }[];
-  washType?: string;
-}
-
-interface SubCategory {
-  title: string;
-  icon: React.ReactNode;
-  services: Service[];
-}
-
-interface ServiceCategory {
-  title: string;
-  icon: React.ReactNode;
-  services: Service[];
-  count?: number;
-  subCategories?: SubCategory[];
-}
+import ServiceTabs from './service/ServiceTabs';
+import ServiceCategoryList from './service/ServiceCategoryList';
+import CategoryList from './categories/CategoryList';
+import ServiceOrderPopup from './ServiceOrderPopup';
+import { Menu } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Service, CartItem, ServiceCategory } from '@/types/serviceTypes';
+import { useServiceData } from '@/hooks/useServiceData';
 
 interface ServiceListProps {
   services: Service[];
@@ -68,215 +34,19 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [mixedServicesDialogOpen, setMixedServicesDialogOpen] = useState(false);
   const [pendingService, setPendingService] = useState<Service | null>(null);
-  const isMobile = useIsMobile();
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
   const tabsContentHeight = useRef<number>(0);
-
-  const coreServices = services.filter(s => s.name.includes('Wash')).map(service => ({
-    ...service,
-    price: 49,
-    unit: 'per kg'
-  }));
   
-  const washAndIronService: Service = {
-    id: 'wash-iron-1',
-    name: 'Wash & Iron',
-    description: 'Professional washing with meticulous ironing for a crisp, fresh finish.',
-    price: 99,
-    unit: 'per kg'
-  };
-  
-  const updatedCoreServices = [...coreServices, washAndIronService];
-
-  const expressWashServices: Service[] = [
-    {
-      id: 'express-wash-fold-1',
-      name: 'Wash & Fold',
-      description: 'Express washing and folding service for quick turnaround.',
-      price: 99,
-      unit: 'per kg'
-    },
-    {
-      id: 'express-wash-iron-1',
-      name: 'Wash & Iron',
-      description: 'Express washing with professional ironing for a crisp finish.',
-      price: 149,
-      unit: 'per kg'
-    }
-  ];
-
-  const accessoriesServices: Service[] = [
-    {
-      id: 'acc-handkerchief',
-      name: 'Hand Kerchief',
-      description: 'Gentle cleaning for handkerchiefs with perfect finishing.',
-      price: 25
-    },
-    {
-      id: 'acc-tie',
-      name: 'Tie',
-      description: 'Professional cleaning for ties, preserving color and texture.',
-      price: 45
-    },
-    {
-      id: 'acc-cap',
-      name: 'Cap',
-      description: 'Thorough cleaning for caps without affecting their shape.',
-      price: 50
-    },
-    {
-      id: 'acc-gloves',
-      name: 'Gloves',
-      description: 'Specialized cleaning for all types of gloves.',
-      price: 35
-    },
-    {
-      id: 'acc-shawl',
-      name: 'Shawl',
-      description: 'Deep cleaning for shawls with gentle care for delicate fabrics.',
-      price: 75
-    }
-  ];
-
-  const dryCleaningSubCategories: SubCategory[] = [
-    {
-      title: "Upper Wear",
-      icon: <Shirt size={16} className="text-blue-500" />,
-      services: [
-        {
-          id: 'dry-upper-1',
-          name: 'Shirt',
-          description: 'Professional dry cleaning for shirts',
-          price: 155
-        },
-        {
-          id: 'dry-upper-2',
-          name: 'T-shirt',
-          description: 'Gentle cleaning for t-shirts',
-          price: 155
-        },
-        {
-          id: 'dry-upper-3',
-          name: 'Ladies Top',
-          description: 'Specialized cleaning for tops',
-          price: 155
-        }
-      ]
-    },
-    {
-      title: "Bottom Wear",
-      icon: <Shirt size={16} className="text-indigo-500" />,
-      services: [
-        {
-          id: 'dry-bottom-1',
-          name: 'Pant',
-          description: 'Professional dry cleaning for pants',
-          price: 70
-        }
-      ]
-    },
-    {
-      title: "Ethnic Wear",
-      icon: <Shirt size={16} className="text-purple-500" />,
-      services: [
-        {
-          id: 'dry-ethnic-1',
-          name: 'Sherwani',
-          description: 'Specialized dry cleaning for sherwani',
-          price: 699
-        }
-      ]
-    }
-  ];
-
-  const shoeServices: Service[] = [
-    {
-      id: 'shoe-1',
-      name: 'Regular Shoes',
-      description: 'Deep cleaning for regular everyday shoes',
-      price: 299
-    },
-    {
-      id: 'shoe-2',
-      name: 'Leather Shoes',
-      description: 'Specialized cleaning and conditioning for leather footwear',
-      price: 399
-    },
-    {
-      id: 'shoe-3',
-      name: 'Sneakers',
-      description: 'Thorough cleaning for sports shoes and sneakers',
-      price: 349
-    },
-    {
-      id: 'shoe-4',
-      name: 'Canvas Shoes',
-      description: 'Cleaning and whitening for canvas footwear',
-      price: 249
-    },
-    {
-      id: 'shoe-5',
-      name: 'Sandals',
-      description: 'Cleaning and sanitizing for all types of sandals',
-      price: 199
-    },
-    {
-      id: 'shoe-6',
-      name: 'Heels',
-      description: 'Gentle cleaning and polishing for formal heels',
-      price: 349
-    }
-  ];
-
-  const categories: ServiceCategory[] = [
-    {
-      title: "Core Laundry Services",
-      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
-      services: updatedCoreServices,
-      count: updatedCoreServices.length
-    }, 
-    {
-      title: "Dry Cleaning Services",
-      icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
-      services: [],
-      count: 5,
-      subCategories: dryCleaningSubCategories
-    }, 
-    {
-      title: "Shoe Laundry Services",
-      icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
-      services: shoeServices,
-      count: 11
-    }
-  ];
-
-  const expressCategories: ServiceCategory[] = [
-    {
-      title: "Core Laundry Services",
-      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
-      services: expressWashServices,
-      count: expressWashServices.length
-    },
-    {
-      title: "Accessories",
-      icon: <Bookmark size={16} className="text-white bg-purple-700 rounded-full" />,
-      services: accessoriesServices,
-      count: accessoriesServices.length
-    }
-  ];
-
-  const deliveryMessages = {
-    standard: "Delivery in just 36 sunlight hours after pickup",
-    express: "Delivery in just 12 sunlight hours after pickup"
-  };
-
-  const backgroundColors = {
-    standard: "bg-blue-50",
-    express: "bg-orange-50"
-  };
+  // Get service data from our custom hook
+  const { 
+    categories, 
+    expressCategories, 
+    backgroundColors,
+    deliveryMessages
+  } = useServiceData(services);
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -295,6 +65,29 @@ const ServiceList: React.FC<ServiceListProps> = ({
       });
     }
     setPopoverOpen(false);
+  };
+
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem('cartItems');
+    if (storedCartItems) {
+      try {
+        const parsedItems = JSON.parse(storedCartItems);
+        setCartItems(parsedItems);
+      } catch (error) {
+        console.error('Error parsing cart items:', error);
+        setCartItems([]);
+      }
+    }
+  }, []);
+  
+  const getExistingWashType = (): string | null => {
+    if (cartItems.length === 0) return null;
+    
+    const expressItemExists = cartItems.some(item => {
+      return item.washType === "express";
+    });
+    
+    return expressItemExists ? "express" : "standard";
   };
 
   const handleOpenServicePopup = (service: Service) => {
@@ -323,38 +116,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   
   const handleCloseServicePopup = () => {
     setSelectedService(null);
-  };
-  
-  useEffect(() => {
-    const storedCartItems = localStorage.getItem('cartItems');
-    if (storedCartItems) {
-      try {
-        const parsedItems = JSON.parse(storedCartItems);
-        setCartItems(parsedItems);
-      } catch (error) {
-        console.error('Error parsing cart items:', error);
-        setCartItems([]);
-      }
-    }
-  }, []);
-  
-  const getExistingWashType = (): string | null => {
-    if (cartItems.length === 0) return null;
-    
-    const expressItemExists = cartItems.some(item => {
-      if (item.washType === "express") return true;
-      
-      const baseServices = [...updatedCoreServices, ...accessoriesServices, ...shoeServices];
-      const matchingService = baseServices.find(s => s.id === item.serviceId);
-      if (matchingService) {
-        const basePrice = matchingService.price;
-        const priceRatio = item.price / basePrice;
-        return Math.abs(priceRatio - 1.5) < 0.1;
-      }
-      return false;
-    });
-    
-    return expressItemExists ? "express" : "standard";
   };
 
   const handleAddToCart = (orderDetails: any) => {
@@ -416,106 +177,108 @@ const ServiceList: React.FC<ServiceListProps> = ({
     return item && item.quantity ? item.quantity : null;
   };
 
-  const handleIncreaseWeight = (service: Service) => {
-    const existingWashType = getExistingWashType();
-    const currentWashType = selectedTab;
-    
-    if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
-      setPendingService(service);
-      setMixedServicesDialogOpen(true);
-      return;
-    }
-    
-    if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-      const currentWeight = getServiceWeight(service.id) || 0;
-      const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
-      
-      handleAddToCart({
-        serviceId: service.id,
-        serviceName: service.name,
-        weight: newWeight,
-        price: service.price * newWeight,
-        studioId: studioId,
-        items: []
-      });
-    } else {
-      const existingItem = cartItems.find(item => item.serviceId === service.id);
-      const quantity = existingItem && existingItem.quantity ? existingItem.quantity + 1 : 1;
-      
-      handleAddToCart({
-        serviceId: service.id,
-        serviceName: service.name,
-        quantity: quantity,
-        price: service.price * quantity,
-        studioId: studioId,
-        items: []
-      });
-    }
-  };
-
-  const handleDecreaseWeight = (service: Service) => {
-    if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-      const currentWeight = getServiceWeight(service.id) || 0;
-      
-      if (currentWeight <= 1) {
-        setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
-        localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
-        return;
-      }
-      
-      const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
-      handleAddToCart({
-        serviceId: service.id,
-        serviceName: service.name,
-        weight: newWeight,
-        price: service.price * newWeight,
-        studioId: studioId,
-        items: []
-      });
-    } else {
-      const existingItem = cartItems.find(item => item.serviceId === service.id);
-      if (!existingItem) return;
-      
-      const quantity = existingItem.quantity ? existingItem.quantity - 1 : 0;
-      
-      if (quantity <= 0) {
-        setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
-        localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
-        return;
-      }
-      
-      handleAddToCart({
-        serviceId: service.id,
-        serviceName: service.name,
-        quantity: quantity,
-        price: service.price * quantity,
-        studioId: studioId,
-        items: []
-      });
-    }
-  };
-
-  const handleCardClick = (service: Service) => {
-    const existingItem = cartItems.find(item => item.serviceId === service.id);
-    
-    if (existingItem) {
-      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-        setSelectedService(service);
-      }
-    } else {
+  const handleServiceInteractions = {
+    increaseWeight: (service: Service) => {
       const existingWashType = getExistingWashType();
       const currentWashType = selectedTab;
       
-      if (existingWashType && existingWashType !== currentWashType) {
+      if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
         setPendingService(service);
         setMixedServicesDialogOpen(true);
         return;
       }
       
-      handleOpenServicePopup(service);
+      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+        const currentWeight = getServiceWeight(service.id) || 0;
+        const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
+        
+        handleAddToCart({
+          serviceId: service.id,
+          serviceName: service.name,
+          weight: newWeight,
+          price: service.price * newWeight,
+          studioId: studioId,
+          items: []
+        });
+      } else {
+        const existingItem = cartItems.find(item => item.serviceId === service.id);
+        const quantity = existingItem && existingItem.quantity ? existingItem.quantity + 1 : 1;
+        
+        handleAddToCart({
+          serviceId: service.id,
+          serviceName: service.name,
+          quantity: quantity,
+          price: service.price * quantity,
+          studioId: studioId,
+          items: []
+        });
+      }
+    },
+
+    decreaseWeight: (service: Service) => {
+      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+        const currentWeight = getServiceWeight(service.id) || 0;
+        
+        if (currentWeight <= 1) {
+          setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+          localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
+          return;
+        }
+        
+        const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
+        handleAddToCart({
+          serviceId: service.id,
+          serviceName: service.name,
+          weight: newWeight,
+          price: service.price * newWeight,
+          studioId: studioId,
+          items: []
+        });
+      } else {
+        const existingItem = cartItems.find(item => item.serviceId === service.id);
+        if (!existingItem) return;
+        
+        const quantity = existingItem.quantity ? existingItem.quantity - 1 : 0;
+        
+        if (quantity <= 0) {
+          setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
+          localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
+          return;
+        }
+        
+        handleAddToCart({
+          serviceId: service.id,
+          serviceName: service.name,
+          quantity: quantity,
+          price: service.price * quantity,
+          studioId: studioId,
+          items: []
+        });
+      }
+    },
+
+    cardClick: (service: Service) => {
+      const existingItem = cartItems.find(item => item.serviceId === service.id);
+      
+      if (existingItem) {
+        if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+          setSelectedService(service);
+        }
+      } else {
+        const existingWashType = getExistingWashType();
+        const currentWashType = selectedTab;
+        
+        if (existingWashType && existingWashType !== currentWashType) {
+          setPendingService(service);
+          setMixedServicesDialogOpen(true);
+          return;
+        }
+        
+        handleOpenServicePopup(service);
+      }
     }
   };
-  
+
   const handleSwitchToStandard = () => {
     const updatedItems = cartItems.filter(item => item.washType !== "express");
     setCartItems(updatedItems);
@@ -607,144 +370,24 @@ const ServiceList: React.FC<ServiceListProps> = ({
       ref={tabsWrapperRef}
     >
       <div ref={tabsRef} className="transition-all duration-300">
-        <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
-          {isTabsSticky && (
-            <div 
-              className="h-0 overflow-hidden" 
-              style={{ 
-                height: tabsContentHeight.current ? `${tabsContentHeight.current}px` : '72px'
-              }}
-            />
-          )}
-          
-          {isTabsSticky && (
-            <div className="fixed top-[56px] left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm animate-fade-in transition-opacity duration-300">
-              <div className={cn("transition-colors duration-300 py-2 px-4", backgroundColors[selectedTab as keyof typeof backgroundColors])}>
-                <TabsList className="w-full grid grid-cols-2 gap-2 bg-transparent my-0 py-1 mx-0">
-                  <TabsTrigger 
-                    value="standard" 
-                    className={cn(
-                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                      selectedTab === "standard" 
-                        ? "text-white bg-blue-600 border-blue-600 font-medium" 
-                        : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
-                    )}
-                  >
-                    <Clock size={16} className="mr-2" />
-                    Standard Wash
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="express" 
-                    className={cn(
-                      "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                      selectedTab === "express" 
-                        ? "text-white bg-orange-500 border-orange-500 font-medium" 
-                        : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
-                    )}
-                  >
-                    <Clock size={16} className="mr-2" />
-                    Express Wash
-                  </TabsTrigger>
-                </TabsList>
-                
-                <div className={cn("flex items-center gap-2 mt-2 text-sm transition-colors duration-300", 
-                  selectedTab === "standard" ? "text-blue-600" : "text-orange-500"
-                )}>
-                  <Clock size={16} />
-                  <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div 
-            className={cn(
-              isTabsSticky ? "opacity-0 invisible h-0 overflow-hidden" : "opacity-100 visible h-auto", 
-              "transition-all duration-500"
-            )}
-          >
-            <TabsList 
-              ref={tabsListRef} 
-              className="grid w-full grid-cols-2 gap-2 mb-6 bg-transparent my-[3px] py-0"
-            >
-              <TabsTrigger 
-                value="standard" 
-                className={cn(
-                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                  selectedTab === "standard" 
-                    ? "text-white bg-blue-600 border-blue-600 font-medium" 
-                    : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
-                )}
-              >
-                <Clock size={16} className="mr-2" />
-                Standard Wash
-              </TabsTrigger>
-              <TabsTrigger 
-                value="express" 
-                className={cn(
-                  "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                  selectedTab === "express" 
-                    ? "text-white bg-orange-500 border-orange-500 font-medium" 
-                    : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
-                )}
-              >
-                <Clock size={16} className="mr-2" />
-                Express Wash
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          <div className={cn("flex items-center gap-2 mb-4 text-sm transition-colors duration-300", 
-            selectedTab === "standard" ? "text-blue-600" : "text-orange-500"
-          )}>
-            <Clock size={16} />
-            <span>{deliveryMessages[selectedTab as keyof typeof deliveryMessages]}</span>
-          </div>
-          
-          <TabsContent value="standard">
-            <div className="space-y-8">
-              {categories.map((category, idx) => (
-                <ServiceCategory
-                  key={idx}
-                  title={category.title}
-                  icon={category.icon}
-                  services={category.services}
-                  subCategories={category.subCategories}
-                  tabType="standard"
-                  getServiceWeight={getServiceWeight}
-                  getServiceQuantity={getServiceQuantity}
-                  onServiceAdd={handleOpenServicePopup}
-                  onServiceIncrease={handleIncreaseWeight}
-                  onServiceDecrease={handleDecreaseWeight}
-                  onServiceClick={handleCardClick}
-                  categoryRef={(el) => setCategoryRef(category.title, el)}
-                />
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="express">
-            <div className="space-y-8">
-              {expressCategories.map((category, idx) => (
-                <ServiceCategory
-                  key={idx}
-                  title={category.title}
-                  icon={category.icon}
-                  services={category.services}
-                  subCategories={category.subCategories}
-                  tabType="express"
-                  getServiceWeight={getServiceWeight}
-                  getServiceQuantity={getServiceQuantity}
-                  onServiceAdd={handleOpenServicePopup}
-                  onServiceIncrease={handleIncreaseWeight}
-                  onServiceDecrease={handleDecreaseWeight}
-                  onServiceClick={handleCardClick}
-                  categoryRef={(el) => setCategoryRef(category.title, el)}
-                />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <ServiceTabs 
+          selectedTab={selectedTab}
+          onTabChange={handleTabChange}
+          isTabsSticky={isTabsSticky}
+          tabsContentHeight={tabsContentHeight.current}
+          tabsListRef={tabsListRef}
+          deliveryMessage={deliveryMessages[selectedTab as keyof typeof deliveryMessages]}
+          backgroundColors={backgroundColors}
+        >
+          <ServiceCategoryList 
+            categories={selectedTab === "standard" ? categories : expressCategories}
+            tabType={selectedTab}
+            getServiceWeight={getServiceWeight}
+            getServiceQuantity={getServiceQuantity}
+            onServiceInteractions={handleServiceInteractions}
+            setCategoryRef={setCategoryRef}
+          />
+        </ServiceTabs>
       </div>
 
       <button 
