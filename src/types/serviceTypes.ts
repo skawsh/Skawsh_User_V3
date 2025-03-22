@@ -14,6 +14,7 @@ export interface CartItem {
   price: number;
   quantity?: number;
   studioId?: string;
+  studioName?: string;
   items: {
     name: string;
     quantity: number;
