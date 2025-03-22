@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,15 +12,13 @@ import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface OrderCardProps {
   order: Order;
@@ -66,6 +63,10 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   const closeDeleteDialog = () => {
     setShowDeleteDialog(false);
+    // Explicitly blur any focused element similar to cancel flow
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   };
 
   const handleDeleteOrder = () => {
@@ -78,8 +79,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
     // Update sessionStorage
     sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
     
-    // Close dialog
-    closeDeleteDialog();
+    // Close dialog immediately to remove overlay/focus traps
+    setShowDeleteDialog(false);
+    
+    // Explicitly blur any focused element to reset focus state
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     
     // Callback to refresh the list
     if (onDeleteComplete) {
@@ -184,23 +190,25 @@ const OrderCard: React.FC<OrderCardProps> = ({
         />
       )}
 
-      {/* Delete confirmation dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Order</AlertDialogTitle>
-            <AlertDialogDescription>
+      {/* Delete confirmation dialog using Dialog from shadcn/ui */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="sm:max-w-[425px]" onInteractOutside={closeDeleteDialog}>
+          <DialogHeader>
+            <DialogTitle>Delete Order</DialogTitle>
+            <DialogDescription>
               Do you want to delete this order from your history?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={closeDeleteDialog}>No</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteOrder} className="bg-red-500 hover:bg-red-600">
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={closeDeleteDialog}>
+              No
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteOrder} className="bg-red-500 hover:bg-red-600">
               Yes
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
