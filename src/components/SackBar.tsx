@@ -25,6 +25,8 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [uniqueServiceCount, setUniqueServiceCount] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showWaterWave, setShowWaterWave] = useState(false);
+  const [showFirstItemMessage, setShowFirstItemMessage] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -42,7 +44,24 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
               uniqueServices.add(item.serviceId);
             }
           });
-          setUniqueServiceCount(uniqueServices.size);
+          
+          const newServiceCount = uniqueServices.size;
+          
+          // Check if this is the first item added
+          const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
+          
+          if (newServiceCount === 1 && uniqueServiceCount === 0 && !hasShownFirstItemMessage) {
+            setShowWaterWave(true);
+            setShowFirstItemMessage(true);
+            localStorage.setItem('hasShownSackWaveAnimation', 'true');
+            
+            // Hide the message after 4 seconds
+            setTimeout(() => {
+              setShowFirstItemMessage(false);
+            }, 4000);
+          }
+          
+          setUniqueServiceCount(newServiceCount);
           
           console.log('Cart items loaded:', parsedItems);
           console.log('Unique service count:', uniqueServices.size);
@@ -66,7 +85,12 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
       window.removeEventListener('storage', loadCartItems);
       document.removeEventListener('cartUpdated', loadCartItems);
     };
-  }, []);
+  }, [uniqueServiceCount]);
+  
+  // Handle water wave animation end
+  const handleWaterWaveAnimationEnd = () => {
+    setShowWaterWave(false);
+  };
   
   if (cartItems.length === 0) return null;
   
@@ -105,70 +129,85 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
       )}
     >
       <div className="max-w-lg mx-auto">
-        <div className="bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
-              <img 
-                src="/lovable-uploads/fda4730e-82ff-4406-877e-1f45d0ca2ebd.png" 
-                alt="Studio logo"
-                className="w-6 h-6 object-contain"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder.svg';
-                }}
-              />
+        <div className="relative">
+          {showFirstItemMessage && (
+            <div className="first-sack-message">
+              You added your 1st service to the sack! 🎉
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
-              <button 
-                className="text-xs text-left flex items-center text-primary-500"
-                onClick={() => studioInfo && navigate(`/studio/${studioInfo.id}`)}
-              >
-                View menu <span className="ml-1">▶</span>
-              </button>
-            </div>
-          </div>
+          )}
           
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleViewSack}
-              className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center hover:bg-[#83d699] transition-colors"
-            >
-              <span>View Sack</span>
-              <span>{uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}</span>
-            </button>
+          <div className="bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform relative overflow-hidden">
+            {showWaterWave && (
+              <div 
+                className="water-wave"
+                onAnimationEnd={handleWaterWaveAnimationEnd}
+              />
+            )}
             
-            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <AlertDialogTrigger asChild>
-                <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
-                  <Trash2 size={24} className="text-red-500" />
+            <div className="flex items-center gap-2 relative z-10">
+              <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
+                <img 
+                  src="/lovable-uploads/fda4730e-82ff-4406-877e-1f45d0ca2ebd.png" 
+                  alt="Studio logo"
+                  className="w-6 h-6 object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.svg';
+                  }}
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
+                <button 
+                  className="text-xs text-left flex items-center text-primary-500"
+                  onClick={() => studioInfo && navigate(`/studio/${studioInfo.id}`)}
+                >
+                  View menu <span className="ml-1">▶</span>
                 </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-xl animate-scale-in">
-                <div className="flex justify-end">
-                  <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
-                    <X size={18} />
-                  </AlertDialogCancel>
-                </div>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Clear Sack</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to clear your sack? This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
-                  <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
-                    <X className="mr-1 h-4 w-4" /> No
-                  </AlertDialogCancel>
-                  <AlertDialogAction 
-                    onClick={handleClearSack}
-                    className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
-                  >
-                    <Check className="mr-1 h-4 w-4" /> Yes
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 relative z-10">
+              <button
+                onClick={handleViewSack}
+                className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center hover:bg-[#83d699] transition-colors"
+              >
+                <span>View Sack</span>
+                <span>{uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}</span>
+              </button>
+              
+              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
+                    <Trash2 size={24} className="text-red-500" />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-xl animate-scale-in">
+                  <div className="flex justify-end">
+                    <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
+                      <X size={18} />
+                    </AlertDialogCancel>
+                  </div>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear Sack</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to clear your sack? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
+                    <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
+                      <X className="mr-1 h-4 w-4" /> No
+                    </AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleClearSack}
+                      className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
+                    >
+                      <Check className="mr-1 h-4 w-4" /> Yes
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         </div>
       </div>

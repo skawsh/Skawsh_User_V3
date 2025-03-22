@@ -13,6 +13,9 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uniqueServiceCount, setUniqueServiceCount] = useState(itemCount);
+  const [showWaterWave, setShowWaterWave] = useState(false);
+  const [showFirstItemMessage, setShowFirstItemMessage] = useState(false);
+  const [isFirstItemAdded, setIsFirstItemAdded] = useState(false);
   
   useEffect(() => {
     // Load cart items and count unique services
@@ -30,7 +33,25 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
               uniqueServices.add(item.serviceId);
             }
           });
-          setUniqueServiceCount(uniqueServices.size);
+          
+          const newServiceCount = uniqueServices.size;
+          
+          // Check if this is the first item added
+          const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
+          
+          if (newServiceCount === 1 && uniqueServiceCount === 0 && !hasShownFirstItemMessage) {
+            setShowWaterWave(true);
+            setShowFirstItemMessage(true);
+            setIsFirstItemAdded(true);
+            localStorage.setItem('hasShownSackWaveAnimation', 'true');
+            
+            // Hide the message after 4 seconds
+            setTimeout(() => {
+              setShowFirstItemMessage(false);
+            }, 4000);
+          }
+          
+          setUniqueServiceCount(newServiceCount);
         } else {
           setUniqueServiceCount(0);
         }
@@ -48,7 +69,12 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     return () => {
       document.removeEventListener('cartUpdated', countUniqueServices);
     };
-  }, [studioId, itemCount]);
+  }, [studioId, itemCount, uniqueServiceCount]);
+
+  // Handle water wave animation end
+  const handleWaterWaveAnimationEnd = () => {
+    setShowWaterWave(false);
+  };
 
   if (uniqueServiceCount === 0) return null;
 
@@ -68,22 +94,37 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
       style={{ transform: 'translateZ(0)' }}
     >
       <div className="max-w-lg mx-auto px-4 pb-4">
-        <button
-          onClick={handleGoToCart}
-          className={cn(
-            "w-full flex items-center justify-between py-3 px-5 rounded-xl shadow-md",
-            "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200",
-            "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
+        <div className="relative">
+          {showFirstItemMessage && (
+            <div className="first-sack-message">
+              You added your 1st service to the sack! 🎉
+            </div>
           )}
-        >
-          <span className="text-[#403E43] font-semibold">
-            {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
-          </span>
-          <div className="flex items-center gap-2">
-            <ShoppingBag size={20} className="text-white" />
-            <span className="text-white font-semibold">View Sack</span>
-          </div>
-        </button>
+          
+          <button
+            onClick={handleGoToCart}
+            className={cn(
+              "w-full flex items-center justify-between py-3 px-5 rounded-xl shadow-md overflow-hidden relative",
+              "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200",
+              "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            )}
+          >
+            {showWaterWave && (
+              <div 
+                className="water-wave"
+                onAnimationEnd={handleWaterWaveAnimationEnd}
+              />
+            )}
+            
+            <span className="text-[#403E43] font-semibold relative z-10">
+              {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
+            </span>
+            <div className="flex items-center gap-2 relative z-10">
+              <ShoppingBag size={20} className={cn("text-white", isFirstItemAdded && "animate-pulse")} />
+              <span className="text-white font-semibold">View Sack</span>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
