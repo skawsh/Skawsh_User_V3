@@ -20,7 +20,7 @@ const OrderDetailsHeader: React.FC<OrderDetailsHeaderProps> = ({
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
+    <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm border-b border-gray-200">
       <div className="max-w-md mx-auto flex justify-between items-center p-4">
         <Button 
           variant="ghost" 
@@ -28,7 +28,7 @@ const OrderDetailsHeader: React.FC<OrderDetailsHeaderProps> = ({
           onClick={onBackClick}
         >
           <ArrowLeft className="h-5 w-5 mr-1" /> 
-          <span>Order Details</span>
+          <span className="font-semibold">Order Details</span>
         </Button>
         <Button 
           variant="link" 

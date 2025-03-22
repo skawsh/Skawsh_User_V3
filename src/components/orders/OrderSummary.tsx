@@ -58,14 +58,14 @@ const OrderSummary: React.FC = () => {
           <span>₹50</span>
         </div>
         <div className="flex justify-between text-sm mb-1">
-          <span>GST</span>
+          <span>Taxes</span>
           <span>₹194.38</span>
         </div>
       </div>
       
       {/* Grand total */}
       <div className="bg-green-50 -mx-4 px-4 py-2 font-bold flex justify-between">
-        <span>Grand Total</span>
+        <span>Approx. Total</span>
         <span>₹1310.38</span>
       </div>
     </>
