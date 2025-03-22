@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -111,13 +112,22 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isHistory ? (
-                  <DropdownMenuItem 
-                    onClick={openDeleteDialog}
-                    className="text-red-500 focus:text-red-500"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Order
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem 
+                      onClick={openDeleteDialog}
+                      className="text-red-500 focus:text-red-500"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Order
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="text-red-500 focus:text-red-500"
+                      // This is the non-functional "Delete Order" option
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete Order (UI Only)
+                    </DropdownMenuItem>
+                  </>
                 ) : (
                   <DropdownMenuItem 
                     onClick={openCancelModal}
