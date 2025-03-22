@@ -12,6 +12,7 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Service, CartItem, ServiceCategory } from '@/types/serviceTypes';
 import { useServiceData } from '@/hooks/useServiceData';
+import WashingMachineCelebration from '../animations/WashingMachineCelebration';
 
 interface ServiceListProps {
   services: Service[];
@@ -38,6 +39,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsListRef = useRef<HTMLDivElement>(null);
   const tabsWrapperRef = useRef<HTMLDivElement>(null);
   const tabsContentHeight = useRef<number>(0);
+  const [showCelebration, setShowCelebration] = useState(false);
   
   // Get service data from our custom hook
   const { 
@@ -153,6 +155,12 @@ const ServiceList: React.FC<ServiceListProps> = ({
           items: updatedOrderDetails.items,
           washType: updatedOrderDetails.washType
         }];
+        
+        const hasShownCelebration = localStorage.getItem('hasShownCelebration');
+        if (!hasShownCelebration && prev.length === 0) {
+          setShowCelebration(true);
+          localStorage.setItem('hasShownCelebration', 'true');
+        }
       }
       
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
@@ -443,6 +451,11 @@ const ServiceList: React.FC<ServiceListProps> = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      <WashingMachineCelebration 
+        isVisible={showCelebration} 
+        onAnimationComplete={() => setShowCelebration(false)} 
+      />
     </div>
   );
 };
