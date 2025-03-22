@@ -77,7 +77,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   };
 
   const handleEditOrder = () => {
-    // Navigate to the studio sack page with the order ID
+    // Navigate to the studio page with the order ID
     navigate(`/studio/${order.studioId}?orderId=${order.id}`);
   };
 
@@ -107,9 +107,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <DropdownMenuContent align="end">
                 {isHistory ? (
                   <>
-                    <DropdownMenuItem className="text-red-500 focus:text-red-500">
+                    <DropdownMenuItem onClick={openDeleteDialog} className="text-red-500 focus:text-red-500">
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Order (UI Only)
+                      Delete Order
                     </DropdownMenuItem>
                   </>
                 ) : (

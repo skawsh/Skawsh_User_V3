@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import SackFooter from '../components/studio/SackFooter';
 import { ShoppingBag, ChevronLeft, MoreVertical, Share, Info, Flag } from 'lucide-react';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
@@ -24,16 +23,55 @@ const StudioProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('orderId');
   const [isScrolled, setIsScrolled] = useState(false);
   const backButtonRef = useRef<HTMLButtonElement>(null);
   const [cartCount, setCartCount] = useState(0);
+  const [isEditingOrder, setIsEditingOrder] = useState(false);
 
   // Use console log to debug the route params
   console.log("Studio ID from URL:", id);
+  console.log("Order ID from URL params:", orderId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]);
+    
+    // Check if we're editing an order
+    if (orderId) {
+      setIsEditingOrder(true);
+      
+      // Clear existing cart items before loading the order
+      localStorage.removeItem('cartItems');
+      document.dispatchEvent(new Event('cartUpdated'));
+      
+      // Load the order details and set them in the cart
+      // This is a mock implementation - in a real app, you'd fetch from API
+      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+      const orderToEdit = orders.find((order: any) => order.id === orderId);
+      
+      if (orderToEdit && orderToEdit.items) {
+        // Convert order items to cart items format
+        const cartItems = orderToEdit.items.map((item: any) => ({
+          serviceId: item.serviceId || Math.random().toString(36).substring(7),
+          serviceName: item.serviceName || 'Service',
+          studioId: id,
+          price: item.price || 0,
+          quantity: item.quantity || 1
+        }));
+        
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        document.dispatchEvent(new Event('cartUpdated'));
+        
+        // Show toast to inform user they're editing an order
+        toast({
+          title: "Editing Order",
+          description: `You're now editing order #${orderId.substring(0, 8)}`,
+          duration: 3000,
+        });
+      }
+    }
+  }, [location, orderId, id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,6 +121,12 @@ const StudioProfile: React.FC = () => {
   }, []);
 
   const handleBackClick = () => {
+    // If editing an order, go back to orders page
+    if (isEditingOrder) {
+      navigate('/orders');
+      return;
+    }
+    
     navigate('/');
   };
 
@@ -177,7 +221,14 @@ const StudioProfile: React.FC = () => {
                 <button onClick={handleBackClick} className="mr-3 p-1.5 rounded-full text-gray-700 bg-gray-100/70 hover:bg-gray-200/80 transition-all">
                   <ChevronLeft size={22} />
                 </button>
-                <h2 className="text-lg font-semibold truncate">{studio.name}</h2>
+                <h2 className="text-lg font-semibold truncate">
+                  {isEditingOrder ? 'Edit Order' : studio.name}
+                  {isEditingOrder && (
+                    <span className="ml-2 text-sm text-blue-600">
+                      #{orderId?.substring(0, 8)}
+                    </span>
+                  )}
+                </h2>
               </div>
               
               <DropdownMenu>
@@ -206,13 +257,13 @@ const StudioProfile: React.FC = () => {
         )}
         
         <StudioHeader 
-          name={studio.name} 
+          name={isEditingOrder ? `Edit Order #${orderId?.substring(0, 8)}` : studio.name} 
           image={studio.image} 
           rating={studio.rating} 
           reviewCount={studio.reviewCount} 
           deliveryTime={studio.deliveryTime} 
           backButtonRef={backButtonRef} 
-          description={studio.description} 
+          description={isEditingOrder ? 'Edit your order details below' : studio.description} 
           onBackClick={handleBackClick} 
         />
         

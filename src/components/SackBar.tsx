@@ -71,10 +71,15 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   if (cartItems.length === 0) return null;
   
   const handleViewSack = () => {
+    // Check if we're coming from an edit order action
+    const urlParams = new URLSearchParams(location.search);
+    const orderId = urlParams.get('orderId');
+    
     navigate('/cart', {
       state: {
         previousPath: location.pathname,
-        studioId: cartItems[0]?.studioId || null
+        studioId: cartItems[0]?.studioId || null,
+        orderId: orderId
       }
     });
   };
