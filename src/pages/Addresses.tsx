@@ -31,6 +31,14 @@ const Addresses: React.FC = () => {
   }]);
 
   const returnToCart = location.state?.returnToCart || false;
+  const newAddress = location.state?.newAddress;
+
+  useEffect(() => {
+    // Add new address if it exists in location state
+    if (newAddress) {
+      setAddresses(prev => [newAddress, ...prev]);
+    }
+  }, [newAddress]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,7 +62,8 @@ const Addresses: React.FC = () => {
   };
 
   const handleAddAddress = () => {
-    console.log('Add new address');
+    const fromPath = location.state?.from;
+    navigate('/add-new-address', { state: { from: fromPath } });
   };
 
   const handleSelectAddress = (address: AddressItem) => {
@@ -85,7 +94,7 @@ const Addresses: React.FC = () => {
           </div>
         )}
 
-        <div className="sticky top-0 z-10 bg-white ${isScrolled ? 'shadow-sm' : ''} transition-shadow duration-200">
+        <div className="sticky top-0 z-10 bg-white transition-shadow duration-200">
           <div className="flex items-center gap-3 py-3 px-4">
             <button onClick={handleBack} className="p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Go back to profile">
               <ArrowLeft size={20} className="text-gray-700" />

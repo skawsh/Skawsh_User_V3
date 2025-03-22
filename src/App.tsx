@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,8 +22,8 @@ import ReferFriends from "./pages/ReferFriends";
 import Support from "./pages/Support";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
+import AddNewAddress from "./pages/AddNewAddress";
 
-// Create a new QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -34,36 +33,39 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/index" element={<Index />} />
-          <Route path="/studio/:id" element={<StudioProfile />} />
-          <Route path="/studio/:id/about" element={<StudioAbout />} />
-          <Route path="/studio/:studioId/reviews" element={<StudioReviews />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/services/:serviceId" element={<StudiosByService />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/addresses" element={<Addresses />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/refer" element={<ReferFriends />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/orders/:orderId" element={<OrderDetails />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/index" element={<Index />} />
+            <Route path="/studio/:id" element={<StudioProfile />} />
+            <Route path="/studio/:id/about" element={<StudioAbout />} />
+            <Route path="/studio/:studioId/reviews" element={<StudioReviews />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/:serviceId" element={<StudiosByService />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/addresses" element={<Addresses />} />
+            <Route path="/add-new-address" element={<AddNewAddress />} />
+            <Route path="/feedback" element={<Feedback />} />
+            <Route path="/refer" element={<ReferFriends />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/orders/:orderId" element={<OrderDetails />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
