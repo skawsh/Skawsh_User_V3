@@ -44,7 +44,7 @@ const PaymentMethodDrawer: React.FC<PaymentMethodDrawerProps> = ({
         if (order.id === orderId) {
           return {
             ...order,
-            status: 'processing',
+            status: 'completed', // Changed from 'processing' to 'completed' to move to history
             paymentMethod: method,
             paymentStatus: 'paid'
           };
