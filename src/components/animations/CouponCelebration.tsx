@@ -27,10 +27,10 @@ const CouponCelebration: React.FC<CouponCelebrationProps> = ({
       }));
       setSparklePositions(newSparkles);
       
-      // Hide the animation after 4 seconds
+      // Hide the animation after 3 seconds (reduced from 4)
       const timer = setTimeout(() => {
         onAnimationComplete();
-      }, 4000);
+      }, 3000);
       
       return () => clearTimeout(timer);
     }

@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Drawer, DrawerContent, DrawerClose, DrawerTrigger } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 
 interface StudioHeaderProps {
   name: string;
@@ -30,6 +30,13 @@ interface LocationOption {
   isClosedForDelivery?: boolean;
 }
 
+interface ServiceSuggestion {
+  id: string;
+  name: string;
+  price: number;
+  category?: string;
+}
+
 const StudioHeader: React.FC<StudioHeaderProps> = ({
   name,
   image,
@@ -43,6 +50,28 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  
+  useOnClickOutside(searchRef, () => setShowSuggestions(false));
+
+  const serviceSuggestions: ServiceSuggestion[] = [
+    { id: '1', name: 'Dry Cleaning', price: 8.99, category: 'Premium Services' },
+    { id: '2', name: 'Wash & Fold', price: 2.49, category: 'Basic Services' },
+    { id: '3', name: 'Ironing', price: 4.99, category: 'Basic Services' },
+    { id: '4', name: 'Express Service', price: 12.99, category: 'Premium Services' },
+    { id: '5', name: 'Shirt Cleaning', price: 5.99, category: 'Upper Wear' },
+    { id: '6', name: 'Trouser Cleaning', price: 6.99, category: 'Lower Wear' },
+    { id: '7', name: 'Carpet Cleaning', price: 3.49, category: 'Home Textiles' },
+  ];
+
+  const filteredSuggestions = searchTerm 
+    ? serviceSuggestions.filter(service => 
+        service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (service.category && service.category.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : [];
 
   const currentLocation: LocationOption = {
     name: "Tolichowki",
@@ -128,6 +157,29 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
 
   const handleViewAllReviews = () => {
     navigate(`/studio/${name.toLowerCase().replace(/\s+/g, '-')}/reviews`);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value) {
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleServiceSelect = (serviceId: string) => {
+    console.log('Selected service:', serviceId);
+    const serviceElement = document.getElementById(`service-${serviceId}`);
+    if (serviceElement) {
+      serviceElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      serviceElement.classList.add('bg-primary-50');
+      setTimeout(() => {
+        serviceElement.classList.remove('bg-primary-50');
+      }, 1500);
+    }
+    setShowSuggestions(false);
+    setSearchTerm('');
   };
 
   return <div className="animate-fade-in">
@@ -259,9 +311,41 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
       </div>
       
       <div className="px-4 py-3 pb-2 bg-white">
-        <div className="relative">
+        <div className="relative" ref={searchRef}>
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          <Input placeholder="Search services in this studio..." className="pl-10 bg-gray-50 border-gray-200 rounded-full shadow-sm" />
+          <Input 
+            placeholder="Search services in this studio..." 
+            className="pl-10 bg-gray-50 border-gray-200 rounded-full shadow-sm" 
+            value={searchTerm}
+            onChange={handleSearch}
+            onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
+          />
+          
+          {showSuggestions && filteredSuggestions.length > 0 && (
+            <div className="absolute z-40 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden">
+              <div className="py-1 max-h-60 overflow-y-auto">
+                {filteredSuggestions.map((service) => (
+                  <div
+                    key={service.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleServiceSelect(service.id)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium">{service.name}</p>
+                        {service.category && (
+                          <p className="text-xs text-gray-500">{service.category}</p>
+                        )}
+                      </div>
+                      <p className="text-sm font-medium text-primary-600">
+                        ₹{service.price}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>;
