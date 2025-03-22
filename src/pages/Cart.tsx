@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
@@ -393,6 +394,24 @@ const Cart: React.FC = () => {
                   </div>
                 </div>
               ))}
+              
+              {/* Add More Section */}
+              <div className="bg-green-50 p-4 rounded-xl mb-4 shadow-sm border border-green-100 animate-fade-in" style={{animationDelay: "300ms"}}>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <PlusCircle size={18} className="text-green-600 mr-2" />
+                    <span className="font-medium text-gray-700">Add More Services</span>
+                  </div>
+                  <Button 
+                    onClick={() => navigate('/services')}
+                    className="bg-green-600 hover:bg-green-700 text-sm px-3 py-1 h-auto"
+                    size="sm"
+                  >
+                    <span>Browse Services</span>
+                    <ChevronRight size={16} />
+                  </Button>
+                </div>
+              </div>
               
               <div className="bg-blue-50 p-4 rounded-xl mb-4 shadow-sm border border-blue-100 animate-fade-in" style={{animationDelay: "350ms"}}>
                 <div className="flex justify-between items-center">
