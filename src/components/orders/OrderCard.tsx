@@ -1,33 +1,18 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ChevronRight, MoreVertical, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 interface OrderCardProps {
   order: Order;
   onCancelComplete?: () => void;
   onDeleteComplete?: () => void;
 }
-
-const OrderCard: React.FC<OrderCardProps> = ({ 
+const OrderCard: React.FC<OrderCardProps> = ({
   order,
   onCancelComplete,
   onDeleteComplete
@@ -36,16 +21,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
     setSpecialCodeActivated(hasSpecialCode);
   }, []);
-  
   const openCancelModal = () => {
     setShowCancelModal(true);
   };
-
   const closeCancelModal = () => {
     setShowCancelModal(false);
     if (document.activeElement instanceof HTMLElement) {
@@ -55,18 +37,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
       onCancelComplete();
     }
   };
-
   const openDeleteDialog = () => {
     setShowDeleteDialog(true);
   };
-
   const closeDeleteDialog = () => {
     setShowDeleteDialog(false);
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   };
-
   const handleDeleteOrder = () => {
     const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
     const updatedOrders = orders.filter((o: Order) => o.id !== order.id);
@@ -81,18 +60,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
       }
     }, 100);
   };
-
   const isPendingPayment = order.status === 'pending_payment';
   const isOngoing = order.status !== 'completed' && order.status !== 'cancelled';
   const isHistory = order.status === 'completed' || order.status === 'cancelled';
-
-  return (
-    <>
-      <Card 
-        className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
-        ref={cardRef}
-        tabIndex={-1}
-      >
+  return <>
+      <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
         <div className="p-4">
           <div className="flex justify-between items-start">
             <div>
@@ -111,33 +83,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {isHistory ? (
-                  <>
-                    <DropdownMenuItem 
-                      onClick={openDeleteDialog}
-                      className="text-red-500 focus:text-red-500"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Order
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="text-red-500 focus:text-red-500"
-                      // This is the non-functional "Delete Order" option
-                    >
+                {isHistory ? <>
+                    
+                    <DropdownMenuItem className="text-red-500 focus:text-red-500"
+                // This is the non-functional "Delete Order" option
+                >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete Order (UI Only)
                     </DropdownMenuItem>
-                  </>
-                ) : (
-                  <DropdownMenuItem 
-                    onClick={openCancelModal}
-                    disabled={!isOngoing}
-                    className="text-red-500 focus:text-red-500"
-                  >
+                  </> : <DropdownMenuItem onClick={openCancelModal} disabled={!isOngoing} className="text-red-500 focus:text-red-500">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Cancel Order
-                  </DropdownMenuItem>
-                )}
+                  </DropdownMenuItem>}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -149,58 +106,29 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </div>
           
           <div className="mt-3 flex gap-2">
-            <Button 
-              asChild
-              variant="outline" 
-              size="sm" 
-              className="rounded-full shadow-sm hover:shadow flex-1"
-            >
+            <Button asChild variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow flex-1">
               <Link to={`/orders/${order.id}`}>View Details</Link>
             </Button>
             
-            {isPendingPayment && (
-              <Button 
-                asChild
-                variant="default" 
-                size="sm" 
-                className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${
-                  specialCodeActivated 
-                    ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
-                }`}
-                disabled={!specialCodeActivated}
-              >
+            {isPendingPayment && <Button asChild variant="default" size="sm" className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${specialCodeActivated ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'}`} disabled={!specialCodeActivated}>
                 <Link to={specialCodeActivated ? `/payment/${order.id}` : '#'}>
                   Pay Now ₹{order.totalAmount}
                 </Link>
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
       </Card>
 
-      {showCancelModal && (
-        <CancelOrderModal
-          orderId={order.id}
-          onClose={closeCancelModal}
-          onCancelSuccess={onCancelComplete}
-        />
-      )}
+      {showCancelModal && <CancelOrderModal orderId={order.id} onClose={closeCancelModal} onCancelSuccess={onCancelComplete} />}
 
-      <Dialog 
-        open={showDeleteDialog} 
-        onOpenChange={(open) => {
-          if (!open) {
-            closeDeleteDialog();
-          }
-        }}
-      >
-        <DialogContent 
-          className="sm:max-w-[425px]"
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+      <Dialog open={showDeleteDialog} onOpenChange={open => {
+      if (!open) {
+        closeDeleteDialog();
+      }
+    }}>
+        <DialogContent className="sm:max-w-[425px]" onInteractOutside={e => {
+        e.preventDefault();
+      }}>
           <DialogHeader>
             <DialogTitle>Delete Order</DialogTitle>
             <DialogDescription>
@@ -217,8 +145,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
-
 export default OrderCard;
