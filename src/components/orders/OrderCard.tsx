@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  // Check localStorage for the special code when component mounts
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
     setSpecialCodeActivated(hasSpecialCode);
@@ -49,7 +47,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   const closeCancelModal = () => {
     setShowCancelModal(false);
-    // Explicitly blur any focused element to remove any lingering cursor
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -64,34 +61,24 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
   const closeDeleteDialog = () => {
     setShowDeleteDialog(false);
-    // Explicitly blur any focused element similar to cancel flow
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
   };
 
   const handleDeleteOrder = () => {
-    // Get current orders from sessionStorage
     const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-    
-    // Filter out the deleted order
     const updatedOrders = orders.filter((o: Order) => o.id !== order.id);
-    
-    // Update sessionStorage
     sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
-    
-    // Close dialog immediately to remove overlay/focus traps
     setShowDeleteDialog(false);
-    
-    // Explicitly blur any focused element to reset focus state
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    
-    // Callback to refresh the list
-    if (onDeleteComplete) {
-      onDeleteComplete();
-    }
+    setTimeout(() => {
+      if (onDeleteComplete) {
+        onDeleteComplete();
+      }
+    }, 100);
   };
 
   const isPendingPayment = order.status === 'pending_payment';
@@ -182,7 +169,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
         </div>
       </Card>
 
-      {/* Only render CancelOrderModal when showCancelModal is true */}
       {showCancelModal && (
         <CancelOrderModal
           orderId={order.id}
@@ -191,11 +177,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
         />
       )}
 
-      {/* Delete confirmation dialog - updated to only close with explicit button actions */}
       <Dialog 
         open={showDeleteDialog} 
         onOpenChange={(open) => {
-          // Only allow the dialog to close when explicitly set to false
           if (!open) {
             closeDeleteDialog();
           }
@@ -203,9 +187,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
       >
         <DialogContent 
           className="sm:max-w-[425px]"
-          // Remove onInteractOutside to prevent closing when clicking outside
           onInteractOutside={(e) => {
-            // Prevent the default behavior (which would close the dialog)
             e.preventDefault();
           }}
         >
