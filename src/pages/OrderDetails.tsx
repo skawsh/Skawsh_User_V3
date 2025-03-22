@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
@@ -7,10 +7,24 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Download, FileText } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+
+  // Handle scroll event to show/hide sticky header
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the page has been scrolled past the header threshold
+      const scrollPosition = window.scrollY;
+      setIsHeaderSticky(scrollPosition > 60);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['order', orderId],
@@ -62,7 +76,30 @@ const OrderDetails = () => {
   const orderNumber = `ORD-${order.id.substring(0, 4)}`;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen relative">
+      {/* Sticky header that appears on scroll */}
+      {isHeaderSticky && (
+        <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
+          <div className="max-w-md mx-auto flex justify-between items-center p-4">
+            <Button 
+              variant="ghost" 
+              className="p-0 h-8" 
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="h-5 w-5 mr-1" /> 
+              <span>Order Details</span>
+            </Button>
+            <Button 
+              variant="link" 
+              className="text-red-500 p-0 h-8" 
+              onClick={() => navigate('/support')}
+            >
+              Support
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-md mx-auto bg-white p-4">
         {/* Header with back button and support link */}
         <div className="flex justify-between items-center mb-4">
@@ -99,10 +136,7 @@ const OrderDetails = () => {
             <span>Download Invoice</span>
           </Button>
           
-          {/* Delivery status */}
-          <p className="text-sm mb-4">
-            Order delivered on March 3, 03:36 PM
-          </p>
+          {/* Removed the delivery status text as requested */}
           
           {/* Order items section */}
           <h3 className="font-bold mb-2">Your Order</h3>
