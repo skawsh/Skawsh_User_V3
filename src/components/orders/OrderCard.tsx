@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import PaymentMethodDrawer from './PaymentMethodDrawer';
+import { Toaster } from 'sonner';
 
 interface OrderCardProps {
   order: Order;
@@ -24,6 +27,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const [editOrderEnabled, setEditOrderEnabled] = useState(false);
+  const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -78,6 +82,46 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const handleEditOrder = () => {
     // Navigate to the studio page with the order ID
     navigate(`/studio/${order.studioId}?orderId=${order.id}`);
+  };
+
+  const handlePayNowClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Check if user has a preferred payment method saved
+    const preferredMethod = localStorage.getItem('preferredPaymentMethod');
+    
+    if (preferredMethod) {
+      // Simulate payment with preferred method without showing drawer
+      setTimeout(() => {
+        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+        const updatedOrders = orders.map((o: Order) => {
+          if (o.id === order.id) {
+            return {
+              ...o,
+              status: 'processing',
+              paymentMethod: preferredMethod,
+              paymentStatus: 'paid'
+            };
+          }
+          return o;
+        });
+        sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
+        
+        // Show toast notification
+        toast.success('Payment Successful', {
+          description: `₹${order.totalAmount} paid successfully using ${preferredMethod}`,
+          duration: 3000,
+        });
+        
+        // Refresh the orders list
+        if (onDeleteComplete) {
+          onDeleteComplete();
+        }
+      }, 500);
+    } else {
+      // Show payment drawer if no preferred method
+      setShowPaymentDrawer(true);
+    }
   };
 
   const isPendingPayment = order.status === 'pending_payment';
@@ -141,11 +185,17 @@ const OrderCard: React.FC<OrderCardProps> = ({
               <Link to={`/orders/${order.id}`}>View Details</Link>
             </Button>
             
-            {isPendingPayment && <Button asChild variant="default" size="sm" className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${specialCodeActivated ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'}`} disabled={!specialCodeActivated}>
-                <Link to={specialCodeActivated ? `/payment/${order.id}` : '#'}>
-                  Pay Now ₹{order.totalAmount}
-                </Link>
-              </Button>}
+            {isPendingPayment && (
+              <Button 
+                variant="default" 
+                size="sm" 
+                className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${specialCodeActivated ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'}`} 
+                disabled={!specialCodeActivated}
+                onClick={specialCodeActivated ? handlePayNowClick : undefined}
+              >
+                Pay Now ₹{order.totalAmount}
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -176,6 +226,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PaymentMethodDrawer 
+        open={showPaymentDrawer} 
+        onOpenChange={setShowPaymentDrawer} 
+        orderId={order.id} 
+        amount={order.totalAmount} 
+      />
+
+      <Toaster position="top-center" />
     </>;
 };
 

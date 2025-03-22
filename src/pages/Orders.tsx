@@ -7,13 +7,11 @@ import OrderList from '@/components/orders/OrderList';
 import { useQuery } from '@tanstack/react-query';
 import { fetchOrders } from '@/utils/ordersUtils';
 import { Loader2 } from 'lucide-react';
-import { Toaster } from '@/components/ui/toaster';
-import { useToast } from '@/hooks/use-toast';
+import { Toaster } from 'sonner';
 
 const Orders = () => {
   const [activeTab, setActiveTab] = useState('ongoing');
   const mainContainerRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
   
   const { 
     data: orders = [], 
@@ -67,15 +65,9 @@ const Orders = () => {
     // Refetch orders to update the list
     refetch();
     
-    // Show a toast notification
-    toast({
-      title: "Order deleted",
-      description: "The order has been removed from your history.",
-    });
-    
     // Reset focus to avoid cursor issues
     resetFocus();
-  }, [refetch, toast, resetFocus]);
+  }, [refetch, resetFocus]);
 
   return (
     <Layout>
@@ -160,7 +152,7 @@ const Orders = () => {
           )}
         </Tabs>
       </div>
-      <Toaster />
+      <Toaster position="top-center" />
     </Layout>
   );
 };
