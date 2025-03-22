@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import CancelOrderModal from './CancelOrderModal';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PaymentMethodDrawer from './PaymentMethodDrawer';
 import { Toaster } from 'sonner';
+import { toast } from 'sonner';
 
 interface OrderCardProps {
   order: Order;
