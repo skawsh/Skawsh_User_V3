@@ -1,21 +1,19 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeft, Download, FileText } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
+import { generateInvoicePDF } from '@/utils/pdfUtils';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
 
   // Handle scroll event to show/hide sticky header
@@ -82,6 +80,10 @@ const OrderDetails = () => {
   const handleBackClick = () => {
     navigate('/orders');
   };
+  
+  const handleDownloadInvoice = () => {
+    generateInvoicePDF(order);
+  };
 
   return (
     <div className="bg-white min-h-screen relative">
@@ -121,6 +123,7 @@ const OrderDetails = () => {
             variant="outline" 
             size="sm" 
             className="w-full mb-4 bg-gray-100 text-gray-800 flex items-center justify-center gap-1 border-gray-300"
+            onClick={handleDownloadInvoice}
           >
             <FileText className="h-4 w-4" />
             <span>Download Invoice</span>
