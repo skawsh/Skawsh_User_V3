@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
@@ -112,6 +112,17 @@ const OrderDetails = () => {
           {/* Studio name and location */}
           <h2 className="text-lg font-bold">{order.studioName}</h2>
           <p className="text-sm text-gray-600 mb-3">Khajaguda, Rai Durgam, HYD</p>
+          
+          {/* Download invoice button - disabled */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full mb-4 bg-gray-100 text-gray-500 flex items-center justify-center gap-1 border-gray-300 cursor-not-allowed opacity-75"
+            disabled={true}
+          >
+            <FileText className="h-4 w-4" />
+            <span>Download Invoice</span>
+          </Button>
           
           {/* Order items section */}
           <h3 className="font-bold mb-2">Your Order</h3>
