@@ -37,10 +37,7 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
       }).catch(err => console.error('Error sharing:', err));
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: "Link copied!",
-        description: "Studio link copied to clipboard"
-      });
+      toast("Link copied! Studio link copied to clipboard");
     }
   };
 
@@ -49,10 +46,7 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
   };
 
   const handleReportStudio = () => {
-    toast({
-      title: "Thank you for your feedback",
-      description: `${studioName} has been reported`,
-    });
+    toast(`Thank you for your feedback. ${studioName} has been reported`);
   };
 
   return (

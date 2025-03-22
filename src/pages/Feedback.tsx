@@ -1,17 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
-import { useToast } from '../components/ui/use-toast';
+import { toast } from '../components/ui/use-toast';
 import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Label } from '../components/ui/label';
 
 const Feedback: React.FC = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [message, setMessage] = useState('');
   const [rating, setRating] = useState('satisfied');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,11 +34,7 @@ const Feedback: React.FC = () => {
     e.preventDefault();
     
     if (!message.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Feedback required",
-        description: "Please enter your feedback before submitting."
-      });
+      toast("Error: Feedback required. Please enter your feedback before submitting.");
       return;
     }
     
@@ -48,10 +42,7 @@ const Feedback: React.FC = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast({
-        title: "Thank you for your feedback!",
-        description: "We appreciate your input and will use it to improve our services."
-      });
+      toast("Thank you for your feedback! We appreciate your input and will use it to improve our services.");
       setIsSubmitting(false);
       setMessage('');
       navigate('/profile');

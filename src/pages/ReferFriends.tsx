@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Copy, Share, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -39,10 +38,7 @@ const ReferFriends: React.FC = () => {
     navigator.clipboard.writeText(referralCode);
     setCopied(true);
     
-    toast({
-      title: "Copied to clipboard!",
-      description: "Your referral code has been copied."
-    });
+    toast("Copied to clipboard! Your referral code has been copied.");
     
     setTimeout(() => setCopied(false), 2000);
   };
@@ -68,11 +64,7 @@ const ReferFriends: React.FC = () => {
     e.preventDefault();
     
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      toast({
-        variant: "destructive",
-        title: "Invalid email",
-        description: "Please enter a valid email address."
-      });
+      toast("Error: Invalid email. Please enter a valid email address.");
       return;
     }
     
@@ -80,10 +72,7 @@ const ReferFriends: React.FC = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast({
-        title: "Invitation sent!",
-        description: `We've sent an invitation to ${email}`
-      });
+      toast(`Invitation sent! We've sent an invitation to ${email}`);
       setIsSending(false);
       setEmail('');
     }, 1500);

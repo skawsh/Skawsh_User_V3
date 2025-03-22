@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toast } from "@/components/ui/use-toast";
@@ -326,10 +325,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       setPendingService(null);
       setMixedServicesDialogOpen(false);
       
-      toast({
-        title: "Multiple delivery types selected",
-        description: "Your items will be delivered separately"
-      });
+      toast("Multiple delivery types selected. Your items will be delivered separately");
     }
   };
 
