@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -106,7 +105,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {isHistory ? (
-                  <>{/* Removed the delete option from history section as requested */}</>
+                  <></>
                 ) : (
                   <>
                     <DropdownMenuItem 
