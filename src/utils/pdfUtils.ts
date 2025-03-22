@@ -91,6 +91,22 @@ export const generateInvoicePDF = (order: Order): void => {
   doc.text('Thank you for your business!', pageWidth / 2, finalY + 35, { align: 'center' });
   doc.text('For any queries, please contact support.', pageWidth / 2, finalY + 40, { align: 'center' });
   
-  // Save the PDF
-  doc.save(`Invoice-${order.id.substring(0, 8)}.pdf`);
+  // Generate a blob and create a download link
+  const pdfBlob = doc.output('blob');
+  const url = URL.createObjectURL(pdfBlob);
+  
+  // Create a temporary link element
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `Invoice-${order.id.substring(0, 8)}.pdf`;
+  
+  // Append to body, click programmatically and remove
+  document.body.appendChild(link);
+  link.click();
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, 100);
 };

@@ -5,11 +5,12 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Download, FileText } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
 import { generateInvoicePDF } from '@/utils/pdfUtils';
+import { toast } from 'sonner';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -82,7 +83,13 @@ const OrderDetails = () => {
   };
   
   const handleDownloadInvoice = () => {
-    generateInvoicePDF(order);
+    try {
+      generateInvoicePDF(order);
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+      toast.error('Failed to download invoice. Please try again.');
+    }
   };
 
   return (
