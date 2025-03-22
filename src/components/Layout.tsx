@@ -67,25 +67,25 @@ const Layout: React.FC<LayoutProps> = ({ children, hideFooter = false }) => {
           <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">
             <NavItem 
               to="/" 
-              icon={<Home size={20} />} 
+              icon={<Home size={22} />} 
               label="Skawsh" 
               isActive={isActive("/")}
             />
             <NavItem 
               to="/services" 
-              icon={<Layers size={20} />} 
+              icon={<Layers size={22} />} 
               label="Services" 
               isActive={isActive("/services")}
             />
             <NavItem 
               to="/orders" 
-              icon={<ClipboardList size={20} />} 
+              icon={<ClipboardList size={22} />} 
               label="Orders" 
               isActive={isActive("/orders")}
             />
             <NavItem 
               to="/cart" 
-              icon={<ShoppingBag size={20} />} 
+              icon={<ShoppingBag size={22} />} 
               label="Sack" 
               isActive={isActive("/cart")}
             />

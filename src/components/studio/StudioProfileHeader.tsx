@@ -50,10 +50,14 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in">
+    <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md animate-fade-in backdrop-blur-sm bg-white/95">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center">
-          <button onClick={onBackClick} className="mr-3 p-1.5 rounded-full text-gray-700 bg-gray-100/70 hover:bg-gray-200/80 transition-all">
+          <button 
+            onClick={onBackClick} 
+            className="mr-3 p-2 rounded-full text-gray-700 bg-gray-100/70 hover:bg-gray-200/80 transition-all"
+            aria-label="Go back"
+          >
             <ChevronLeft size={22} />
           </button>
           <h2 className="text-lg font-semibold truncate">
@@ -68,20 +72,23 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-1.5 rounded-full hover:bg-gray-100 bg-gray-100/70">
+            <button 
+              className="p-2 rounded-full hover:bg-gray-100 bg-gray-100/70 transition-colors"
+              aria-label="More options"
+            >
               <MoreVertical size={20} />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white">
-            <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2">
-              <Share size={16} />
+          <DropdownMenuContent align="end" className="bg-white animate-scale-in">
+            <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2 py-2.5">
+              <Share size={16} className="text-blue-500" />
               <span>Share Studio</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2">
-              <Info size={16} />
+            <DropdownMenuItem onClick={handleAboutStudio} className="flex items-center gap-2 py-2.5">
+              <Info size={16} className="text-blue-500" />
               <span>About Studio</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 text-red-500">
+            <DropdownMenuItem onClick={handleReportStudio} className="flex items-center gap-2 py-2.5 text-red-500">
               <Flag size={16} />
               <span>Report this Studio</span>
             </DropdownMenuItem>
