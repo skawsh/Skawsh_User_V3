@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import Layout from '../components/Layout';
 import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
@@ -24,6 +25,7 @@ interface CartItem {
   serviceId: string;
   serviceName: string;
   studioId: string;
+  studioName?: string;
   price: number;
   quantity?: number;
   weight?: number;
