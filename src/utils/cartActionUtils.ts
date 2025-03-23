@@ -4,7 +4,7 @@
  */
 
 import { CartItem } from '@/types/serviceTypes';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Order } from '@/types/order';
 
 /**
@@ -77,18 +77,21 @@ export const createOrder = (
 ): string => {
   const orderId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   
-  // Map cart items to order services
+  // Get the correct studio name from cart items
+  const studioName = cartItems[0]?.studioName || "Busy Bee";
+  
+  // Map cart items to order services with more detailed information
   const services = cartItems.map(item => ({
     id: item.serviceId,
     name: item.serviceName,
     price: item.price,
-    quantity: item.quantity || 1
+    quantity: item.quantity || 1,
+    description: item.serviceCategory ? `${item.serviceCategory}${item.serviceSubCategory ? ' - ' + item.serviceSubCategory : ''}` : '',
+    washType: item.washType || 'Regular',
+    details: item.items && item.items.length > 0 ? item.items.map(subItem => `${subItem.name} x${subItem.quantity}`).join(', ') : ''
   }));
   
   const totalAmount = subtotal + deliveryFee + tax;
-  
-  // Get the studio name from cart items
-  const studioName = cartItems[0]?.studioName || "Unknown Studio";
   
   // Create a properly formatted order object
   const newOrder: Order = {
@@ -113,7 +116,7 @@ export const createOrder = (
   localStorage.setItem('cartItems', JSON.stringify([]));
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Show success toast - Fixing the toast call to match the correct format
+  // Show success toast
   toast(`Order placed successfully! Your order #${orderId.substring(0, 8)} has been placed.`);
   
   return orderId;

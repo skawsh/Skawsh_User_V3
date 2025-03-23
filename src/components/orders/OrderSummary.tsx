@@ -7,6 +7,9 @@ interface OrderSummaryProps {
     name: string;
     price: number;
     quantity: number;
+    description?: string;
+    washType?: string;
+    details?: string;
   }[];
   totalAmount: number;
 }
@@ -31,14 +34,36 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ services, totalAmount }) =>
           <div className="ml-2">
             {Array.isArray(services) && services.length > 0 ? (
               services.map((service, index) => (
-                <div key={service?.id || index} className="flex justify-between text-sm mb-1">
-                  <div>
+                <div key={service?.id || index} className="flex justify-between text-sm mb-2">
+                  <div className="flex-1">
                     <span>{index + 1}) {service?.name || 'Unknown Service'}</span>
+                    
+                    {/* Show service description if available */}
+                    {service?.description && (
+                      <div className="text-gray-600 text-xs ml-4">
+                        {service.description}
+                      </div>
+                    )}
+                    
+                    {/* Show wash type if available */}
+                    {service?.washType && service.washType !== 'Regular' && (
+                      <div className="text-gray-600 text-xs ml-4">
+                        Wash Type: {service.washType}
+                      </div>
+                    )}
+                    
+                    {/* Show service details if available */}
+                    {service?.details && (
+                      <div className="text-gray-600 text-xs ml-4">
+                        Items: {service.details}
+                      </div>
+                    )}
+                    
                     <div className="text-gray-600 text-xs ml-4">
                       {service?.quantity || 1} {(service?.quantity || 1) > 1 ? 'items' : 'item'} X ₹{service?.price || 0}
                     </div>
                   </div>
-                  <div>₹{(service?.price || 0) * (service?.quantity || 1)}</div>
+                  <div className="ml-2 whitespace-nowrap">₹{(service?.price || 0) * (service?.quantity || 1)}</div>
                 </div>
               ))
             ) : (
