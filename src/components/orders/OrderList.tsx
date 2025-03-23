@@ -17,12 +17,17 @@ const OrderList: React.FC<OrderListProps> = ({
   // Create a reference to the list container for focus management
   const listContainerRef = useRef<HTMLDivElement>(null);
   
-  // This function will be called after an order is successfully cancelled
-  const handleCancelComplete = () => {
+  // This function will be called after an order is successfully cancelled or rated
+  const handleOrderActionComplete = () => {
     // Set focus to the list container itself, which is a non-interactive element
     // This prevents any text input from getting focus
     if (listContainerRef.current) {
       listContainerRef.current.focus();
+    }
+    
+    // Call the parent callback if provided
+    if (onDeleteComplete) {
+      onDeleteComplete();
     }
   };
 
@@ -48,7 +53,7 @@ const OrderList: React.FC<OrderListProps> = ({
         <OrderCard 
           key={order.id} 
           order={order} 
-          onCancelComplete={handleCancelComplete}
+          onCancelComplete={handleOrderActionComplete}
           onDeleteComplete={onDeleteComplete}
         />
       ))}
