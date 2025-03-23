@@ -1,8 +1,31 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '@/components/Layout';
+import RateExperiencePopup from '@/components/RateExperiencePopup';
 
 const Index = () => {
+  const [showRatingPopup, setShowRatingPopup] = useState(false);
+
+  useEffect(() => {
+    // Check if we should show the rating popup
+    const shouldShowPopup = sessionStorage.getItem('showRatingPopup') === 'true';
+    
+    if (shouldShowPopup) {
+      // Set a slight delay to ensure the page has loaded first
+      const timer = setTimeout(() => {
+        setShowRatingPopup(true);
+        // Remove the flag so the popup doesn't show again on refresh
+        sessionStorage.removeItem('showRatingPopup');
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseRatingPopup = () => {
+    setShowRatingPopup(false);
+  };
+
   return (
     <Layout>
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -17,6 +40,12 @@ const Index = () => {
           </a>
         </div>
       </div>
+
+      {/* Rating Experience Popup */}
+      <RateExperiencePopup
+        isOpen={showRatingPopup}
+        onClose={handleCloseRatingPopup}
+      />
     </Layout>
   );
 };

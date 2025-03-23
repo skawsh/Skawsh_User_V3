@@ -31,6 +31,8 @@ const OrderConfirmation: React.FC = () => {
   }, [location.state, navigate]);
   
   const handleReturnHome = () => {
+    // Set flag in sessionStorage to show rating popup on home page
+    sessionStorage.setItem('showRatingPopup', 'true');
     navigate('/');
   };
   
