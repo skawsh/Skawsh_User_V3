@@ -14,6 +14,7 @@ import FeedbackDialog from './FeedbackDialog';
 import OrderRatingSection from './OrderRatingSection';
 import { useRatingSystem } from '@/hooks/useRatingSystem';
 import { useOrderModals } from '@/hooks/useOrderModals';
+import OrderViewDetailsButton from './OrderViewDetailsButton';
 
 interface OrderCardProps {
   order: Order;
@@ -67,11 +68,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
     navigate(`/studio/${order.studioId}?orderId=${order.id}`);
   };
 
-  // Function to navigate to order details
-  const handleViewDetails = () => {
-    navigate(`/orders/${order.id}`);
-  };
-
   const isPendingPayment = order.status === 'pending_payment';
   const isOngoing = order.status !== 'completed' && order.status !== 'cancelled';
   const isHistory = order.status === 'completed' || order.status === 'cancelled';
@@ -103,12 +99,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
           
           {/* View Details button */}
           <div className="mt-3">
-            <button 
-              onClick={handleViewDetails}
+            <OrderViewDetailsButton 
+              orderId={order.id} 
               className="w-full py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              View Details
-            </button>
+              variant="outline"
+            />
           </div>
           
           {/* Rating section for completed orders */}
@@ -125,7 +120,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
 
       <DeleteOrderDialog 
         open={showDeleteDialog} 
-        onOpenChange={setShowDeleteDialog} 
+        onOpenChange={closeDeleteDialog} 
         onDelete={handleDeleteOrder} 
       />
 

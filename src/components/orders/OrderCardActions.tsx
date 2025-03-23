@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Order } from '@/types/order';
+import OrderViewDetailsButton from './OrderViewDetailsButton';
 
 interface OrderCardActionsProps {
   order: Order;
@@ -27,9 +28,12 @@ const OrderCardActions: React.FC<OrderCardActionsProps> = ({
       </div>
       
       <div className="mt-3 flex flex-col gap-2">
-        <Button asChild variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow flex-1">
-          <Link to={`/orders/${order.id}`}>View Details</Link>
-        </Button>
+        <OrderViewDetailsButton 
+          orderId={order.id} 
+          variant="outline" 
+          size="sm" 
+          className="flex-1"
+        />
         
         {isPendingPayment && (
           <>

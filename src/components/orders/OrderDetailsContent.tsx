@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
 import RatingStars from '@/components/orders/RatingStars';
+import OrderViewDetailsButton from './OrderViewDetailsButton';
 
 interface OrderDetailsContentProps {
   order: Order;
