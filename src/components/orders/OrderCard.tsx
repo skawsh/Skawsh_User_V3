@@ -11,8 +11,8 @@ import OrderCardHeader from './OrderCardHeader';
 import OrderCardMenu from './OrderCardMenu';
 import OrderCardActions from './OrderCardActions';
 import DeleteOrderDialog from './DeleteOrderDialog';
-import { Star } from 'lucide-react';
 import FeedbackDialog from './FeedbackDialog';
+import OrderRatingSection from './OrderRatingSection';
 
 interface OrderCardProps {
   order: Order;
@@ -196,31 +196,13 @@ const OrderCard: React.FC<OrderCardProps> = ({
             </button>
           </div>
           
-          {/* Rating section for completed orders in history */}
-          {isCompleted && (
-            <div className="mt-4 pt-3 border-t border-gray-200">
-              {!isRatingSubmitted ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Rate this order</span>
-                  <div className="flex space-x-1">
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                      <Star
-                        key={rating}
-                        className={`h-5 w-5 cursor-pointer transition-all duration-200 ${
-                          rating <= selectedRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                        }`}
-                        onClick={() => handleRatingClick(rating)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center text-green-600 font-medium">
-                  Thank you for your feedback!
-                </div>
-              )}
-            </div>
-          )}
+          {/* Rating section for completed orders */}
+          <OrderRatingSection
+            isCompleted={isCompleted}
+            isRatingSubmitted={isRatingSubmitted}
+            selectedRating={selectedRating}
+            onRatingClick={handleRatingClick}
+          />
         </div>
       </Card>
 
