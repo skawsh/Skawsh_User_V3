@@ -7,15 +7,15 @@ const Index = () => {
   const [showRatingPopup, setShowRatingPopup] = useState(false);
 
   useEffect(() => {
-    // Check if we should show the rating popup
-    const shouldShowPopup = sessionStorage.getItem('showRatingPopup') === 'true';
+    // Check if we should show the rating popup from localStorage instead of sessionStorage
+    const shouldShowPopup = localStorage.getItem('showRatingPopup') === 'true';
     
     if (shouldShowPopup) {
       // Set a slight delay to ensure the page has loaded first
       const timer = setTimeout(() => {
         setShowRatingPopup(true);
         // Remove the flag so the popup doesn't show again on refresh
-        sessionStorage.removeItem('showRatingPopup');
+        localStorage.removeItem('showRatingPopup');
       }, 500);
       
       return () => clearTimeout(timer);
