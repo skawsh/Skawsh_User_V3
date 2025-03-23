@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { ShoppingBag, ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -114,6 +115,19 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     return "";
   };
 
+  const getWashTypeBackground = () => {
+    if (washType === "Standard Wash") {
+      return "bg-[#D5E7FF]";
+    } else if (washType === "Express Wash") {
+      return "bg-orange-50";
+    }
+    return "bg-green-400";
+  };
+
+  const getButtonBackground = () => {
+    return "bg-green-400 hover:bg-green-500";
+  };
+
   return (
     <div 
       className="fixed bottom-0 left-0 right-0 z-50"
@@ -130,14 +144,14 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           <div
             className={cn(
               "w-full rounded-xl shadow-md overflow-hidden relative",
-              washType === "Standard Wash" ? "bg-[#D5E7FF]" : washType === "Express Wash" ? "bg-orange-50" : "bg-green-400"
+              getWashTypeBackground()
             )}
           >            
             <button
               onClick={handleGoToCart}
               className={cn(
                 "w-full flex items-center justify-between py-3 px-5 overflow-hidden relative",
-                "bg-green-400 hover:bg-green-500 transition-colors duration-200",
+                getButtonBackground(),
                 "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
               )}
             >

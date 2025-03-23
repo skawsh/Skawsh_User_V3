@@ -336,20 +336,38 @@ const Cart: React.FC = () => {
     }
   };
 
-  const getDeliveryMessage = () => {
-    if (dominantWashType === "Standard Wash") {
-      return "Delivery in just 36 sunlight hours after pickup";
-    } else if (dominantWashType === "Express Wash") {
-      return "Express delivery in just 12 hours after pickup";
-    }
-    return "";
-  };
-
   const getWashTypeBackground = () => {
     if (dominantWashType === "Standard Wash") {
       return "bg-[#D5E7FF]";
     } else if (dominantWashType === "Express Wash") {
       return "bg-orange-50";
+    }
+    return "";
+  };
+
+  const getWashTypeTextColor = () => {
+    if (dominantWashType === "Standard Wash") {
+      return "text-blue-600";
+    } else if (dominantWashType === "Express Wash") {
+      return "text-orange-500";
+    }
+    return "";
+  };
+
+  const getWashTypeMessageBackground = () => {
+    if (dominantWashType === "Standard Wash") {
+      return "bg-blue-100";
+    } else if (dominantWashType === "Express Wash") {
+      return "bg-orange-100";
+    }
+    return "";
+  };
+
+  const getDeliveryMessage = () => {
+    if (dominantWashType === "Standard Wash") {
+      return "Delivery in just 36 sunlight hours after pickup";
+    } else if (dominantWashType === "Express Wash") {
+      return "Express delivery in just 12 hours after pickup";
     }
     return "";
   };
@@ -432,16 +450,20 @@ const Cart: React.FC = () => {
               {dominantWashType && (
                 <div className={cn(
                   "rounded-xl overflow-hidden mb-4 animate-fade-in",
-                  dominantWashType === "Standard Wash" ? "bg-[#D5E7FF]" : "bg-orange-50"
+                  getWashTypeBackground()
                 )}>
                   <div className="p-4 text-center">
-                    <h3 className="font-semibold text-xl">
+                    <h3 className={cn(
+                      "font-semibold text-xl",
+                      getWashTypeTextColor()
+                    )}>
                       {dominantWashType}
                     </h3>
                   </div>
                   <div className={cn(
                     "px-4 py-3 flex justify-center items-center gap-3",
-                    dominantWashType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
+                    getWashTypeMessageBackground(),
+                    getWashTypeTextColor()
                   )}>
                     <Clock size={20} />
                     <span className="font-medium">
