@@ -62,7 +62,7 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="mt-2 mb-3 bg-gray-50 p-2 rounded-md">
             <div className="text-xs font-medium text-gray-700 mb-1 flex items-center">
               <ShoppingBag size={12} className="mr-1" /> 
-              Clothing Items
+              Selected Items
             </div>
             <ul className="space-y-1">
               {item.items.map((clothingItem, index) => (

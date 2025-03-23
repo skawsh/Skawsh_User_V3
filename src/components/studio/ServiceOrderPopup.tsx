@@ -128,6 +128,12 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     return !isNaN(numWeight) && numWeight > 0;
   };
 
+  // Check if weight is valid for enabling clothing items
+  const isWeightValid = () => {
+    const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
+    return !isNaN(numWeight) && numWeight > 0;
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
@@ -168,11 +174,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 onNewItemNameChange={handleNewItemNameChange}
                 onAddItem={handleAddItem}
                 onToggleAddingItem={setIsAddingItem}
+                isDisabled={!isWeightValid()}
               />
               
               <ClothingItemsList 
                 clothingItems={clothingItems} 
-                onQuantityChange={handleQuantityChange} 
+                onQuantityChange={handleQuantityChange}
+                isDisabled={!isWeightValid()}
               />
             </div>
           )}
@@ -188,7 +196,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             disabled={!isAddToCartEnabled()}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
-            Add to Cart
+            Add to Sack
           </Button>
         </div>
       </DialogContent>

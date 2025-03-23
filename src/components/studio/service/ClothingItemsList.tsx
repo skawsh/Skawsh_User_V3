@@ -11,11 +11,13 @@ export interface ClothingItem {
 interface ClothingItemsListProps {
   clothingItems: ClothingItem[];
   onQuantityChange: (index: number, change: number) => void;
+  isDisabled?: boolean;
 }
 
 const ClothingItemsList: React.FC<ClothingItemsListProps> = ({
   clothingItems,
-  onQuantityChange
+  onQuantityChange,
+  isDisabled = false
 }) => {
   return (
     <div className="space-y-4 max-h-[240px] overflow-y-auto no-scrollbar">
@@ -28,7 +30,7 @@ const ClothingItemsList: React.FC<ClothingItemsListProps> = ({
               variant="outline" 
               className="h-7 w-7 rounded-full border-gray-300" 
               onClick={() => onQuantityChange(index, -1)} 
-              disabled={item.quantity === 0}
+              disabled={item.quantity === 0 || isDisabled}
             >
               <Minus className="h-3 w-3" />
             </Button>
@@ -40,6 +42,7 @@ const ClothingItemsList: React.FC<ClothingItemsListProps> = ({
               variant="outline" 
               className="h-7 w-7 rounded-full border-gray-300" 
               onClick={() => onQuantityChange(index, 1)}
+              disabled={isDisabled}
             >
               <Plus className="h-3 w-3" />
             </Button>

@@ -10,6 +10,7 @@ interface AddClothingItemFormProps {
   onNewItemNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onAddItem: () => void;
   onToggleAddingItem: (isAdding: boolean) => void;
+  isDisabled?: boolean;
 }
 
 const AddClothingItemForm: React.FC<AddClothingItemFormProps> = ({
@@ -17,7 +18,8 @@ const AddClothingItemForm: React.FC<AddClothingItemFormProps> = ({
   newItemName,
   onNewItemNameChange,
   onAddItem,
-  onToggleAddingItem
+  onToggleAddingItem,
+  isDisabled = false
 }) => {
   return (
     <div className="flex items-center justify-between mb-3">
@@ -27,12 +29,13 @@ const AddClothingItemForm: React.FC<AddClothingItemFormProps> = ({
             value={newItemName} 
             onChange={onNewItemNameChange} 
             placeholder="Item name" 
-            className="flex-grow" 
+            className="flex-grow"
+            disabled={isDisabled}
           />
-          <Button onClick={onAddItem} size="sm" className="whitespace-nowrap">
+          <Button onClick={onAddItem} size="sm" className="whitespace-nowrap" disabled={isDisabled}>
             Add
           </Button>
-          <Button onClick={() => onToggleAddingItem(false)} size="sm" variant="ghost">
+          <Button onClick={() => onToggleAddingItem(false)} size="sm" variant="ghost" disabled={isDisabled}>
             Cancel
           </Button>
         </div>
@@ -43,14 +46,16 @@ const AddClothingItemForm: React.FC<AddClothingItemFormProps> = ({
             variant="link" 
             size="sm" 
             className="text-blue-600 p-0 h-auto"
+            disabled={isDisabled}
           >
-            Add clothing Item
+            Select clothing items
           </Button>
           <Button 
             onClick={() => onToggleAddingItem(true)} 
             size="icon" 
             variant="ghost" 
             className="rounded-full h-8 w-8"
+            disabled={isDisabled}
           >
             <Plus className="h-4 w-4" />
           </Button>
