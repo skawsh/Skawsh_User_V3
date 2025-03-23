@@ -67,8 +67,8 @@ const OrderDetails = () => {
     );
   }
 
-  // Ensure services exists before passing to OrderSummary
-  const orderServices = order?.services || [];
+  // Ensure services exists and is an array before passing to OrderSummary
+  const orderServices = Array.isArray(order.services) ? order.services : [];
   const orderTotal = order?.totalAmount || 0;
 
   // Dummy phone number and address for demo purposes

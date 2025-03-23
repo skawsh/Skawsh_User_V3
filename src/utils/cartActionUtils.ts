@@ -5,6 +5,7 @@
 
 import { CartItem } from '@/types/serviceTypes';
 import { toast } from "@/components/ui/use-toast";
+import { Order } from '@/types/order';
 
 /**
  * Update quantity of an item in the cart
@@ -76,34 +77,45 @@ export const createOrder = (
 ): string => {
   const orderId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   
-  const newOrder = {
+  // Map cart items to order services
+  const services = cartItems.map(item => ({
+    id: item.serviceId,
+    name: item.serviceName,
+    price: item.price,
+    quantity: item.quantity || 1
+  }));
+  
+  const totalAmount = subtotal + deliveryFee + tax;
+  
+  // Create a properly formatted order object
+  const newOrder: Order = {
     id: orderId,
     studioId: studioId || cartItems[0]?.studioId || "default-studio",
     studioName: cartItems[0]?.studioName || "Laundry Service",
-    items: cartItems.map(item => ({
-      serviceId: item.serviceId,
-      serviceName: item.serviceName,
-      price: item.price,
-      quantity: item.quantity || 1
-    })),
+    userId: "user1", // Default user ID
+    services: services,
+    totalAmount: totalAmount,
     status: "pending_payment",
-    paymentStatus: "unpaid",
-    totalAmount: subtotal + deliveryFee + tax,
     createdAt: new Date().toISOString(),
-    specialInstructions: specialInstructions,
-    address: address
+    updatedAt: new Date().toISOString(),
+    paymentStatus: "pending"
   };
   
+  // Get existing orders and add the new one
   const existingOrders = JSON.parse(sessionStorage.getItem('orders') || '[]');
   existingOrders.push(newOrder);
   sessionStorage.setItem('orders', JSON.stringify(existingOrders));
   
+  // Clear the cart
   localStorage.setItem('cartItems', JSON.stringify([]));
-  
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Fix: Use the Sonner toast format without nested properties
-  toast(`Order Placed Successfully! Your order #${orderId.substring(0, 8)} has been placed.`);
+  // Show success toast
+  toast({
+    title: "Order placed successfully",
+    description: `Your order #${orderId.substring(0, 8)} has been placed.`,
+    duration: 3000,
+  });
   
   return orderId;
 };

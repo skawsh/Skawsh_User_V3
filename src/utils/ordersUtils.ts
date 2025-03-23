@@ -1,4 +1,3 @@
-
 import { Order } from '@/types/order';
 
 // Mock data for orders - keeping only one in history
@@ -17,22 +16,6 @@ const mockOrders: Order[] = [
     updatedAt: new Date(2023, 9, 18).toISOString(),
     paymentMethod: 'UPI',
     paymentStatus: 'paid'
-  },
-  // Adding a sample ongoing order for testing
-  {
-    id: 's64q97s7sxpzkkry0prcz',
-    studioId: '2',
-    studioName: 'Laundry Service',
-    userId: 'user1',
-    services: [
-      { id: 's1', name: 'Regular Wash', price: 25, quantity: 2 },
-      { id: 's2', name: 'Premium Iron', price: 50, quantity: 1 }
-    ],
-    totalAmount: 100,
-    status: 'processing',
-    createdAt: new Date(2023, 10, 5).toISOString(),
-    updatedAt: new Date(2023, 10, 5).toISOString(),
-    paymentStatus: 'pending'
   }
 ];
 
