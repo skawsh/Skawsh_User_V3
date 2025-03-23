@@ -11,7 +11,6 @@ import OrderCardHeader from './OrderCardHeader';
 import OrderCardMenu from './OrderCardMenu';
 import OrderCardActions from './OrderCardActions';
 import DeleteOrderDialog from './DeleteOrderDialog';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
 
 interface OrderCardProps {
   order: Order;
@@ -128,19 +127,19 @@ const OrderCard: React.FC<OrderCardProps> = ({
   return <>
       <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
         <div className="p-4">
-          <DropdownMenu>
-            <OrderCardHeader 
-              order={order} 
-            />
-            
-            <OrderCardMenu 
-              isHistory={isHistory} 
-              isOngoing={isOngoing} 
-              editOrderEnabled={editOrderEnabled}
-              onEdit={handleEditOrder}
-              onCancel={openCancelModal}
-            />
-          </DropdownMenu>
+          {/* Header with dropdown menu */}
+          <OrderCardHeader 
+            order={order} 
+            dropdownMenuContent={
+              <OrderCardMenu 
+                isHistory={isHistory} 
+                isOngoing={isOngoing} 
+                editOrderEnabled={editOrderEnabled}
+                onEdit={handleEditOrder}
+                onCancel={openCancelModal}
+              />
+            }
+          />
           
           <OrderCardActions 
             order={order}
