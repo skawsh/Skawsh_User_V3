@@ -1,8 +1,11 @@
 
-import React from 'react';
-import { Minus, Plus, Trash2, Clock, ShoppingBag, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Minus, Plus, Trash2, Clock, ShoppingBag, Check, Edit } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CartItem as CartItemType } from '@/types/serviceTypes';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import ClothingItemsList from '../studio/service/ClothingItemsList';
+import AddClothingItemForm from '../studio/service/AddClothingItemForm';
 
 interface CartItemProps {
   item: CartItemType;
@@ -17,6 +20,11 @@ const CartItem: React.FC<CartItemProps> = ({
   onRemoveItem,
   hideWashTypeLabel = false
 }) => {
+  const [isEditingItems, setIsEditingItems] = useState(false);
+  const [clothingItems, setClothingItems] = useState(item.items || []);
+  const [newItemName, setNewItemName] = useState('');
+  const [isAddingItem, setIsAddingItem] = useState(false);
+
   const formatIndianRupee = (amount: number): string => {
     return `₹${amount.toFixed(0)}`;
   };
@@ -53,6 +61,55 @@ const CartItem: React.FC<CartItemProps> = ({
       // For count-based items, increase by 1
       onQuantityChange(item.serviceId, item.quantity + 1);
     }
+  };
+
+  const handleQuantityChange = (index: number, change: number) => {
+    const newItems = [...clothingItems];
+    const newQuantity = Math.max(0, newItems[index].quantity + change);
+    newItems[index].quantity = newQuantity;
+    setClothingItems(newItems);
+  };
+
+  const handleAddItem = () => {
+    if (newItemName.trim()) {
+      setClothingItems([...clothingItems, {
+        name: newItemName.trim(),
+        quantity: 1
+      }]);
+      setNewItemName('');
+      setIsAddingItem(false);
+    }
+  };
+
+  const handleNewItemNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewItemName(e.target.value);
+  };
+
+  const handleSaveItems = () => {
+    // Filter out items with quantity 0
+    const updatedItems = clothingItems.filter(item => item.quantity > 0);
+    
+    // Update the cart item with the new clothing items
+    const updatedItem = {
+      ...item,
+      items: updatedItems
+    };
+    
+    // Use the same onQuantityChange function to update the item
+    // This will trigger a cart update with the new items
+    onQuantityChange(item.serviceId, showWeightDetails ? item.weight : item.quantity);
+    
+    // Update local state
+    localStorage.setItem('cartItems', JSON.stringify(
+      JSON.parse(localStorage.getItem('cartItems') || '[]').map((cartItem: CartItemType) => 
+        cartItem.serviceId === item.serviceId ? {...cartItem, items: updatedItems} : cartItem
+      )
+    ));
+    
+    // Dispatch custom event for cart updates
+    document.dispatchEvent(new Event('cartUpdated'));
+    
+    setIsEditingItems(false);
   };
   
   return (
@@ -91,9 +148,57 @@ const CartItem: React.FC<CartItemProps> = ({
         {/* Display clothing items if they exist */}
         {hasClothingItems && (
           <div className="mt-2 mb-3 bg-gray-50 p-2 rounded-md">
-            <div className="text-xs font-medium text-gray-700 mb-1 flex items-center">
-              <ShoppingBag size={12} className="mr-1" /> 
-              Selected Items:
+            <div className="text-xs font-medium text-gray-700 mb-1 flex items-center justify-between">
+              <div className="flex items-center">
+                <ShoppingBag size={12} className="mr-1" /> 
+                Selected Items:
+              </div>
+              
+              {/* Edit button for weight-based items */}
+              {showWeightDetails && (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <button 
+                      className="text-blue-500 hover:text-blue-700 text-xs flex items-center"
+                      onClick={() => {
+                        setClothingItems(item.items || []);
+                        setIsAddingItem(false);
+                      }}
+                    >
+                      <Edit size={12} className="mr-1" /> Edit
+                    </button>
+                  </SheetTrigger>
+                  <SheetContent side="bottom" className="px-0 py-0 h-[70vh]">
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold mb-4">Edit Selected Items</h3>
+                      
+                      <AddClothingItemForm 
+                        isAddingItem={isAddingItem}
+                        newItemName={newItemName}
+                        onNewItemNameChange={handleNewItemNameChange}
+                        onAddItem={handleAddItem}
+                        onToggleAddingItem={setIsAddingItem}
+                        isDisabled={false}
+                      />
+                      
+                      <ClothingItemsList 
+                        clothingItems={clothingItems} 
+                        onQuantityChange={handleQuantityChange}
+                        isDisabled={false}
+                      />
+                      
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <button 
+                          className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          onClick={handleSaveItems}
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              )}
             </div>
             <ul className="space-y-1">
               {item.items.map((clothingItem, index) => (
