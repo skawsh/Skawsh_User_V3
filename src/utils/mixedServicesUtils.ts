@@ -1,6 +1,6 @@
 
 import { Service } from '@/types/serviceTypes';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 /**
  * Switch to standard wash and remove express items
@@ -72,9 +72,6 @@ export const continueMixedTypes = (
     setPendingService(null);
     setMixedServicesDialogOpen(false);
     
-    toast({
-      title: "Multiple delivery types selected", 
-      description: "Your items will be delivered separately"
-    });
+    toast("Multiple delivery types selected. Your items will be delivered separately");
   }
 };
