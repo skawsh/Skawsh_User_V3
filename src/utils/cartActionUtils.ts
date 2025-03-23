@@ -102,8 +102,5 @@ export const createOrder = (
   
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Fix: Use the Sonner toast format without nested properties
-  toast(`Order Placed Successfully! Your order #${orderId.substring(0, 8)} has been placed.`);
-  
   return orderId;
 };
