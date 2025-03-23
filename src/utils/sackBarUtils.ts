@@ -62,43 +62,41 @@ export const useCartItems = () => {
 export const getDominantWashType = (items: any[]): string | null => {
   if (items.length === 0) return null;
   
-  const washTypeCounts: Record<string, number> = {};
+  const washTypes = new Set();
   
   items.forEach((item: any) => {
     if (item.washType) {
-      washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
+      washTypes.add(item.washType);
     }
   });
   
-  let maxCount = 0;
-  let dominantType = null;
+  if (washTypes.size === 0) return null;
+  if (washTypes.size === 1) return Array.from(washTypes)[0] as string;
+  if (washTypes.size > 1) return "both";
   
-  Object.entries(washTypeCounts).forEach(([type, count]) => {
-    if (count > maxCount) {
-      maxCount = count;
-      dominantType = type;
-    }
-  });
-  
-  return dominantType;
+  return null;
 };
 
 // Get color for wash type
 export const getWashTypeTextColor = (washType: string | null): string => {
-  if (washType === "Standard Wash") {
+  if (washType === "standard") {
     return "text-blue-600";
-  } else if (washType === "Express Wash") {
+  } else if (washType === "express") {
     return "text-orange-500";
+  } else if (washType === "both") {
+    return "text-gray-700";
   }
   return "";
 };
 
 // Get background color for wash type
 export const getWashTypeBackground = (washType: string | null): string => {
-  if (washType === "Standard Wash") {
+  if (washType === "standard") {
     return "bg-[#D5E7FF]";
-  } else if (washType === "Express Wash") {
+  } else if (washType === "express") {
     return "bg-orange-50";
+  } else if (washType === "both") {
+    return "bg-[#E6E2DE]";
   }
   return "";
 };

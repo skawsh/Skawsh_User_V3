@@ -38,25 +38,23 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           const newServiceCount = uniqueServices.size;
           
           if (studioItems.length > 0) {
-            const washTypeCounts: Record<string, number> = {};
+            // Track all wash types in the cart
+            const washTypes = new Set();
             
             studioItems.forEach((item: any) => {
               if (item.washType) {
-                washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
+                washTypes.add(item.washType);
               }
             });
             
-            let maxCount = 0;
-            let dominantType = null;
-            
-            Object.entries(washTypeCounts).forEach(([type, count]) => {
-              if (count > maxCount) {
-                maxCount = count;
-                dominantType = type;
-              }
-            });
-            
-            setWashType(dominantType);
+            // Set wash type based on the types found
+            if (washTypes.size === 0) {
+              setWashType(null);
+            } else if (washTypes.size === 1) {
+              setWashType(Array.from(washTypes)[0] as string);
+            } else if (washTypes.size > 1) {
+              setWashType("both");
+            }
           }
           
           const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
@@ -108,6 +106,14 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     });
   };
 
+  // Get display wash type text
+  const getDisplayWashType = () => {
+    if (washType === "standard") return "Standard Wash";
+    if (washType === "express") return "Express Wash";
+    if (washType === "both") return "Both";
+    return null;
+  };
+
   return (
     <div 
       className="fixed bottom-0 left-0 right-0 z-50"
@@ -138,7 +144,7 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
               
               <SackFooterContent 
                 uniqueServiceCount={uniqueServiceCount}
-                washType={washType}
+                washType={getDisplayWashType()}
                 isFirstItemAdded={isFirstItemAdded}
               />
             </button>

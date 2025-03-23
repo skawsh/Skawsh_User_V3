@@ -21,7 +21,7 @@ const SackFooterContent: React.FC<SackFooterContentProps> = ({
         <span className="text-[#403E43] font-semibold">
           <span className={cn(
             "mr-1 font-medium",
-            getWashTypeTextColor(washType)
+            getWashTypeTextColor(washType === "Both" ? "both" : washType?.toLowerCase() as string || null)
           )}>
             {washType && `${washType} •`}
           </span>

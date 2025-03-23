@@ -64,6 +64,14 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     name: 'Busy Bee'
   } : null;
 
+  // Get the display name for wash type
+  const getDisplayWashType = () => {
+    if (washType === "standard") return "Standard Wash";
+    if (washType === "express") return "Express Wash";
+    if (washType === "both") return "Both";
+    return null;
+  };
+
   return (
     <div 
       className={cn(
@@ -87,7 +95,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             <div className="flex items-center justify-between p-3 relative z-10">
               <SackContent 
                 studioInfo={studioInfo}
-                washType={washType}
+                washType={getDisplayWashType()}
                 uniqueServiceCount={uniqueServiceCount}
               />
               
