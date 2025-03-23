@@ -8,16 +8,22 @@ interface CartItemProps {
   item: CartItemType;
   onQuantityChange: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
+  hideWashTypeLabel?: boolean;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ item, onQuantityChange, onRemoveItem }) => {
+const CartItem: React.FC<CartItemProps> = ({ 
+  item, 
+  onQuantityChange, 
+  onRemoveItem,
+  hideWashTypeLabel = false
+}) => {
   const formatIndianRupee = (amount: number): string => {
     return `₹${amount.toFixed(0)}`;
   };
   
   return (
     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in">
-      {item.washType && (
+      {!hideWashTypeLabel && item.washType && (
         <div className={cn(
           "text-xs font-medium mb-1.5 flex items-center",
           item.washType === "standard" ? "text-blue-600" : "text-orange-500"

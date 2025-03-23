@@ -18,15 +18,27 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
   onQuantityChange,
   onRemoveItem
 }) => {
-  // Group items by category
-  const groupedItems = items.reduce((acc: Record<string, CartItem[]>, item) => {
-    const category = item.serviceCategory || 'Uncategorized';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {});
+  // First separate items by wash type
+  const standardItems = items.filter(item => item.washType === 'standard' || !item.washType);
+  const expressItems = items.filter(item => item.washType === 'express');
+  
+  // Then group items by category within each wash type
+  const groupItemsByCategory = (items: CartItem[]) => {
+    return items.reduce((acc: Record<string, CartItem[]>, item) => {
+      const category = item.serviceCategory || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {});
+  };
+  
+  const standardGroupedItems = groupItemsByCategory(standardItems);
+  const expressGroupedItems = groupItemsByCategory(expressItems);
+  
+  // Set a flag to indicate we're in a wash-specific section for child components
+  const hasBothWashTypes = dominantWashType === 'both';
   
   return (
     <div className="mb-4 animate-fade-in" style={{animationDelay: "100ms"}}>
@@ -34,17 +46,62 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
       
       <WeightWarning />
       
-      {dominantWashType && <WashTypeHeader washType={dominantWashType} />}
-      
-      {Object.entries(groupedItems).map(([categoryName, categoryItems], index) => (
-        <CartItemCategory
-          key={categoryName}
-          categoryName={categoryName}
-          items={categoryItems}
-          onQuantityChange={onQuantityChange}
-          onRemoveItem={onRemoveItem}
-        />
-      ))}
+      {/* Show individual wash type sections when using both standard and express */}
+      {hasBothWashTypes ? (
+        <>
+          {/* Standard Wash Section */}
+          {standardItems.length > 0 && (
+            <div className="mb-5 bg-blue-50 rounded-xl p-3">
+              <WashTypeHeader washType="standard" simplified={true} />
+              
+              {Object.entries(standardGroupedItems).map(([categoryName, categoryItems], index) => (
+                <CartItemCategory
+                  key={`standard-${categoryName}`}
+                  categoryName={categoryName}
+                  items={categoryItems}
+                  onQuantityChange={onQuantityChange}
+                  onRemoveItem={onRemoveItem}
+                  inWashTypeSection={true}
+                />
+              ))}
+            </div>
+          )}
+          
+          {/* Express Wash Section */}
+          {expressItems.length > 0 && (
+            <div className="mb-5 bg-orange-50 rounded-xl p-3">
+              <WashTypeHeader washType="express" simplified={true} />
+              
+              {Object.entries(expressGroupedItems).map(([categoryName, categoryItems], index) => (
+                <CartItemCategory
+                  key={`express-${categoryName}`}
+                  categoryName={categoryName}
+                  items={categoryItems}
+                  onQuantityChange={onQuantityChange}
+                  onRemoveItem={onRemoveItem}
+                  inWashTypeSection={true}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        // Single wash type display (original behavior)
+        <>
+          {dominantWashType && <WashTypeHeader washType={dominantWashType} />}
+          
+          {Object.entries(groupItemsByCategory(items)).map(([categoryName, categoryItems], index) => (
+            <CartItemCategory
+              key={categoryName}
+              categoryName={categoryName}
+              items={categoryItems}
+              onQuantityChange={onQuantityChange}
+              onRemoveItem={onRemoveItem}
+              inWashTypeSection={false}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 };

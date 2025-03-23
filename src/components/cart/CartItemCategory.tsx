@@ -9,13 +9,15 @@ interface CartItemCategoryProps {
   items: CartItemType[];
   onQuantityChange: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
+  inWashTypeSection?: boolean;
 }
 
 const CartItemCategory: React.FC<CartItemCategoryProps> = ({ 
   categoryName, 
   items,
   onQuantityChange,
-  onRemoveItem
+  onRemoveItem,
+  inWashTypeSection = false
 }) => {
   const getCategoryIcon = () => {
     switch (categoryName) {
@@ -52,12 +54,13 @@ const CartItemCategory: React.FC<CartItemCategoryProps> = ({
       )}
       
       <div className="space-y-3">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <CartItem 
             key={item.serviceId}
             item={item}
             onQuantityChange={onQuantityChange}
             onRemoveItem={onRemoveItem}
+            hideWashTypeLabel={inWashTypeSection}
           />
         ))}
       </div>

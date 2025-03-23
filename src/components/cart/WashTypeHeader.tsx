@@ -5,9 +5,10 @@ import { cn } from '@/lib/utils';
 
 interface WashTypeHeaderProps {
   washType: string | null;
+  simplified?: boolean;
 }
 
-const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType }) => {
+const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType, simplified = false }) => {
   if (!washType) return null;
   
   // Convert internal washType (e.g., "standard", "express", "both") to display names
@@ -69,6 +70,15 @@ const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType }) => {
     return <Clock size={20} />;
   };
   
+  // For the individual wash type headers in the "both" mode, use a simpler styling
+  if (simplified) {
+    const textColor = washType === "standard" ? "text-blue-600" : "text-orange-500";
+    return (
+      <h3 className={`font-semibold text-lg ${textColor} mb-2`}>{getDisplayWashType()}</h3>
+    );
+  }
+  
+  // Default full header for single wash type or main "both" header
   return (
     <div className={cn(
       "rounded-xl overflow-hidden mb-4 animate-fade-in",
