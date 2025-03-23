@@ -27,6 +27,8 @@ import AddNewAddress from "./pages/AddNewAddress";
 import OrderConfirmation from './pages/OrderConfirmation';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import { useState, useEffect } from "react";
+import RateExperiencePopup from "./components/RateExperiencePopup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +40,34 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const [showRatingPopup, setShowRatingPopup] = useState(false);
+  
+  // Check for the rating popup flag whenever the App component mounts or updates
+  useEffect(() => {
+    const checkForRatingPopup = () => {
+      const shouldShowPopup = localStorage.getItem('showRatingPopup') === 'true';
+      if (shouldShowPopup) {
+        setShowRatingPopup(true);
+        // Clear the flag after showing the popup
+        localStorage.removeItem('showRatingPopup');
+      }
+    };
+    
+    // Check immediately on mount
+    checkForRatingPopup();
+    
+    // Also listen for storage events (in case localStorage changes)
+    window.addEventListener('storage', checkForRatingPopup);
+    
+    return () => {
+      window.removeEventListener('storage', checkForRatingPopup);
+    };
+  }, []);
+  
+  const handleCloseRatingPopup = () => {
+    setShowRatingPopup(false);
+  };
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -69,6 +99,12 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Rating Popup */}
+          <RateExperiencePopup 
+            isOpen={showRatingPopup} 
+            onClose={handleCloseRatingPopup} 
+          />
         </Router>
       </TooltipProvider>
     </QueryClientProvider>

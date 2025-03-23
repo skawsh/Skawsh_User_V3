@@ -59,8 +59,8 @@ const RateExperiencePopup: React.FC<RateExperiencePopupProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-white border border-gray-200 rounded-xl p-6 w-[90%] max-w-[400px] mx-auto shadow-lg animate-slide-in">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={true}>
+      <DialogContent className="bg-white border border-gray-200 rounded-xl p-6 w-[90%] max-w-[400px] mx-auto shadow-lg animate-slide-in" hideCloseButton>
         <div className="absolute top-3 right-3">
           <button 
             onClick={onClose}
