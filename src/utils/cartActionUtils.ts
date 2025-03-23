@@ -1,0 +1,90 @@
+
+/**
+ * Utility functions for cart actions
+ */
+
+import { CartItem } from '@/types/serviceTypes';
+import { toast } from "@/components/ui/use-toast";
+
+/**
+ * Update quantity of an item in the cart
+ */
+export const updateItemQuantity = (id: string, newQuantity: number, cartItems: CartItem[]): CartItem[] => {
+  if (newQuantity < 1) return cartItems;
+  
+  const updatedItems = cartItems.map(item => 
+    item.serviceId === id ? { ...item, quantity: newQuantity } : item
+  );
+  
+  localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  
+  return updatedItems;
+};
+
+/**
+ * Remove an item from the cart
+ */
+export const removeItem = (id: string, cartItems: CartItem[]): CartItem[] => {
+  const updatedItems = cartItems.filter(item => item.serviceId !== id);
+  localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  
+  // Dispatch custom event for components listening to cart updates
+  document.dispatchEvent(new Event('cartUpdated'));
+  
+  return updatedItems;
+};
+
+/**
+ * Clear all items from the cart
+ */
+export const clearCart = (): CartItem[] => {
+  localStorage.setItem('cartItems', JSON.stringify([]));
+  
+  // Dispatch custom event for components listening to cart updates
+  document.dispatchEvent(new Event('cartUpdated'));
+  
+  return [];
+};
+
+/**
+ * Create an order from cart items
+ */
+export const createOrder = (
+  cartItems: CartItem[], 
+  studioId: string | null, 
+  address: string, 
+  specialInstructions: string,
+  subtotal: number,
+  deliveryFee: number, 
+  tax: number
+): string => {
+  const orderId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  
+  const newOrder = {
+    id: orderId,
+    studioId: studioId || cartItems[0]?.studioId || "default-studio",
+    studioName: cartItems[0]?.studioName || "Laundry Service",
+    items: cartItems.map(item => ({
+      serviceId: item.serviceId,
+      serviceName: item.serviceName,
+      price: item.price,
+      quantity: item.quantity || 1
+    })),
+    status: "pending_payment",
+    paymentStatus: "unpaid",
+    totalAmount: subtotal + deliveryFee + tax,
+    createdAt: new Date().toISOString(),
+    specialInstructions: specialInstructions,
+    address: address
+  };
+  
+  const existingOrders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+  existingOrders.push(newOrder);
+  sessionStorage.setItem('orders', JSON.stringify(existingOrders));
+  
+  localStorage.setItem('cartItems', JSON.stringify([]));
+  
+  document.dispatchEvent(new Event('cartUpdated'));
+  
+  return orderId;
+};
