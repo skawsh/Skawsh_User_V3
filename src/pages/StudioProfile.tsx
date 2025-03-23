@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -74,9 +73,7 @@ const StudioProfile: React.FC = () => {
         document.dispatchEvent(new Event('cartUpdated'));
         
         // Show toast to inform user they're editing an order
-        toast({
-          title: `Editing Order: You're now editing order #${orderId.substring(0, 8)}`
-        });
+        toast(`Editing Order: You're now editing order #${orderId.substring(0, 8)}`);
       }
     }
   }, [orderId, id]);
