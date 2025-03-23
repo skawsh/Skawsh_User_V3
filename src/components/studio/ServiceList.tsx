@@ -1,15 +1,16 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ServiceTabs from './service/ServiceTabs';
 import ServiceCategoryList from './service/ServiceCategoryList';
 import CategoryList from './categories/CategoryList';
 import ServiceOrderPopup from './ServiceOrderPopup';
-import MixedServicesDialog from './service/MixedServicesDialog';
 import CategoryButton from './service/CategoryButton';
-import WashingMachineCelebration from '../animations/WashingMachineCelebration';
+import ServiceAnimations from './service/ServiceAnimations';
+import ServiceContainer from './service/ServiceContainer';
 import { Service } from '@/types/serviceTypes';
 import { useServiceData } from '@/hooks/useServiceData';
 import { useServiceInteractions } from '@/hooks/useServiceInteractions';
+import { useServiceListState } from '@/hooks/useServiceListState';
 
 interface ServiceListProps {
   services: Service[];
@@ -24,18 +25,24 @@ const ServiceList: React.FC<ServiceListProps> = ({
   onCartUpdate,
   studioId = '1'
 }) => {
-  // Tabs and scroll state
-  const [selectedTab, setSelectedTab] = useState<string>("standard");
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [isTabsSticky, setIsTabsSticky] = useState(false);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  
-  // Refs for scroll behavior
-  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const tabsRef = useRef<HTMLDivElement>(null);
-  const tabsListRef = useRef<HTMLDivElement>(null);
-  const tabsWrapperRef = useRef<HTMLDivElement>(null);
-  const tabsContentHeight = useRef<number>(0);
+  // Get UI state from custom hook
+  const {
+    selectedTab,
+    popoverOpen,
+    isTabsSticky,
+    selectedService,
+    categoryRefs,
+    tabsRef,
+    tabsListRef,
+    tabsWrapperRef,
+    tabsContentHeight,
+    setPopoverOpen,
+    handleTabChange,
+    setCategoryRef,
+    scrollToCategory,
+    handleOpenServicePopup,
+    handleCloseServicePopup
+  } = useServiceListState();
   
   // Get service data from hook
   const { 
@@ -54,16 +61,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const updatedBackgroundColors = {
     ...backgroundColors,
     standard: "bg-[#D5E7FF]"
-  };
-
-  // Open service popup handler
-  const handleOpenServicePopup = (service: Service) => {
-    setSelectedService(service);
-  };
-
-  // Close service popup handler
-  const handleCloseServicePopup = () => {
-    setSelectedService(null);
   };
 
   // Service interactions hook
@@ -87,28 +84,6 @@ const ServiceList: React.FC<ServiceListProps> = ({
     onOpenServicePopup: handleOpenServicePopup
   });
 
-  // Tab change handler
-  const handleTabChange = (value: string) => {
-    setSelectedTab(value);
-  };
-
-  // Set up refs for category navigation
-  const setCategoryRef = (categoryTitle: string, element: HTMLDivElement | null) => {
-    categoryRefs.current[categoryTitle] = element;
-  };
-
-  // Scroll to category when selected from menu
-  const scrollToCategory = (categoryTitle: string) => {
-    const element = categoryRefs.current[categoryTitle];
-    if (element) {
-      element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-    setPopoverOpen(false);
-  };
-
   // Update cart count when cart items change
   useEffect(() => {
     if (onCartUpdate) {
@@ -116,63 +91,30 @@ const ServiceList: React.FC<ServiceListProps> = ({
     }
   }, [cartItems, onCartUpdate]);
 
-  // Measure tabs height for sticky behavior
-  useEffect(() => {
-    if (tabsListRef.current) {
-      tabsContentHeight.current = tabsListRef.current.offsetHeight + 12;
-    }
-  }, []);
-
-  // Handle scroll events for sticky tabs
-  useEffect(() => {
-    const handleScroll = () => {
-      if (tabsWrapperRef.current) {
-        const headerHeight = 56;
-        const tabsPosition = tabsWrapperRef.current.getBoundingClientRect().top;
-        const shouldBeSticky = tabsPosition <= headerHeight;
-        
-        if (shouldBeSticky !== isTabsSticky) {
-          setIsTabsSticky(shouldBeSticky);
-        }
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll, {
-      passive: true
-    });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [isTabsSticky]);
-
   return (
-    <div 
-      className={`mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative ${
-        updatedBackgroundColors[selectedTab as keyof typeof updatedBackgroundColors]
-      }`} 
-      ref={tabsWrapperRef}
+    <ServiceContainer 
+      backgroundColor={updatedBackgroundColors[selectedTab as keyof typeof updatedBackgroundColors]}
+      tabsWrapperRef={tabsWrapperRef}
+      tabsRef={tabsRef}
     >
-      <div ref={tabsRef} className="transition-all duration-300">
-        <ServiceTabs 
-          selectedTab={selectedTab}
-          onTabChange={handleTabChange}
-          isTabsSticky={isTabsSticky}
-          tabsContentHeight={tabsContentHeight.current}
-          tabsListRef={tabsListRef}
-          deliveryMessage={updatedDeliveryMessages[selectedTab as keyof typeof updatedDeliveryMessages]}
-          backgroundColors={updatedBackgroundColors}
-        >
-          <ServiceCategoryList 
-            categories={selectedTab === "standard" ? categories : expressCategories}
-            tabType={selectedTab}
-            getServiceWeight={getServiceWeight}
-            getServiceQuantity={getServiceQuantity}
-            onServiceInteractions={handleServiceInteractions}
-            setCategoryRef={setCategoryRef}
-          />
-        </ServiceTabs>
-      </div>
+      <ServiceTabs 
+        selectedTab={selectedTab}
+        onTabChange={handleTabChange}
+        isTabsSticky={isTabsSticky}
+        tabsContentHeight={tabsContentHeight.current}
+        tabsListRef={tabsListRef}
+        deliveryMessage={updatedDeliveryMessages[selectedTab as keyof typeof updatedDeliveryMessages]}
+        backgroundColors={updatedBackgroundColors}
+      >
+        <ServiceCategoryList 
+          categories={selectedTab === "standard" ? categories : expressCategories}
+          tabType={selectedTab}
+          getServiceWeight={getServiceWeight}
+          getServiceQuantity={getServiceQuantity}
+          onServiceInteractions={handleServiceInteractions}
+          setCategoryRef={setCategoryRef}
+        />
+      </ServiceTabs>
 
       <CategoryButton 
         onClick={() => setPopoverOpen(true)}
@@ -198,19 +140,16 @@ const ServiceList: React.FC<ServiceListProps> = ({
         />
       )}
       
-      <MixedServicesDialog
-        open={mixedServicesDialogOpen}
-        onOpenChange={setMixedServicesDialogOpen}
+      <ServiceAnimations 
+        mixedServicesDialogOpen={mixedServicesDialogOpen}
+        setMixedServicesDialogOpen={setMixedServicesDialogOpen}
+        showCelebration={showCelebration}
+        setShowCelebration={setShowCelebration}
         existingWashType={getExistingWashType()}
         onSwitchToStandard={handleSwitchToStandard}
         onContinueMixedTypes={handleContinueMixedTypes}
       />
-
-      <WashingMachineCelebration 
-        isVisible={showCelebration} 
-        onAnimationComplete={() => setShowCelebration(false)} 
-      />
-    </div>
+    </ServiceContainer>
   );
 };
 
