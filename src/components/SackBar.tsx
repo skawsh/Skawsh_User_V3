@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Trash2, Check, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useCartItems, clearCart, getWashTypeBackground } from '@/utils/sackBarUtils';
+import SackAnimation from './sack/SackAnimation';
+import SackContent from './sack/SackContent';
+import ClearSackDialog from './sack/ClearSackDialog';
 
 interface SackBarProps {
   className?: string;
@@ -21,89 +13,26 @@ interface SackBarProps {
 }
 
 const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [uniqueServiceCount, setUniqueServiceCount] = useState(0);
+  const { cartItems, uniqueServiceCount, washType } = useCartItems();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showWaterWave, setShowWaterWave] = useState(false);
   const [showFirstItemMessage, setShowFirstItemMessage] = useState(false);
-  const [washType, setWashType] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   useEffect(() => {
-    const loadCartItems = () => {
-      try {
-        const storedItems = localStorage.getItem('cartItems');
-        if (storedItems) {
-          const parsedItems = JSON.parse(storedItems);
-          setCartItems(parsedItems);
-          
-          const uniqueServices = new Set();
-          parsedItems.forEach((item: any) => {
-            if (item.serviceId) {
-              uniqueServices.add(item.serviceId);
-            }
-          });
-          
-          const newServiceCount = uniqueServices.size;
-          
-          if (parsedItems.length > 0) {
-            const washTypeCounts: Record<string, number> = {};
-            
-            parsedItems.forEach((item: any) => {
-              if (item.washType) {
-                washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
-              }
-            });
-            
-            let maxCount = 0;
-            let dominantWashType = null;
-            
-            Object.entries(washTypeCounts).forEach(([type, count]) => {
-              if (count > maxCount) {
-                maxCount = count;
-                dominantWashType = type;
-              }
-            });
-            
-            setWashType(dominantWashType);
-          }
-          
-          const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
-          
-          if (newServiceCount === 1 && uniqueServiceCount === 0 && !hasShownFirstItemMessage) {
-            setShowWaterWave(true);
-            setShowFirstItemMessage(true);
-            localStorage.setItem('hasShownSackWaveAnimation', 'true');
-            
-            setTimeout(() => {
-              setShowFirstItemMessage(false);
-            }, 4000);
-          }
-          
-          setUniqueServiceCount(newServiceCount);
-        } else {
-          setCartItems([]);
-          setUniqueServiceCount(0);
-          setWashType(null);
-        }
-      } catch (error) {
-        console.error('Error loading cart items:', error);
-        setCartItems([]);
-        setUniqueServiceCount(0);
-        setWashType(null);
-      }
-    };
+    // Show water wave animation for first item added
+    const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
     
-    loadCartItems();
-    
-    window.addEventListener('storage', loadCartItems);
-    document.addEventListener('cartUpdated', loadCartItems);
-    
-    return () => {
-      window.removeEventListener('storage', loadCartItems);
-      document.removeEventListener('cartUpdated', loadCartItems);
-    };
+    if (uniqueServiceCount === 1 && !hasShownFirstItemMessage) {
+      setShowWaterWave(true);
+      setShowFirstItemMessage(true);
+      localStorage.setItem('hasShownSackWaveAnimation', 'true');
+      
+      setTimeout(() => {
+        setShowFirstItemMessage(false);
+      }, 4000);
+    }
   }, [uniqueServiceCount]);
   
   const handleWaterWaveAnimationEnd = () => {
@@ -126,10 +55,8 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   };
   
   const handleClearSack = () => {
-    localStorage.removeItem('cartItems');
-    setCartItems([]);
+    clearCart();
     setIsDialogOpen(false);
-    document.dispatchEvent(new Event('cartUpdated'));
   };
   
   const studioInfo = cartItems[0]?.studioId ? {
@@ -137,15 +64,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     name: 'Busy Bee'
   } : null;
 
-  const getWashTypeTextColor = () => {
-    if (washType === "Standard Wash") {
-      return "text-blue-600";
-    } else if (washType === "Express Wash") {
-      return "text-orange-500";
-    }
-    return "";
-  };
-  
   return (
     <div 
       className={cn(
@@ -156,46 +74,22 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     >
       <div className="max-w-lg mx-auto">
         <div className="relative">
-          {showFirstItemMessage && (
-            <div className="first-sack-message">
-              You added your 1st service to the sack! 🎉
-            </div>
-          )}
-          
           <div className={cn(
             "bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden relative",
-            washType && (washType === "Standard Wash" ? "bg-[#D5E7FF]" : "bg-orange-50")
+            washType && getWashTypeBackground(washType)
           )}>
-            {showWaterWave && (
-              <div 
-                className="water-wave"
-                onAnimationEnd={handleWaterWaveAnimationEnd}
-              />
-            )}
+            <SackAnimation 
+              showWaterWave={showWaterWave}
+              showFirstItemMessage={showFirstItemMessage}
+              onAnimationEnd={handleWaterWaveAnimationEnd}
+            />
             
             <div className="flex items-center justify-between p-3 relative z-10">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
-                  <img 
-                    src="/lovable-uploads/fda4730e-82ff-4406-877e-1f45d0ca2ebd.png" 
-                    alt="Studio logo"
-                    className="w-6 h-6 object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder.svg';
-                    }}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
-                  <span className={cn(
-                    "text-xs font-medium",
-                    getWashTypeTextColor()
-                  )}>
-                    {washType || 'Laundry Service'} • {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}
-                  </span>
-                </div>
-              </div>
+              <SackContent 
+                studioInfo={studioInfo}
+                washType={washType}
+                uniqueServiceCount={uniqueServiceCount}
+              />
               
               <div className="flex items-center gap-2 relative z-10">
                 <button
@@ -205,37 +99,11 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
                   View Sack
                 </button>
                 
-                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <AlertDialogTrigger asChild>
-                    <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
-                      <Trash2 size={24} className="text-red-500" />
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="rounded-xl animate-scale-in">
-                    <div className="flex justify-end">
-                      <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
-                        <X size={18} />
-                      </AlertDialogCancel>
-                    </div>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Clear Sack</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to clear your sack? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
-                      <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
-                        <X className="mr-1 h-4 w-4" /> No
-                      </AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={handleClearSack}
-                        className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
-                      >
-                        <Check className="mr-1 h-4 w-4" /> Yes
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <ClearSackDialog 
+                  isOpen={isDialogOpen}
+                  onOpenChange={setIsDialogOpen}
+                  onClearSack={handleClearSack}
+                />
               </div>
             </div>
           </div>
