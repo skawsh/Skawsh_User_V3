@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Trash2, Check, X, Clock } from 'lucide-react';
@@ -85,10 +86,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           }
           
           setUniqueServiceCount(newServiceCount);
-          
-          console.log('Cart items loaded:', parsedItems);
-          console.log('Unique service count:', uniqueServices.size);
-          console.log('Wash type:', dominantType);
         } else {
           setCartItems([]);
           setUniqueServiceCount(0);
