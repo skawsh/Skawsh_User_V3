@@ -1,8 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { getWashTypeBackground } from '@/utils/sackBarUtils';
+import SackFooterAnimation from '../sack/SackFooterAnimation';
+import SackFooterContent from '../sack/SackFooterContent';
 
 interface SackFooterProps {
   itemCount: number;
@@ -106,28 +108,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     });
   };
 
-  const getWashTypeTextColor = () => {
-    if (washType === "Standard Wash") {
-      return "text-blue-600";
-    } else if (washType === "Express Wash") {
-      return "text-orange-500";
-    }
-    return "";
-  };
-
-  const getWashTypeBackground = () => {
-    if (washType === "Standard Wash") {
-      return "bg-[#D5E7FF]";
-    } else if (washType === "Express Wash") {
-      return "bg-orange-50";
-    }
-    return "bg-green-400";
-  };
-
-  const getButtonBackground = () => {
-    return "bg-green-400 hover:bg-green-500";
-  };
-
   return (
     <div 
       className="fixed bottom-0 left-0 right-0 z-50"
@@ -135,52 +115,32 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     >
       <div className="max-w-lg mx-auto px-4 pb-4">
         <div className="relative">
-          {showFirstItemMessage && (
-            <div className="first-sack-message">
-              You added your 1st service to the sack! 🎉
-            </div>
-          )}
-          
           <div
             className={cn(
               "w-full rounded-xl shadow-md overflow-hidden relative",
-              getWashTypeBackground()
+              getWashTypeBackground(washType)
             )}
           >            
             <button
               onClick={handleGoToCart}
               className={cn(
                 "w-full flex items-center justify-between py-3 px-5 overflow-hidden relative",
-                getButtonBackground(),
+                "bg-green-400 hover:bg-green-500",
                 "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
               )}
             >
-              {showWaterWave && (
-                <div 
-                  className="water-wave"
-                  onAnimationEnd={handleWaterWaveAnimationEnd}
-                />
-              )}
+              <SackFooterAnimation 
+                showWaterWave={showWaterWave}
+                showFirstItemMessage={showFirstItemMessage}
+                onAnimationEnd={handleWaterWaveAnimationEnd}
+                isFirstItemAdded={isFirstItemAdded}
+              />
               
-              <div className="flex flex-col items-start relative z-10">
-                <span className={cn(
-                  "text-[#403E43] font-semibold"
-                )}>
-                  <span className={cn(
-                    "mr-1 font-medium",
-                    getWashTypeTextColor()
-                  )}>
-                    {washType &&
-                      `${washType} •`
-                    }
-                  </span>
-                  {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
-                </span>
-              </div>
-              <div className="flex items-center gap-2 relative z-10">
-                <ShoppingBag size={20} className={cn("text-white", isFirstItemAdded && "animate-pulse")} />
-                <span className="text-white font-semibold">View Sack</span>
-              </div>
+              <SackFooterContent 
+                uniqueServiceCount={uniqueServiceCount}
+                washType={washType}
+                isFirstItemAdded={isFirstItemAdded}
+              />
             </button>
           </div>
         </div>
