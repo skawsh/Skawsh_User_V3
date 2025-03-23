@@ -27,7 +27,7 @@ const WeightInput: React.FC<WeightInputProps> = ({
           value={weight} 
           onChange={onChange} 
           className="pl-9" 
-          placeholder={unit === 'sft' ? "Enter area" : "Enter weight"}
+          placeholder={unit === 'sft' ? "Please enter the area" : "Please enter the weight"}
         />
       </div>
       <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">

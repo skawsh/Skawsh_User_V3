@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingBag } from 'lucide-react';
+import { X, ShoppingBag, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   isExpress = false,
   studioId = ''
 }) => {
-  const [weight, setWeight] = useState<number | string>(initialWeight || 1);
+  const [weight, setWeight] = useState<number | string>('');
   const [clothingItems, setClothingItems] = useState<ClothingItem[]>(DEFAULT_CLOTHING_ITEMS);
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -50,7 +50,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setWeight(initialWeight || 1);
+      setWeight('');
       setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
@@ -62,7 +62,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         setUnit('kg');
       }
     }
-  }, [isOpen, initialWeight, service.unit]);
+  }, [isOpen, service.unit]);
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWeight(e.target.value);
