@@ -8,13 +8,15 @@ import OrderDetailsLoading from '@/components/orders/OrderDetailsLoading';
 import OrderDetailsError from '@/components/orders/OrderDetailsError';
 import OrderDetailsContent from '@/components/orders/OrderDetailsContent';
 import FeedbackDialog from '@/components/orders/FeedbackDialog';
+import { useRatingSystem } from '@/hooks/useRatingSystem';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number>(0);
-  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
-  const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
+
+  // Extract rating logic to a custom hook
+  const { selectedRating, isRatingSubmitted, handleRatingClick, handleFeedbackSubmit, showFeedbackDialog, setShowFeedbackDialog } = 
+    useRatingSystem(orderId);
 
   // Handle scroll event to show/hide sticky header
   useEffect(() => {
@@ -27,40 +29,11 @@ const OrderDetails = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Check if rating was already submitted for this order
-  useEffect(() => {
-    if (orderId) {
-      const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
-      if (ratedOrders[orderId]) {
-        setIsRatingSubmitted(true);
-      }
-    }
-  }, [orderId]);
-
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderId ? getOrderById(orderId) : Promise.reject('No order ID provided'),
     enabled: !!orderId,
   });
-
-  const handleRatingClick = (rating: number) => {
-    setSelectedRating(rating);
-    setShowFeedbackDialog(true);
-  };
-
-  const handleFeedbackSubmit = (feedback: string) => {
-    // Save the rating and feedback
-    const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
-    ratedOrders[orderId as string] = { 
-      rating: selectedRating, 
-      feedback, 
-      date: new Date().toISOString() 
-    };
-    localStorage.setItem('ratedOrders', JSON.stringify(ratedOrders));
-    
-    setIsRatingSubmitted(true);
-    setShowFeedbackDialog(false);
-  };
 
   if (isLoading) {
     return <OrderDetailsLoading />;
