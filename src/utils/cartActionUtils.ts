@@ -87,11 +87,14 @@ export const createOrder = (
   
   const totalAmount = subtotal + deliveryFee + tax;
   
+  // Get the studio name from cart items
+  const studioName = cartItems[0]?.studioName || "Unknown Studio";
+  
   // Create a properly formatted order object
   const newOrder: Order = {
     id: orderId,
     studioId: studioId || cartItems[0]?.studioId || "default-studio",
-    studioName: cartItems[0]?.studioName || "Laundry Service",
+    studioName: studioName,
     userId: "user1", // Default user ID
     services: services,
     totalAmount: totalAmount,
