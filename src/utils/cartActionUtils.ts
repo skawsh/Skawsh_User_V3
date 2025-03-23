@@ -102,12 +102,8 @@ export const createOrder = (
   
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Show success toast notification using the correct format
-  toast({
-    title: "Order Placed Successfully!",
-    description: `Your order #${orderId.substring(0, 8)} has been placed.`,
-    duration: 5000,
-  });
+  // Fix: Use the Sonner toast format without nested properties
+  toast(`Order Placed Successfully! Your order #${orderId.substring(0, 8)} has been placed.`);
   
   return orderId;
 };
