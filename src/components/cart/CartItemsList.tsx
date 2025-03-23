@@ -4,6 +4,7 @@ import CartItemCategory from './CartItemCategory';
 import WashTypeHeader from './WashTypeHeader';
 import WeightWarning from './WeightWarning';
 import { CartItem } from '@/types/serviceTypes';
+import { cn } from '@/lib/utils';
 
 interface CartItemsListProps {
   items: CartItem[];
@@ -46,15 +47,20 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
       
       <WeightWarning />
       
+      {/* Show main wash type header if not mixed */}
+      {!hasBothWashTypes && dominantWashType && (
+        <WashTypeHeader washType={dominantWashType} />
+      )}
+      
       {/* Show individual wash type sections when using both standard and express */}
       {hasBothWashTypes ? (
         <>
           {/* Standard Wash Section */}
           {standardItems.length > 0 && (
-            <div className="mb-5 bg-blue-50 rounded-xl p-3">
+            <div className="mb-5 bg-blue-50 rounded-xl p-4">
               <WashTypeHeader washType="standard" simplified={true} />
               
-              {Object.entries(standardGroupedItems).map(([categoryName, categoryItems], index) => (
+              {Object.entries(standardGroupedItems).map(([categoryName, categoryItems]) => (
                 <CartItemCategory
                   key={`standard-${categoryName}`}
                   categoryName={categoryName}
@@ -69,10 +75,10 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
           
           {/* Express Wash Section */}
           {expressItems.length > 0 && (
-            <div className="mb-5 bg-orange-50 rounded-xl p-3">
+            <div className="mb-5 bg-orange-50 rounded-xl p-4">
               <WashTypeHeader washType="express" simplified={true} />
               
-              {Object.entries(expressGroupedItems).map(([categoryName, categoryItems], index) => (
+              {Object.entries(expressGroupedItems).map(([categoryName, categoryItems]) => (
                 <CartItemCategory
                   key={`express-${categoryName}`}
                   categoryName={categoryName}
@@ -86,11 +92,9 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
           )}
         </>
       ) : (
-        // Single wash type display (original behavior)
+        // Single wash type display
         <>
-          {dominantWashType && <WashTypeHeader washType={dominantWashType} />}
-          
-          {Object.entries(groupItemsByCategory(items)).map(([categoryName, categoryItems], index) => (
+          {Object.entries(groupItemsByCategory(items)).map(([categoryName, categoryItems]) => (
             <CartItemCategory
               key={categoryName}
               categoryName={categoryName}

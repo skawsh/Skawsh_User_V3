@@ -22,10 +22,10 @@ const CartItem: React.FC<CartItemProps> = ({
   };
   
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in">
+    <div className="bg-white px-4 py-3 animate-fade-in">
       {!hideWashTypeLabel && item.washType && (
         <div className={cn(
-          "text-xs font-medium mb-1.5 flex items-center",
+          "text-xs font-medium mb-1 flex items-center",
           item.washType === "standard" ? "text-blue-600" : "text-orange-500"
         )}>
           <Clock size={12} className="mr-1" /> 

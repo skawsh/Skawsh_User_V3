@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Shirt, Package, Footprints } from 'lucide-react';
+import { Shirt, Package, Footprints, Clock } from 'lucide-react';
 import CartItem from './CartItem';
 import { CartItem as CartItemType } from '@/types/serviceTypes';
+import { cn } from '@/lib/utils';
 
 interface CartItemCategoryProps {
   categoryName: string;
@@ -33,19 +34,20 @@ const CartItemCategory: React.FC<CartItemCategoryProps> = ({
   };
   
   const subCategories = Array.from(new Set(items.map(item => item.serviceSubCategory).filter(Boolean)));
+  const washType = items[0]?.washType || null;
   
   return (
-    <div className="mb-5 animate-fade-in">
-      <div className="flex items-center mb-2">
+    <div className="mb-4 animate-fade-in">
+      <div className="flex items-center py-2">
         {getCategoryIcon()}
         <h3 className="font-semibold text-gray-800">{categoryName}</h3>
       </div>
       
       {subCategories.length > 0 && (
-        <div className="pl-6 mb-2">
+        <div className="pl-6 mb-1">
           {subCategories.map(
             subCategory => subCategory && (
-              <div key={subCategory} className="text-sm text-gray-600 font-medium">
+              <div key={subCategory} className="text-sm text-gray-600 font-medium mb-1">
                 {subCategory}
               </div>
             )
@@ -53,15 +55,16 @@ const CartItemCategory: React.FC<CartItemCategoryProps> = ({
         </div>
       )}
       
-      <div className="space-y-3">
+      <div className="border-t border-gray-100">
         {items.map((item) => (
-          <CartItem 
-            key={item.serviceId}
-            item={item}
-            onQuantityChange={onQuantityChange}
-            onRemoveItem={onRemoveItem}
-            hideWashTypeLabel={inWashTypeSection}
-          />
+          <div key={item.serviceId} className="border-b border-gray-100 last:border-b-0">
+            <CartItem 
+              item={item}
+              onQuantityChange={onQuantityChange}
+              onRemoveItem={onRemoveItem}
+              hideWashTypeLabel={inWashTypeSection}
+            />
+          </div>
         ))}
       </div>
     </div>

@@ -21,7 +21,7 @@ const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType, simplified = 
   
   const getWashTypeBackground = () => {
     if (washType === "standard") {
-      return "bg-[#D5E7FF]";
+      return "bg-blue-100";
     } else if (washType === "express") {
       return "bg-orange-50";
     } else if (washType === "both") {
@@ -37,17 +37,6 @@ const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType, simplified = 
       return "text-orange-500";
     } else if (washType === "both") {
       return "text-gray-700";
-    }
-    return "";
-  };
-
-  const getWashTypeMessageBackground = () => {
-    if (washType === "standard") {
-      return "bg-blue-100";
-    } else if (washType === "express") {
-      return "bg-orange-100";
-    } else if (washType === "both") {
-      return "bg-gray-100";
     }
     return "";
   };
@@ -72,9 +61,15 @@ const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType, simplified = 
   
   // For the individual wash type headers in the "both" mode, use a simpler styling
   if (simplified) {
-    const textColor = washType === "standard" ? "text-blue-600" : "text-orange-500";
     return (
-      <h3 className={`font-semibold text-lg ${textColor} mb-2`}>{getDisplayWashType()}</h3>
+      <div className={cn(
+        "flex items-center gap-2 rounded-md px-2 py-1",
+        washType === "standard" ? "text-blue-600 bg-blue-50" : "text-orange-500 bg-orange-50",
+        "inline-block mb-2"
+      )}>
+        <Clock size={14} />
+        <span className="font-medium text-sm">{getDisplayWashType()}</span>
+      </div>
     );
   }
   
@@ -94,7 +89,6 @@ const WashTypeHeader: React.FC<WashTypeHeaderProps> = ({ washType, simplified = 
       </div>
       <div className={cn(
         "px-4 py-3 flex justify-center items-center gap-3",
-        getWashTypeMessageBackground(),
         getWashTypeTextColor()
       )}>
         {getIcon()}
