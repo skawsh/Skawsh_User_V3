@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Star, ChevronLeft, ThumbsUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,18 +15,28 @@ interface Review {
   comment: string;
   date: string;
   helpful: number;
-  images?: string[];
 }
 
 const StudioReviews: React.FC = () => {
   const navigate = useNavigate();
   const { studioId } = useParams<{ studioId: string }>();
+  const [isScrolled, setIsScrolled] = useState(false);
   
   // Convert studioId (dash-case) to display name (Title Case)
   const studioName = studioId
     ?.split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ') || 'Studio';
+  
+  // Track scroll position to apply sticky header
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   // Sample reviews data
   const reviews: Review[] = [
@@ -37,11 +47,7 @@ const StudioReviews: React.FC = () => {
       rating: 5,
       comment: 'Great service! My clothes came back spotless and perfectly pressed. The delivery was also on time. Will definitely use again.',
       date: '2 days ago',
-      helpful: 12,
-      images: [
-        'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=200&h=200&auto=format',
-        'https://images.unsplash.com/photo-1558618666-dd4717178de9?w=200&h=200&auto=format'
-      ]
+      helpful: 12
     },
     {
       id: '2',
@@ -77,10 +83,7 @@ const StudioReviews: React.FC = () => {
       rating: 5,
       comment: 'Best laundry service in the area! They handle delicate fabrics very well and maintain the color integrity. Worth every rupee.',
       date: '1 month ago',
-      helpful: 20,
-      images: [
-        'https://images.unsplash.com/photo-1512099053734-e6767b535838?w=200&h=200&auto=format'
-      ]
+      helpful: 20
     }
   ];
   
@@ -100,7 +103,7 @@ const StudioReviews: React.FC = () => {
   return (
     <Layout>
       <div className="bg-white min-h-screen">
-        <div className="sticky top-0 z-10 bg-white shadow-sm">
+        <div className={`sticky top-0 z-10 bg-white shadow-sm transition-all duration-200 ${isScrolled ? 'shadow-md' : ''}`}>
           <div className="flex items-center p-4">
             <button onClick={handleBackClick} className="mr-3">
               <ChevronLeft size={24} />
@@ -174,19 +177,6 @@ const StudioReviews: React.FC = () => {
                   </div>
                   
                   <p className="mt-3 text-gray-700">{review.comment}</p>
-                  
-                  {review.images && review.images.length > 0 && (
-                    <div className="mt-3 flex gap-2 overflow-x-auto">
-                      {review.images.map((img, index) => (
-                        <img 
-                          key={index} 
-                          src={img} 
-                          alt={`Review by ${review.userName}`} 
-                          className="w-20 h-20 object-cover rounded-lg" 
-                        />
-                      ))}
-                    </div>
-                  )}
                   
                   <div className="mt-4 flex items-center text-sm text-gray-500">
                     <button className="flex items-center gap-1 hover:text-blue-500">

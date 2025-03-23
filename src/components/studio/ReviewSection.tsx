@@ -2,6 +2,7 @@
 import React from 'react';
 import GlassCard from '../ui-elements/GlassCard';
 import { Star, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Review {
   id: string;
@@ -13,13 +14,24 @@ interface Review {
 
 interface ReviewSectionProps {
   reviews: Review[];
+  studioId: string;
 }
 
 const ReviewSection: React.FC<ReviewSectionProps> = ({
-  reviews
+  reviews,
+  studioId
 }) => {
+  const navigate = useNavigate();
   // Only show first 2 reviews in preview
   const previewReviews = reviews.slice(0, 2);
+  
+  const handleSeeAllReviews = () => {
+    // Convert studio ID to kebab case for the URL
+    const formattedStudioId = studioId
+      ? studioId.toLowerCase().replace(/\s+/g, '-')
+      : '';
+    navigate(`/studio/${formattedStudioId}/reviews`);
+  };
   
   return (
     <div className="my-8">
@@ -46,7 +58,10 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
           </GlassCard>
         ))}
       </div>
-      <button className="flex items-center text-blue-600 text-sm mt-4">
+      <button 
+        className="flex items-center text-blue-600 text-sm mt-4"
+        onClick={handleSeeAllReviews}
+      >
         See all reviews <ChevronRight size={16} />
       </button>
     </div>
