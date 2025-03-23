@@ -1,15 +1,16 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronRight, MoreVertical, Trash2, Edit } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PaymentMethodDrawer from './PaymentMethodDrawer';
 import { Toaster } from 'sonner';
 import { toast } from 'sonner';
+import OrderCardHeader from './OrderCardHeader';
+import OrderCardMenu from './OrderCardMenu';
+import OrderCardActions from './OrderCardActions';
+import DeleteOrderDialog from './DeleteOrderDialog';
 
 interface OrderCardProps {
   order: Order;
@@ -29,6 +30,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [editOrderEnabled, setEditOrderEnabled] = useState(false);
   const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
@@ -126,101 +128,37 @@ const OrderCard: React.FC<OrderCardProps> = ({
   return <>
       <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
         <div className="p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-bold">{order.studioName}</h3>
-              <p className="text-sm text-gray-500">Order #{order.id.substring(0, 8)}</p>
-              <p className="text-sm text-gray-500">
-                {new Date(order.createdAt).toLocaleDateString()} • {order.status.replace('_', ' ')}
-              </p>
-            </div>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8" type="button">
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">More options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {isHistory ? (
-                  <></>
-                ) : (
-                  <>
-                    <DropdownMenuItem 
-                      onClick={handleEditOrder}
-                      disabled={!editOrderEnabled} 
-                      className="text-blue-500 focus:text-blue-500"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Order
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={openCancelModal} 
-                      disabled={!isOngoing} 
-                      className="text-red-500 focus:text-red-500"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Cancel Order
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <OrderCardHeader 
+            order={order} 
+            onOpenMenu={() => setDropdownOpen(true)} 
+          />
           
-          <div className="mt-2">
-            <Link to={`/studio/${order.studioId}`} className="text-sm text-primary-500 flex items-center">
-              View Menu <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
+          {dropdownOpen && (
+            <OrderCardMenu 
+              isHistory={isHistory} 
+              isOngoing={isOngoing} 
+              editOrderEnabled={editOrderEnabled}
+              onEdit={handleEditOrder}
+              onCancel={openCancelModal}
+            />
+          )}
           
-          <div className="mt-3 flex gap-2">
-            <Button asChild variant="outline" size="sm" className="rounded-full shadow-sm hover:shadow flex-1">
-              <Link to={`/orders/${order.id}`}>View Details</Link>
-            </Button>
-            
-            {isPendingPayment && (
-              <Button 
-                variant="default" 
-                size="sm" 
-                className={`rounded-full shadow-sm hover:shadow flex-1 transition-colors ${specialCodeActivated ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'}`} 
-                disabled={!specialCodeActivated}
-                onClick={specialCodeActivated ? handlePayNowClick : undefined}
-              >
-                Pay Now ₹{order.totalAmount}
-              </Button>
-            )}
-          </div>
+          <OrderCardActions 
+            order={order}
+            specialCodeActivated={specialCodeActivated}
+            isPendingPayment={isPendingPayment}
+            onPayNowClick={handlePayNowClick}
+          />
         </div>
       </Card>
 
       {showCancelModal && <CancelOrderModal orderId={order.id} onClose={closeCancelModal} onCancelSuccess={onCancelComplete} />}
 
-      <Dialog open={showDeleteDialog} onOpenChange={open => {
-      if (!open) {
-        closeDeleteDialog();
-      }
-    }}>
-        <DialogContent className="sm:max-w-[425px]" onInteractOutside={e => {
-        e.preventDefault();
-      }}>
-          <DialogHeader>
-            <DialogTitle>Delete Order</DialogTitle>
-            <DialogDescription>
-              Do you want to delete this order from your history?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={closeDeleteDialog}>
-              No
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteOrder} className="bg-red-500 hover:bg-red-600">
-              Yes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteOrderDialog 
+        open={showDeleteDialog} 
+        onOpenChange={setShowDeleteDialog} 
+        onDelete={handleDeleteOrder} 
+      />
 
       <PaymentMethodDrawer 
         open={showPaymentDrawer} 
