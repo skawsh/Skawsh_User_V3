@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -346,7 +345,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           </div>
           
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden mt-1" style={{ zIndex: 50000, position: 'absolute' }}>
+            <div className="absolute w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden mt-1" style={{ zIndex: 99999, position: 'absolute' }}>
               <div className="py-1 max-h-60 overflow-y-auto">
                 {filteredSuggestions.map((service) => (
                   <div
