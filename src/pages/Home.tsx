@@ -151,7 +151,8 @@ const Home: React.FC = () => {
     bgColor: 'bg-blue-700',
     buttonColor: 'bg-yellow-400',
     textColor: 'text-gray-800',
-    image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    serviceId: 'premium-care'
   }, {
     id: '2',
     title: 'Express Service',
@@ -159,7 +160,8 @@ const Home: React.FC = () => {
     bgColor: 'bg-purple-600',
     buttonColor: 'bg-green-400',
     textColor: 'text-gray-800',
-    image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    serviceId: 'express-service'
   }, {
     id: '3',
     title: 'Eco Friendly',
@@ -167,7 +169,8 @@ const Home: React.FC = () => {
     bgColor: 'bg-teal-600',
     buttonColor: 'bg-amber-400',
     textColor: 'text-gray-800',
-    image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    serviceId: 'eco-friendly'
   }, {
     id: '4',
     title: 'First Order Discount',
@@ -175,7 +178,8 @@ const Home: React.FC = () => {
     bgColor: 'bg-pink-600',
     buttonColor: 'bg-blue-400',
     textColor: 'text-gray-800',
-    image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+    serviceId: 'wash-fold'
   }];
 
   return <Layout>

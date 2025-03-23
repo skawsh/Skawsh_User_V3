@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Carousel,
   CarouselContent,
@@ -17,6 +18,7 @@ interface Banner {
   buttonColor: string;
   textColor: string;
   image: string;
+  serviceId?: string; // Optional service ID to link to specific service
 }
 
 interface PromotionSliderProps {
@@ -24,10 +26,12 @@ interface PromotionSliderProps {
 }
 
 const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const isSwiping = useRef(false);
 
   // Auto slide every 5 seconds when autoplay is enabled
   useEffect(() => {
@@ -55,10 +59,17 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
     touchStartX.current = e.touches[0].clientX;
     // Pause autoplay while user is interacting
     setAutoPlayEnabled(false);
+    isSwiping.current = false;
   };
 
   const handleTouchMove = (e: TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
+    
+    // If the user has moved more than a small threshold, consider it a swipe
+    if (touchStartX.current && touchEndX.current && 
+        Math.abs(touchStartX.current - touchEndX.current) > 10) {
+      isSwiping.current = true;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -75,6 +86,7 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
         // Swipe right - go to previous
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? banners.length - 1 : prevIndex - 1));
       }
+      isSwiping.current = true; // This was definitely a swipe
     }
     
     // Reset touch points
@@ -97,6 +109,22 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
     setTimeout(() => setAutoPlayEnabled(true), 5000);
   };
 
+  const handleBannerClick = (banner: Banner) => {
+    // Don't navigate if the user was swiping
+    if (isSwiping.current) return;
+    
+    // Determine service ID - either from banner or derived from title
+    const serviceId = banner.serviceId || banner.title.toLowerCase().replace(/\s+/g, '-');
+    
+    // Navigate to the service page with the banner title as the service name
+    navigate(`/services/${serviceId}`, {
+      state: {
+        serviceName: banner.title,
+        from: window.location.pathname
+      }
+    });
+  };
+
   return (
     <div className="mb-6 animate-fade-in animate-stagger-2">
       <div 
@@ -112,14 +140,21 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
           {banners.map((banner, index) => (
             <div 
               key={banner.id}
-              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[1%] shrink-0 relative overflow-hidden`}
+              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[1%] shrink-0 relative overflow-hidden cursor-pointer`}
+              onClick={() => handleBannerClick(banner)}
             >
               <div className="relative z-10">
                 <h3 className="font-semibold text-xl mb-1">{banner.title}</h3>
                 <p className="text-white/90 text-sm mb-4">
                   {banner.description}
                 </p>
-                <button className={`${banner.buttonColor} ${banner.textColor} font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2`}>
+                <button 
+                  className={`${banner.buttonColor} ${banner.textColor} font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2`}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent banner click handler from firing
+                    handleBannerClick(banner);
+                  }}
+                >
                   EXPLORE <ArrowRight size={16} />
                 </button>
               </div>
