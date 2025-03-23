@@ -1,6 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, TouchEvent } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext
+} from "@/components/ui/carousel";
 
 interface Banner {
   id: string;
@@ -18,23 +25,86 @@ interface PromotionSliderProps {
 
 const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
-  // Auto slide every 5 seconds
+  // Auto slide every 5 seconds when autoplay is enabled
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-    }, 5000);
+    let interval: NodeJS.Timeout;
     
-    return () => clearInterval(interval);
-  }, [banners.length]);
+    if (autoPlayEnabled) {
+      interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+      }, 5000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [banners.length, autoPlayEnabled]);
 
   const handleDotClick = (index: number) => {
     setCurrentIndex(index);
+    // Temporarily pause autoplay for a few seconds when user interacts
+    setAutoPlayEnabled(false);
+    setTimeout(() => setAutoPlayEnabled(true), 5000);
+  };
+
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    // Pause autoplay while user is interacting
+    setAutoPlayEnabled(false);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50; // Minimum swipe distance
+    
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        // Swipe left - go to next
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+      } else {
+        // Swipe right - go to previous
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? banners.length - 1 : prevIndex - 1));
+      }
+    }
+    
+    // Reset touch points
+    touchStartX.current = null;
+    touchEndX.current = null;
+    
+    // Re-enable autoplay after a short delay
+    setTimeout(() => setAutoPlayEnabled(true), 5000);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
+    setAutoPlayEnabled(false);
+    setTimeout(() => setAutoPlayEnabled(true), 5000);
+  };
+
+  const goToPrev = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? banners.length - 1 : prevIndex - 1));
+    setAutoPlayEnabled(false);
+    setTimeout(() => setAutoPlayEnabled(true), 5000);
   };
 
   return (
     <div className="mb-6 animate-fade-in animate-stagger-2">
-      <div className="relative overflow-hidden rounded-xl">
+      <div 
+        className="relative overflow-hidden rounded-xl"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <div 
           className="flex transition-transform duration-700 ease-in-out" 
           style={{ transform: `translateX(-${currentIndex * 92}%)` }}
@@ -59,9 +129,26 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
             </div>
           ))}
         </div>
+        
+        {/* Navigation arrows - only shown on desktop or larger screens */}
+        <button 
+          onClick={goToPrev}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/50 flex items-center justify-center backdrop-blur-sm hidden sm:flex"
+          aria-label="Previous banner"
+        >
+          <ArrowRight size={16} className="transform rotate-180" />
+        </button>
+        
+        <button 
+          onClick={goToNext}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/50 flex items-center justify-center backdrop-blur-sm hidden sm:flex"
+          aria-label="Next banner"
+        >
+          <ArrowRight size={16} />
+        </button>
       </div>
       
-      {/* Dots indicator */}
+      {/* Dots indicator with improved interaction */}
       <div className="flex justify-center gap-2 mt-3">
         {banners.map((_, index) => (
           <button 
