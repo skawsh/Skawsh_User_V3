@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
 import { Service, CartItem } from '@/types/serviceTypes';
+import { addToCart, getExistingWashType, getServiceWeight, getServiceQuantity } from '@/utils/cartUtils';
+import { increaseServiceWeight, decreaseServiceWeight, handleServiceCardClick } from '@/utils/serviceInteractionUtils';
+import { switchToStandardWash, continueMixedTypes } from '@/utils/mixedServicesUtils';
 
 interface UseServiceInteractionsProps {
   studioId?: string;
@@ -19,6 +22,7 @@ export const useServiceInteractions = ({
   const [mixedServicesDialogOpen, setMixedServicesDialogOpen] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
 
+  // Load cart items from localStorage
   useEffect(() => {
     const storedCartItems = localStorage.getItem('cartItems');
     if (storedCartItems) {
@@ -32,184 +36,68 @@ export const useServiceInteractions = ({
     }
   }, []);
 
-  const getExistingWashType = (): string | null => {
-    if (cartItems.length === 0) return null;
-    
-    const expressItemExists = cartItems.some(item => {
-      return item.washType === "express";
-    });
-    
-    return expressItemExists ? "express" : "standard";
-  };
-
+  // Handle adding to cart
   const handleAddToCart = (orderDetails: any) => {
-    const roundedWeight = orderDetails.weight ? Math.round(orderDetails.weight * 10) / 10 : 0;
+    const updatedItems = addToCart(orderDetails, cartItems, studioId, selectedTab);
+    setCartItems(updatedItems);
     
-    setCartItems(prev => {
-      const existingItemIndex = prev.findIndex(item => item.serviceId === orderDetails.serviceId);
-      
-      const updatedOrderDetails = {
-        ...orderDetails,
-        washType: selectedTab
-      };
-      
-      let updatedItems;
-      if (existingItemIndex >= 0) {
-        const newItems = [...prev];
-        newItems[existingItemIndex] = {
-          serviceId: updatedOrderDetails.serviceId,
-          serviceName: updatedOrderDetails.serviceName,
-          weight: roundedWeight,
-          price: Math.round(updatedOrderDetails.price * 100) / 100,
-          quantity: updatedOrderDetails.quantity,
-          studioId: studioId,
-          items: updatedOrderDetails.items,
-          washType: updatedOrderDetails.washType
-        };
-        updatedItems = newItems;
-      } else {
-        updatedItems = [...prev, {
-          serviceId: updatedOrderDetails.serviceId,
-          serviceName: updatedOrderDetails.serviceName,
-          weight: roundedWeight,
-          price: Math.round(updatedOrderDetails.price * 100) / 100,
-          quantity: updatedOrderDetails.quantity,
-          studioId: studioId,
-          items: updatedOrderDetails.items,
-          washType: updatedOrderDetails.washType
-        }];
-        
-        const hasShownCelebration = localStorage.getItem('hasShownCelebration');
-        if (!hasShownCelebration && prev.length === 0) {
-          setShowCelebration(true);
-          localStorage.setItem('hasShownCelebration', 'true');
-        }
-      }
-      
-      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-      return updatedItems;
-    });
-  };
-
-  const getServiceWeight = (serviceId: string): number | null => {
-    const item = cartItems.find(item => item.serviceId === serviceId);
-    return item ? item.weight : null;
-  };
-
-  const getServiceQuantity = (serviceId: string): number | null => {
-    const item = cartItems.find(item => item.serviceId === serviceId);
-    return item && item.quantity ? item.quantity : null;
-  };
-
-  const handleServiceInteractions = {
-    increaseWeight: (service: Service) => {
-      const existingWashType = getExistingWashType();
-      const currentWashType = selectedTab;
-      
-      if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
-        setPendingService(service);
-        setMixedServicesDialogOpen(true);
-        return;
-      }
-      
-      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-        const currentWeight = getServiceWeight(service.id) || 0;
-        const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
-        
-        handleAddToCart({
-          serviceId: service.id,
-          serviceName: service.name,
-          weight: newWeight,
-          price: service.price * newWeight,
-          studioId: studioId,
-          items: []
-        });
-      } else {
-        const existingItem = cartItems.find(item => item.serviceId === service.id);
-        const quantity = existingItem && existingItem.quantity ? existingItem.quantity + 1 : 1;
-        
-        handleAddToCart({
-          serviceId: service.id,
-          serviceName: service.name,
-          quantity: quantity,
-          price: service.price * quantity,
-          studioId: studioId,
-          items: []
-        });
-      }
-    },
-
-    decreaseWeight: (service: Service) => {
-      if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-        const currentWeight = getServiceWeight(service.id) || 0;
-        
-        if (currentWeight <= 1) {
-          setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
-          localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
-          return;
-        }
-        
-        const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
-        handleAddToCart({
-          serviceId: service.id,
-          serviceName: service.name,
-          weight: newWeight,
-          price: service.price * newWeight,
-          studioId: studioId,
-          items: []
-        });
-      } else {
-        const existingItem = cartItems.find(item => item.serviceId === service.id);
-        if (!existingItem) return;
-        
-        const quantity = existingItem.quantity ? existingItem.quantity - 1 : 0;
-        
-        if (quantity <= 0) {
-          setCartItems(prev => prev.filter(item => item.serviceId !== service.id));
-          localStorage.setItem('cartItems', JSON.stringify(cartItems.filter(item => item.serviceId !== service.id)));
-          return;
-        }
-        
-        handleAddToCart({
-          serviceId: service.id,
-          serviceName: service.name,
-          quantity: quantity,
-          price: service.price * quantity,
-          studioId: studioId,
-          items: []
-        });
-      }
-    },
-
-    cardClick: (service: Service) => {
-      const existingItem = cartItems.find(item => item.serviceId === service.id);
-      
-      if (existingItem) {
-        if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
-          onOpenServicePopup(service);
-        }
-      } else {
-        const existingWashType = getExistingWashType();
-        const currentWashType = selectedTab;
-        
-        if (existingWashType && existingWashType !== currentWashType) {
-          setPendingService(service);
-          setMixedServicesDialogOpen(true);
-          return;
-        }
-        
-        handleOpenServicePopup(service);
-      }
+    // Show celebration animation if this is the first item
+    const hasShownCelebration = localStorage.getItem('hasShownCelebration');
+    if (!hasShownCelebration && cartItems.length === 0 && updatedItems.length > 0) {
+      setShowCelebration(true);
+      localStorage.setItem('hasShownCelebration', 'true');
     }
   };
 
+  // Show mixed services dialog
+  const handleShowMixedServicesDialog = (service: Service) => {
+    setPendingService(service);
+    setMixedServicesDialogOpen(true);
+  };
+
+  // Handle service interactions
+  const handleServiceInteractions = {
+    increaseWeight: (service: Service) => {
+      increaseServiceWeight(
+        service,
+        cartItems,
+        getExistingWashType(cartItems),
+        selectedTab,
+        studioId,
+        handleShowMixedServicesDialog,
+        handleAddToCart
+      );
+    },
+
+    decreaseWeight: (service: Service) => {
+      decreaseServiceWeight(
+        service,
+        cartItems,
+        studioId,
+        selectedTab,
+        setCartItems,
+        handleAddToCart
+      );
+    },
+
+    cardClick: (service: Service) => {
+      handleServiceCardClick(
+        service,
+        cartItems,
+        getExistingWashType(cartItems),
+        selectedTab,
+        handleShowMixedServicesDialog,
+        handleOpenServicePopup
+      );
+    }
+  };
+
+  // Handle opening service popup with type checking
   const handleOpenServicePopup = (service: Service) => {
-    const existingWashType = getExistingWashType();
-    const currentWashType = selectedTab;
+    const existingWashType = getExistingWashType(cartItems);
     
-    if (existingWashType && existingWashType !== currentWashType) {
-      setPendingService(service);
-      setMixedServicesDialogOpen(true);
+    if (existingWashType && existingWashType !== selectedTab) {
+      handleShowMixedServicesDialog(service);
       return;
     }
     
@@ -227,55 +115,31 @@ export const useServiceInteractions = ({
     }
   };
 
+  // Handle switching to standard wash
   const handleSwitchToStandard = () => {
-    const updatedItems = cartItems.filter(item => item.washType !== "express");
-    setCartItems(updatedItems);
-    localStorage.setItem('cartItems', JSON.stringify(updatedItems));
-    document.dispatchEvent(new Event('cartUpdated'));
-    
-    setMixedServicesDialogOpen(false);
-    
-    if (pendingService) {
-      setTimeout(() => {
-        if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
-          onOpenServicePopup(pendingService);
-        } else {
-          handleAddToCart({
-            serviceId: pendingService.id,
-            serviceName: pendingService.name,
-            quantity: 1,
-            price: pendingService.price,
-            studioId: studioId,
-            items: []
-          });
-        }
-        
-        setPendingService(null);
-      }, 300);
-    }
+    switchToStandardWash(
+      cartItems,
+      pendingService,
+      setCartItems,
+      onOpenServicePopup,
+      handleAddToCart,
+      studioId,
+      setMixedServicesDialogOpen,
+      setPendingService
+    );
   };
   
+  // Handle continuing with mixed types
   const handleContinueMixedTypes = () => {
-    if (pendingService) {
-      if (pendingService.unit && (pendingService.unit.includes('per kg') || pendingService.unit.includes('per sft'))) {
-        onOpenServicePopup(pendingService);
-      } else {
-        const price = selectedTab === "express" ? pendingService.price * 1.5 : pendingService.price;
-        handleAddToCart({
-          serviceId: pendingService.id,
-          serviceName: pendingService.name,
-          quantity: 1,
-          price: price,
-          studioId: studioId,
-          items: []
-        });
-      }
-      
-      setPendingService(null);
-      setMixedServicesDialogOpen(false);
-      
-      toast("Multiple delivery types selected. Your items will be delivered separately");
-    }
+    continueMixedTypes(
+      pendingService,
+      selectedTab,
+      handleAddToCart,
+      onOpenServicePopup,
+      studioId,
+      setPendingService,
+      setMixedServicesDialogOpen
+    );
   };
 
   return {
@@ -283,10 +147,10 @@ export const useServiceInteractions = ({
     pendingService,
     mixedServicesDialogOpen,
     showCelebration,
-    getServiceWeight,
-    getServiceQuantity,
+    getServiceWeight: (serviceId: string) => getServiceWeight(serviceId, cartItems),
+    getServiceQuantity: (serviceId: string) => getServiceQuantity(serviceId, cartItems),
     handleServiceInteractions,
-    getExistingWashType,
+    getExistingWashType: () => getExistingWashType(cartItems),
     setMixedServicesDialogOpen,
     handleSwitchToStandard,
     handleContinueMixedTypes,
