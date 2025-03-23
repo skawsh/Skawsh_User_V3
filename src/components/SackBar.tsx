@@ -59,16 +59,16 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             });
             
             let maxCount = 0;
-            let dominantType = null;
+            let dominantWashType = null;
             
             Object.entries(washTypeCounts).forEach(([type, count]) => {
               if (count > maxCount) {
                 maxCount = count;
-                dominantType = type;
+                dominantWashType = type;
               }
             });
             
-            setWashType(dominantType);
+            setWashType(dominantWashType);
           }
           
           // Check if this is the first item added
@@ -177,7 +177,10 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             </div>
           )}
           
-          <div className="bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform relative overflow-hidden">
+          <div className={cn(
+            "bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform relative overflow-hidden",
+            washType && getWashTypeBackground()
+          )}>
             {showWaterWave && (
               <div 
                 className="water-wave"

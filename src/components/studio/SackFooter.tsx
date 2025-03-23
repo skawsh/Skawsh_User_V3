@@ -114,6 +114,16 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     });
   };
 
+  // Get background color based on wash type
+  const getWashTypeBackground = () => {
+    if (washType === "Standard Wash") {
+      return "bg-[#D5E7FF]";
+    } else if (washType === "Express Wash") {
+      return "bg-orange-50";
+    }
+    return "";
+  };
+
   return (
     <div 
       className="fixed bottom-0 left-0 right-0 z-50"

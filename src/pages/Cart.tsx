@@ -414,7 +414,7 @@ const Cart: React.FC = () => {
               {dominantWashType && (
                 <div className={cn(
                   "rounded-xl overflow-hidden mb-4 animate-fade-in",
-                  dominantWashType === "Standard Wash" ? "bg-blue-50" : "bg-orange-50"
+                  dominantWashType === "Standard Wash" ? "bg-[#D5E7FF]" : "bg-orange-50"
                 )}>
                   <div className="p-4 text-center">
                     <h3 className="font-semibold text-xl">
@@ -677,3 +677,4 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
+

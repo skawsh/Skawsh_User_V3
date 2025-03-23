@@ -211,7 +211,7 @@ export const useServiceData = (services: Service[]) => {
   };
 
   const backgroundColors = {
-    standard: "bg-blue-50",
+    standard: "bg-[#D5E7FF]",
     express: "bg-orange-50"
   };
 
