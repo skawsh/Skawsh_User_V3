@@ -110,12 +110,8 @@ export const createOrder = (
   localStorage.setItem('cartItems', JSON.stringify([]));
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Show success toast
-  toast({
-    title: "Order placed successfully",
-    description: `Your order #${orderId.substring(0, 8)} has been placed.`,
-    duration: 3000,
-  });
+  // Show success toast - Fixing the toast call to match the correct format
+  toast(`Order placed successfully! Your order #${orderId.substring(0, 8)} has been placed.`);
   
   return orderId;
 };
