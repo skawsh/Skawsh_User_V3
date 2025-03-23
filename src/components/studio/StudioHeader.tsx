@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -331,7 +332,7 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-3 pb-2 bg-white relative" style={{ zIndex: 9999 }}>
+      <div className="px-4 py-3 pb-2 bg-white relative" style={{ zIndex: 50 }}>
         <div className="relative" ref={searchRef}>
           <Input 
             placeholder="Search services in this studio..." 
@@ -345,27 +346,29 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
           </div>
           
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden mt-1" style={{ zIndex: 99999, position: 'absolute' }}>
-              <div className="py-1 max-h-60 overflow-y-auto">
-                {filteredSuggestions.map((service) => (
-                  <div
-                    key={service.id}
-                    className="px-4 py-2.5 hover:bg-gray-100 cursor-pointer transition-colors"
-                    onClick={() => handleServiceSelect(service.id)}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="text-sm font-medium text-gray-800">{service.name}</p>
-                        {service.category && (
-                          <p className="text-xs text-gray-500 mt-0.5">{service.category}</p>
-                        )}
+            <div className="fixed w-full left-0 right-0 px-4" style={{ top: 'auto', zIndex: 999999 }}>
+              <div className="bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden mt-1 mx-auto" style={{ maxWidth: '100%' }}>
+                <div className="py-1 max-h-60 overflow-y-auto">
+                  {filteredSuggestions.map((service) => (
+                    <div
+                      key={service.id}
+                      className="px-4 py-2.5 hover:bg-gray-100 cursor-pointer transition-colors"
+                      onClick={() => handleServiceSelect(service.id)}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm font-medium text-gray-800">{service.name}</p>
+                          {service.category && (
+                            <p className="text-xs text-gray-500 mt-0.5">{service.category}</p>
+                          )}
+                        </div>
+                        <p className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+                          ₹{service.price}
+                        </p>
                       </div>
-                      <p className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
-                        ₹{service.price}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           )}
