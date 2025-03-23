@@ -6,7 +6,6 @@ import { Order } from '@/types/order';
 import CancelOrderModal from './CancelOrderModal';
 import PaymentMethodDrawer from './PaymentMethodDrawer';
 import { Toaster } from 'sonner';
-import { toast } from 'sonner';
 import OrderCardHeader from './OrderCardHeader';
 import OrderCardMenu from './OrderCardMenu';
 import OrderCardActions from './OrderCardActions';
@@ -14,6 +13,7 @@ import DeleteOrderDialog from './DeleteOrderDialog';
 import FeedbackDialog from './FeedbackDialog';
 import OrderRatingSection from './OrderRatingSection';
 import { useRatingSystem } from '@/hooks/useRatingSystem';
+import { useOrderModals } from '@/hooks/useOrderModals';
 
 interface OrderCardProps {
   order: Order;
@@ -27,11 +27,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onDeleteComplete
 }) => {
   const navigate = useNavigate();
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const [editOrderEnabled, setEditOrderEnabled] = useState(false);
-  const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
   // Using the extracted rating hook
@@ -44,6 +41,20 @@ const OrderCard: React.FC<OrderCardProps> = ({
     setShowFeedbackDialog 
   } = useRatingSystem(order.id);
   
+  // Using the extracted modals management hook
+  const {
+    showCancelModal,
+    showDeleteDialog,
+    showPaymentDrawer,
+    setShowPaymentDrawer,
+    openCancelModal,
+    closeCancelModal,
+    openDeleteDialog,
+    closeDeleteDialog,
+    handleDeleteOrder,
+    handlePayNowClick
+  } = useOrderModals({ order, onCancelComplete, onDeleteComplete });
+  
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
     const canEditOrder = localStorage.getItem('editOrderEnabled') === 'true';
@@ -52,85 +63,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
     setEditOrderEnabled(canEditOrder);
   }, [order.id]);
 
-  const openCancelModal = () => {
-    setShowCancelModal(true);
-  };
-
-  const closeCancelModal = () => {
-    setShowCancelModal(false);
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-    if (onCancelComplete) {
-      onCancelComplete();
-    }
-  };
-
-  const openDeleteDialog = () => {
-    setShowDeleteDialog(true);
-  };
-
-  const closeDeleteDialog = () => {
-    setShowDeleteDialog(false);
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-  };
-
-  const handleDeleteOrder = () => {
-    const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-    const updatedOrders = orders.filter((o: Order) => o.id !== order.id);
-    sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
-    setShowDeleteDialog(false);
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-    setTimeout(() => {
-      if (onDeleteComplete) {
-        onDeleteComplete();
-      }
-    }, 100);
-  };
-
   const handleEditOrder = () => {
     navigate(`/studio/${order.studioId}?orderId=${order.id}`);
-  };
-
-  const handlePayNowClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    
-    const preferredMethod = localStorage.getItem('preferredPaymentMethod');
-    
-    if (preferredMethod) {
-      setTimeout(() => {
-        const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
-        const updatedOrders = orders.map((o: Order) => {
-          if (o.id === order.id) {
-            return {
-              ...o,
-              status: 'processing', // Keep as processing instead of completed
-              paymentMethod: preferredMethod,
-              paymentStatus: 'paid'
-            };
-          }
-          return o;
-        });
-        sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
-        
-        toast.success('Payment Successful', {
-          description: `₹${order.totalAmount} paid successfully using ${preferredMethod}`,
-          duration: 3000,
-        });
-        
-        localStorage.setItem('showRatingPopup', 'true');
-        
-        if (onDeleteComplete) {
-          onDeleteComplete();
-        }
-      }, 500);
-    } else {
-      setShowPaymentDrawer(true);
-    }
   };
 
   // Function to navigate to order details
