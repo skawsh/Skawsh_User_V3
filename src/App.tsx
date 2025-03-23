@@ -42,13 +42,26 @@ const queryClient = new QueryClient({
 function App() {
   const [showRatingPopup, setShowRatingPopup] = useState(false);
   
+  // Check for the rating popup flag whenever the App component mounts or updates
   useEffect(() => {
-    const shouldShowPopup = localStorage.getItem('showRatingPopup') === 'true';
-    if (shouldShowPopup) {
-      setShowRatingPopup(true);
-      // Clear the flag after showing the popup
-      localStorage.removeItem('showRatingPopup');
-    }
+    const checkForRatingPopup = () => {
+      const shouldShowPopup = localStorage.getItem('showRatingPopup') === 'true';
+      if (shouldShowPopup) {
+        setShowRatingPopup(true);
+        // Clear the flag after showing the popup
+        localStorage.removeItem('showRatingPopup');
+      }
+    };
+    
+    // Check immediately on mount
+    checkForRatingPopup();
+    
+    // Also listen for storage events (in case localStorage changes)
+    window.addEventListener('storage', checkForRatingPopup);
+    
+    return () => {
+      window.removeEventListener('storage', checkForRatingPopup);
+    };
   }, []);
   
   const handleCloseRatingPopup = () => {
