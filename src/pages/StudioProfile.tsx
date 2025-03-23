@@ -1,12 +1,15 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import SackFooter from '../components/studio/SackFooter';
+import SackBar from '../components/SackBar';
 import { toast } from "@/components/ui/use-toast";
 import StudioProfileHeader from '../components/studio/StudioProfileHeader';
 import { useStudioData } from '@/hooks/useStudioData';
+import { useCartItems } from '@/utils/sackBarUtils';
 
 // Helper function to format currency in Indian Rupee format
 export const formatIndianRupee = (amount: number): string => {
@@ -30,6 +33,10 @@ const StudioProfile: React.FC = () => {
 
   // Get studio data from custom hook
   const { studio, services } = useStudioData(id);
+  
+  // Get cart items to check if we should show the sack bar
+  const { cartItems } = useCartItems();
+  const showSackBar = cartItems.length > 0 && cartCount === 0;
 
   // Console logs for debugging
   console.log("Studio ID from URL:", id);
@@ -162,6 +169,14 @@ const StudioProfile: React.FC = () => {
             studioId={studio.id}
           />
         </div>
+
+        {/* Show SackBar when there are items in the cart but no current services selected in this studio */}
+        {showSackBar && (
+          <SackBar
+            className="bottom-4 z-30"
+            isVisible={true}
+          />
+        )}
 
         {/* Sack Footer */}
         <SackFooter 
