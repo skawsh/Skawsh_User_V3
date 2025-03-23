@@ -1,25 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Layout from '../components/Layout';
-import { Trash2, ShoppingBag, ChevronRight, AlertTriangle, ChevronLeft, MapPin, Clock, Minus, Plus, Edit, Tag, Package, CheckCircle2, Shirt, Footprints, PlusCircle, Info, File, ChevronDown, X } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { cn } from '@/lib/utils';
-import Button from '../components/ui-elements/Button';
+
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
+import Layout from '../components/Layout';
+import CartHeader from '@/components/cart/CartHeader';
+import EmptyCart from '@/components/cart/EmptyCart';
+import DeliveryAddress from '@/components/cart/DeliveryAddress';
+import CartItemsList from '@/components/cart/CartItemsList';
+import AddMoreServices from '@/components/cart/AddMoreServices';
+import SpecialInstructions from '@/components/cart/SpecialInstructions';
+import CouponSection from '@/components/cart/CouponSection';
+import OrderSummaryCollapsible from '@/components/cart/OrderSummaryCollapsible';
+import CartFooter from '@/components/cart/CartFooter';
 import CouponCelebration from '@/components/animations/CouponCelebration';
-
-const formatIndianRupee = (amount: number): string => {
-  return `₹${amount.toFixed(0)}`;
-};
-
-const formatDecimal = (value: number): number => {
-  return Math.round(value * 10) / 10;
-};
 
 interface CartItem {
   serviceId: string;
@@ -44,14 +37,9 @@ const Cart: React.FC = () => {
   const location = useLocation();
   const { toast } = useToast();
   const [specialInstructions, setSpecialInstructions] = useState<string>('');
-  const [showInstructionsInput, setShowInstructionsInput] = useState(false);
   const studioId = location.state?.studioId || null;
   const previousPath = location.state?.previousPath || "/";
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [couponCode, setCouponCode] = useState('');
-  const [isHeaderSticky, setIsHeaderSticky] = useState(false);
-  const [showEstimatedDetails, setShowEstimatedDetails] = useState(false);
-  const headerRef = useRef<HTMLDivElement>(null);
   const [showCouponCelebration, setShowCouponCelebration] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(0);
@@ -63,27 +51,6 @@ const Cart: React.FC = () => {
     state: 'NY',
     zipCode: '10001'
   });
-
-  const handleBackNavigation = () => {
-    if (previousPath) {
-      navigate(previousPath);
-    } else {
-      navigate(-1); // Fallback to the browser's default back behavior
-    }
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        const scrollY = window.scrollY;
-        setIsHeaderSticky(scrollY > 10);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (location.state?.selectedAddress) {
@@ -97,11 +64,16 @@ const Cart: React.FC = () => {
     if (storedCartItems) {
       try {
         const parsedItems = JSON.parse(storedCartItems);
-        const filteredItems = studioId ? parsedItems.filter((item: CartItem) => !studioId || item.studioId === studioId) : parsedItems;
+        const filteredItems = studioId 
+          ? parsedItems.filter((item: CartItem) => !studioId || item.studioId === studioId) 
+          : parsedItems;
+
         const categorizedItems = filteredItems.map((item: CartItem) => {
           let serviceCategory = '';
           let serviceSubCategory = '';
-          if (item.serviceId.includes('wash') || item.serviceId.includes('iron') || item.serviceId === '1' || item.serviceId === '2' || item.serviceId === '3' || item.serviceId === '4' || item.serviceId === 'wash-iron-1') {
+          
+          if (item.serviceId.includes('wash') || item.serviceId.includes('iron') || 
+              ['1', '2', '3', '4', 'wash-iron-1'].includes(item.serviceId)) {
             serviceCategory = 'Core Laundry Services';
           } else if (item.serviceId.includes('dry-upper')) {
             serviceCategory = 'Dry Cleaning Services';
@@ -114,9 +86,10 @@ const Cart: React.FC = () => {
             serviceSubCategory = 'Ethnic Wear';
           } else if (item.serviceId.includes('shoe')) {
             serviceCategory = 'Shoe Laundry Services';
-          } else if (item.serviceId === 'stain-protection' || item.serviceId === 'premium-detergent') {
+          } else if (['stain-protection', 'premium-detergent'].includes(item.serviceId)) {
             serviceCategory = 'Additional Services';
           }
+          
           return {
             ...item,
             serviceCategory,
@@ -125,6 +98,7 @@ const Cart: React.FC = () => {
           };
         });
         
+        // Determine dominant wash type
         const washTypeCounts: Record<string, number> = {};
         categorizedItems.forEach(item => {
           if (item.washType) {
@@ -143,7 +117,6 @@ const Cart: React.FC = () => {
         });
         
         setDominantWashType(dominantType);
-        
         setCartItems(categorizedItems);
         console.log('Cart items loaded:', categorizedItems);
       } catch (error) {
@@ -188,62 +161,14 @@ const Cart: React.FC = () => {
     });
   };
 
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) {
-      toast({
-        title: "Empty coupon",
-        description: "Please enter a coupon code.",
-        variant: "destructive",
-        duration: 2000,
-      });
-      return;
-    }
-    
-    if (couponCode.trim().toLowerCase() === "skawsh") {
-      setDiscountPercentage(15);
-      setDiscountApplied(true);
-      setShowCouponCelebration(true);
-      
-      toast({
-        title: "Coupon applied",
-        description: "You got 15% off on your total order value!",
-        duration: 3000,
-      });
-    } else {
-      toast({
-        title: "Coupon applied",
-        description: "Your coupon has been applied successfully.",
-        duration: 2000,
-      });
-    }
+  const handleCouponApplied = (percentage: number) => {
+    setDiscountPercentage(percentage);
+    setDiscountApplied(true);
+    setShowCouponCelebration(true);
   };
 
   const handleCouponCelebrationComplete = () => {
     setShowCouponCelebration(false);
-  };
-
-  const handleAddSpecialInstructions = () => {
-    setShowInstructionsInput(true);
-  };
-
-  const handleSaveInstructions = () => {
-    setShowInstructionsInput(false);
-    if (specialInstructions.trim()) {
-      toast({
-        title: "Instructions saved",
-        description: "Your special instructions have been saved.",
-        duration: 2000,
-      });
-    }
-  };
-
-  const handleProceedToCheckout = () => {
-    navigate('/checkout', { state: { cartItems } });
-    toast({
-      title: "Proceeding to checkout",
-      description: "Taking you to the payment page.",
-      duration: 2000,
-    });
   };
 
   const handleClearCart = () => {
@@ -262,24 +187,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleChangeAddress = () => {
-    navigate('/addresses', { 
-      state: { 
-        from: '/cart',
-        returnToCart: true
-      } 
-    });
-  };
-
-  const groupedItems = cartItems.reduce((acc: Record<string, CartItem[]>, item) => {
-    const category = item.serviceCategory || 'Uncategorized';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(item);
-    return acc;
-  }, {});
-
   const subtotal = cartItems.reduce((sum, item) => {
     const itemPrice = item.price * (item.quantity || 1);
     return sum + itemPrice;
@@ -287,9 +194,7 @@ const Cart: React.FC = () => {
   
   const deliveryFee = subtotal > 0 ? 49 : 0;
   const tax = Math.round(subtotal * 0.05); // Assuming 5% tax
-  
   const discount = discountApplied ? Math.round(subtotal * (discountPercentage / 100)) : 0;
-  
   const total = subtotal + deliveryFee + tax - discount;
 
   const handlePlaceOrder = () => {
@@ -326,382 +231,62 @@ const Cart: React.FC = () => {
     });
   };
 
-  const handleAddMoreServices = () => {
-    if (studioId) {
-      navigate(`/studio/${studioId}`);
-    } else if (cartItems.length > 0 && cartItems[0].studioId) {
-      navigate(`/studio/${cartItems[0].studioId}`);
-    } else {
-      navigate('/services');
-    }
-  };
-
-  const getWashTypeBackground = () => {
-    if (dominantWashType === "Standard Wash") {
-      return "bg-[#D5E7FF]";
-    } else if (dominantWashType === "Express Wash") {
-      return "bg-orange-50";
-    }
-    return "";
-  };
-
-  const getWashTypeTextColor = () => {
-    if (dominantWashType === "Standard Wash") {
-      return "text-blue-600";
-    } else if (dominantWashType === "Express Wash") {
-      return "text-orange-500";
-    }
-    return "";
-  };
-
-  const getWashTypeMessageBackground = () => {
-    if (dominantWashType === "Standard Wash") {
-      return "bg-blue-100";
-    } else if (dominantWashType === "Express Wash") {
-      return "bg-orange-100";
-    }
-    return "";
-  };
-
-  const getDeliveryMessage = () => {
-    if (dominantWashType === "Standard Wash") {
-      return "Delivery in just 36 sunlight hours after pickup";
-    } else if (dominantWashType === "Express Wash") {
-      return "Express delivery in just 12 hours after pickup";
-    }
-    return "";
-  };
-
   return (
     <Layout>
       <div className="cart-container bg-gray-50 min-h-screen pb-20">
-        <div
-          ref={headerRef}
-          className={cn(
-            "flex items-center justify-between p-4 bg-white transition-all duration-300",
-            isHeaderSticky ? "fixed top-0 left-0 right-0 z-10 shadow-md animate-slide-in" : ""
-          )}
-        >
-          <div className="flex items-center">
-            <button onClick={handleBackNavigation} className="mr-3 hover:bg-gray-100 p-2 rounded-full transition-colors">
-              <ChevronLeft size={24} className="text-gray-800" />
-            </button>
-            <h1 className="text-xl font-semibold text-gray-800">Your Sack</h1>
-          </div>
-          
-          {cartItems.length > 0 && (
-            <button 
-              onClick={handleClearCart} 
-              className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-              aria-label="Clear sack"
-            >
-              <Trash2 size={20} />
-            </button>
-          )}
-        </div>
+        <CartHeader 
+          cartItemsCount={cartItems.length} 
+          onClearCart={handleClearCart} 
+          previousPath={previousPath}
+        />
         
         {cartItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-8 mt-16 animate-fade-in">
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 w-full max-w-md">
-              <ShoppingBag size={64} className="text-gray-300 mb-4 mx-auto" />
-              <h2 className="text-xl font-semibold mb-2 text-center">Your sack is empty</h2>
-              <p className="text-gray-500 text-center mb-6">
-                Add some services to your sack to proceed with checkout
-              </p>
-              <Button 
-                onClick={() => navigate('/services')} 
-                className="bg-[#92E3A9] hover:bg-[#83d699] text-gray-800 w-full"
-                fullWidth
-              >
-                Browse Services
-              </Button>
-            </div>
-          </div>
+          <EmptyCart />
         ) : (
           <div className="px-4 pt-3 pb-24 max-w-3xl mx-auto">
-            <div className="bg-blue-50 p-4 rounded-xl mb-4 animate-fade-in shadow-sm border border-blue-100">
-              <div className="flex justify-between items-center">
-                <div className="flex items-start">
-                  <MapPin size={20} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium text-gray-700">Delivery Address</p>
-                    <p className="text-sm text-gray-600">{address.street}</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={handleChangeAddress}
-                  className="text-blue-600 text-sm font-medium hover:underline"
-                >
-                  Change
-                </button>
-              </div>
-            </div>
+            <DeliveryAddress address={address.street} />
 
-            <div className="mb-4 animate-fade-in" style={{animationDelay: "100ms"}}>
-              <h2 className="text-lg font-semibold mb-3 text-gray-800">Review your order</h2>
-              
-              <div className="bg-yellow-50 p-3 rounded-xl mb-4 flex items-start shadow-sm border border-yellow-100">
-                <AlertTriangle size={18} className="text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-gray-700">
-                  Price may vary depending on the weight and clothing items during pickup of your order.
-                </p>
-              </div>
-
-              {dominantWashType && (
-                <div className={cn(
-                  "rounded-xl overflow-hidden mb-4 animate-fade-in",
-                  getWashTypeBackground()
-                )}>
-                  <div className="p-4 text-center">
-                    <h3 className={cn(
-                      "font-semibold text-xl",
-                      getWashTypeTextColor()
-                    )}>
-                      {dominantWashType}
-                    </h3>
-                  </div>
-                  <div className={cn(
-                    "px-4 py-3 flex justify-center items-center gap-3",
-                    getWashTypeMessageBackground(),
-                    getWashTypeTextColor()
-                  )}>
-                    <Clock size={20} />
-                    <span className="font-medium">
-                      {getDeliveryMessage()}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {Object.entries(groupedItems).map((categoryEntry, categoryIndex) => (
-                <div key={categoryEntry[0]} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
-                  <div className="flex items-center mb-2">
-                    {categoryEntry[0] === 'Dry Cleaning Services' && (
-                      <Shirt size={18} className="text-gray-700 mr-2" />
-                    )}
-                    {categoryEntry[0] === 'Core Laundry Services' && (
-                      <Package size={18} className="text-gray-700 mr-2" />
-                    )}
-                    {categoryEntry[0] === 'Shoe Laundry Services' && (
-                      <Footprints size={18} className="text-gray-700 mr-2" />
-                    )}
-                    <h3 className="font-semibold text-gray-800">{categoryEntry[0]}</h3>
-                  </div>
-                  
-                  {categoryEntry[1].some(item => item.serviceSubCategory) && (
-                    <div className="pl-6 mb-2">
-                      {Array.from(new Set(categoryEntry[1].map(item => item.serviceSubCategory))).map(
-                        subCategory => subCategory && (
-                          <div key={subCategory} className="text-sm text-gray-600 font-medium">
-                            {subCategory}
-                          </div>
-                        )
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className="space-y-3">
-                    {categoryEntry[1].map((item, itemIndex) => (
-                      <div key={item.serviceId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in" style={{animationDelay: `${200 + itemIndex * 50}ms`}}>
-                        {item.washType && (
-                          <div className={cn(
-                            "text-xs font-medium mb-1.5 flex items-center",
-                            item.washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
-                          )}>
-                            <Clock size={12} className="mr-1" /> {item.washType}
-                          </div>
-                        )}
-                        <div className="mb-1">
-                          <h4 className="font-medium text-gray-800">{item.serviceName}</h4>
-                          <div className="flex justify-between items-center text-sm text-gray-600">
-                            <span>{item.quantity} Item × {formatIndianRupee(item.price)}</span>
-                            <span className="font-medium text-gray-800">{formatIndianRupee(item.price * (item.quantity || 1))}</span>
-                          </div>
-                          <div className="text-xs text-gray-500 mb-2 flex items-center">
-                            <Clock size={12} className="inline mr-1" /> 
-                            <span>
-                              {item.washType === "Express Wash" ? "12h Express Delivery" : "36h Standard Delivery"}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center border border-gray-200 rounded-full overflow-hidden shadow-sm">
-                            <button 
-                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-                              onClick={() => handleQuantityChange(item.serviceId, (item.quantity || 1) - 1)}
-                              aria-label="Decrease quantity"
-                            >
-                              <Minus size={16} />
-                            </button>
-                            <span className="px-3 py-1 border-x border-gray-200 bg-white">{item.quantity || 1}</span>
-                            <button 
-                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-                              onClick={() => handleQuantityChange(item.serviceId, (item.quantity || 1) + 1)}
-                              aria-label="Increase quantity"
-                            >
-                              <Plus size={16} />
-                            </button>
-                          </div>
-                          
-                          <button 
-                            className="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
-                            onClick={() => handleRemoveItem(item.serviceId)}
-                            aria-label="Remove item"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              
-              <div className="bg-green-50 p-4 rounded-xl mb-4 shadow-sm border border-green-100 animate-fade-in" style={{animationDelay: "300ms"}}>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <PlusCircle size={18} className="text-green-600 mr-2" />
-                    <span className="font-medium text-gray-700">Add More Services</span>
-                  </div>
-                  <Button 
-                    onClick={handleAddMoreServices}
-                    className="bg-green-600 hover:bg-green-700 text-sm px-3 py-1 h-auto"
-                    size="sm"
-                  >
-                    <span>Browse Services</span>
-                    <ChevronRight size={16} />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="bg-blue-50 p-4 rounded-xl mb-4 shadow-sm border border-blue-100 animate-fade-in" style={{animationDelay: "350ms"}}>
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <File size={18} className="text-blue-600 mr-2" />
-                    <span className="font-medium text-gray-700">Special Instructions</span>
-                  </div>
-                  {!showInstructionsInput && (
-                    <button 
-                      onClick={handleAddSpecialInstructions}
-                      className="text-blue-600 text-sm font-medium hover:underline"
-                    >
-                      Add
-                    </button>
-                  )}
-                </div>
-                
-                {showInstructionsInput && (
-                  <div className="mt-3">
-                    <Textarea 
-                      placeholder="Add any special instructions for your order..."
-                      value={specialInstructions}
-                      onChange={(e) => setSpecialInstructions(e.target.value)}
-                      className="w-full mb-2 border-blue-200 focus:border-blue-300 rounded-lg"
-                    />
-                    <div className="flex justify-end">
-                      <Button 
-                        onClick={handleSaveInstructions}
-                        className="bg-blue-600 text-sm"
-                        size="sm"
-                      >
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {!showInstructionsInput && specialInstructions && (
-                  <div className="mt-2 text-sm text-gray-600 bg-white p-3 rounded-lg border border-blue-100">
-                    {specialInstructions}
-                  </div>
-                )}
-              </div>
-              
-              <div className="bg-purple-50 p-4 rounded-xl mb-4 shadow-sm border border-purple-100 animate-fade-in" style={{animationDelay: "400ms"}}>
-                <div className="flex items-center mb-2">
-                  <Tag size={18} className="text-purple-600 mr-2" />
-                  <span className="font-medium text-gray-700">Apply Coupon</span>
-                </div>
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="Enter coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 border-purple-200 focus:border-purple-300 rounded-lg"
-                  />
-                  <Button 
-                    onClick={handleApplyCoupon}
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    Apply
-                  </Button>
-                </div>
-                {discountApplied && (
-                  <div className="mt-2 text-sm text-purple-600 font-medium">
-                    {discountPercentage}% discount applied! You saved {formatIndianRupee(discount)}
-                  </div>
-                )}
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm animate-fade-in" style={{animationDelay: "450ms"}}>
-                <Collapsible open={showEstimatedDetails} onOpenChange={setShowEstimatedDetails}>
-                  <CollapsibleTrigger className="flex justify-between items-center w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors">
-                    <div>
-                      <h3 className="font-semibold text-gray-800">Estimated Bill {formatIndianRupee(total)}</h3>
-                      <p className="text-xs text-gray-500">Incl. taxes and charges</p>
-                    </div>
-                    <ChevronDown 
-                      size={20} 
-                      className={`transition-transform duration-300 ${showEstimatedDetails ? 'rotate-180' : ''} text-gray-500`}
-                    />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="animate-slide-in">
-                    <div className="px-4 pb-3 pt-1 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Subtotal</span>
-                        <span>{formatIndianRupee(subtotal)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Delivery Fee</span>
-                        <span>{formatIndianRupee(deliveryFee)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tax</span>
-                        <span>{formatIndianRupee(tax)}</span>
-                      </div>
-                      {discountApplied && (
-                        <div className="flex justify-between text-purple-600">
-                          <span>Discount ({discountPercentage}%)</span>
-                          <span>-{formatIndianRupee(discount)}</span>
-                        </div>
-                      )}
-                      <Separator className="my-2" />
-                      <div className="flex justify-between font-medium">
-                        <span>Total</span>
-                        <span>{formatIndianRupee(total)}</span>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            </div>
+            <CartItemsList 
+              items={cartItems}
+              dominantWashType={dominantWashType}
+              onQuantityChange={handleQuantityChange}
+              onRemoveItem={handleRemoveItem}
+            />
+            
+            <AddMoreServices 
+              studioId={studioId} 
+              defaultStudioId={cartItems[0]?.studioId}
+            />
+            
+            <SpecialInstructions 
+              instructions={specialInstructions}
+              onInstructionsChange={setSpecialInstructions}
+            />
+            
+            <CouponSection 
+              onCouponApplied={handleCouponApplied}
+              discountApplied={discountApplied}
+              discountPercentage={discountPercentage}
+              discountAmount={discount}
+            />
+            
+            <OrderSummaryCollapsible 
+              subtotal={subtotal}
+              deliveryFee={deliveryFee}
+              tax={tax}
+              discount={discount}
+              discountPercentage={discountPercentage}
+              total={total}
+              discountApplied={discountApplied}
+            />
           </div>
         )}
         
         {cartItems.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg animate-slide-in" style={{animationDelay: "500ms"}}>
-            <div className="max-w-3xl mx-auto">
-              <Button 
-                onClick={handlePlaceOrder}
-                className="w-full bg-[#92E3A9] text-gray-800 hover:bg-[#83d699] font-semibold text-base py-3"
-                icon={<Package size={18} />}
-                fullWidth
-              >
-                Place Order {formatIndianRupee(total)}
-              </Button>
-            </div>
-          </div>
+          <CartFooter 
+            total={total}
+            onPlaceOrder={handlePlaceOrder}
+          />
         )}
         
         <CouponCelebration 
