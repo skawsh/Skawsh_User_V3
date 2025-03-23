@@ -2,15 +2,10 @@
 import React from 'react';
 import { Minus, Plus, Trash2, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CartItem as CartItemType } from '@/types/serviceTypes';
 
 interface CartItemProps {
-  item: {
-    serviceId: string;
-    serviceName: string;
-    price: number;
-    quantity: number;
-    washType?: string;
-  };
+  item: CartItemType;
   onQuantityChange: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
 }
@@ -25,9 +20,10 @@ const CartItem: React.FC<CartItemProps> = ({ item, onQuantityChange, onRemoveIte
       {item.washType && (
         <div className={cn(
           "text-xs font-medium mb-1.5 flex items-center",
-          item.washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
+          item.washType === "standard" ? "text-blue-600" : "text-orange-500"
         )}>
-          <Clock size={12} className="mr-1" /> {item.washType}
+          <Clock size={12} className="mr-1" /> 
+          {item.washType === "standard" ? "Standard Wash" : "Express Wash"}
         </div>
       )}
       <div className="mb-1">
@@ -39,7 +35,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onQuantityChange, onRemoveIte
         <div className="text-xs text-gray-500 mb-2 flex items-center">
           <Clock size={12} className="inline mr-1" /> 
           <span>
-            {item.washType === "Express Wash" ? "12h Express Delivery" : "36h Standard Delivery"}
+            {item.washType === "express" ? "12h Express Delivery" : "36h Standard Delivery"}
           </span>
         </div>
       </div>

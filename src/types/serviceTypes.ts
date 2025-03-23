@@ -12,7 +12,7 @@ export interface CartItem {
   serviceName: string;
   weight?: number;
   price: number;
-  quantity?: number;
+  quantity: number; // Changed from optional to required
   studioId?: string;
   studioName?: string;
   items: {
@@ -20,6 +20,8 @@ export interface CartItem {
     quantity: number;
   }[];
   washType?: string;
+  serviceCategory?: string;  // Added to match usage in Cart components
+  serviceSubCategory?: string; // Added to match usage in Cart components
 }
 
 export interface SubCategory {

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -13,24 +12,7 @@ import CouponSection from '@/components/cart/CouponSection';
 import OrderSummaryCollapsible from '@/components/cart/OrderSummaryCollapsible';
 import CartFooter from '@/components/cart/CartFooter';
 import CouponCelebration from '@/components/animations/CouponCelebration';
-
-interface CartItem {
-  serviceId: string;
-  serviceName: string;
-  studioId: string;
-  studioName?: string;
-  price: number;
-  quantity?: number;
-  weight?: number;
-  items?: {
-    name: string;
-    quantity: number;
-  }[];
-  isExpress?: boolean;
-  serviceCategory?: string;
-  serviceSubCategory?: string;
-  washType?: string;
-}
+import { CartItem } from '@/types/serviceTypes';
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();

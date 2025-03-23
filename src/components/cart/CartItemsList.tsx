@@ -3,17 +3,7 @@ import React from 'react';
 import CartItemCategory from './CartItemCategory';
 import WashTypeHeader from './WashTypeHeader';
 import WeightWarning from './WeightWarning';
-
-interface CartItem {
-  serviceId: string;
-  serviceName: string;
-  studioId: string;
-  price: number;
-  quantity: number;
-  serviceCategory?: string;
-  serviceSubCategory?: string;
-  washType?: string;
-}
+import { CartItem } from '@/types/serviceTypes';
 
 interface CartItemsListProps {
   items: CartItem[];

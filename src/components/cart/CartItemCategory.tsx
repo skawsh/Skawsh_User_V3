@@ -2,17 +2,7 @@
 import React from 'react';
 import { Shirt, Package, Footprints } from 'lucide-react';
 import CartItem from './CartItem';
-
-interface CartItemType {
-  serviceId: string;
-  serviceName: string;
-  studioId: string;
-  price: number;
-  quantity: number;
-  serviceCategory?: string;
-  serviceSubCategory?: string;
-  washType?: string;
-}
+import { CartItem as CartItemType } from '@/types/serviceTypes';
 
 interface CartItemCategoryProps {
   categoryName: string;
