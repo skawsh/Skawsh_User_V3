@@ -19,7 +19,7 @@ const OrderCardMenu: React.FC<OrderCardMenuProps> = ({
   onCancel
 }) => {
   return (
-    <DropdownMenuContent align="end">
+    <DropdownMenuContent align="end" className="bg-white">
       {isHistory ? (
         <></>
       ) : (

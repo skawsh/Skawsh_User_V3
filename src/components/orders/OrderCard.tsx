@@ -11,6 +11,7 @@ import OrderCardHeader from './OrderCardHeader';
 import OrderCardMenu from './OrderCardMenu';
 import OrderCardActions from './OrderCardActions';
 import DeleteOrderDialog from './DeleteOrderDialog';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
 
 interface OrderCardProps {
   order: Order;
@@ -30,7 +31,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [editOrderEnabled, setEditOrderEnabled] = useState(false);
   const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
@@ -128,12 +128,11 @@ const OrderCard: React.FC<OrderCardProps> = ({
   return <>
       <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
         <div className="p-4">
-          <OrderCardHeader 
-            order={order} 
-            onOpenMenu={() => setDropdownOpen(true)} 
-          />
-          
-          {dropdownOpen && (
+          <DropdownMenu>
+            <OrderCardHeader 
+              order={order} 
+            />
+            
             <OrderCardMenu 
               isHistory={isHistory} 
               isOngoing={isOngoing} 
@@ -141,7 +140,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               onEdit={handleEditOrder}
               onCancel={openCancelModal}
             />
-          )}
+          </DropdownMenu>
           
           <OrderCardActions 
             order={order}

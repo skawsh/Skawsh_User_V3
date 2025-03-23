@@ -2,15 +2,14 @@
 import React from 'react';
 import { MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Order } from '@/types/order';
 
 interface OrderCardHeaderProps {
   order: Order;
-  onOpenMenu: () => void;
 }
 
-const OrderCardHeader: React.FC<OrderCardHeaderProps> = ({ order, onOpenMenu }) => {
+const OrderCardHeader: React.FC<OrderCardHeaderProps> = ({ order }) => {
   return (
     <div className="flex justify-between items-start">
       <div>
@@ -21,14 +20,12 @@ const OrderCardHeader: React.FC<OrderCardHeaderProps> = ({ order, onOpenMenu }) 
         </p>
       </div>
       
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8" type="button" onClick={onOpenMenu}>
-            <MoreVertical className="h-4 w-4" />
-            <span className="sr-only">More options</span>
-          </Button>
-        </DropdownMenuTrigger>
-      </DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8" type="button">
+          <MoreVertical className="h-4 w-4" />
+          <span className="sr-only">More options</span>
+        </Button>
+      </DropdownMenuTrigger>
     </div>
   );
 };
