@@ -6,7 +6,8 @@ import {
   getServiceQuantity, 
   removeServiceFromCart,
   serviceExistsInCart,
-  createServiceOrderDetails
+  createServiceOrderDetails,
+  getExistingWashType
 } from './cartUtils';
 
 /**
