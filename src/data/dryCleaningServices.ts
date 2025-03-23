@@ -1,13 +1,17 @@
 
-import React from 'react';
 import { SubCategory } from '@/types/serviceTypes';
 import { Shirt, Footprints } from 'lucide-react';
+
+// Create a function to generate icon configuration instead of JSX
+const createIconConfig = (icon: string, color: string) => {
+  return { icon, color };
+};
 
 export const getDryCleaningSubCategories = (): SubCategory[] => {
   return [
     {
       title: "Upper Wear",
-      icon: <Shirt size={16} className="text-blue-500" />,
+      icon: createIconConfig("Shirt", "text-blue-500"),
       services: [
         {
           id: 'dry-upper-1',
@@ -31,7 +35,7 @@ export const getDryCleaningSubCategories = (): SubCategory[] => {
     },
     {
       title: "Bottom Wear",
-      icon: <Shirt size={16} className="text-indigo-500" />,
+      icon: createIconConfig("Shirt", "text-indigo-500"),
       services: [
         {
           id: 'dry-bottom-1',
@@ -43,7 +47,7 @@ export const getDryCleaningSubCategories = (): SubCategory[] => {
     },
     {
       title: "Ethnic Wear",
-      icon: <Shirt size={16} className="text-purple-500" />,
+      icon: createIconConfig("Shirt", "text-purple-500"),
       services: [
         {
           id: 'dry-ethnic-1',

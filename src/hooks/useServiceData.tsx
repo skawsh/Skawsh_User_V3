@@ -14,9 +14,30 @@ export const useServiceData = (services: Service[]) => {
   const updatedCoreServices = getCoreServices(services);
   const expressWashServices = getExpressWashServices();
   const accessoriesServices = getAccessoriesServices();
-  const dryCleaningSubCategories = getDryCleaningSubCategories();
+  const dryCleaningSubCategoriesData = getDryCleaningSubCategories();
   const shoeServices = getShoeServices();
   const { deliveryMessages, backgroundColors } = getServiceUIConfig();
+
+  // Process dry cleaning sub-categories to render the icons
+  const dryCleaningSubCategories = dryCleaningSubCategoriesData.map(subCategory => {
+    // Render icon component based on the iconConfig
+    const iconConfig = subCategory.icon as { icon: string, color: string };
+    let iconComponent;
+    
+    if (iconConfig.icon === 'Shirt') {
+      iconComponent = <Shirt size={16} className={iconConfig.color} />;
+    } else if (iconConfig.icon === 'Footprints') {
+      iconComponent = <Footprints size={16} className={iconConfig.color} />;
+    } else {
+      // Default to Shirt if icon not recognized
+      iconComponent = <Shirt size={16} className={iconConfig.color} />;
+    }
+
+    return {
+      ...subCategory,
+      icon: iconComponent
+    };
+  });
 
   // Main categories
   const categories: ServiceCategory[] = [
