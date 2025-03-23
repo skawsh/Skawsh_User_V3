@@ -102,5 +102,12 @@ export const createOrder = (
   
   document.dispatchEvent(new Event('cartUpdated'));
   
+  // Show success toast notification
+  toast({
+    title: "Order Placed Successfully!",
+    description: `Your order #${orderId.substring(0, 8)} has been placed.`,
+    duration: 5000,
+  });
+  
   return orderId;
 };

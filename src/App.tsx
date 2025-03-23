@@ -27,6 +27,8 @@ import AddNewAddress from "./pages/AddNewAddress";
 import OrderConfirmation from './pages/OrderConfirmation';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import { useState, useEffect } from "react";
+import RateExperiencePopup from "./components/RateExperiencePopup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +40,21 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const [showRatingPopup, setShowRatingPopup] = useState(false);
+  
+  useEffect(() => {
+    const shouldShowPopup = localStorage.getItem('showRatingPopup') === 'true';
+    if (shouldShowPopup) {
+      setShowRatingPopup(true);
+      // Clear the flag after showing the popup
+      localStorage.removeItem('showRatingPopup');
+    }
+  }, []);
+  
+  const handleCloseRatingPopup = () => {
+    setShowRatingPopup(false);
+  };
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -69,6 +86,12 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          
+          {/* Rating Popup */}
+          <RateExperiencePopup 
+            isOpen={showRatingPopup} 
+            onClose={handleCloseRatingPopup} 
+          />
         </Router>
       </TooltipProvider>
     </QueryClientProvider>
