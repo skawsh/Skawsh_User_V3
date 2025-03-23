@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Service, ServiceCategory } from '@/types/serviceTypes';
+import { Service, ServiceCategory, IconConfig } from '@/types/serviceTypes';
 import { ShoppingBag, Shirt, Footprints, Bookmark } from 'lucide-react';
 import { getCoreServices } from '@/data/coreServices';
 import { getExpressWashServices } from '@/data/expressServices';
@@ -20,23 +20,29 @@ export const useServiceData = (services: Service[]) => {
 
   // Process dry cleaning sub-categories to render the icons
   const dryCleaningSubCategories = dryCleaningSubCategoriesData.map(subCategory => {
-    // Render icon component based on the iconConfig
-    const iconConfig = subCategory.icon as { icon: string, color: string };
-    let iconComponent;
-    
-    if (iconConfig.icon === 'Shirt') {
-      iconComponent = <Shirt size={16} className={iconConfig.color} />;
-    } else if (iconConfig.icon === 'Footprints') {
-      iconComponent = <Footprints size={16} className={iconConfig.color} />;
-    } else {
-      // Default to Shirt if icon not recognized
-      iconComponent = <Shirt size={16} className={iconConfig.color} />;
-    }
+    // Check if the icon is an IconConfig or a ReactNode
+    if (typeof subCategory.icon === 'object' && 'icon' in subCategory.icon && 'color' in subCategory.icon) {
+      // It's an IconConfig, convert it to a ReactNode
+      const iconConfig = subCategory.icon as IconConfig;
+      let iconComponent;
+      
+      if (iconConfig.icon === 'Shirt') {
+        iconComponent = <Shirt size={16} className={iconConfig.color} />;
+      } else if (iconConfig.icon === 'Footprints') {
+        iconComponent = <Footprints size={16} className={iconConfig.color} />;
+      } else {
+        // Default to Shirt if icon not recognized
+        iconComponent = <Shirt size={16} className={iconConfig.color} />;
+      }
 
-    return {
-      ...subCategory,
-      icon: iconComponent
-    };
+      return {
+        ...subCategory,
+        icon: iconComponent
+      };
+    }
+    
+    // If it's already a ReactNode, return it as is
+    return subCategory;
   });
 
   // Main categories

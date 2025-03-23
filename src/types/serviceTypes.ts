@@ -24,9 +24,15 @@ export interface CartItem {
   serviceSubCategory?: string; // Added to match usage in Cart components
 }
 
+// Add a new interface for the icon configuration
+export interface IconConfig {
+  icon: string;
+  color: string;
+}
+
 export interface SubCategory {
   title: string;
-  icon: React.ReactNode;
+  icon: React.ReactNode | IconConfig; // Updated to allow both ReactNode and IconConfig
   services: Service[];
 }
 
