@@ -160,6 +160,16 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     }
     return "";
   };
+
+  // Get text color based on wash type
+  const getWashTypeTextColor = () => {
+    if (washType === "Standard Wash") {
+      return "text-blue-600";
+    } else if (washType === "Express Wash") {
+      return "text-orange-500";
+    }
+    return "";
+  };
   
   return (
     <div 
@@ -178,7 +188,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           )}
           
           <div className={cn(
-            "bg-white border border-gray-200 rounded-full shadow-md flex items-center justify-between py-1 px-3 transform hover:scale-[1.02] active:scale-[0.98] transition-transform relative overflow-hidden",
+            "bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden relative",
             washType && getWashTypeBackground()
           )}>
             {showWaterWave && (
@@ -187,72 +197,88 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
                 onAnimationEnd={handleWaterWaveAnimationEnd}
               />
             )}
-            
-            <div className="flex items-center gap-2 relative z-10">
-              <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
-                <img 
-                  src="/lovable-uploads/fda4730e-82ff-4406-877e-1f45d0ca2ebd.png" 
-                  alt="Studio logo"
-                  className="w-6 h-6 object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/placeholder.svg';
-                  }}
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
-                {washType && (
-                  <span className={cn(
-                    "text-xs flex items-center", 
-                    washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
-                  )}>
-                    <Clock size={12} className="mr-1" /> {washType}
+
+            {/* Wash Type Header */}
+            {washType && (
+              <div className="w-full">
+                <div className="p-3 text-center">
+                  <h3 className="font-semibold text-lg">
+                    {washType}
+                  </h3>
+                </div>
+                <div className={cn(
+                  "px-4 py-2 flex justify-center items-center gap-2",
+                  washType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
+                )}>
+                  <Clock size={18} />
+                  <span className="font-medium text-sm">
+                    {getDeliveryMessage()}
                   </span>
-                )}
+                </div>
               </div>
-            </div>
+            )}
             
-            <div className="flex items-center gap-2 relative z-10">
-              <button
-                onClick={handleViewSack}
-                className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex flex-col items-center hover:bg-[#83d699] transition-colors"
-              >
-                <span>View Sack</span>
-                <span>{uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}</span>
-              </button>
+            <div className="flex items-center justify-between p-3 relative z-10">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center overflow-hidden bg-white">
+                  <img 
+                    src="/lovable-uploads/fda4730e-82ff-4406-877e-1f45d0ca2ebd.png" 
+                    alt="Studio logo"
+                    className="w-6 h-6 object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
+                  <span className="text-xs text-gray-600">
+                    {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}
+                  </span>
+                </div>
+              </div>
               
-              <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <AlertDialogTrigger asChild>
-                  <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
-                    <Trash2 size={24} className="text-red-500" />
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-xl animate-scale-in">
-                  <div className="flex justify-end">
-                    <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
-                      <X size={18} />
-                    </AlertDialogCancel>
-                  </div>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Sack</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to clear your sack? This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
-                    <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
-                      <X className="mr-1 h-4 w-4" /> No
-                    </AlertDialogCancel>
-                    <AlertDialogAction 
-                      onClick={handleClearSack}
-                      className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
-                    >
-                      <Check className="mr-1 h-4 w-4" /> Yes
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <div className="flex items-center gap-2 relative z-10">
+                <button
+                  onClick={handleViewSack}
+                  className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex items-center hover:bg-[#83d699] transition-colors"
+                >
+                  View Sack
+                </button>
+                
+                <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <button className="p-2 hover:bg-red-50 rounded-full transition-colors">
+                      <Trash2 size={24} className="text-red-500" />
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="rounded-xl animate-scale-in">
+                    <div className="flex justify-end">
+                      <AlertDialogCancel className="p-2 m-0 h-auto absolute top-2 right-2 rounded-full">
+                        <X size={18} />
+                      </AlertDialogCancel>
+                    </div>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Sack</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to clear your sack? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-4 flex gap-2 justify-end">
+                      <AlertDialogCancel className="rounded-full border-gray-300 text-gray-700 font-medium">
+                        <X className="mr-1 h-4 w-4" /> No
+                      </AlertDialogCancel>
+                      <AlertDialogAction 
+                        onClick={handleClearSack}
+                        className="rounded-full bg-red-500 hover:bg-red-600 text-white font-medium"
+                      >
+                        <Check className="mr-1 h-4 w-4" /> Yes
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           </div>
         </div>

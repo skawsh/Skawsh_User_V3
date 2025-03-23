@@ -336,6 +336,24 @@ const Cart: React.FC = () => {
     }
   };
 
+  const getDeliveryMessage = () => {
+    if (dominantWashType === "Standard Wash") {
+      return "Delivery in just 36 sunlight hours after pickup";
+    } else if (dominantWashType === "Express Wash") {
+      return "Express delivery in just 12 hours after pickup";
+    }
+    return "";
+  };
+
+  const getWashTypeBackground = () => {
+    if (dominantWashType === "Standard Wash") {
+      return "bg-[#D5E7FF]";
+    } else if (dominantWashType === "Express Wash") {
+      return "bg-orange-50";
+    }
+    return "";
+  };
+
   return (
     <Layout>
       <div className="cart-container bg-gray-50 min-h-screen pb-20">
@@ -423,13 +441,11 @@ const Cart: React.FC = () => {
                   </div>
                   <div className={cn(
                     "px-4 py-3 flex justify-center items-center gap-3",
-                    dominantWashType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-600"
+                    dominantWashType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
                   )}>
                     <Clock size={20} />
                     <span className="font-medium">
-                      {dominantWashType === "Standard Wash" 
-                        ? "Delivery in just 36 sunlight hours after pickup" 
-                        : "Express delivery in just 12 hours after pickup"}
+                      {getDeliveryMessage()}
                     </span>
                   </div>
                 </div>
@@ -677,4 +693,3 @@ const Cart: React.FC = () => {
 };
 
 export default Cart;
-

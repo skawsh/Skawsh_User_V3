@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Service, ServiceCategory, SubCategory } from '@/types/serviceTypes';
 import { ShoppingBag, Shirt, Footprints, Bookmark } from 'lucide-react';

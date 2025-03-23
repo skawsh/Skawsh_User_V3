@@ -121,6 +121,26 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     } else if (washType === "Express Wash") {
       return "bg-orange-50";
     }
+    return "bg-[#92E3A9]";
+  };
+
+  // Get delivery message based on wash type
+  const getDeliveryMessage = () => {
+    if (washType === "Standard Wash") {
+      return "Delivery in just 36 sunlight hours after pickup";
+    } else if (washType === "Express Wash") {
+      return "Express delivery in just 12 hours after pickup";
+    }
+    return "";
+  };
+
+  // Get text color for wash type
+  const getWashTypeTextColor = () => {
+    if (washType === "Standard Wash") {
+      return "text-blue-600";
+    } else if (washType === "Express Wash") {
+      return "text-orange-500";
+    }
     return "";
   };
 
@@ -137,39 +157,58 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
             </div>
           )}
           
-          <button
-            onClick={handleGoToCart}
+          <div
             className={cn(
-              "w-full flex items-center justify-between py-3 px-5 rounded-xl shadow-md overflow-hidden relative",
-              "bg-[#92E3A9] hover:bg-[#83d699] transition-colors duration-200",
-              "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              "w-full rounded-xl shadow-md overflow-hidden relative",
+              getWashTypeBackground()
             )}
           >
-            {showWaterWave && (
-              <div 
-                className="water-wave"
-                onAnimationEnd={handleWaterWaveAnimationEnd}
-              />
+            {/* Wash Type Header */}
+            {washType && (
+              <div className="w-full">
+                <div className="p-3 text-center">
+                  <h3 className="font-semibold text-lg">
+                    {washType}
+                  </h3>
+                </div>
+                <div className={cn(
+                  "px-4 py-2 flex justify-center items-center gap-2",
+                  washType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
+                )}>
+                  <Clock size={18} />
+                  <span className="font-medium text-sm">
+                    {getDeliveryMessage()}
+                  </span>
+                </div>
+              </div>
             )}
             
-            <div className="flex flex-col items-start relative z-10">
-              <span className="text-[#403E43] font-semibold">
-                {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
-              </span>
-              {washType && (
-                <span className={cn(
-                  "text-xs font-medium flex items-center", 
-                  washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
-                )}>
-                  <Clock size={14} className="mr-1" /> {washType}
-                </span>
+            <button
+              onClick={handleGoToCart}
+              className={cn(
+                "w-full flex items-center justify-between py-3 px-5 overflow-hidden relative",
+                "bg-green-400 hover:bg-green-500 transition-colors duration-200",
+                "transform hover:scale-[1.02] active:scale-[0.98] transition-transform"
               )}
-            </div>
-            <div className="flex items-center gap-2 relative z-10">
-              <ShoppingBag size={20} className={cn("text-white", isFirstItemAdded && "animate-pulse")} />
-              <span className="text-white font-semibold">View Sack</span>
-            </div>
-          </button>
+            >
+              {showWaterWave && (
+                <div 
+                  className="water-wave"
+                  onAnimationEnd={handleWaterWaveAnimationEnd}
+                />
+              )}
+              
+              <div className="flex flex-col items-start relative z-10">
+                <span className="text-[#403E43] font-semibold">
+                  {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
+                </span>
+              </div>
+              <div className="flex items-center gap-2 relative z-10">
+                <ShoppingBag size={20} className={cn("text-white", isFirstItemAdded && "animate-pulse")} />
+                <span className="text-white font-semibold">View Sack</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
