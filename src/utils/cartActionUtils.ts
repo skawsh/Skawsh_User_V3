@@ -10,13 +10,29 @@ import { toast } from "@/components/ui/use-toast";
  * Update quantity of an item in the cart
  */
 export const updateItemQuantity = (id: string, newQuantity: number, cartItems: CartItem[]): CartItem[] => {
-  if (newQuantity < 1) return cartItems;
+  // For weight-based items, allow quantities as low as 0.1, for others, minimum is 1
+  const isWeightBased = cartItems.some(item => item.serviceId === id && item.weight !== undefined);
   
-  const updatedItems = cartItems.map(item => 
-    item.serviceId === id ? { ...item, quantity: newQuantity } : item
-  );
+  if ((isWeightBased && newQuantity < 0.1) || (!isWeightBased && newQuantity < 1)) {
+    // Instead of returning unmodified items, remove the item if quantity is too low
+    return removeItem(id, cartItems);
+  }
+  
+  const updatedItems = cartItems.map(item => {
+    if (item.serviceId === id) {
+      if (isWeightBased) {
+        return { ...item, weight: newQuantity };
+      } else {
+        return { ...item, quantity: newQuantity };
+      }
+    }
+    return item;
+  });
   
   localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  
+  // Dispatch custom event for components listening to cart updates
+  document.dispatchEvent(new Event('cartUpdated'));
   
   return updatedItems;
 };

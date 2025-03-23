@@ -24,6 +24,37 @@ const CartItem: React.FC<CartItemProps> = ({
   const showWeightDetails = item.weight && item.weight > 0;
   const hasClothingItems = item.items && item.items.length > 0;
   
+  const handleDecreaseQuantity = () => {
+    if (showWeightDetails) {
+      // For weight-based items, decrease by 0.1kg
+      const newWeight = parseFloat((item.weight - 0.1).toFixed(1));
+      if (newWeight <= 0) {
+        onRemoveItem(item.serviceId);
+      } else {
+        onQuantityChange(item.serviceId, newWeight);
+      }
+    } else {
+      // For count-based items, decrease by 1
+      const newQuantity = item.quantity - 1;
+      if (newQuantity <= 0) {
+        onRemoveItem(item.serviceId);
+      } else {
+        onQuantityChange(item.serviceId, newQuantity);
+      }
+    }
+  };
+  
+  const handleIncreaseQuantity = () => {
+    if (showWeightDetails) {
+      // For weight-based items, increase by 0.1kg
+      const newWeight = parseFloat((item.weight + 0.1).toFixed(1));
+      onQuantityChange(item.serviceId, newWeight);
+    } else {
+      // For count-based items, increase by 1
+      onQuantityChange(item.serviceId, item.quantity + 1);
+    }
+  };
+  
   return (
     <div className="bg-white px-4 py-3 animate-fade-in">
       {!hideWashTypeLabel && item.washType && (
@@ -82,11 +113,7 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="flex items-center border border-gray-200 rounded-full overflow-hidden shadow-sm">
             <button 
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-              onClick={() => {
-                // For weight-based items, decrease by 0.1kg
-                const newWeight = Math.max(0.1, parseFloat((item.weight - 0.1).toFixed(1)));
-                onQuantityChange(item.serviceId, newWeight);
-              }}
+              onClick={handleDecreaseQuantity}
               aria-label="Decrease quantity"
             >
               <Minus size={16} />
@@ -94,11 +121,7 @@ const CartItem: React.FC<CartItemProps> = ({
             <span className="px-3 py-1 border-x border-gray-200 bg-white">{item.weight} kg</span>
             <button 
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-              onClick={() => {
-                // For weight-based items, increase by 0.1kg
-                const newWeight = parseFloat((item.weight + 0.1).toFixed(1));
-                onQuantityChange(item.serviceId, newWeight);
-              }}
+              onClick={handleIncreaseQuantity}
               aria-label="Increase quantity"
             >
               <Plus size={16} />
@@ -108,7 +131,7 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="flex items-center border border-gray-200 rounded-full overflow-hidden shadow-sm">
             <button 
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-              onClick={() => onQuantityChange(item.serviceId, item.quantity - 1)}
+              onClick={handleDecreaseQuantity}
               aria-label="Decrease quantity"
             >
               <Minus size={16} />
@@ -116,7 +139,7 @@ const CartItem: React.FC<CartItemProps> = ({
             <span className="px-3 py-1 border-x border-gray-200 bg-white">{item.quantity}</span>
             <button 
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
-              onClick={() => onQuantityChange(item.serviceId, item.quantity + 1)}
+              onClick={handleIncreaseQuantity}
               aria-label="Increase quantity"
             >
               <Plus size={16} />
