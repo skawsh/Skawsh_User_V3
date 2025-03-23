@@ -38,8 +38,8 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
   const standardGroupedItems = groupItemsByCategory(standardItems);
   const expressGroupedItems = groupItemsByCategory(expressItems);
   
-  // Set a flag to indicate we're in a wash-specific section for child components
-  const hasBothWashTypes = dominantWashType === 'both';
+  // Check if we have both wash types
+  const hasBothWashTypes = standardItems.length > 0 && expressItems.length > 0;
   
   return (
     <div className="mb-4 animate-fade-in" style={{animationDelay: "100ms"}}>
@@ -57,37 +57,41 @@ const CartItemsList: React.FC<CartItemsListProps> = ({
         <>
           {/* Standard Wash Section */}
           {standardItems.length > 0 && (
-            <div className="mb-5 bg-blue-50 rounded-xl p-4">
-              <WashTypeHeader washType="standard" simplified={true} />
+            <div className="mb-5 bg-blue-50 rounded-xl overflow-hidden">
+              <WashTypeHeader washType="standard" />
               
-              {Object.entries(standardGroupedItems).map(([categoryName, categoryItems]) => (
-                <CartItemCategory
-                  key={`standard-${categoryName}`}
-                  categoryName={categoryName}
-                  items={categoryItems}
-                  onQuantityChange={onQuantityChange}
-                  onRemoveItem={onRemoveItem}
-                  inWashTypeSection={true}
-                />
-              ))}
+              <div className="p-4">
+                {Object.entries(standardGroupedItems).map(([categoryName, categoryItems]) => (
+                  <CartItemCategory
+                    key={`standard-${categoryName}`}
+                    categoryName={categoryName}
+                    items={categoryItems}
+                    onQuantityChange={onQuantityChange}
+                    onRemoveItem={onRemoveItem}
+                    inWashTypeSection={true}
+                  />
+                ))}
+              </div>
             </div>
           )}
           
           {/* Express Wash Section */}
           {expressItems.length > 0 && (
-            <div className="mb-5 bg-orange-50 rounded-xl p-4">
-              <WashTypeHeader washType="express" simplified={true} />
+            <div className="mb-5 bg-orange-50 rounded-xl overflow-hidden">
+              <WashTypeHeader washType="express" />
               
-              {Object.entries(expressGroupedItems).map(([categoryName, categoryItems]) => (
-                <CartItemCategory
-                  key={`express-${categoryName}`}
-                  categoryName={categoryName}
-                  items={categoryItems}
-                  onQuantityChange={onQuantityChange}
-                  onRemoveItem={onRemoveItem}
-                  inWashTypeSection={true}
-                />
-              ))}
+              <div className="p-4">
+                {Object.entries(expressGroupedItems).map(([categoryName, categoryItems]) => (
+                  <CartItemCategory
+                    key={`express-${categoryName}`}
+                    categoryName={categoryName}
+                    items={categoryItems}
+                    onQuantityChange={onQuantityChange}
+                    onRemoveItem={onRemoveItem}
+                    inWashTypeSection={true}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </>
