@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Trash2, Check, X, Clock } from 'lucide-react';
+import { Trash2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -48,7 +47,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           
           const newServiceCount = uniqueServices.size;
           
-          // Determine dominant wash type
           if (parsedItems.length > 0) {
             const washTypeCounts: Record<string, number> = {};
             
@@ -71,7 +69,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             setWashType(dominantWashType);
           }
           
-          // Check if this is the first item added
           const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
           
           if (newServiceCount === 1 && uniqueServiceCount === 0 && !hasShownFirstItemMessage) {
@@ -79,7 +76,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
             setShowFirstItemMessage(true);
             localStorage.setItem('hasShownSackWaveAnimation', 'true');
             
-            // Hide the message after 4 seconds
             setTimeout(() => {
               setShowFirstItemMessage(false);
             }, 4000);
@@ -141,27 +137,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     name: 'Busy Bee'
   } : null;
 
-  // Get delivery message based on wash type
-  const getDeliveryMessage = () => {
-    if (washType === "Standard Wash") {
-      return "Delivery in just 36 sunlight hours after pickup";
-    } else if (washType === "Express Wash") {
-      return "Express delivery in just 12 hours after pickup";
-    }
-    return "";
-  };
-
-  // Get background color based on wash type
-  const getWashTypeBackground = () => {
-    if (washType === "Standard Wash") {
-      return "bg-[#D5E7FF]";
-    } else if (washType === "Express Wash") {
-      return "bg-orange-50";
-    }
-    return "";
-  };
-
-  // Get text color based on wash type
   const getWashTypeTextColor = () => {
     if (washType === "Standard Wash") {
       return "text-blue-600";
@@ -189,33 +164,13 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           
           <div className={cn(
             "bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden relative",
-            washType && getWashTypeBackground()
+            washType && (washType === "Standard Wash" ? "bg-[#D5E7FF]" : "bg-orange-50")
           )}>
             {showWaterWave && (
               <div 
                 className="water-wave"
                 onAnimationEnd={handleWaterWaveAnimationEnd}
               />
-            )}
-
-            {/* Wash Type Header */}
-            {washType && (
-              <div className="w-full">
-                <div className="p-3 text-center">
-                  <h3 className="font-semibold text-lg">
-                    {washType}
-                  </h3>
-                </div>
-                <div className={cn(
-                  "px-4 py-2 flex justify-center items-center gap-2",
-                  washType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
-                )}>
-                  <Clock size={18} />
-                  <span className="font-medium text-sm">
-                    {getDeliveryMessage()}
-                  </span>
-                </div>
-              </div>
             )}
             
             <div className="flex items-center justify-between p-3 relative z-10">
@@ -233,8 +188,11 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
-                  <span className="text-xs text-gray-600">
-                    {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}
+                  <span className={cn(
+                    "text-xs font-medium",
+                    getWashTypeTextColor()
+                  )}>
+                    {washType || 'Laundry Service'} • {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'}
                   </span>
                 </div>
               </div>

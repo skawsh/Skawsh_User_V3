@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, ChevronRight, Clock } from 'lucide-react';
+import { ShoppingBag, ChevronRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +18,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const [washType, setWashType] = useState<string | null>(null);
   
   useEffect(() => {
-    // Load cart items and count unique services
     const countUniqueServices = () => {
       try {
         const storedItems = localStorage.getItem('cartItems');
@@ -27,7 +25,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           const parsedItems = JSON.parse(storedItems);
           const studioItems = parsedItems.filter((item: any) => item.studioId === studioId);
           
-          // Count unique services by serviceId
           const uniqueServices = new Set();
           studioItems.forEach((item: any) => {
             if (item.serviceId) {
@@ -37,7 +34,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           
           const newServiceCount = uniqueServices.size;
           
-          // Determine dominant wash type
           if (studioItems.length > 0) {
             const washTypeCounts: Record<string, number> = {};
             
@@ -60,7 +56,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
             setWashType(dominantType);
           }
           
-          // Check if this is the first item added
           const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
           
           if (newServiceCount === 1 && uniqueServiceCount === 0 && !hasShownFirstItemMessage) {
@@ -69,7 +64,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
             setIsFirstItemAdded(true);
             localStorage.setItem('hasShownSackWaveAnimation', 'true');
             
-            // Hide the message after 4 seconds
             setTimeout(() => {
               setShowFirstItemMessage(false);
             }, 4000);
@@ -82,14 +76,13 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
         }
       } catch (error) {
         console.error('Error counting unique services:', error);
-        setUniqueServiceCount(itemCount); // Fallback to the prop value
+        setUniqueServiceCount(itemCount);
         setWashType(null);
       }
     };
     
     countUniqueServices();
     
-    // Listen for cart updates
     document.addEventListener('cartUpdated', countUniqueServices);
     
     return () => {
@@ -97,7 +90,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     };
   }, [studioId, itemCount, uniqueServiceCount]);
 
-  // Handle water wave animation end
   const handleWaterWaveAnimationEnd = () => {
     setShowWaterWave(false);
   };
@@ -105,7 +97,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   if (uniqueServiceCount === 0) return null;
 
   const handleGoToCart = () => {
-    // Use navigate with state and replace to properly handle back navigation
     navigate('/cart', {
       state: {
         studioId: studioId,
@@ -114,27 +105,6 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
     });
   };
 
-  // Get background color based on wash type
-  const getWashTypeBackground = () => {
-    if (washType === "Standard Wash") {
-      return "bg-[#D5E7FF]";
-    } else if (washType === "Express Wash") {
-      return "bg-orange-50";
-    }
-    return "bg-[#92E3A9]";
-  };
-
-  // Get delivery message based on wash type
-  const getDeliveryMessage = () => {
-    if (washType === "Standard Wash") {
-      return "Delivery in just 36 sunlight hours after pickup";
-    } else if (washType === "Express Wash") {
-      return "Express delivery in just 12 hours after pickup";
-    }
-    return "";
-  };
-
-  // Get text color for wash type
   const getWashTypeTextColor = () => {
     if (washType === "Standard Wash") {
       return "text-blue-600";
@@ -160,29 +130,9 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           <div
             className={cn(
               "w-full rounded-xl shadow-md overflow-hidden relative",
-              getWashTypeBackground()
+              washType === "Standard Wash" ? "bg-[#D5E7FF]" : washType === "Express Wash" ? "bg-orange-50" : "bg-green-400"
             )}
-          >
-            {/* Wash Type Header */}
-            {washType && (
-              <div className="w-full">
-                <div className="p-3 text-center">
-                  <h3 className="font-semibold text-lg">
-                    {washType}
-                  </h3>
-                </div>
-                <div className={cn(
-                  "px-4 py-2 flex justify-center items-center gap-2",
-                  washType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-500"
-                )}>
-                  <Clock size={18} />
-                  <span className="font-medium text-sm">
-                    {getDeliveryMessage()}
-                  </span>
-                </div>
-              </div>
-            )}
-            
+          >            
             <button
               onClick={handleGoToCart}
               className={cn(
@@ -199,7 +149,17 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
               )}
               
               <div className="flex flex-col items-start relative z-10">
-                <span className="text-[#403E43] font-semibold">
+                <span className={cn(
+                  "text-[#403E43] font-semibold"
+                )}>
+                  <span className={cn(
+                    "mr-1 font-medium",
+                    getWashTypeTextColor()
+                  )}>
+                    {washType &&
+                      `${washType} •`
+                    }
+                  </span>
                   {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
                 </span>
               </div>
