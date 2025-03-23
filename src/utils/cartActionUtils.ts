@@ -102,7 +102,7 @@ export const createOrder = (
   
   document.dispatchEvent(new Event('cartUpdated'));
   
-  // Show success toast notification
+  // Show success toast notification using the correct format
   toast({
     title: "Order Placed Successfully!",
     description: `Your order #${orderId.substring(0, 8)} has been placed.`,
