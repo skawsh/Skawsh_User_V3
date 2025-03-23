@@ -2,10 +2,11 @@
 import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeft } from 'lucide-react';
+import { IconConfig } from '@/types/serviceTypes';
 
 interface SubCategory {
   title: string;
-  icon: React.ReactNode;
+  icon: React.ReactNode | IconConfig;
   services: Array<{
     name: string;
     description: string;

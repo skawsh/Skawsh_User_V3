@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import ServiceTabs from './service/ServiceTabs';
 import ServiceCategoryList from './service/ServiceCategoryList';
@@ -7,7 +6,7 @@ import ServiceOrderPopup from './ServiceOrderPopup';
 import CategoryButton from './service/CategoryButton';
 import ServiceAnimations from './service/ServiceAnimations';
 import ServiceContainer from './service/ServiceContainer';
-import { Service } from '@/types/serviceTypes';
+import { Service, ServiceCategory } from '@/types/serviceTypes';
 import { useServiceData } from '@/hooks/useServiceData';
 import { useServiceInteractions } from '@/hooks/useServiceInteractions';
 import { useServiceListState } from '@/hooks/useServiceListState';
@@ -123,7 +122,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
       
       {popoverOpen && (
         <CategoryList
-          categories={selectedTab === "standard" ? categories : expressCategories}
+          categories={selectedTab === "standard" ? categories as any : expressCategories as any}
           onCategorySelect={scrollToCategory}
           onClose={() => setPopoverOpen(false)}
         />

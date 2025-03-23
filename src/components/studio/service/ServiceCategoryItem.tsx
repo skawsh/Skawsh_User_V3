@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Service, SubCategory } from '@/types/serviceTypes';
+import { Service, SubCategory, IconConfig } from '@/types/serviceTypes';
 import ServiceItem from '../services/ServiceItem';
+import { Shirt, Footprints } from 'lucide-react';
 
 interface ServiceCategoryItemProps {
   title: string;
@@ -17,6 +18,22 @@ interface ServiceCategoryItemProps {
   onServiceClick: (service: Service) => void;
   categoryRef: (el: HTMLDivElement | null) => void;
 }
+
+// Helper function to render icon based on IconConfig
+const renderIcon = (icon: React.ReactNode | IconConfig): React.ReactNode => {
+  if (typeof icon === 'object' && 'icon' in icon && 'color' in icon) {
+    const iconConfig = icon as IconConfig;
+    if (iconConfig.icon === 'Shirt') {
+      return <Shirt size={16} className={iconConfig.color} />;
+    } else if (iconConfig.icon === 'Footprints') {
+      return <Footprints size={16} className={iconConfig.color} />;
+    } else {
+      // Default icon
+      return <Shirt size={16} className={iconConfig.color} />;
+    }
+  }
+  return icon;
+};
 
 const ServiceCategoryItem: React.FC<ServiceCategoryItemProps> = ({
   title,
@@ -60,7 +77,7 @@ const ServiceCategoryItem: React.FC<ServiceCategoryItemProps> = ({
       {subCategories && subCategories.map((subCategory, idx) => (
         <div key={idx} className="mb-4">
           <div className="flex items-center gap-2 mb-2 mt-4">
-            <div className="p-1">{subCategory.icon}</div>
+            <div className="p-1">{renderIcon(subCategory.icon)}</div>
             <h4 className="font-medium">{subCategory.title}</h4>
           </div>
           
