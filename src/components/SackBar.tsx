@@ -140,6 +140,26 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     id: cartItems[0].studioId,
     name: 'Busy Bee'
   } : null;
+
+  // Get delivery message based on wash type
+  const getDeliveryMessage = () => {
+    if (washType === "Standard Wash") {
+      return "Delivery in just 36 sunlight hours after pickup";
+    } else if (washType === "Express Wash") {
+      return "Express delivery in just 12 hours after pickup";
+    }
+    return "";
+  };
+
+  // Get background color based on wash type
+  const getWashTypeBackground = () => {
+    if (washType === "Standard Wash") {
+      return "bg-[#D5E7FF]";
+    } else if (washType === "Express Wash") {
+      return "bg-orange-50";
+    }
+    return "";
+  };
   
   return (
     <div 

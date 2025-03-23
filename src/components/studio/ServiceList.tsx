@@ -41,13 +41,22 @@ const ServiceList: React.FC<ServiceListProps> = ({
   const tabsContentHeight = useRef<number>(0);
   const [showCelebration, setShowCelebration] = useState(false);
   
-  // Get service data from our custom hook
   const { 
     categories, 
     expressCategories, 
     backgroundColors,
     deliveryMessages
   } = useServiceData(services);
+
+  const updatedDeliveryMessages = {
+    ...deliveryMessages,
+    standard: "Delivery in just 36 sunlight hours after pickup"
+  };
+
+  const updatedBackgroundColors = {
+    ...backgroundColors,
+    standard: "bg-[#D5E7FF]"
+  };
 
   const handleTabChange = (value: string) => {
     setSelectedTab(value);
@@ -369,7 +378,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     <div 
       className={cn(
         "mt-[-2px] animate-fade-in p-4 rounded-lg transition-colors duration-300 -mx-2 relative", 
-        backgroundColors[selectedTab as keyof typeof backgroundColors]
+        updatedBackgroundColors[selectedTab as keyof typeof updatedBackgroundColors]
       )} 
       ref={tabsWrapperRef}
     >
@@ -380,8 +389,8 @@ const ServiceList: React.FC<ServiceListProps> = ({
           isTabsSticky={isTabsSticky}
           tabsContentHeight={tabsContentHeight.current}
           tabsListRef={tabsListRef}
-          deliveryMessage={deliveryMessages[selectedTab as keyof typeof deliveryMessages]}
-          backgroundColors={backgroundColors}
+          deliveryMessage={updatedDeliveryMessages[selectedTab as keyof typeof updatedDeliveryMessages]}
+          backgroundColors={updatedBackgroundColors}
         >
           <ServiceCategoryList 
             categories={selectedTab === "standard" ? categories : expressCategories}
