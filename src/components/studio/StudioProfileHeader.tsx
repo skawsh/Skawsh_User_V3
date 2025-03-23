@@ -101,10 +101,12 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
         </div>
       </div>
       
+      {/* Using React Portal for the dialog to ensure it renders at the root level */}
       <ReportStudioDialog 
         open={showReportDialog} 
         onOpenChange={setShowReportDialog} 
         studioName={studioName} 
+        studioId={studioId}
       />
     </>
   );

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog, 
   DialogContent, 
@@ -18,6 +18,7 @@ interface ReportStudioDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studioName: string;
+  studioId: string;
 }
 
 const reportReasons = [
@@ -30,13 +31,23 @@ const reportReasons = [
 const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
   open,
   onOpenChange,
-  studioName
+  studioName,
+  studioId
 }) => {
   const [selectedReason, setSelectedReason] = useState<string>('');
   const [otherReason, setOtherReason] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   console.log("Dialog open state:", open); // Debug log
+  
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open) {
+      setSelectedReason('');
+      setOtherReason('');
+      setIsSubmitting(false);
+    }
+  }, [open]);
   
   const handleReasonChange = (value: string) => {
     setSelectedReason(value);
@@ -61,23 +72,25 @@ const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
     // In a real app, you would send this data to your backend
     setTimeout(() => {
       setIsSubmitting(false);
+      
+      // Close dialog first
       onOpenChange(false);
       
-      // Reset form
-      setSelectedReason('');
-      setOtherReason('');
-      
-      // Show success message
+      // Then show success message
       toast.success(
         'Your report has been received. We will investigate and update you within 24 hours.',
         { duration: 5000 }
       );
+      
+      // Reset form
+      setSelectedReason('');
+      setOtherReason('');
     }, 1000);
   };
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] z-50">
+      <DialogContent className="sm:max-w-[425px] z-[100]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-red-500" />
@@ -98,7 +111,7 @@ const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
               <SelectTrigger id="reason" className="w-full">
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
-              <SelectContent position="popper" className="z-[60]">
+              <SelectContent position="popper" className="z-[110]">
                 {reportReasons.map((reason) => (
                   <SelectItem key={reason.id} value={reason.id}>
                     {reason.label}
