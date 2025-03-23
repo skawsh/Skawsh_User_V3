@@ -48,6 +48,7 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
   };
 
   const handleReportStudio = () => {
+    console.log("Opening report dialog"); // Debug log
     setShowReportDialog(true);
   };
 
@@ -82,7 +83,7 @@ const StudioProfileHeader: React.FC<StudioProfileHeaderProps> = ({
                 <MoreVertical size={20} />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white animate-scale-in">
+            <DropdownMenuContent align="end" className="bg-white animate-scale-in z-50">
               <DropdownMenuItem onClick={handleShareStudio} className="flex items-center gap-2 py-2.5">
                 <Share size={16} className="text-blue-500" />
                 <span>Share Studio</span>

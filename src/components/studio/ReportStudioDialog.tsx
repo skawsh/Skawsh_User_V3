@@ -36,6 +36,8 @@ const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
   const [otherReason, setOtherReason] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  console.log("Dialog open state:", open); // Debug log
+  
   const handleReasonChange = (value: string) => {
     setSelectedReason(value);
     if (value !== 'other') {
@@ -75,7 +77,7 @@ const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-50">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-red-500" />
@@ -96,7 +98,7 @@ const ReportStudioDialog: React.FC<ReportStudioDialogProps> = ({
               <SelectTrigger id="reason" className="w-full">
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper" className="z-[60]">
                 {reportReasons.map((reason) => (
                   <SelectItem key={reason.id} value={reason.id}>
                     {reason.label}
