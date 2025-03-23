@@ -15,6 +15,8 @@ const OrderMetaData: React.FC<OrderMetaDataProps> = ({
 }) => {
   const isCompleted = order.status === 'completed';
   const orderNumber = `ORD-${order.id.substring(0, 4)}`;
+  
+  // Use NA for date and payment mode for ongoing orders
   const orderDate = isCompleted 
     ? new Date(order.updatedAt).toLocaleString('en-US', {
         year: 'numeric',

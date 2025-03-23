@@ -12,8 +12,9 @@ interface OrderSummaryProps {
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({ services, totalAmount }) => {
-  // Calculate subtotal from services
-  const subtotal = services.reduce((acc, service) => acc + (service.price * service.quantity), 0);
+  // Calculate subtotal from services, with error checking
+  const subtotal = services?.reduce((acc, service) => 
+    acc + ((service?.price || 0) * (service?.quantity || 1)), 0) || 0;
   
   // Dummy values for demonstration
   const deliveryCharge = 50;
@@ -26,17 +27,21 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ services, totalAmount }) =>
         <div className="mb-3">
           <h4 className="font-semibold">Services</h4>
           <div className="ml-2">
-            {services.map((service, index) => (
-              <div key={service.id} className="flex justify-between text-sm mb-1">
-                <div>
-                  <span>{index + 1}) {service.name}</span>
-                  <div className="text-gray-600 text-xs ml-4">
-                    {service.quantity} {service.quantity > 1 ? 'items' : 'item'} X ₹{service.price}
+            {services && services.length > 0 ? (
+              services.map((service, index) => (
+                <div key={service.id || index} className="flex justify-between text-sm mb-1">
+                  <div>
+                    <span>{index + 1}) {service.name}</span>
+                    <div className="text-gray-600 text-xs ml-4">
+                      {service.quantity} {service.quantity > 1 ? 'items' : 'item'} X ₹{service.price}
+                    </div>
                   </div>
+                  <div>₹{service.price * service.quantity}</div>
                 </div>
-                <div>₹{service.price * service.quantity}</div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-gray-500">No services in this order</div>
+            )}
           </div>
         </div>
       </div>
