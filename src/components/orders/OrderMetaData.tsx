@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Order } from '@/types/order';
 
 interface OrderMetaDataProps {
@@ -13,12 +13,28 @@ const OrderMetaData: React.FC<OrderMetaDataProps> = ({
   phoneNumber,
   deliveryAddress
 }) => {
+  const [completionDate, setCompletionDate] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Get the stored completion date if this is a completed order
+    if (order.status === 'completed') {
+      // Check if we have a stored completion date from the secret code
+      const storedDate = localStorage.getItem('orderCompletionDate');
+      if (storedDate) {
+        setCompletionDate(storedDate);
+      } else {
+        // Fallback to the order's updated date
+        setCompletionDate(order.updatedAt);
+      }
+    }
+  }, [order.status, order.updatedAt]);
+  
   const isCompleted = order.status === 'completed';
   const orderNumber = `ORD-${order.id.substring(0, 4)}`;
   
-  // Use NA for date and payment mode for ongoing orders
-  const orderDate = isCompleted 
-    ? new Date(order.updatedAt).toLocaleString('en-US', {
+  // Format the date and time for display
+  const orderDate = isCompleted && completionDate
+    ? new Date(completionDate).toLocaleString('en-US', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',

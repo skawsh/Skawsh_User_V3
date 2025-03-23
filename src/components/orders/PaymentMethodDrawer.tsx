@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { Drawer, DrawerContent, DrawerClose } from '@/components/ui/drawer';
@@ -44,7 +43,7 @@ const PaymentMethodDrawer: React.FC<PaymentMethodDrawerProps> = ({
         if (order.id === orderId) {
           return {
             ...order,
-            status: 'completed', // Changed from 'processing' to 'completed' to move to history
+            status: 'processing', // Change to 'processing' instead of 'completed' to keep in ongoing
             paymentMethod: method,
             paymentStatus: 'paid'
           };

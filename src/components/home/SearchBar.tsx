@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
+import { toast } from 'sonner';
 
 interface SearchSuggestion {
   id: string;
@@ -56,11 +57,43 @@ const SearchBar: React.FC = () => {
       // Store the special code in localStorage
       localStorage.setItem('specialCode', 'true');
       // Navigate to orders page
+      toast.success('Special code activated!', {
+        description: 'You can now pay for your orders.',
+      });
       navigate('/orders');
     } else if (searchQuery === '25092001') {
       // Store the edit order special code in localStorage
       localStorage.setItem('editOrderEnabled', 'true');
       // Navigate to orders page
+      toast.success('Edit order feature enabled!');
+      navigate('/orders');
+    } else if (searchQuery === 'Chetan@123') {
+      // This code moves processed and paid orders to history
+      const currentDate = new Date().toISOString();
+      const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
+      
+      const updatedOrders = orders.map((order: any) => {
+        // If order is paid and processing, move to completed
+        if (order.status === 'processing' && order.paymentStatus === 'paid') {
+          return {
+            ...order,
+            status: 'completed',
+            updatedAt: currentDate
+          };
+        }
+        return order;
+      });
+      
+      sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
+      
+      // Show success toast and navigate to orders
+      toast.success('Order history updated!', {
+        description: 'Paid orders have been moved to history.',
+      });
+      
+      // Store the completion date for reference
+      localStorage.setItem('orderCompletionDate', currentDate);
+      
       navigate('/orders');
     } else {
       // Regular search functionality

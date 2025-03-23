@@ -95,7 +95,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
           if (o.id === order.id) {
             return {
               ...o,
-              status: 'processing',
+              status: 'processing', // Keep as processing instead of completed
               paymentMethod: preferredMethod,
               paymentStatus: 'paid'
             };
