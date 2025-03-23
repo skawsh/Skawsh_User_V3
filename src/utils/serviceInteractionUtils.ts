@@ -1,6 +1,13 @@
 
 import { Service } from '@/types/serviceTypes';
-import { addToCart, getServiceWeight, getServiceQuantity, removeServiceFromCart } from './cartUtils';
+import { 
+  addToCart, 
+  getServiceWeight, 
+  getServiceQuantity, 
+  removeServiceFromCart,
+  serviceExistsInCart,
+  createServiceOrderDetails
+} from './cartUtils';
 
 /**
  * Handle increasing the weight or quantity of a service
@@ -15,7 +22,7 @@ export const increaseServiceWeight = (
   handleAddToCart: (orderDetails: any) => void
 ) => {
   // Check if there's a wash type mismatch
-  if (existingWashType && existingWashType !== currentWashType && !cartItems.some(item => item.serviceId === service.id)) {
+  if (existingWashType && existingWashType !== currentWashType && !serviceExistsInCart(service.id, cartItems)) {
     handleShowMixedServicesDialog(service);
     return;
   }
@@ -24,26 +31,28 @@ export const increaseServiceWeight = (
     const currentWeight = getServiceWeight(service.id, cartItems) || 0;
     const newWeight = Math.round((currentWeight + 0.1) * 10) / 10;
     
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      weight: newWeight,
-      price: service.price * newWeight,
-      studioId: studioId,
-      items: []
-    });
-  } else {
-    const existingItem = cartItems.find(item => item.serviceId === service.id);
-    const quantity = existingItem && existingItem.quantity ? existingItem.quantity + 1 : 1;
+    const orderDetails = createServiceOrderDetails(
+      service,
+      1,
+      newWeight,
+      currentWashType === "express",
+      studioId
+    );
     
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      quantity: quantity,
-      price: service.price * quantity,
-      studioId: studioId,
-      items: []
-    });
+    handleAddToCart(orderDetails);
+  } else {
+    const existingQuantity = getServiceQuantity(service.id, cartItems) || 0;
+    const newQuantity = existingQuantity + 1;
+    
+    const orderDetails = createServiceOrderDetails(
+      service,
+      newQuantity,
+      null,
+      currentWashType === "express",
+      studioId
+    );
+    
+    handleAddToCart(orderDetails);
   }
 };
 
@@ -68,34 +77,36 @@ export const decreaseServiceWeight = (
     }
     
     const newWeight = Math.round((currentWeight - 0.1) * 10) / 10;
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      weight: newWeight,
-      price: service.price * newWeight,
-      studioId: studioId,
-      items: []
-    });
+    
+    const orderDetails = createServiceOrderDetails(
+      service,
+      1,
+      newWeight,
+      currentWashType === "express",
+      studioId
+    );
+    
+    handleAddToCart(orderDetails);
   } else {
-    const existingItem = cartItems.find(item => item.serviceId === service.id);
-    if (!existingItem) return;
+    const existingQuantity = getServiceQuantity(service.id, cartItems) || 0;
     
-    const quantity = existingItem.quantity ? existingItem.quantity - 1 : 0;
-    
-    if (quantity <= 0) {
+    if (existingQuantity <= 1) {
       const updatedItems = removeServiceFromCart(service.id, cartItems);
       setCartItems(updatedItems);
       return;
     }
     
-    handleAddToCart({
-      serviceId: service.id,
-      serviceName: service.name,
-      quantity: quantity,
-      price: service.price * quantity,
-      studioId: studioId,
-      items: []
-    });
+    const newQuantity = existingQuantity - 1;
+    
+    const orderDetails = createServiceOrderDetails(
+      service,
+      newQuantity,
+      null,
+      currentWashType === "express",
+      studioId
+    );
+    
+    handleAddToCart(orderDetails);
   }
 };
 
@@ -110,9 +121,9 @@ export const handleServiceCardClick = (
   handleShowMixedServicesDialog: (service: Service) => void,
   handleOpenServicePopup: (service: Service) => void
 ) => {
-  const existingItem = cartItems.find(item => item.serviceId === service.id);
+  const serviceExists = serviceExistsInCart(service.id, cartItems);
   
-  if (existingItem) {
+  if (serviceExists) {
     if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
       handleOpenServicePopup(service);
     }
@@ -124,4 +135,33 @@ export const handleServiceCardClick = (
     
     handleOpenServicePopup(service);
   }
+};
+
+/**
+ * Add a simple service directly to cart
+ */
+export const addSimpleServiceToCart = (
+  service: Service,
+  cartItems: any[],
+  studioId: string,
+  selectedTab: string,
+  handleShowMixedServicesDialog: (service: Service) => void,
+  handleAddToCart: (orderDetails: any) => void
+) => {
+  const existingWashType = getExistingWashType(cartItems);
+  
+  if (existingWashType && existingWashType !== selectedTab && !serviceExistsInCart(service.id, cartItems)) {
+    handleShowMixedServicesDialog(service);
+    return;
+  }
+  
+  const orderDetails = createServiceOrderDetails(
+    service,
+    1,
+    null,
+    selectedTab === "express",
+    studioId
+  );
+  
+  handleAddToCart(orderDetails);
 };

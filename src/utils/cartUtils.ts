@@ -48,6 +48,8 @@ export const addToCart = (
   }
   
   localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  // Dispatch event for components listening to cart updates
+  document.dispatchEvent(new Event('cartUpdated'));
   return updatedItems;
 };
 
@@ -86,5 +88,48 @@ export const getServiceQuantity = (serviceId: string, cartItems: CartItem[]): nu
 export const removeServiceFromCart = (serviceId: string, cartItems: CartItem[]): CartItem[] => {
   const updatedItems = cartItems.filter(item => item.serviceId !== serviceId);
   localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+  // Dispatch event for components listening to cart updates
+  document.dispatchEvent(new Event('cartUpdated'));
   return updatedItems;
+};
+
+/**
+ * Check if a service exists in the cart
+ */
+export const serviceExistsInCart = (serviceId: string, cartItems: CartItem[]): boolean => {
+  return cartItems.some(item => item.serviceId === serviceId);
+};
+
+/**
+ * Create service order details for cart
+ */
+export const createServiceOrderDetails = (
+  service: Service, 
+  quantity: number, 
+  weight: number | null = null,
+  isExpress: boolean = false,
+  studioId: string = '1'
+): any => {
+  const basePrice = service.price;
+  const price = isExpress ? basePrice * 1.5 : basePrice;
+  
+  if (service.unit && (service.unit.includes('per kg') || service.unit.includes('per sft'))) {
+    return {
+      serviceId: service.id,
+      serviceName: service.name,
+      weight: weight || 1,
+      price: price * (weight || 1),
+      studioId: studioId,
+      items: []
+    };
+  } else {
+    return {
+      serviceId: service.id,
+      serviceName: service.name,
+      quantity: quantity,
+      price: price * quantity,
+      studioId: studioId,
+      items: []
+    };
+  }
 };
