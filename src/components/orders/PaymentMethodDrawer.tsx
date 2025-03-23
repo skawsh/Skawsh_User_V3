@@ -63,6 +63,9 @@ const PaymentMethodDrawer: React.FC<PaymentMethodDrawerProps> = ({
       if (dontAskAgain) {
         localStorage.setItem('preferredPaymentMethod', method);
       }
+      
+      // Set flag to show rating popup
+      localStorage.setItem('showRatingPopup', 'true');
     }, 500);
   };
 

@@ -114,6 +114,9 @@ const OrderCard: React.FC<OrderCardProps> = ({
           duration: 3000,
         });
         
+        // Set flag to show rating popup
+        localStorage.setItem('showRatingPopup', 'true');
+        
         // Refresh the orders list
         if (onDeleteComplete) {
           onDeleteComplete();
