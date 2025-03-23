@@ -72,6 +72,9 @@ export const continueMixedTypes = (
     setPendingService(null);
     setMixedServicesDialogOpen(false);
     
-    toast("Multiple delivery types selected. Your items will be delivered separately");
+    toast({
+      title: "Multiple delivery types selected", 
+      description: "Your items will be delivered separately"
+    });
   }
 };
