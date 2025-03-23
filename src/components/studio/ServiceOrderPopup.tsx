@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import WeightInput from './service/WeightInput';
 import ClothingItemsList, { ClothingItem } from './service/ClothingItemsList';
@@ -146,9 +146,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               </span>
             )}
           </DialogTitle>
-          <DialogClose className="rounded-full h-6 w-6 flex items-center justify-center">
+          <button className="rounded-full h-6 w-6 flex items-center justify-center" onClick={onClose}>
             <X size={18} />
-          </DialogClose>
+          </button>
         </div>
         
         <div className="p-4 space-y-4">
@@ -161,6 +161,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               unit={unit} 
               price={totalPrice()} 
               onChange={handleWeightChange} 
+              placeholder="Please enter the weight"
             />
           </div>
           

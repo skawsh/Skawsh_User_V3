@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Minus, Plus, Trash2, Clock, ShoppingBag } from 'lucide-react';
+import { Minus, Plus, Trash2, Clock, ShoppingBag, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CartItem as CartItemType } from '@/types/serviceTypes';
 
@@ -62,13 +62,14 @@ const CartItem: React.FC<CartItemProps> = ({
           <div className="mt-2 mb-3 bg-gray-50 p-2 rounded-md">
             <div className="text-xs font-medium text-gray-700 mb-1 flex items-center">
               <ShoppingBag size={12} className="mr-1" /> 
-              Selected Items
+              Selected Items:
             </div>
             <ul className="space-y-1">
               {item.items.map((clothingItem, index) => (
-                <li key={index} className="text-xs text-gray-600 flex justify-between">
-                  <span>{clothingItem.name}</span>
-                  <span>{clothingItem.quantity}x</span>
+                <li key={index} className="text-xs text-gray-600 flex items-center">
+                  <Check size={14} className="text-green-500 mr-1" />
+                  <span className="flex-1">{clothingItem.name}</span>
+                  <span className="text-gray-500 ml-1">× {clothingItem.quantity}</span>
                 </li>
               ))}
             </ul>
@@ -83,7 +84,7 @@ const CartItem: React.FC<CartItemProps> = ({
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
               onClick={() => {
                 // For weight-based items, decrease by 0.1kg
-                const newWeight = Math.max(0.1, item.weight - 0.1);
+                const newWeight = Math.max(0.1, parseFloat((item.weight - 0.1).toFixed(1)));
                 onQuantityChange(item.serviceId, newWeight);
               }}
               aria-label="Decrease quantity"
@@ -95,7 +96,7 @@ const CartItem: React.FC<CartItemProps> = ({
               className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition-colors"
               onClick={() => {
                 // For weight-based items, increase by 0.1kg
-                const newWeight = item.weight + 0.1;
+                const newWeight = parseFloat((item.weight + 0.1).toFixed(1));
                 onQuantityChange(item.serviceId, newWeight);
               }}
               aria-label="Increase quantity"

@@ -1,38 +1,41 @@
 
 import React from 'react';
-import { Scale } from 'lucide-react';
 import { Input } from "@/components/ui/input";
-import { formatIndianRupee } from "@/pages/StudioProfile";
 
 interface WeightInputProps {
-  weight: number | string;
+  weight: string | number;
   unit: string;
   price: number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
 }
 
-const WeightInput: React.FC<WeightInputProps> = ({
-  weight,
-  unit,
-  price,
-  onChange
+const WeightInput: React.FC<WeightInputProps> = ({ 
+  weight, 
+  unit, 
+  price, 
+  onChange,
+  placeholder = "Enter weight" 
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-grow relative">
-        <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-        <Input 
-          id="weight" 
-          type="text" 
-          value={weight} 
-          onChange={onChange} 
-          className="pl-9" 
-          placeholder={unit === 'sft' ? "Please enter the area" : "Please enter the weight"}
+    <div className="relative">
+      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+        <Input
+          type="number"
+          value={weight}
+          onChange={onChange}
+          className="border-0 h-12 flex-grow"
+          placeholder={placeholder}
+          step="0.1"
+          min="0.1"
         />
+        <div className="bg-gray-100 px-3 py-3 text-gray-600 h-full flex items-center">
+          {unit}
+        </div>
       </div>
-      <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
-        <div className="text-xs text-gray-600">Total</div>
-        <div className="font-semibold text-blue-600">{formatIndianRupee(price)}</div>
+      
+      <div className="text-right text-sm mt-2 font-medium">
+        {price > 0 ? `Estimated Price: ₹${price}` : ''}
       </div>
     </div>
   );
