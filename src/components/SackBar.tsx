@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Trash2, Check, X } from 'lucide-react';
+import { Trash2, Check, X, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -27,6 +27,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showWaterWave, setShowWaterWave] = useState(false);
   const [showFirstItemMessage, setShowFirstItemMessage] = useState(false);
+  const [washType, setWashType] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -46,6 +47,11 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           });
           
           const newServiceCount = uniqueServices.size;
+          
+          // Get wash type from first item (assuming all items have same wash type)
+          if (parsedItems.length > 0 && parsedItems[0].washType) {
+            setWashType(parsedItems[0].washType);
+          }
           
           // Check if this is the first item added
           const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
@@ -68,11 +74,13 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
         } else {
           setCartItems([]);
           setUniqueServiceCount(0);
+          setWashType(null);
         }
       } catch (error) {
         console.error('Error loading cart items:', error);
         setCartItems([]);
         setUniqueServiceCount(0);
+        setWashType(null);
       }
     };
     
@@ -158,12 +166,14 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-gray-900">{studioInfo?.name || 'Studio'}</span>
-                <button 
-                  className="text-xs text-left flex items-center text-primary-500"
-                  onClick={() => studioInfo && navigate(`/studio/${studioInfo.id}`)}
-                >
-                  View menu <span className="ml-1">▶</span>
-                </button>
+                {washType && (
+                  <span className={cn(
+                    "text-xs flex items-center", 
+                    washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
+                  )}>
+                    <Clock size={12} className="mr-1" /> {washType}
+                  </span>
+                )}
               </div>
             </div>
             

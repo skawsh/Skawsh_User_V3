@@ -25,8 +25,34 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
   backgroundColors,
   children
 }) => {
+  // Get the display wash type name based on the tab
+  const getWashTypeName = (tab: string) => {
+    return tab === "standard" ? "Standard Wash" : "Express Wash";
+  };
+
+  // When a tab is changed, update any existing cart items with the new wash type
+  const handleTabChange = (value: string) => {
+    try {
+      const storedItems = localStorage.getItem('cartItems');
+      if (storedItems) {
+        const parsedItems = JSON.parse(storedItems);
+        const updatedItems = parsedItems.map((item: any) => ({
+          ...item,
+          washType: getWashTypeName(value)
+        }));
+        localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+        document.dispatchEvent(new Event('cartUpdated'));
+      }
+    } catch (error) {
+      console.error('Error updating wash type in cart items:', error);
+    }
+    
+    // Call the original onTabChange handler
+    onTabChange(value);
+  };
+
   return (
-    <Tabs defaultValue="standard" value={selectedTab} onValueChange={onTabChange}>
+    <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
       {isTabsSticky && (
         <div 
           className="h-0 overflow-hidden" 

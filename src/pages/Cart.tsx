@@ -36,6 +36,7 @@ interface CartItem {
   isExpress?: boolean;
   serviceCategory?: string;
   serviceSubCategory?: string;
+  washType?: string;
 }
 
 const Cart: React.FC = () => {
@@ -419,6 +420,14 @@ const Cart: React.FC = () => {
                   <div className="space-y-3">
                     {categoryEntry[1].map((item, itemIndex) => (
                       <div key={item.serviceId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate-fade-in" style={{animationDelay: `${200 + itemIndex * 50}ms`}}>
+                        {item.washType && (
+                          <div className={cn(
+                            "text-xs font-medium mb-1.5 flex items-center",
+                            item.washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
+                          )}>
+                            <Clock size={12} className="mr-1" /> {item.washType}
+                          </div>
+                        )}
                         <div className="mb-1">
                           <h4 className="font-medium text-gray-800">{item.serviceName}</h4>
                           <div className="flex justify-between items-center text-sm text-gray-600">
@@ -426,7 +435,10 @@ const Cart: React.FC = () => {
                             <span className="font-medium text-gray-800">{formatIndianRupee(item.price * (item.quantity || 1))}</span>
                           </div>
                           <div className="text-xs text-gray-500 mb-2 flex items-center">
-                            <Clock size={12} className="inline mr-1" /> <span>36h Standard Delivery</span>
+                            <Clock size={12} className="inline mr-1" /> 
+                            <span>
+                              {item.washType === "Express Wash" ? "12h Express Delivery" : "36h Standard Delivery"}
+                            </span>
                           </div>
                         </div>
                         

@@ -16,6 +16,7 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
   const [showWaterWave, setShowWaterWave] = useState(false);
   const [showFirstItemMessage, setShowFirstItemMessage] = useState(false);
   const [isFirstItemAdded, setIsFirstItemAdded] = useState(false);
+  const [washType, setWashType] = useState<string | null>(null);
   
   useEffect(() => {
     // Load cart items and count unique services
@@ -36,6 +37,11 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           
           const newServiceCount = uniqueServices.size;
           
+          // Get wash type from first item (assuming all items have same wash type)
+          if (studioItems.length > 0 && studioItems[0].washType) {
+            setWashType(studioItems[0].washType);
+          }
+          
           // Check if this is the first item added
           const hasShownFirstItemMessage = localStorage.getItem('hasShownSackWaveAnimation') === 'true';
           
@@ -54,10 +60,12 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           setUniqueServiceCount(newServiceCount);
         } else {
           setUniqueServiceCount(0);
+          setWashType(null);
         }
       } catch (error) {
         console.error('Error counting unique services:', error);
         setUniqueServiceCount(itemCount); // Fallback to the prop value
+        setWashType(null);
       }
     };
     
@@ -116,9 +124,19 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
               />
             )}
             
-            <span className="text-[#403E43] font-semibold relative z-10">
-              {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
-            </span>
+            <div className="flex flex-col items-start relative z-10">
+              <span className="text-[#403E43] font-semibold">
+                {uniqueServiceCount} {uniqueServiceCount === 1 ? 'Service' : 'Services'} added
+              </span>
+              {washType && (
+                <span className={cn(
+                  "text-xs font-medium", 
+                  washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
+                )}>
+                  {washType}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2 relative z-10">
               <ShoppingBag size={20} className={cn("text-white", isFirstItemAdded && "animate-pulse")} />
               <span className="text-white font-semibold">View Sack</span>
