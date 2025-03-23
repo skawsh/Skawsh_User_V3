@@ -52,7 +52,7 @@ const RateExperiencePopup: React.FC<RateExperiencePopupProps> = ({
       >
         <Star
           size={32}
-          className={`${isFilled ? 'fill-blue-500 text-blue-500' : 'text-blue-500'}`}
+          className={`${isFilled ? 'fill-blue-900 text-blue-900' : 'text-blue-900'} stroke-[1.5px]`}
         />
       </div>
     );
@@ -60,11 +60,11 @@ const RateExperiencePopup: React.FC<RateExperiencePopupProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl p-6 w-[90%] max-w-[400px] mx-auto shadow-lg animate-slide-in">
+      <DialogContent className="bg-white border border-gray-200 rounded-xl p-6 w-[90%] max-w-[400px] mx-auto shadow-lg animate-slide-in">
         <div className="absolute top-3 right-3">
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 font-medium text-sm underline"
+            className="text-gray-800 hover:text-gray-900 font-medium text-sm underline"
           >
             Skip
           </button>
@@ -83,7 +83,7 @@ const RateExperiencePopup: React.FC<RateExperiencePopupProps> = ({
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               placeholder="Enter the text..."
-              className="border-2 border-blue-900/20 rounded-md focus:border-blue-500"
+              className="border-2 border-blue-900 rounded-md focus:border-blue-900"
             />
           </div>
           
