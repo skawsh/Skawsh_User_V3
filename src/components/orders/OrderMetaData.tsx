@@ -1,17 +1,35 @@
 
 import React from 'react';
+import { Order } from '@/types/order';
 
 interface OrderMetaDataProps {
-  orderNumber: string;
+  order: Order;
   phoneNumber: string;
   deliveryAddress: string;
 }
 
 const OrderMetaData: React.FC<OrderMetaDataProps> = ({
-  orderNumber,
+  order,
   phoneNumber,
   deliveryAddress
 }) => {
+  const isCompleted = order.status === 'completed';
+  const orderNumber = `ORD-${order.id.substring(0, 4)}`;
+  const orderDate = isCompleted 
+    ? new Date(order.updatedAt).toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      })
+    : 'NA';
+  
+  const paymentMode = isCompleted
+    ? `Using ${order.paymentMethod || 'UPI'} (₹${order.totalAmount})`
+    : 'NA';
+
   return (
     <div className="mt-4">
       <h3 className="font-bold mb-1">Order Details</h3>
@@ -22,11 +40,11 @@ const OrderMetaData: React.FC<OrderMetaDataProps> = ({
         </div>
         <div className="flex">
           <span className="w-36 text-gray-600">Payment mode:</span>
-          <span>Using UPI (₹1310)</span>
+          <span>{paymentMode}</span>
         </div>
         <div className="flex">
           <span className="w-36 text-gray-600">Date:</span>
-          <span>22/03/2025 at 03:40 PM</span>
+          <span>{orderDate}</span>
         </div>
         <div className="flex">
           <span className="w-36 text-gray-600">Phone Number:</span>

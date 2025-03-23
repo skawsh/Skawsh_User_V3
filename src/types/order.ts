@@ -14,4 +14,6 @@ export interface Order {
   status: 'pending' | 'pending_payment' | 'processing' | 'ready' | 'completed' | 'cancelled';
   createdAt: string;
   updatedAt: string;
+  paymentMethod?: string;
+  paymentStatus?: 'paid' | 'pending';
 }

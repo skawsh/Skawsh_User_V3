@@ -67,14 +67,9 @@ const OrderDetails = () => {
     );
   }
 
-  // Calculate delivery date for display
-  const orderDeliveryDate = new Date(order.updatedAt);
   // Dummy phone number and address for demo purposes
   const phoneNumber = "8197733xxxx";
   const deliveryAddress = "Home(306, Prashant Hills, Hyd)";
-  
-  // Format order number
-  const orderNumber = `ORD-${order.id.substring(0, 4)}`;
 
   const handleBackClick = () => {
     navigate('/orders');
@@ -127,11 +122,11 @@ const OrderDetails = () => {
           {/* Order items section */}
           <h3 className="font-bold mb-2">Your Order</h3>
           
-          <OrderSummary />
+          <OrderSummary services={order.services} totalAmount={order.totalAmount} />
           
           {/* Order meta details */}
           <OrderMetaData 
-            orderNumber={orderNumber}
+            order={order}
             phoneNumber={phoneNumber}
             deliveryAddress={deliveryAddress}
           />

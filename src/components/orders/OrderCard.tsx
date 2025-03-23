@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,7 +31,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    // Check for special codes when component mounts
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
     const canEditOrder = localStorage.getItem('editOrderEnabled') === 'true';
     
@@ -81,18 +79,15 @@ const OrderCard: React.FC<OrderCardProps> = ({
   };
 
   const handleEditOrder = () => {
-    // Navigate to the studio page with the order ID
     navigate(`/studio/${order.studioId}?orderId=${order.id}`);
   };
 
   const handlePayNowClick = (e: React.MouseEvent) => {
     e.preventDefault();
     
-    // Check if user has a preferred payment method saved
     const preferredMethod = localStorage.getItem('preferredPaymentMethod');
     
     if (preferredMethod) {
-      // Simulate payment with preferred method without showing drawer
       setTimeout(() => {
         const orders = JSON.parse(sessionStorage.getItem('orders') || '[]');
         const updatedOrders = orders.map((o: Order) => {
@@ -108,22 +103,18 @@ const OrderCard: React.FC<OrderCardProps> = ({
         });
         sessionStorage.setItem('orders', JSON.stringify(updatedOrders));
         
-        // Show toast notification
         toast.success('Payment Successful', {
           description: `₹${order.totalAmount} paid successfully using ${preferredMethod}`,
           duration: 3000,
         });
         
-        // Set flag to show rating popup
         localStorage.setItem('showRatingPopup', 'true');
         
-        // Refresh the orders list
         if (onDeleteComplete) {
           onDeleteComplete();
         }
       }, 500);
     } else {
-      // Show payment drawer if no preferred method
       setShowPaymentDrawer(true);
     }
   };
