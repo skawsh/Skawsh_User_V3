@@ -1,21 +1,22 @@
+
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, ShoppingBag, Scale } from 'lucide-react';
+import { X, ShoppingBag } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { formatIndianRupee } from "@/pages/StudioProfile";
+import WeightInput from './service/WeightInput';
+import ClothingItemsList, { ClothingItem } from './service/ClothingItemsList';
+import AddClothingItemForm from './service/AddClothingItemForm';
+import { formatDecimal } from '@/utils/formatUtils';
 
-// Format decimals to show only one digit after decimal point
-const formatDecimal = (value: number): number => {
-  return Math.round(value * 10) / 10;
-};
-
-interface ClothingItem {
-  name: string;
-  quantity: number;
-}
+const DEFAULT_CLOTHING_ITEMS = [
+  { name: 'Shirt', quantity: 0 },
+  { name: 'T-Shirt', quantity: 0 },
+  { name: 'Cotton Saree', quantity: 0 },
+  { name: 'Silk Saree', quantity: 0 },
+  { name: 'Jeans', quantity: 0 },
+  { name: 'Pants', quantity: 0 }
+];
 
 interface ServiceOrderPopupProps {
   service: {
@@ -28,36 +29,9 @@ interface ServiceOrderPopupProps {
   onClose: () => void;
   onAddToCart: (order: any) => void;
   initialWeight?: number;
-  isExpress?: boolean; // Define this prop
-  studioId?: string; // Add studioId prop
+  isExpress?: boolean;
+  studioId?: string;
 }
-
-const DEFAULT_CLOTHING_ITEMS = [
-  {
-    name: 'Shirt',
-    quantity: 0
-  },
-  {
-    name: 'T-Shirt',
-    quantity: 0
-  },
-  {
-    name: 'Cotton Saree',
-    quantity: 0
-  },
-  {
-    name: 'Silk Saree',
-    quantity: 0
-  },
-  {
-    name: 'Jeans',
-    quantity: 0
-  },
-  {
-    name: 'Pants',
-    quantity: 0
-  }
-];
 
 const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   service,
@@ -91,8 +65,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   }, [isOpen, initialWeight, service.unit]);
 
   const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setWeight(inputValue);
+    setWeight(e.target.value);
   };
 
   const handleQuantityChange = (index: number, change: number) => {
@@ -111,6 +84,10 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setNewItemName('');
       setIsAddingItem(false);
     }
+  };
+
+  const handleNewItemNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewItemName(e.target.value);
   };
 
   // Calculate price based on weight and express status
@@ -173,68 +150,30 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             <label htmlFor="weight" className="text-sm font-medium block mb-2">
               {unit === 'sft' ? 'Area (SFT)' : 'Weight (KG)'}
             </label>
-            <div className="flex items-center gap-2">
-              <div className="flex-grow relative">
-                <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                <Input 
-                  id="weight" 
-                  type="text" 
-                  value={weight} 
-                  onChange={handleWeightChange} 
-                  className="pl-9" 
-                  placeholder={unit === 'sft' ? "Enter area" : "Enter weight"}
-                />
-              </div>
-              <div className="bg-blue-50 rounded-md p-2 min-w-[80px] text-center">
-                <div className="text-xs text-gray-600">Total</div>
-                <div className="font-semibold text-blue-600">{formatIndianRupee(totalPrice())}</div>
-              </div>
-            </div>
+            <WeightInput 
+              weight={weight} 
+              unit={unit} 
+              price={totalPrice()} 
+              onChange={handleWeightChange} 
+            />
           </div>
           
           {unit === 'kg' && (
             <div>
               <label className="text-sm font-medium block mb-2">Select Clothing Items (Optional)</label>
               
-              <div className="flex items-center justify-between mb-3">
-                {isAddingItem ? (
-                  <div className="flex w-full items-center gap-2">
-                    <Input value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Item name" className="flex-grow" />
-                    <Button onClick={handleAddItem} size="sm" className="whitespace-nowrap">
-                      Add
-                    </Button>
-                    <Button onClick={() => setIsAddingItem(false)} size="sm" variant="ghost">
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <Button onClick={() => setIsAddingItem(true)} variant="link" size="sm" className="text-blue-600 p-0 h-auto">Add clothing Item</Button>
-                    <Button onClick={() => setIsAddingItem(true)} size="icon" variant="ghost" className="rounded-full h-8 w-8">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
+              <AddClothingItemForm 
+                isAddingItem={isAddingItem}
+                newItemName={newItemName}
+                onNewItemNameChange={handleNewItemNameChange}
+                onAddItem={handleAddItem}
+                onToggleAddingItem={setIsAddingItem}
+              />
               
-              <div className="space-y-4 max-h-[240px] overflow-y-auto no-scrollbar">
-                {clothingItems.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <span className="text-gray-700">{item.name}</span>
-                    <div className="flex items-center gap-3">
-                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, -1)} disabled={item.quantity === 0}>
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      
-                      <span className="w-6 text-center">{item.quantity}</span>
-                      
-                      <Button size="icon" variant="outline" className="h-7 w-7 rounded-full border-gray-300" onClick={() => handleQuantityChange(index, 1)}>
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <ClothingItemsList 
+                clothingItems={clothingItems} 
+                onQuantityChange={handleQuantityChange} 
+              />
             </div>
           )}
         </div>
