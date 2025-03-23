@@ -67,6 +67,10 @@ const OrderDetails = () => {
     );
   }
 
+  // Ensure services exists before passing to OrderSummary
+  const orderServices = order?.services || [];
+  const orderTotal = order?.totalAmount || 0;
+
   // Dummy phone number and address for demo purposes
   const phoneNumber = "8197733xxxx";
   const deliveryAddress = "Home(306, Prashant Hills, Hyd)";
@@ -122,7 +126,7 @@ const OrderDetails = () => {
           {/* Order items section */}
           <h3 className="font-bold mb-2">Your Order</h3>
           
-          <OrderSummary services={order.services} totalAmount={order.totalAmount} />
+          <OrderSummary services={orderServices} totalAmount={orderTotal} />
           
           {/* Order meta details */}
           <OrderMetaData 
