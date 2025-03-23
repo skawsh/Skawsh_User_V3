@@ -11,20 +11,53 @@ const StudioAbout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   
   // This would normally come from an API using the ID from the URL
-  const studio = {
-    id: id || '1',
-    name: 'Busy Bee',
-    locations: [
-      'Deluxe Colony',
-      'Hakeempet',
-      'Shaikpet',
-      'Tolichowki'
-    ],
-    city: 'Hyderabad',
-    operatingHours: '08:00 AM – 10:00 PM',
-    since: '2025',
-    phone: '+91 9876543210' // Example phone number
+  // Mock data for different studios
+  const studioData = {
+    '1': {
+      id: '1',
+      name: 'Busy Bee',
+      locations: [
+        'Deluxe Colony',
+        'Hakeempet',
+        'Shaikpet',
+        'Tolichowki'
+      ],
+      city: 'Hyderabad',
+      operatingHours: '08:00 AM – 10:00 PM',
+      since: '2020',
+      phone: '+91 9876543210'
+    },
+    '2': {
+      id: '2',
+      name: 'U clean',
+      locations: [
+        'Jubilee Hills',
+        'Banjara Hills',
+        'Madhapur',
+        'HITEC City'
+      ],
+      city: 'Hyderabad',
+      operatingHours: '07:00 AM – 11:00 PM',
+      since: '2018',
+      phone: '+91 9876543211'
+    },
+    '3': {
+      id: '3',
+      name: 'Tumble Dry',
+      locations: [
+        'Gachibowli',
+        'Kondapur',
+        'Miyapur',
+        'Kukatpally'
+      ],
+      city: 'Hyderabad',
+      operatingHours: '06:00 AM – 10:00 PM',
+      since: '2019',
+      phone: '+91 9876543212'
+    }
   };
+
+  const studio = studioData[id as keyof typeof studioData] || studioData['1'];
 
   const handleBackClick = () => {
     navigate(`/studio/${id}`);
