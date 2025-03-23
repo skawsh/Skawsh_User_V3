@@ -5,15 +5,19 @@ import { useQuery } from '@tanstack/react-query';
 import { getOrderById } from '@/utils/ordersUtils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { ArrowLeft, FileText, Star } from 'lucide-react';
 import OrderDetailsHeader from '@/components/orders/OrderDetailsHeader';
 import OrderSummary from '@/components/orders/OrderSummary';
 import OrderMetaData from '@/components/orders/OrderMetaData';
+import FeedbackDialog from '@/components/orders/FeedbackDialog';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
+  const [selectedRating, setSelectedRating] = useState<number>(0);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
 
   // Handle scroll event to show/hide sticky header
   useEffect(() => {
@@ -27,11 +31,36 @@ const OrderDetails = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Check if rating was already submitted for this order
+  useEffect(() => {
+    if (orderId) {
+      const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
+      if (ratedOrders[orderId]) {
+        setIsRatingSubmitted(true);
+      }
+    }
+  }, [orderId]);
+
   const { data: order, isLoading, error } = useQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderId ? getOrderById(orderId) : Promise.reject('No order ID provided'),
     enabled: !!orderId,
   });
+
+  const handleRatingClick = (rating: number) => {
+    setSelectedRating(rating);
+    setShowFeedbackDialog(true);
+  };
+
+  const handleFeedbackSubmit = (feedback: string) => {
+    // Save the rating and feedback
+    const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
+    ratedOrders[orderId as string] = { rating: selectedRating, feedback, date: new Date().toISOString() };
+    localStorage.setItem('ratedOrders', JSON.stringify(ratedOrders));
+    
+    setIsRatingSubmitted(true);
+    setShowFeedbackDialog(false);
+  };
 
   if (isLoading) {
     return (
@@ -78,6 +107,28 @@ const OrderDetails = () => {
   const handleBackClick = () => {
     navigate('/orders');
   };
+
+  const isOrderCompleted = order.status === 'completed';
+
+  // Rating stars component
+  const RatingStars = () => (
+    <div className="mt-4 border-t pt-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">Rate this order</span>
+        <div className="flex space-x-1">
+          {[1, 2, 3, 4, 5].map((rating) => (
+            <Star
+              key={rating}
+              className={`h-5 w-5 cursor-pointer transition-all duration-200 ${
+                rating <= selectedRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              }`}
+              onClick={() => handleRatingClick(rating)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-white min-h-screen relative">
@@ -134,8 +185,28 @@ const OrderDetails = () => {
             phoneNumber={phoneNumber}
             deliveryAddress={deliveryAddress}
           />
+
+          {/* Rating section for completed orders */}
+          {isOrderCompleted && !isRatingSubmitted && <RatingStars />}
+          
+          {/* Display after rating is submitted */}
+          {isOrderCompleted && isRatingSubmitted && (
+            <div className="mt-4 border-t pt-4">
+              <div className="text-center text-green-600 font-medium">
+                Thank you for your feedback!
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Feedback Dialog */}
+      <FeedbackDialog 
+        open={showFeedbackDialog}
+        onOpenChange={setShowFeedbackDialog}
+        onSubmit={handleFeedbackSubmit}
+        rating={selectedRating}
+      />
     </div>
   );
 };
