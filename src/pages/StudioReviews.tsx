@@ -103,7 +103,8 @@ const StudioReviews: React.FC = () => {
   return (
     <Layout>
       <div className="bg-white min-h-screen">
-        <div className={`sticky top-0 z-10 bg-white shadow-sm transition-all duration-200 ${isScrolled ? 'shadow-md' : ''}`}>
+        {/* Fixed header that always stays at the top */}
+        <div className="fixed top-0 left-0 right-0 bg-white z-40 shadow-md">
           <div className="flex items-center p-4">
             <button onClick={handleBackClick} className="mr-3">
               <ChevronLeft size={24} />
@@ -112,7 +113,8 @@ const StudioReviews: React.FC = () => {
           </div>
         </div>
         
-        <div className="px-4 py-6">
+        {/* Add padding to content to account for fixed header */}
+        <div className="pt-16 px-4 py-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="text-3xl font-bold">{averageRating.toFixed(1)}</div>
