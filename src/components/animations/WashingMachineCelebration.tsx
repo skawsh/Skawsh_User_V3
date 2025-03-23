@@ -1,7 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
-import { WashingMachine, Sparkles } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { WashingMachine, Sparkles, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 
 interface WashingMachineCelebrationProps {
   isVisible: boolean;
@@ -13,6 +14,14 @@ const WashingMachineCelebration: React.FC<WashingMachineCelebrationProps> = ({
   onAnimationComplete
 }) => {
   const [sparklePositions, setSparklePositions] = useState<Array<{x: number, y: number, delay: number, size: number}>>([]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  
+  // Handle outside clicks
+  useOnClickOutside(dialogRef, () => {
+    if (isVisible) {
+      onAnimationComplete();
+    }
+  });
 
   useEffect(() => {
     if (isVisible) {
@@ -37,8 +46,24 @@ const WashingMachineCelebration: React.FC<WashingMachineCelebrationProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
-      <div className="relative p-12 bg-white rounded-xl shadow-2xl animate-scale-in">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in"
+      onClick={() => onAnimationComplete()}
+    >
+      <div 
+        ref={dialogRef}
+        className="relative p-12 bg-white rounded-xl shadow-2xl animate-scale-in"
+        onClick={(e) => e.stopPropagation()} // Prevent clicks on the dialog from closing it
+      >
+        {/* Close button */}
+        <button 
+          onClick={() => onAnimationComplete()}
+          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Close"
+        >
+          <X size={18} className="text-gray-500" />
+        </button>
+        
         <div className="relative">
           <WashingMachine size={80} className="text-blue-500 animate-pulse" />
           <div className="absolute -top-4 -right-4 bg-[#92E3A9] rounded-full p-2 animate-bounce">

@@ -1,7 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
-import { Gift, Sparkles, Percent } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Gift, Sparkles, Percent, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 
 interface CouponCelebrationProps {
   isVisible: boolean;
@@ -15,6 +16,14 @@ const CouponCelebration: React.FC<CouponCelebrationProps> = ({
   discountPercentage
 }) => {
   const [sparklePositions, setSparklePositions] = useState<Array<{x: number, y: number, delay: number, size: number}>>([]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  
+  // Handle outside clicks
+  useOnClickOutside(dialogRef, () => {
+    if (isVisible) {
+      onAnimationComplete();
+    }
+  });
 
   useEffect(() => {
     if (isVisible) {
@@ -39,8 +48,24 @@ const CouponCelebration: React.FC<CouponCelebrationProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
-      <div className="relative p-12 bg-white rounded-xl shadow-2xl animate-scale-in text-center">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in"
+      onClick={() => onAnimationComplete()}
+    >
+      <div 
+        ref={dialogRef}
+        className="relative p-12 bg-white rounded-xl shadow-2xl animate-scale-in text-center"
+        onClick={(e) => e.stopPropagation()} // Prevent clicks on the dialog from closing it
+      >
+        {/* Close button */}
+        <button 
+          onClick={() => onAnimationComplete()}
+          className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Close"
+        >
+          <X size={18} className="text-gray-500" />
+        </button>
+        
         <div className="relative flex justify-center mb-4">
           <Gift size={70} className="text-purple-500" />
           <div className="absolute -top-4 -right-4 bg-[#92E3A9] rounded-full p-2 animate-bounce">
