@@ -13,6 +13,7 @@ import OrderCardActions from './OrderCardActions';
 import DeleteOrderDialog from './DeleteOrderDialog';
 import FeedbackDialog from './FeedbackDialog';
 import OrderRatingSection from './OrderRatingSection';
+import { useRatingSystem } from '@/hooks/useRatingSystem';
 
 interface OrderCardProps {
   order: Order;
@@ -31,10 +32,17 @@ const OrderCard: React.FC<OrderCardProps> = ({
   const [specialCodeActivated, setSpecialCodeActivated] = useState(false);
   const [editOrderEnabled, setEditOrderEnabled] = useState(false);
   const [showPaymentDrawer, setShowPaymentDrawer] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number>(0);
-  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
-  const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Using the extracted rating hook
+  const { 
+    selectedRating, 
+    isRatingSubmitted, 
+    handleRatingClick, 
+    handleFeedbackSubmit, 
+    showFeedbackDialog, 
+    setShowFeedbackDialog 
+  } = useRatingSystem(order.id);
   
   useEffect(() => {
     const hasSpecialCode = localStorage.getItem('specialCode') === 'true';
@@ -42,14 +50,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
     
     setSpecialCodeActivated(hasSpecialCode);
     setEditOrderEnabled(canEditOrder);
-    
-    // Check if rating was already submitted for this order
-    if (order.id) {
-      const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
-      if (ratedOrders[order.id]) {
-        setIsRatingSubmitted(true);
-      }
-    }
   }, [order.id]);
 
   const openCancelModal = () => {
@@ -132,35 +132,16 @@ const OrderCard: React.FC<OrderCardProps> = ({
       setShowPaymentDrawer(true);
     }
   };
-  
-  const handleRatingClick = (rating: number) => {
-    setSelectedRating(rating);
-    setShowFeedbackDialog(true);
-  };
 
-  const handleFeedbackSubmit = (feedback: string) => {
-    // Save the rating and feedback
-    const ratedOrders = JSON.parse(localStorage.getItem('ratedOrders') || '{}');
-    ratedOrders[order.id] = { rating: selectedRating, feedback, date: new Date().toISOString() };
-    localStorage.setItem('ratedOrders', JSON.stringify(ratedOrders));
-    
-    setIsRatingSubmitted(true);
-    setShowFeedbackDialog(false);
-    
-    if (onDeleteComplete) {
-      onDeleteComplete();
-    }
+  // Function to navigate to order details
+  const handleViewDetails = () => {
+    navigate(`/orders/${order.id}`);
   };
 
   const isPendingPayment = order.status === 'pending_payment';
   const isOngoing = order.status !== 'completed' && order.status !== 'cancelled';
   const isHistory = order.status === 'completed' || order.status === 'cancelled';
   const isCompleted = order.status === 'completed';
-
-  // Function to navigate to order details
-  const handleViewDetails = () => {
-    navigate(`/orders/${order.id}`);
-  };
 
   return <>
       <Card className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow" ref={cardRef} tabIndex={-1}>
