@@ -1,12 +1,13 @@
+
 import React, { useState, useRef } from 'react';
-import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
+import { Star, ChevronLeft, MoreVertical, Share, Info, Flag, Search, ChevronDown, X, Check, ChevronRight } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Drawer, DrawerContent, DrawerClose, DrawerTrigger } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
-import SearchBar from './SearchBar';
 
 interface StudioHeaderProps {
   name: string;
@@ -50,7 +51,12 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   
+  useOnClickOutside(searchRef, () => setShowSuggestions(false));
+
   const serviceSuggestions: ServiceSuggestion[] = [
     { id: '1', name: 'Dry Cleaning', price: 8.99, category: 'Premium Services' },
     { id: '2', name: 'Wash & Fold', price: 2.49, category: 'Basic Services' },
@@ -60,6 +66,13 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     { id: '6', name: 'Trouser Cleaning', price: 6.99, category: 'Lower Wear' },
     { id: '7', name: 'Carpet Cleaning', price: 3.49, category: 'Home Textiles' },
   ];
+
+  const filteredSuggestions = searchTerm 
+    ? serviceSuggestions.filter(service => 
+        service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (service.category && service.category.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : [];
 
   const currentLocation: LocationOption = {
     name: "Tolichowki",
@@ -71,12 +84,32 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     isNearest: true
   };
 
-  const otherLocations: LocationOption[] = [
-    { name: "Mehdipatnam", area: "Hyderabad", rating: 4.2, time: "", distance: "8.0 km" },
-    { name: "Attapur", area: "Hyderabad", rating: 4.1, time: "", distance: "9.7 km" },
-    { name: "Panjagutta", area: "Hyderabad", rating: 3.8, time: "", distance: "10.5 km" },
-    { name: "Narsingi", area: "Hyderabad", rating: 4.0, time: "", distance: "11.2 km", isClosedForDelivery: true }
-  ];
+  const otherLocations: LocationOption[] = [{
+    name: "Mehdipatnam",
+    area: "Hyderabad",
+    rating: 4.2,
+    time: "",
+    distance: "8.0 km"
+  }, {
+    name: "Attapur",
+    area: "Hyderabad",
+    rating: 4.1,
+    time: "",
+    distance: "9.7 km"
+  }, {
+    name: "Panjagutta",
+    area: "Hyderabad",
+    rating: 3.8,
+    time: "",
+    distance: "10.5 km"
+  }, {
+    name: "Narsingi",
+    area: "Hyderabad",
+    rating: 4.0,
+    time: "",
+    distance: "11.2 km",
+    isClosedForDelivery: true
+  }];
 
   const getOpeningHours = () => {
     const timeMappings: Record<string, string> = {
@@ -127,6 +160,15 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
     navigate(`/studio/${name.toLowerCase().replace(/\s+/g, '-')}/reviews`);
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value) {
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
   const handleServiceSelect = (serviceId: string) => {
     console.log('Selected service:', serviceId);
     const serviceElement = document.getElementById(`service-${serviceId}`);
@@ -137,6 +179,8 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         serviceElement.classList.remove('bg-primary-50');
       }, 1500);
     }
+    setShowSuggestions(false);
+    setSearchTerm('');
   };
 
   return (
@@ -288,11 +332,45 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
         </div>
       </div>
       
-      <div className="px-4 py-3 pb-2 bg-white">
-        <SearchBar 
-          serviceSuggestions={serviceSuggestions}
-          onSelectService={handleServiceSelect}
-        />
+      <div className="px-4 py-3 pb-2 bg-white relative" style={{ zIndex: 9999 }}>
+        <div className="relative" ref={searchRef}>
+          <Input 
+            placeholder="Search services in this studio..." 
+            className="bg-gray-50 border-gray-200 rounded-full shadow-sm pr-10 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50" 
+            value={searchTerm}
+            onChange={handleSearch}
+            onFocus={() => searchTerm.length > 0 && setShowSuggestions(true)}
+          />
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <Search size={18} />
+          </div>
+          
+          {showSuggestions && filteredSuggestions.length > 0 && (
+            <div className="absolute w-full bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden mt-1" style={{ zIndex: 50000, position: 'absolute' }}>
+              <div className="py-1 max-h-60 overflow-y-auto">
+                {filteredSuggestions.map((service) => (
+                  <div
+                    key={service.id}
+                    className="px-4 py-2.5 hover:bg-gray-100 cursor-pointer transition-colors"
+                    onClick={() => handleServiceSelect(service.id)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">{service.name}</p>
+                        {service.category && (
+                          <p className="text-xs text-gray-500 mt-0.5">{service.category}</p>
+                        )}
+                      </div>
+                      <p className="text-sm font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded">
+                        ₹{service.price}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
