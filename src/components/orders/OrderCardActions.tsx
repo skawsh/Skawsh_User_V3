@@ -32,7 +32,7 @@ const OrderCardActions: React.FC<OrderCardActionsProps> = ({
           orderId={order.id} 
           variant="outline" 
           size="sm" 
-          className="flex-1"
+          className="w-full"
         />
         
         {isPendingPayment && (

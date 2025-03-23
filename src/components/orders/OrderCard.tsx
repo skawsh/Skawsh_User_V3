@@ -14,7 +14,6 @@ import FeedbackDialog from './FeedbackDialog';
 import OrderRatingSection from './OrderRatingSection';
 import { useRatingSystem } from '@/hooks/useRatingSystem';
 import { useOrderModals } from '@/hooks/useOrderModals';
-import OrderViewDetailsButton from './OrderViewDetailsButton';
 
 interface OrderCardProps {
   order: Order;
@@ -96,15 +95,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
             isPendingPayment={isPendingPayment}
             onPayNowClick={handlePayNowClick}
           />
-          
-          {/* View Details button */}
-          <div className="mt-3">
-            <OrderViewDetailsButton 
-              orderId={order.id} 
-              className="w-full py-2 px-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors"
-              variant="outline"
-            />
-          </div>
           
           {/* Rating section for completed orders */}
           <OrderRatingSection
