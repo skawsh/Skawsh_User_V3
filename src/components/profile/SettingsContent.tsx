@@ -3,7 +3,7 @@ import React from 'react';
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsContent: React.FC = () => {
@@ -56,6 +56,32 @@ const SettingsContent: React.FC = () => {
               onCheckedChange={setWhatsappEnabled}
               className="data-[state=checked]:bg-primary-500"
             />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-none shadow-sm overflow-hidden">
+        <CardContent className="p-0">
+          <div className="bg-primary-50/80 px-4 py-3">
+            <h2 className="font-medium text-gray-600 text-sm tracking-wide uppercase">Legal</h2>
+          </div>
+          
+          <div 
+            className="px-4 py-4 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between"
+            onClick={() => navigate('/terms')}
+          >
+            <span className="font-medium text-gray-800">Terms & Conditions</span>
+            <ChevronRight size={18} className="text-gray-500" />
+          </div>
+          
+          <Separator className="bg-gray-100" />
+          
+          <div 
+            className="px-4 py-4 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between"
+            onClick={() => navigate('/privacy')}
+          >
+            <span className="font-medium text-gray-800">Privacy Policy</span>
+            <ChevronRight size={18} className="text-gray-500" />
           </div>
         </CardContent>
       </Card>
