@@ -40,6 +40,8 @@ const StudioProfile: React.FC = () => {
 
   // Console logs for debugging
   console.log("Studio ID from URL:", id);
+  console.log("Studio data loaded:", studio);
+  console.log("Services loaded:", services);
   console.log("Order ID from URL params:", orderId);
 
   useEffect(() => {
@@ -72,7 +74,9 @@ const StudioProfile: React.FC = () => {
         document.dispatchEvent(new Event('cartUpdated'));
         
         // Show toast to inform user they're editing an order
-        toast(`Editing Order: You're now editing order #${orderId.substring(0, 8)}`);
+        toast({
+          title: `Editing Order: You're now editing order #${orderId.substring(0, 8)}`
+        });
       }
     }
   }, [orderId, id]);
@@ -138,26 +142,42 @@ const StudioProfile: React.FC = () => {
     setCartCount(count);
   };
 
+  // Safeguard against empty studio data
+  if (!studio || !studio.name) {
+    console.error("Studio data not available");
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <h1 className="text-xl font-bold mb-4">Loading studio information...</h1>
+        <button 
+          onClick={() => navigate('/')} 
+          className="px-4 py-2 bg-primary-500 text-white rounded-lg"
+        >
+          Return to Home
+        </button>
+      </div>
+    );
+  }
+
   return (
     <Layout hideFooter={cartCount > 0}>
       <div className="no-scrollbar bg-gray-50/50">
         <StudioProfileHeader 
           isScrolled={isScrolled}
-          studioName={studio.name}
+          studioName={studio?.name}
           isEditingOrder={isEditingOrder}
           orderId={orderId}
           onBackClick={handleBackClick}
-          studioId={studio.id}
+          studioId={studio?.id}
         />
         
         <StudioHeader 
-          name={isEditingOrder ? `Edit Order #${orderId?.substring(0, 8)}` : studio.name} 
-          image={studio.image} 
-          rating={studio.rating} 
-          reviewCount={studio.reviewCount} 
-          deliveryTime={studio.deliveryTime} 
+          name={isEditingOrder ? `Edit Order #${orderId?.substring(0, 8)}` : studio?.name} 
+          image={studio?.image} 
+          rating={studio?.rating} 
+          reviewCount={studio?.reviewCount} 
+          deliveryTime={studio?.deliveryTime} 
           backButtonRef={backButtonRef} 
-          description={isEditingOrder ? 'Edit your order details below' : studio.description} 
+          description={isEditingOrder ? 'Edit your order details below' : studio?.description} 
           onBackClick={handleBackClick} 
         />
         

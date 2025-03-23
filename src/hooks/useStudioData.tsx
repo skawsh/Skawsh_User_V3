@@ -141,11 +141,97 @@ export const useStudioData = (studioId?: string) => {
           unit: 'per piece'
         }
       ]
+    },
+    '4': {
+      id: '4',
+      name: 'Fabrico',
+      image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.3,
+      reviewCount: 85,
+      deliveryTime: '3-4 hours',
+      description: 'Premium fabric care experts with advanced cleaning technologies.',
+      services: [
+        {
+          id: '16',
+          name: 'Premium Dry Cleaning',
+          description: 'High-end dry cleaning for designer garments.',
+          price: 12.99,
+          unit: 'per piece'
+        },
+        {
+          id: '17',
+          name: 'Express Laundry',
+          description: 'Quick turnaround for everyday laundry needs.',
+          price: 3.49,
+          unit: 'per kg'
+        }
+      ]
+    },
+    '5': {
+      id: '5',
+      name: 'Eco Clean',
+      image: 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 4.7,
+      reviewCount: 103,
+      deliveryTime: '2 days',
+      description: 'Environmentally conscious cleaning services using sustainable products.',
+      services: [
+        {
+          id: '18',
+          name: 'Eco Wash',
+          description: 'Washing with eco-friendly detergents.',
+          price: 3.99,
+          unit: 'per kg'
+        },
+        {
+          id: '19',
+          name: 'Green Dry Clean',
+          description: 'Chemical-free dry cleaning process.',
+          price: 9.99,
+          unit: 'per piece'
+        }
+      ]
+    },
+    '6': {
+      id: '6',
+      name: 'Mycloth',
+      image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80',
+      rating: 5.0,
+      reviewCount: 145,
+      deliveryTime: '1-2 days',
+      description: 'Personalized garment care with attention to detail and premium finishes.',
+      services: [
+        {
+          id: '20',
+          name: 'Personal Laundry',
+          description: 'Customized care for your everyday clothing.',
+          price: 4.49,
+          unit: 'per kg'
+        },
+        {
+          id: '21',
+          name: 'Luxury Garments',
+          description: 'Specialized care for high-end and delicate garments.',
+          price: 14.99,
+          unit: 'per piece'
+        }
+      ]
     }
   };
 
-  // Get the specific studio based on ID, or default to the first one
-  const studio = studios[studioId as keyof typeof studios] || studios['1'];
+  // Checks if the studioId exists, otherwise returns a default fallback 
+  const getStudioData = () => {
+    // Check if studioId is provided and exists in the studios object
+    if (studioId && studios[studioId as keyof typeof studios]) {
+      return studios[studioId as keyof typeof studios];
+    }
+    
+    // Fallback to default studio if studioId is invalid
+    console.warn(`Studio ID ${studioId} not found, using default studio`);
+    return studios['1'];
+  };
+  
+  const studio = getStudioData();
   
   return {
     studio,

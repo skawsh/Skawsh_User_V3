@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
@@ -242,7 +241,7 @@ const StudioCard: React.FC<StudioProps> = ({ studio, onClick }) => {
   }
 
   return (
-    <div className="border rounded-2xl overflow-hidden shadow-sm mb-4" onClick={onClick}>
+    <div className="border rounded-2xl overflow-hidden shadow-sm mb-4 cursor-pointer" onClick={onClick}>
       {/* Logo Section */}
       <div className="border-b">
         {logoContent}
