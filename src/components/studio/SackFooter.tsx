@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, ChevronRight } from 'lucide-react';
+import { ShoppingBag, ChevronRight, Clock } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -37,9 +37,27 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
           
           const newServiceCount = uniqueServices.size;
           
-          // Get wash type from first item (assuming all items have same wash type)
-          if (studioItems.length > 0 && studioItems[0].washType) {
-            setWashType(studioItems[0].washType);
+          // Determine dominant wash type
+          if (studioItems.length > 0) {
+            const washTypeCounts: Record<string, number> = {};
+            
+            studioItems.forEach((item: any) => {
+              if (item.washType) {
+                washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
+              }
+            });
+            
+            let maxCount = 0;
+            let dominantType = null;
+            
+            Object.entries(washTypeCounts).forEach(([type, count]) => {
+              if (count > maxCount) {
+                maxCount = count;
+                dominantType = type;
+              }
+            });
+            
+            setWashType(dominantType);
           }
           
           // Check if this is the first item added
@@ -130,10 +148,10 @@ const SackFooter: React.FC<SackFooterProps> = ({ itemCount, studioId }) => {
               </span>
               {washType && (
                 <span className={cn(
-                  "text-xs font-medium", 
+                  "text-xs font-medium flex items-center", 
                   washType === "Standard Wash" ? "text-blue-600" : "text-orange-500"
                 )}>
-                  {washType}
+                  <Clock size={14} className="mr-1" /> {washType}
                 </span>
               )}
             </div>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Trash2, Check, X, Clock } from 'lucide-react';
@@ -48,9 +47,27 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           
           const newServiceCount = uniqueServices.size;
           
-          // Get wash type from first item (assuming all items have same wash type)
-          if (parsedItems.length > 0 && parsedItems[0].washType) {
-            setWashType(parsedItems[0].washType);
+          // Determine dominant wash type
+          if (parsedItems.length > 0) {
+            const washTypeCounts: Record<string, number> = {};
+            
+            parsedItems.forEach((item: any) => {
+              if (item.washType) {
+                washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
+              }
+            });
+            
+            let maxCount = 0;
+            let dominantType = null;
+            
+            Object.entries(washTypeCounts).forEach(([type, count]) => {
+              if (count > maxCount) {
+                maxCount = count;
+                dominantType = type;
+              }
+            });
+            
+            setWashType(dominantType);
           }
           
           // Check if this is the first item added
@@ -71,6 +88,7 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
           
           console.log('Cart items loaded:', parsedItems);
           console.log('Unique service count:', uniqueServices.size);
+          console.log('Wash type:', dominantType);
         } else {
           setCartItems([]);
           setUniqueServiceCount(0);
@@ -95,7 +113,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
     };
   }, [uniqueServiceCount]);
   
-  // Handle water wave animation end
   const handleWaterWaveAnimationEnd = () => {
     setShowWaterWave(false);
   };
@@ -103,7 +120,6 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
   if (cartItems.length === 0) return null;
   
   const handleViewSack = () => {
-    // Check if we're coming from an edit order action
     const urlParams = new URLSearchParams(location.search);
     const orderId = urlParams.get('orderId');
     

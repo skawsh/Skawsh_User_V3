@@ -55,6 +55,7 @@ const Cart: React.FC = () => {
   const [showCouponCelebration, setShowCouponCelebration] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [dominantWashType, setDominantWashType] = useState<string | null>(null);
   
   const [address, setAddress] = useState({
     street: location.state?.selectedAddress?.address || '123 Main Street, Apartment 4B',
@@ -123,6 +124,26 @@ const Cart: React.FC = () => {
             quantity: item.quantity || 1
           };
         });
+        
+        const washTypeCounts: Record<string, number> = {};
+        categorizedItems.forEach(item => {
+          if (item.washType) {
+            washTypeCounts[item.washType] = (washTypeCounts[item.washType] || 0) + 1;
+          }
+        });
+        
+        let maxCount = 0;
+        let dominantType = null;
+        
+        Object.entries(washTypeCounts).forEach(([type, count]) => {
+          if (count > maxCount) {
+            maxCount = count;
+            dominantType = type;
+          }
+        });
+        
+        setDominantWashType(dominantType);
+        
         setCartItems(categorizedItems);
         console.log('Cart items loaded:', categorizedItems);
       } catch (error) {
@@ -389,6 +410,30 @@ const Cart: React.FC = () => {
                   Price may vary depending on the weight and clothing items during pickup of your order.
                 </p>
               </div>
+
+              {dominantWashType && (
+                <div className={cn(
+                  "rounded-xl overflow-hidden mb-4 animate-fade-in",
+                  dominantWashType === "Standard Wash" ? "bg-blue-50" : "bg-orange-50"
+                )}>
+                  <div className="p-4 text-center">
+                    <h3 className="font-semibold text-xl">
+                      {dominantWashType}
+                    </h3>
+                  </div>
+                  <div className={cn(
+                    "px-4 py-3 flex justify-center items-center gap-3",
+                    dominantWashType === "Standard Wash" ? "bg-blue-100 text-blue-600" : "bg-orange-100 text-orange-600"
+                  )}>
+                    <Clock size={20} />
+                    <span className="font-medium">
+                      {dominantWashType === "Standard Wash" 
+                        ? "Delivery in just 36 sunlight hours after pickup" 
+                        : "Express delivery in just 12 hours after pickup"}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {Object.entries(groupedItems).map((categoryEntry, categoryIndex) => (
                 <div key={categoryEntry[0]} className="mb-5 animate-fade-in" style={{animationDelay: `${150 + categoryIndex * 50}ms`}}>
