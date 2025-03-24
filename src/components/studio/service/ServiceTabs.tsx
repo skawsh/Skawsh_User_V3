@@ -51,6 +51,19 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
     onTabChange(value);
   };
 
+  // Styles for the selected and unselected tabs based on design
+  const getTabStyles = (tabValue: string) => {
+    if (tabValue === "standard") {
+      return selectedTab === "standard"
+        ? "text-white bg-[#5B9BD5] border-[#5B9BD5] font-medium" // Light blue from image
+        : "text-gray-800 bg-white border-gray-300 hover:bg-blue-50";
+    } else {
+      return selectedTab === "express"
+        ? "text-white bg-[#FFBF00] border-[#FFBF00] font-medium" // Bright yellow from image
+        : "text-gray-800 bg-white border-gray-300 hover:bg-orange-50";
+    }
+  };
+
   return (
     <Tabs defaultValue="standard" value={selectedTab} onValueChange={handleTabChange}>
       {isTabsSticky && (
@@ -70,24 +83,18 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
                 value="standard" 
                 className={cn(
                   "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                  selectedTab === "standard" 
-                    ? "text-white bg-blue-500 border-blue-500 font-medium" 
-                    : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
+                  getTabStyles("standard")
                 )}
               >
-                <Clock size={16} className="mr-2" />
                 Standard Wash
               </TabsTrigger>
               <TabsTrigger 
                 value="express" 
                 className={cn(
                   "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-                  selectedTab === "express" 
-                    ? "text-white bg-orange-500 border-orange-500 font-medium" 
-                    : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
+                  getTabStyles("express")
                 )}
               >
-                <Clock size={16} className="mr-2" />
                 Express Wash
               </TabsTrigger>
             </TabsList>
@@ -116,24 +123,18 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
             value="standard" 
             className={cn(
               "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-              selectedTab === "standard" 
-                ? "text-white bg-blue-500 border-blue-500 font-medium" 
-                : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
+              getTabStyles("standard")
             )}
           >
-            <Clock size={16} className="mr-2" />
             Standard Wash
           </TabsTrigger>
           <TabsTrigger 
             value="express" 
             className={cn(
               "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
-              selectedTab === "express" 
-                ? "text-white bg-orange-500 border-orange-500 font-medium" 
-                : "text-gray-500 bg-white border-gray-200 hover:bg-orange-50"
+              getTabStyles("express")
             )}
           >
-            <Clock size={16} className="mr-2" />
             Express Wash
           </TabsTrigger>
         </TabsList>
