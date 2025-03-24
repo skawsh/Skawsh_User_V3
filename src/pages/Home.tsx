@@ -1,55 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import React from 'react';
 import Layout from '../components/Layout';
-import LocationBar from '../components/home/LocationBar';
-import SearchBar from '../components/home/SearchBar';
-import PromotionSlider from '../components/home/PromotionSlider';
-import ServiceCard from '../components/home/ServiceCard';
-import StudioCard from '../components/home/StudioCard';
-import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, MapPin, Tag, Star, TrendingUp, Heart } from 'lucide-react';
-import { Card, CardContent } from "@/components/ui/card";
+import HeaderSection from '../components/home/HeaderSection';
+import ServicesSection from '../components/home/ServicesSection';
+import StudiosSection from '../components/home/StudiosSection';
+import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase } from 'lucide-react';
 
 const Home: React.FC = () => {
-  const [isSticky, setIsSticky] = useState(false);
-  const [stickyHeight, setStickyHeight] = useState(0);
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const dividerRef = useRef<HTMLDivElement>(null);
-  const studiosRef = useRef<HTMLDivElement>(null);
-  const servicesRowRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const servicesRow = servicesRowRef.current;
-      const invisibleDivider = dividerRef.current;
-      if (invisibleDivider && servicesRow) {
-        const dividerPosition = invisibleDivider.getBoundingClientRect().top;
-        const shouldStick = dividerPosition <= 0;
-
-        if (shouldStick && !isSticky) {
-          setStickyHeight(servicesRow.offsetHeight);
-          requestAnimationFrame(() => {
-            setIsSticky(true);
-          });
-        } else if (!shouldStick && isSticky) {
-          requestAnimationFrame(() => {
-            setIsSticky(false);
-          });
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, {
-      passive: true
-    });
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isSticky]);
-
-  useEffect(() => {
-    if (servicesRowRef.current && stickyHeight === 0) {
-      setStickyHeight(servicesRowRef.current.offsetHeight);
-    }
-  }, []);
-
   const services = [{
     id: 'wash-fold',
     title: 'Wash & Fold',
@@ -182,87 +139,15 @@ const Home: React.FC = () => {
     serviceId: 'wash-fold'
   }];
 
-  return <Layout>
-    <div className="section-container p-0 bg-gradient-to-b from-primary-50 to-white">
-      <div className="px-4 -mx-4 -mt-10 pt-4 pb-3 rounded-b-3xl" style={{
-        backgroundImage: 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)'
-      }}>
-        <LocationBar />
-        <SearchBar />
-        <PromotionSlider banners={banners} />
-        <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
-          <span className="font-bold text-xs">Welcome to Skawsh</span>
-          <Heart size={14} className="ml-1 text-white" fill="white" />
-        </div>
+  return (
+    <Layout>
+      <div className="section-container p-0 bg-gradient-to-b from-primary-50 to-white">
+        <HeaderSection banners={banners} />
+        <ServicesSection services={services} />
+        <StudiosSection studios={studios} />
       </div>
-      
-      <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-primary-50 to-white">
-        <Card className="border-none shadow-none bg-transparent mb-2">
-          <CardContent className="p-0 pt-2 px-[15px]">
-            <h2 className="section-title mb-2 font-bold text-lg">Explore Laundry Services</h2>
-          </CardContent>
-        </Card>
-        
-        <div ref={dividerRef} className="h-[1px] w-full invisible" aria-hidden="true"></div>
-        
-        <div id="services-row" ref={servicesRowRef} className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} style={{
-          transition: 'transform 0.2s ease, opacity 0.2s ease'
-        }}>
-          <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
-            <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-transparent">
-              {services.map((service, index) => <ServiceCard key={service.id} id={service.id} icon={service.icon} title={service.title} image={service.image} index={index} isSticky={isSticky} />)}
-            </div>
-          </div>
-        </div>
-        
-        {isSticky && <div style={{
-          height: `${stickyHeight}px`,
-          opacity: 1
-        }} className="pointer-events-none" aria-hidden="true"></div>}
-      </div>
-      
-      <div ref={studiosRef} style={{
-        position: 'relative',
-        zIndex: 0,
-        marginTop: '15px'
-      }} className="mb-10 my-[14px] -mx-4 px-[5px]">
-        <Card className="border-none shadow-none bg-transparent mb-2">
-          <CardContent className="p-0 px-[15px]">
-            <h2 className="section-title mb-4 font-bold text-lg">Explore Laundry Studios</h2>
-          </CardContent>
-        </Card>
-        
-        <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px]">
-          <FilterButton icon={<MapPin size={14} />} label="Nearby" />
-          <FilterButton icon={<Tag size={14} />} label="Offers" />
-          <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
-          <FilterButton icon={<Star size={14} />} label="Top Rated" />
-          <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
-        </div>
-        
-        <div className="space-y-4 mx-0 px-2">
-          {studios.map((studio, index) => <StudioCard key={studio.id} id={studio.id} name={studio.name} image={studio.image} rating={studio.rating} deliveryTime={studio.deliveryTime} distance={studio.distance} workingHours={studio.workingHours} index={index} promoted={studio.promoted} />)}
-        </div>
-      </div>
-    </div>
-  </Layout>;
-};
-
-interface FilterButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-}
-
-const FilterButton: React.FC<FilterButtonProps> = ({
-  icon,
-  label,
-  active = false
-}) => {
-  return <button className={`flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs whitespace-nowrap transition-colors duration-200 ${active ? 'bg-primary-500 text-white' : 'bg-white text-gray-700 shadow-sm border border-gray-100 hover:bg-gray-50'}`}>
-      {icon}
-      {label}
-    </button>;
+    </Layout>
+  );
 };
 
 export default Home;
