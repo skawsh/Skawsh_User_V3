@@ -13,12 +13,16 @@ interface StudioHeaderContainerProps {
   backButtonRef?: React.RefObject<HTMLButtonElement>;
   description?: string;
   onBackClick?: () => void;
+  onReportClick?: () => void; // Added this prop
 }
 
 const StudioHeaderContainer: React.FC<StudioHeaderContainerProps> = (props) => {
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
   
   const handleReportStudio = () => {
+    if (props.onReportClick) {
+      props.onReportClick();
+    }
     setReportDialogOpen(true);
   };
   
