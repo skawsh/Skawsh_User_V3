@@ -1,129 +1,22 @@
 
-import React, { useState, useEffect, useRef, TouchEvent } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext
-} from "@/components/ui/carousel";
-
-interface Banner {
-  id: string;
-  title: string;
-  description: string;
-  bgColor: string;
-  buttonColor: string;
-  textColor: string;
-  image: string;
-  serviceId?: string; // Optional service ID to link to specific service
-}
-
-interface PromotionSliderProps {
-  banners: Banner[];
-}
+import React from 'react';
+import { PromotionSliderProps } from './promotion/types';
+import { BannerItem } from './promotion/BannerItem';
+import { DotIndicator } from './promotion/DotIndicator';
+import { NavigationArrows } from './promotion/NavigationArrows';
+import { usePromotionSlider } from './promotion/usePromotionSlider';
 
 const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
-  const navigate = useNavigate();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [autoPlayEnabled, setAutoPlayEnabled] = useState(true);
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-  const isSwiping = useRef(false);
-
-  // Auto slide every 5 seconds when autoplay is enabled
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (autoPlayEnabled) {
-      interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-      }, 5000);
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [banners.length, autoPlayEnabled]);
-
-  const handleDotClick = (index: number) => {
-    setCurrentIndex(index);
-    // Temporarily pause autoplay for a few seconds when user interacts
-    setAutoPlayEnabled(false);
-    setTimeout(() => setAutoPlayEnabled(true), 5000);
-  };
-
-  const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    // Pause autoplay while user is interacting
-    setAutoPlayEnabled(false);
-    isSwiping.current = false;
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-    
-    // If the user has moved more than a small threshold, consider it a swipe
-    if (touchStartX.current && touchEndX.current && 
-        Math.abs(touchStartX.current - touchEndX.current) > 10) {
-      isSwiping.current = true;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    
-    const diff = touchStartX.current - touchEndX.current;
-    const threshold = 50; // Minimum swipe distance
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        // Swipe left - go to next
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-      } else {
-        // Swipe right - go to previous
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? banners.length - 1 : prevIndex - 1));
-      }
-      isSwiping.current = true; // This was definitely a swipe
-    }
-    
-    // Reset touch points
-    touchStartX.current = null;
-    touchEndX.current = null;
-    
-    // Re-enable autoplay after a short delay
-    setTimeout(() => setAutoPlayEnabled(true), 5000);
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-    setAutoPlayEnabled(false);
-    setTimeout(() => setAutoPlayEnabled(true), 5000);
-  };
-
-  const goToPrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? banners.length - 1 : prevIndex - 1));
-    setAutoPlayEnabled(false);
-    setTimeout(() => setAutoPlayEnabled(true), 5000);
-  };
-
-  const handleBannerClick = (banner: Banner) => {
-    // Don't navigate if the user was swiping
-    if (isSwiping.current) return;
-    
-    // Determine service ID - either from banner or derived from title
-    const serviceId = banner.serviceId || banner.title.toLowerCase().replace(/\s+/g, '-');
-    
-    // Navigate to the service page with the banner title as the service name
-    navigate(`/services/${serviceId}`, {
-      state: {
-        serviceName: banner.title,
-        from: window.location.pathname
-      }
-    });
-  };
+  const {
+    currentIndex,
+    isSwiping,
+    handleDotClick,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    goToNext,
+    goToPrev
+  } = usePromotionSlider(banners.length);
 
   return (
     <div className="mb-6 animate-fade-in animate-stagger-2">
@@ -137,65 +30,23 @@ const PromotionSlider: React.FC<PromotionSliderProps> = ({ banners }) => {
           className="flex transition-transform duration-700 ease-in-out" 
           style={{ transform: `translateX(-${currentIndex * 92}%)` }}
         >
-          {banners.map((banner, index) => (
-            <div 
-              key={banner.id}
-              className={`${banner.bgColor} text-white p-5 rounded-xl min-w-[92%] mr-[1%] shrink-0 relative overflow-hidden cursor-pointer`}
-              onClick={() => handleBannerClick(banner)}
-            >
-              <div className="relative z-10">
-                <h3 className="font-semibold text-xl mb-1">{banner.title}</h3>
-                <p className="text-white/90 text-sm mb-4">
-                  {banner.description}
-                </p>
-                <button 
-                  className={`${banner.buttonColor} ${banner.textColor} font-medium text-sm py-1.5 px-4 rounded-full flex items-center gap-2`}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent banner click handler from firing
-                    handleBannerClick(banner);
-                  }}
-                >
-                  EXPLORE <ArrowRight size={16} />
-                </button>
-              </div>
-              <div className="absolute top-0 right-0 w-full h-full bg-no-repeat bg-right bg-contain opacity-20"
-                   style={{ backgroundImage: `url('${banner.image}')` }}>
-              </div>
-            </div>
+          {banners.map((banner) => (
+            <BannerItem 
+              key={banner.id} 
+              banner={banner} 
+              isSwiping={isSwiping} 
+            />
           ))}
         </div>
         
-        {/* Navigation arrows - only shown on desktop or larger screens */}
-        <button 
-          onClick={goToPrev}
-          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/50 flex items-center justify-center backdrop-blur-sm hidden sm:flex"
-          aria-label="Previous banner"
-        >
-          <ArrowRight size={16} className="transform rotate-180" />
-        </button>
-        
-        <button 
-          onClick={goToNext}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/50 flex items-center justify-center backdrop-blur-sm hidden sm:flex"
-          aria-label="Next banner"
-        >
-          <ArrowRight size={16} />
-        </button>
+        <NavigationArrows onPrev={goToPrev} onNext={goToNext} />
       </div>
       
-      {/* Dots indicator with improved interaction */}
-      <div className="flex justify-center gap-2 mt-3">
-        {banners.map((_, index) => (
-          <button 
-            key={index} 
-            onClick={() => handleDotClick(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? 'bg-primary-500 w-4' : 'bg-gray-300'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      <DotIndicator 
+        count={banners.length} 
+        currentIndex={currentIndex} 
+        onClick={handleDotClick} 
+      />
     </div>
   );
 };
