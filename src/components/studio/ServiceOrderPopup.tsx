@@ -48,7 +48,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [unit, setUnit] = useState<string>('kg');
-  const [isClothingItemsOpen, setIsClothingItemsOpen] = useState(true);
+  const [isClothingItemsOpen, setIsClothingItemsOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,7 +56,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
-      setIsClothingItemsOpen(true);
+      setIsClothingItemsOpen(false);
       
       if (service.unit && service.unit.includes('per sft')) {
         setUnit('sft');
@@ -129,17 +129,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     return !isNaN(numWeight) && numWeight > 0;
   };
 
-  const toggleClothingItems = () => {
-    setIsClothingItemsOpen(!isClothingItemsOpen);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent 
-        className="max-w-md p-0 gap-0 rounded-xl animate-in slide-in-from-bottom duration-300"
+        className="max-w-md p-0 gap-0 rounded-xl shadow-lg animate-in duration-300 slide-in-from-bottom"
         style={{ transform: 'translate(-50%, -50%)' }}
       >
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
             {service.name}
             {isExpress && (
@@ -150,7 +146,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </DialogTitle>
         </div>
         
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-5">
           <div>
             <label htmlFor="weight" className="text-sm font-medium block mb-2">
               {unit === 'sft' ? 'Estimated Area (SFT)' : 'Estimated Weight (KG)'}
@@ -165,23 +161,31 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </div>
           
           {unit === 'kg' && isWeightValid() && (
-            <div className="border rounded-lg p-3">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium">
+            <div className="border rounded-lg p-4 bg-gray-50 shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-gray-700">
                   Add clothing items within {weight}{unit} (Optional)
                 </label>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-8 text-sm text-blue-600"
-                  onClick={toggleClothingItems}
+                  className="h-8 text-sm text-blue-600 hover:bg-blue-50"
+                  onClick={() => setIsClothingItemsOpen(!isClothingItemsOpen)}
                 >
-                  {isClothingItemsOpen ? 'Skip' : 'Show'}
+                  {isClothingItemsOpen ? (
+                    <span className="flex items-center gap-1">
+                      Hide <ChevronUp className="h-4 w-4" />
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      Show <ChevronDown className="h-4 w-4" />
+                    </span>
+                  )}
                 </Button>
               </div>
               
               <Collapsible open={isClothingItemsOpen} onOpenChange={setIsClothingItemsOpen}>
-                <CollapsibleContent className="space-y-3 pt-2">
+                <CollapsibleContent className="space-y-4 pt-2 animate-in slide-in-from-top duration-200">
                   <AddClothingItemForm 
                     isAddingItem={isAddingItem}
                     newItemName={newItemName}
@@ -202,11 +206,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           )}
         </div>
         
-        <div className="p-4 pt-0">
+        <div className="p-6 pt-0">
           <Button 
             className={cn(
-              "w-full h-12 rounded-lg text-white", 
-              isAddToCartEnabled() ? "bg-green-500 hover:bg-green-600" : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+              "w-full h-12 rounded-lg text-white shadow-md transition-all", 
+              isAddToCartEnabled() 
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700" 
+                : "bg-gray-300 hover:bg-gray-400 text-gray-600"
             )} 
             onClick={handleAddToCart} 
             disabled={!isAddToCartEnabled()}
