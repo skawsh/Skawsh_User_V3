@@ -40,25 +40,29 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
     }
     
     // Apply filtering logic based on the selected filter
-    // This is a simplified example - you would implement actual filtering logic
     let filtered = [...studios];
     
     switch (filter) {
       case 'nearby':
-        filtered = studios.filter(studio => 
-          studio.distance && parseFloat(studio.distance) < 2.0);
+        filtered = studios.filter(
+          (studio) => studio.distance && parseFloat(studio.distance) < 2.0
+        );
         break;
       case 'offers':
-        filtered = studios.filter(studio => studio.promoted);
+        filtered = studios.filter((studio) => studio.promoted);
         break;
       case 'express':
-        filtered = studios.filter(studio => 
-          studio.deliveryTime && studio.deliveryTime.toLowerCase().includes('same day') || 
-          studio.deliveryTime && studio.deliveryTime.includes('hours'));
+        filtered = studios.filter(
+          (studio) =>
+            (studio.deliveryTime &&
+              studio.deliveryTime.toLowerCase().includes('same day')) ||
+            (studio.deliveryTime && studio.deliveryTime.includes('hours'))
+        );
         break;
       case 'rated':
-        filtered = studios.filter(studio => 
-          studio.rating && studio.rating >= 4.7);
+        filtered = studios.filter(
+          (studio) => studio.rating && studio.rating >= 4.7
+        );
         break;
       case 'budget':
         // Example filter - in a real app you'd have price data
@@ -72,33 +76,35 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
   };
 
   useEffect(() => {
-    // Get the services section element for detecting when to make filters sticky
     const servicesRow = document.getElementById('services-row');
     if (!servicesRow) return;
-    
+
+    // Calculate the point at which the filter bar should become sticky
+    const servicesOffsetTop = servicesRow.offsetTop;
+    const servicesHeight = servicesRow.offsetHeight;
+
     const handleScroll = () => {
-      if (servicesRow) {
-        const servicesBottom = servicesRow.getBoundingClientRect().bottom;
-        // Make filters sticky when services section scrolls out of view
-        const shouldStick = servicesBottom <= 0;
-        
-        // Only update state if the sticky status changes to avoid unnecessary renders
-        if (shouldStick !== isFiltersSticky) {
-          setIsFiltersSticky(shouldStick);
-        }
+      // Stick once we scroll beyond the bottom of the services row
+      const scrolledPastServices = window.scrollY >= (servicesOffsetTop + servicesHeight);
+
+      // Update state only if there's a change
+      if (scrolledPastServices !== isFiltersSticky) {
+        setIsFiltersSticky(scrolledPastServices);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [isFiltersSticky]);
 
-  // Measure the filters height for the placeholder
+  // Measure the filters container height once (for placeholder)
   useEffect(() => {
     if (filtersRef.current) {
       setStickyHeight(filtersRef.current.offsetHeight);
     }
-  }, []); // Only run once on mount
+  }, []);
 
   return (
     <div 
@@ -122,7 +128,8 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
           ref={filtersRef}
           className={isFiltersSticky ? 'fixed left-0 right-0 z-30' : 'relative'}
           style={{
-            top: isFiltersSticky ? (document.getElementById('services-row')?.offsetHeight || 0) + 'px' : 'auto',
+            // If sticky, pin to the very top (adjust if you have a fixed header)
+            top: isFiltersSticky ? '0px' : 'auto',
             transition: 'all 0.2s ease-in-out'
           }}
         >
