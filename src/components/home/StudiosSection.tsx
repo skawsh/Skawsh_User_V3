@@ -82,15 +82,18 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
     // Calculate the point at which the filter bar should become sticky
     const servicesOffsetTop = servicesRow.offsetTop;
     const servicesHeight = servicesRow.offsetHeight;
-
+    
     const handleScroll = () => {
-      // Stick only when scrolling beyond the services row, unstick when scrolling back up
       const scrollPosition = window.scrollY;
-      const shouldBeSticky = scrollPosition >= (servicesOffsetTop + servicesHeight);
+      const servicesSticky = scrollPosition > 0;
+      const filtersThreshold = servicesOffsetTop + servicesHeight;
       
-      // Only update state if the sticky status changes to avoid unnecessary renders
-      if (shouldBeSticky !== isFiltersSticky) {
-        setIsFiltersSticky(shouldBeSticky);
+      // The filters should become sticky when we scroll past the services section
+      // but only if the services section is already sticky
+      const shouldFiltersBeSticky = scrollPosition >= filtersThreshold && servicesSticky;
+      
+      if (shouldFiltersBeSticky !== isFiltersSticky) {
+        setIsFiltersSticky(shouldFiltersBeSticky);
       }
     };
 
