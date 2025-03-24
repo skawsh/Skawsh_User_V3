@@ -73,39 +73,31 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
 
   useEffect(() => {
     const servicesRow = document.getElementById('services-row');
+    
     const handleScroll = () => {
-      if (filtersWrapperRef.current && servicesRow) {
+      if (servicesRow) {
         const servicesBottom = servicesRow.getBoundingClientRect().bottom;
         const shouldStick = servicesBottom <= 0;
-
-        if (shouldStick && !isFiltersSticky) {
-          if (filtersRef.current) {
+        
+        if (shouldStick !== isFiltersSticky) {
+          if (filtersRef.current && !stickyHeight) {
             setStickyHeight(filtersRef.current.offsetHeight);
           }
-          requestAnimationFrame(() => {
-            setIsFiltersSticky(true);
-          });
-        } else if (!shouldStick && isFiltersSticky) {
-          requestAnimationFrame(() => {
-            setIsFiltersSticky(false);
-          });
+          setIsFiltersSticky(shouldStick);
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll, {
-      passive: true
-    });
-
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isFiltersSticky]);
+  }, [isFiltersSticky, stickyHeight]);
 
   // Set initial height for the sticky placeholder
   useEffect(() => {
     if (filtersRef.current && stickyHeight === 0) {
       setStickyHeight(filtersRef.current.offsetHeight);
     }
-  }, []);
+  }, [stickyHeight]);
 
   return (
     <div 
@@ -127,7 +119,7 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
         {/* Filters container */}
         <div 
           ref={filtersRef}
-          className={`${isFiltersSticky ? 'fixed top-0 left-0 right-0 z-20 will-change-transform transition-transform duration-200' : ''}`}
+          className={`${isFiltersSticky ? 'fixed left-0 right-0 z-30' : 'relative'}`}
           style={{
             top: isFiltersSticky ? '0' : 'auto'
           }}

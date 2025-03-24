@@ -29,7 +29,9 @@ const StudioFilters: React.FC<StudioFiltersProps> = ({
   };
 
   return (
-    <div className={`flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px] ${isSticky ? 'py-2 bg-white/95 backdrop-blur-sm shadow-sm border-b' : ''} ${className}`}>
+    <div className={`flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px] 
+      ${isSticky ? 'py-2 bg-white/95 backdrop-blur-sm shadow-sm border-b w-full z-30' : ''} 
+      ${className}`}>
       <FilterButton
         icon={<MapPin size={14} />}
         label="Nearby"
