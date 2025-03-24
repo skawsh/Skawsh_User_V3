@@ -76,50 +76,43 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
   };
 
   useEffect(() => {
-    const servicesRow = document.getElementById('services-row');
-    if (!servicesRow) return;
-
-    const filtersElement = filtersRef.current;
-    if (!filtersElement) return;
-
-    // Calculate the point at which the filter bar should become sticky
-    const servicesOffsetTop = servicesRow.offsetTop;
-    const servicesHeight = servicesRow.offsetHeight;
-    const filtersOffset = filtersWrapperRef.current?.offsetTop || 0;
+    const checkScroll = () => {
+      const servicesRow = document.getElementById('services-row');
+      if (!servicesRow) return false;
+      
+      const filtersWrapper = filtersWrapperRef.current;
+      if (!filtersWrapper) return false;
+      
+      // Get the original position of the filters
+      const filtersOriginalPosition = filtersWrapper.getBoundingClientRect().top + window.scrollY;
+      
+      // Get the bottom position of the services row
+      const servicesBottom = servicesRow.getBoundingClientRect().bottom;
+      
+      // Check if we've scrolled past the services AND if the filters' original position is below view
+      const shouldBeSticky = servicesBottom <= 0 && filtersOriginalPosition < window.scrollY;
+      
+      return shouldBeSticky;
+    };
     
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
+      const shouldBeSticky = checkScroll();
       
-      // Calculate when the filters should become sticky:
-      // - They should become sticky when we scroll past the services section
-      // - They should unstick when scrolling back up to their original position
-      
-      // The threshold to start being sticky - when we've scrolled past the services
-      const stickyThreshold = servicesOffsetTop + servicesHeight;
-      
-      // The threshold to stop being sticky - when we scroll back above filters' original position
-      const unstickyThreshold = filtersOffset - servicesHeight;
-      
-      // Set sticky state based on scroll position
-      if (scrollPosition >= stickyThreshold && !isFiltersSticky) {
-        setIsFiltersSticky(true);
-      } else if (scrollPosition < unstickyThreshold && isFiltersSticky) {
-        setIsFiltersSticky(false);
+      if (shouldBeSticky !== isFiltersSticky) {
+        setIsFiltersSticky(shouldBeSticky);
       }
     };
+
+    // Set initial height for the placeholder
+    if (filtersRef.current) {
+      setStickyHeight(filtersRef.current.offsetHeight);
+    }
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [isFiltersSticky]);
-
-  // Measure the filters container height once (for placeholder)
-  useEffect(() => {
-    if (filtersRef.current) {
-      setStickyHeight(filtersRef.current.offsetHeight);
-    }
-  }, []);
 
   return (
     <div 
