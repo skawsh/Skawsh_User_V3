@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import WeightInput from './service/WeightInput';
 import ClothingItemsList, { ClothingItem } from './service/ClothingItemsList';
 import AddClothingItemForm from './service/AddClothingItemForm';
 import { formatDecimal } from '@/utils/formatUtils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 const DEFAULT_CLOTHING_ITEMS = [
   { name: 'Shirt', quantity: 0 },
@@ -130,19 +130,32 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent 
-        className="max-w-md p-0 gap-0 rounded-xl overflow-hidden shadow-xl animate-in zoom-in-95 slide-in-from-bottom-10 duration-300"
+    <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
+      <SheetContent 
+        side="bottom" 
+        className="h-[92%] max-h-screen rounded-t-xl p-0 border-t-0 overflow-auto"
       >
-        <div className="flex items-center justify-between p-5 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-          <DialogTitle className="text-lg font-semibold flex items-center gap-2">
-            {service.name}
-            {isExpress && (
-              <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Clock className="h-3 w-3" /> Express
-              </span>
-            )}
-          </DialogTitle>
+        <div className="sticky top-0 z-10 bg-white border-b">
+          <div className="w-12 h-1.5 bg-gray-300 mx-auto my-3 rounded-full"/>
+          
+          <div className="flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <SheetTitle className="text-lg font-semibold flex items-center gap-2">
+              {service.name}
+              {isExpress && (
+                <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> Express
+                </span>
+              )}
+            </SheetTitle>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full h-8 w-8 bg-white/80 hover:bg-white" 
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         
         <div className="p-6 space-y-5 bg-white">
@@ -205,7 +218,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           )}
         </div>
         
-        <div className="p-6 pt-0 bg-white">
+        <div className="sticky bottom-0 p-6 bg-white border-t">
           <Button 
             className={cn(
               "w-full h-12 rounded-lg text-white shadow-md transition-all", 
@@ -220,8 +233,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             Add to Sack
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
