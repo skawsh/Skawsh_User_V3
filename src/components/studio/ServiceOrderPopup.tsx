@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import React, { useState } from 'react';
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import ServiceOrderHeader from './service/popup/ServiceOrderHeader';
 import WeightInputSection from './service/popup/WeightInputSection';
 import ClothingItemsSection from './service/popup/ClothingItemsSection';
@@ -57,49 +57,50 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   });
 
   return (
-    <Sheet open={isOpen} onOpenChange={open => !open && onClose()}>
-      <SheetContent 
-        side="bottom" 
-        className="h-[92%] max-h-screen rounded-t-xl p-0 border-t-0 overflow-auto"
-      >
-        <ServiceOrderHeader 
-          serviceName={service.name}
-          isExpress={isExpress}
-          onClose={onClose}
-        />
-        
-        <div className="p-6 space-y-5 bg-white">
-          <WeightInputSection
-            weight={weight}
-            unit={unit}
-            price={totalPrice()}
-            onChange={handleWeightChange}
-          />
-          
-          {unit === 'kg' && isWeightValid() && (
-            <ClothingItemsSection
-              weight={weight}
-              unit={unit}
-              clothingItems={clothingItems}
-              newItemName={newItemName}
-              isAddingItem={isAddingItem}
-              isClothingItemsOpen={isClothingItemsOpen}
-              onNewItemNameChange={handleNewItemNameChange}
-              onAddItem={handleAddItem}
-              onToggleAddingItem={setIsAddingItem}
-              onQuantityChange={handleQuantityChange}
-              setIsClothingItemsOpen={setIsClothingItemsOpen}
-              isWeightValid={isWeightValid}
+    <Drawer open={isOpen} onOpenChange={open => !open && onClose()} dismissible>
+      <DrawerContent className="max-h-[85vh] rounded-t-xl p-0 focus:outline-none">
+        <div className="h-full flex flex-col">
+          <div className="flex-1 overflow-auto">
+            <ServiceOrderHeader 
+              serviceName={service.name}
+              isExpress={isExpress}
+              onClose={onClose}
             />
-          )}
+            
+            <div className="px-6 py-5 space-y-5 bg-white">
+              <WeightInputSection
+                weight={weight}
+                unit={unit}
+                price={totalPrice()}
+                onChange={handleWeightChange}
+              />
+              
+              {unit === 'kg' && isWeightValid() && (
+                <ClothingItemsSection
+                  weight={weight}
+                  unit={unit}
+                  clothingItems={clothingItems}
+                  newItemName={newItemName}
+                  isAddingItem={isAddingItem}
+                  isClothingItemsOpen={isClothingItemsOpen}
+                  onNewItemNameChange={handleNewItemNameChange}
+                  onAddItem={handleAddItem}
+                  onToggleAddingItem={setIsAddingItem}
+                  onQuantityChange={handleQuantityChange}
+                  setIsClothingItemsOpen={setIsClothingItemsOpen}
+                  isWeightValid={isWeightValid}
+                />
+              )}
+            </div>
+          </div>
+          
+          <ServiceOrderFooter
+            isEnabled={isAddToCartEnabled()}
+            onAddToCart={handleAddToCart}
+          />
         </div>
-        
-        <ServiceOrderFooter
-          isEnabled={isAddToCartEnabled()}
-          onAddToCart={handleAddToCart}
-        />
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

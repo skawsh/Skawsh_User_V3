@@ -14,7 +14,7 @@ const ServiceOrderFooter: React.FC<ServiceOrderFooterProps> = ({
   onAddToCart
 }) => {
   return (
-    <div className="sticky bottom-0 p-6 bg-white border-t">
+    <div className="py-4 px-6 bg-white border-t shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
       <Button 
         className={cn(
           "w-full h-12 rounded-lg text-white shadow-md transition-all", 
