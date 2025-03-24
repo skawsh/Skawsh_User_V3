@@ -71,7 +71,7 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
                 className={cn(
                   "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
                   selectedTab === "standard" 
-                    ? "text-blue-600 bg-[#EFF6FF] border-blue-200 font-medium" 
+                    ? "text-blue-600 bg-[#D3E4FD] border-blue-200 font-medium" 
                     : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
                 )}
               >
@@ -117,7 +117,7 @@ const ServiceTabs: React.FC<ServiceTabsProps> = ({
             className={cn(
               "rounded-full border shadow-sm transition-colors duration-300 flex items-center justify-center h-10", 
               selectedTab === "standard" 
-                ? "text-blue-600 bg-[#EFF6FF] border-blue-200 font-medium" 
+                ? "text-blue-600 bg-[#D3E4FD] border-blue-200 font-medium" 
                 : "text-gray-500 bg-white border-gray-200 hover:bg-blue-50"
             )}
           >
