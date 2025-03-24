@@ -2,6 +2,7 @@
 import React from 'react';
 import WeightInput from '../WeightInput';
 import { Label } from "@/components/ui/label";
+import { motion } from "framer-motion";
 
 interface WeightInputSectionProps {
   weight: number | string;
@@ -17,7 +18,12 @@ const WeightInputSection: React.FC<WeightInputSectionProps> = ({
   onChange
 }) => {
   return (
-    <div className="space-y-3">
+    <motion.div 
+      className="space-y-3"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
       <Label htmlFor="weight" className="text-base font-medium text-gray-700">
         {unit === 'sft' ? 'Estimated Area (SFT)' : 'Estimated Weight (KG)'}
       </Label>
@@ -28,7 +34,7 @@ const WeightInputSection: React.FC<WeightInputSectionProps> = ({
         onChange={onChange} 
         placeholder={unit === 'sft' ? "Enter the estimated area" : "Enter the estimated weight"}
       />
-    </div>
+    </motion.div>
   );
 };
 
