@@ -21,6 +21,7 @@ import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 const ProfileInfo: React.FC = () => {
   const navigate = useNavigate();
+  // Use a stable photo URL to avoid auto-switching
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>('/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png');
   const [isEditing, setIsEditing] = useState(false);
 
@@ -55,7 +56,10 @@ const ProfileInfo: React.FC = () => {
                 />
               ) : (
                 <Avatar className="h-20 w-20 border-2 border-white shadow-md">
-                  <AvatarImage src={profilePhotoUrl} alt="Raksha sha" />
+                  <AvatarImage 
+                    src={profilePhotoUrl} 
+                    alt="Raksha sha" 
+                  />
                   <AvatarFallback className="bg-blue-50 text-blue-500">
                     <User size={32} />
                   </AvatarFallback>

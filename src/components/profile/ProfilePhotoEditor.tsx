@@ -15,6 +15,7 @@ const ProfilePhotoEditor: React.FC<ProfilePhotoEditorProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -42,6 +43,10 @@ const ProfilePhotoEditor: React.FC<ProfilePhotoEditorProps> = ({
     toast("Profile photo updated successfully");
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <div 
       className="relative cursor-pointer"
@@ -50,10 +55,17 @@ const ProfilePhotoEditor: React.FC<ProfilePhotoEditorProps> = ({
       onClick={handleClick}
     >
       <Avatar className="h-20 w-20 border-2 border-white shadow-md">
-        <AvatarImage src={currentPhotoUrl} alt="Profile Photo" />
-        <AvatarFallback className="bg-blue-50 text-blue-500">
-          <User size={32} />
-        </AvatarFallback>
+        {!imageError ? (
+          <AvatarImage 
+            src={currentPhotoUrl} 
+            alt="Profile Photo" 
+            onError={handleImageError}
+          />
+        ) : (
+          <AvatarFallback className="bg-blue-50 text-blue-500">
+            <User size={32} />
+          </AvatarFallback>
+        )}
       </Avatar>
       
       {/* Camera overlay on hover */}
