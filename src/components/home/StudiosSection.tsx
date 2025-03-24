@@ -74,6 +74,7 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
   useEffect(() => {
     // Get the services section element for detecting when to make filters sticky
     const servicesRow = document.getElementById('services-row');
+    const servicesHeight = servicesRow ? servicesRow.offsetHeight : 0;
     
     const handleScroll = () => {
       if (servicesRow) {
@@ -119,7 +120,11 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
         {/* Filters container */}
         <div 
           ref={filtersRef}
-          className={isFiltersSticky ? 'fixed left-0 right-0 top-0 z-30' : 'relative'}
+          className={isFiltersSticky ? 'fixed left-0 right-0 z-30' : 'relative'}
+          style={{
+            top: isFiltersSticky ? (document.getElementById('services-row')?.offsetHeight || 0) + 'px' : 'auto',
+            transition: 'all 0.2s ease-in-out'
+          }}
         >
           <StudioFilters 
             onFilterChange={handleFilterChange} 

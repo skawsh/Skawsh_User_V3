@@ -30,11 +30,10 @@ const StudioFilters: React.FC<StudioFiltersProps> = ({
 
   return (
     <div className={`flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px] 
-      ${isSticky ? 'sticky-filters py-2 bg-white/95 backdrop-blur-sm shadow-sm border-b w-full' : ''} 
+      ${isSticky ? 'py-2 bg-white/95 backdrop-blur-sm shadow-sm border-b w-full' : ''} 
       ${className}`}
       style={{
         transition: 'all 0.2s ease-in-out',
-        zIndex: isSticky ? 30 : 'auto',
       }}
     >
       <FilterButton
