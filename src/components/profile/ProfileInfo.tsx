@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -215,7 +214,7 @@ const ProfileInfo: React.FC = () => {
             icon={<Building size={18} className="text-primary-500" />} 
             title="Skawsh for Studio" 
             description="Partner with us for your business"
-            onClick={() => handleMenuItem('/studio')} 
+            onClick={() => handleMenuItem('/register-studio')} 
           />
           <ProfileMenuItem 
             icon={<HelpCircle size={18} className="text-primary-500" />} 

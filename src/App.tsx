@@ -27,6 +27,7 @@ import AddNewAddress from "./pages/AddNewAddress";
 import OrderConfirmation from './pages/OrderConfirmation';
 import TermsAndConditions from './pages/TermsAndConditions';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Studio from './pages/Studio';
 import { useState, useEffect } from "react";
 import RateExperiencePopup from "./components/RateExperiencePopup";
 
@@ -97,6 +98,7 @@ function App() {
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/register-studio" element={<Studio />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           
