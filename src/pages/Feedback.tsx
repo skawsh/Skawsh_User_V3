@@ -1,17 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from '../components/ui/use-toast';
-import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
-import { Label } from '../components/ui/label';
 
 const Feedback: React.FC = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
-  const [rating, setRating] = useState('satisfied');
+  const [rating, setRating] = useState(0);
+  const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -38,6 +38,11 @@ const Feedback: React.FC = () => {
       return;
     }
     
+    if (rating === 0) {
+      toast("Error: Please select a rating before submitting.");
+      return;
+    }
+    
     setIsSubmitting(true);
     
     // Simulate API call
@@ -47,6 +52,18 @@ const Feedback: React.FC = () => {
       setMessage('');
       navigate('/profile');
     }, 1500);
+  };
+
+  const handleStarClick = (selectedRating: number) => {
+    setRating(selectedRating);
+  };
+
+  const handleStarHover = (starIndex: number) => {
+    setHoveredRating(starIndex);
+  };
+
+  const handleStarLeave = () => {
+    setHoveredRating(0);
   };
 
   return (
@@ -81,38 +98,43 @@ const Feedback: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6 px-4">
           <div className="space-y-4">
             <h2 className="text-lg font-medium text-gray-700">How satisfied are you with Skawsh?</h2>
-            <RadioGroup 
-              value={rating}
-              onValueChange={setRating}
-              className="flex flex-col space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="very_satisfied" id="r1" />
-                <Label htmlFor="r1">Very Satisfied</Label>
+            
+            <div className="flex justify-center py-4">
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((starIndex) => (
+                  <div
+                    key={starIndex}
+                    className="cursor-pointer transition-transform hover:scale-110"
+                    onClick={() => handleStarClick(starIndex)}
+                    onMouseEnter={() => handleStarHover(starIndex)}
+                    onMouseLeave={handleStarLeave}
+                  >
+                    <Star
+                      size={32}
+                      className={`${
+                        (hoveredRating || rating) >= starIndex 
+                          ? 'fill-yellow-400 text-yellow-400' 
+                          : 'text-gray-300'
+                      } stroke-[1.5px]`}
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="satisfied" id="r2" />
-                <Label htmlFor="r2">Satisfied</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="neutral" id="r3" />
-                <Label htmlFor="r3">Neutral</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dissatisfied" id="r4" />
-                <Label htmlFor="r4">Dissatisfied</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="very_dissatisfied" id="r5" />
-                <Label htmlFor="r5">Very Dissatisfied</Label>
-              </div>
-            </RadioGroup>
+            </div>
+
+            <div className="text-center text-sm text-gray-500">
+              {rating === 0 ? 'Select a rating' : 
+               rating === 1 ? 'Very Dissatisfied' :
+               rating === 2 ? 'Dissatisfied' :
+               rating === 3 ? 'Neutral' :
+               rating === 4 ? 'Satisfied' : 'Very Satisfied'}
+            </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="feedback" className="text-lg font-medium text-gray-700">
+            <label htmlFor="feedback" className="text-lg font-medium text-gray-700">
               Tell us more about your experience
-            </Label>
+            </label>
             <Textarea
               id="feedback"
               placeholder="Write your feedback here..."
@@ -125,7 +147,7 @@ const Feedback: React.FC = () => {
           <Button 
             type="submit" 
             className="w-full bg-primary-500 hover:bg-primary-600 text-white"
-            disabled={isSubmitting}
+            disabled={isSubmitting || rating === 0}
           >
             {isSubmitting ? "Submitting..." : "Submit Feedback"}
           </Button>
