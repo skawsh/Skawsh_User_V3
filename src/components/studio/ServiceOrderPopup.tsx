@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { X, ShoppingBag, Clock } from 'lucide-react';
+import { X, ShoppingBag, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,7 @@ import WeightInput from './service/WeightInput';
 import ClothingItemsList, { ClothingItem } from './service/ClothingItemsList';
 import AddClothingItemForm from './service/AddClothingItemForm';
 import { formatDecimal } from '@/utils/formatUtils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const DEFAULT_CLOTHING_ITEMS = [
   { name: 'Shirt', quantity: 0 },
@@ -46,6 +48,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   const [newItemName, setNewItemName] = useState('');
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [unit, setUnit] = useState<string>('kg');
+  const [isClothingItemsOpen, setIsClothingItemsOpen] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,6 +56,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setClothingItems(DEFAULT_CLOTHING_ITEMS);
       setNewItemName('');
       setIsAddingItem(false);
+      setIsClothingItemsOpen(true);
       
       if (service.unit && service.unit.includes('per sft')) {
         setUnit('sft');
@@ -125,9 +129,16 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     return !isNaN(numWeight) && numWeight > 0;
   };
 
+  const toggleClothingItems = () => {
+    setIsClothingItemsOpen(!isClothingItemsOpen);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="max-w-md p-0 gap-0 rounded-xl">
+      <DialogContent 
+        className="max-w-md p-0 gap-0 rounded-xl animate-in slide-in-from-bottom duration-300"
+        style={{ transform: 'translate(-50%, -50%)' }}
+      >
         <div className="flex items-center justify-between p-4 border-b">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
             {service.name}
@@ -153,24 +164,40 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
             />
           </div>
           
-          {unit === 'kg' && (
-            <div>
-              <label className="text-sm font-medium block mb-2">Select Clothing Items (Optional)</label>
+          {unit === 'kg' && isWeightValid() && (
+            <div className="border rounded-lg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium">
+                  Add clothing items within {weight}{unit} (Optional)
+                </label>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 text-sm text-blue-600"
+                  onClick={toggleClothingItems}
+                >
+                  {isClothingItemsOpen ? 'Skip' : 'Show'}
+                </Button>
+              </div>
               
-              <AddClothingItemForm 
-                isAddingItem={isAddingItem}
-                newItemName={newItemName}
-                onNewItemNameChange={handleNewItemNameChange}
-                onAddItem={handleAddItem}
-                onToggleAddingItem={setIsAddingItem}
-                isDisabled={!isWeightValid()}
-              />
-              
-              <ClothingItemsList 
-                clothingItems={clothingItems} 
-                onQuantityChange={handleQuantityChange}
-                isDisabled={!isWeightValid()}
-              />
+              <Collapsible open={isClothingItemsOpen} onOpenChange={setIsClothingItemsOpen}>
+                <CollapsibleContent className="space-y-3 pt-2">
+                  <AddClothingItemForm 
+                    isAddingItem={isAddingItem}
+                    newItemName={newItemName}
+                    onNewItemNameChange={handleNewItemNameChange}
+                    onAddItem={handleAddItem}
+                    onToggleAddingItem={setIsAddingItem}
+                    isDisabled={!isWeightValid()}
+                  />
+                  
+                  <ClothingItemsList 
+                    clothingItems={clothingItems} 
+                    onQuantityChange={handleQuantityChange}
+                    isDisabled={!isWeightValid()}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
             </div>
           )}
         </div>
