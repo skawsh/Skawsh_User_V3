@@ -1,9 +1,9 @@
 
-import React, { useRef } from 'react';
-import { MapPin, Tag, Clock, Star, TrendingUp } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import StudioCard from './StudioCard';
-import FilterButton from './FilterButton';
+import StudioFilters from '../studio/StudioFilters';
+import { FilterType } from '../studio/StudioFilters';
 
 interface StudioItem {
   id: string;
@@ -21,7 +21,91 @@ interface StudiosSectionProps {
 }
 
 const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
+  const [isFiltersSticky, setIsFiltersSticky] = useState(false);
+  const [stickyHeight, setStickyHeight] = useState(0);
+  const [filteredStudios, setFilteredStudios] = useState<StudioItem[]>(studios);
+  const [activeFilter, setActiveFilter] = useState<FilterType>(null);
+  
   const studiosRef = useRef<HTMLDivElement>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
+  const filtersWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Handle filter change
+  const handleFilterChange = (filter: FilterType) => {
+    setActiveFilter(filter);
+    
+    if (filter === null) {
+      setFilteredStudios(studios);
+      return;
+    }
+    
+    // Apply filtering logic based on the selected filter
+    // This is a simplified example - you would implement actual filtering logic
+    let filtered = [...studios];
+    
+    switch (filter) {
+      case 'nearby':
+        filtered = studios.filter(studio => 
+          studio.distance && parseFloat(studio.distance) < 2.0);
+        break;
+      case 'offers':
+        filtered = studios.filter(studio => studio.promoted);
+        break;
+      case 'express':
+        filtered = studios.filter(studio => 
+          studio.deliveryTime && studio.deliveryTime.toLowerCase().includes('same day') || 
+          studio.deliveryTime && studio.deliveryTime.includes('hours'));
+        break;
+      case 'rated':
+        filtered = studios.filter(studio => 
+          studio.rating && studio.rating >= 4.7);
+        break;
+      case 'budget':
+        // Example filter - in a real app you'd have price data
+        filtered = studios.filter((_, index) => index % 2 === 0);
+        break;
+      default:
+        filtered = studios;
+    }
+    
+    setFilteredStudios(filtered);
+  };
+
+  useEffect(() => {
+    const servicesRow = document.getElementById('services-row');
+    const handleScroll = () => {
+      if (filtersWrapperRef.current && servicesRow) {
+        const servicesBottom = servicesRow.getBoundingClientRect().bottom;
+        const shouldStick = servicesBottom <= 0;
+
+        if (shouldStick && !isFiltersSticky) {
+          if (filtersRef.current) {
+            setStickyHeight(filtersRef.current.offsetHeight);
+          }
+          requestAnimationFrame(() => {
+            setIsFiltersSticky(true);
+          });
+        } else if (!shouldStick && isFiltersSticky) {
+          requestAnimationFrame(() => {
+            setIsFiltersSticky(false);
+          });
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, {
+      passive: true
+    });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isFiltersSticky]);
+
+  // Set initial height for the sticky placeholder
+  useEffect(() => {
+    if (filtersRef.current && stickyHeight === 0) {
+      setStickyHeight(filtersRef.current.offsetHeight);
+    }
+  }, []);
 
   return (
     <div 
@@ -39,16 +123,33 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
         </CardContent>
       </Card>
       
-      <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px]">
-        <FilterButton icon={<MapPin size={14} />} label="Nearby" />
-        <FilterButton icon={<Tag size={14} />} label="Offers" />
-        <FilterButton icon={<Clock size={14} />} label="Express Delivery" />
-        <FilterButton icon={<Star size={14} />} label="Top Rated" />
-        <FilterButton icon={<TrendingUp size={14} />} label="Budget Friendly" />
+      <div ref={filtersWrapperRef} className="relative">
+        {/* Filters container */}
+        <div 
+          ref={filtersRef}
+          className={`${isFiltersSticky ? 'fixed top-0 left-0 right-0 z-20 will-change-transform transition-transform duration-200' : ''}`}
+          style={{
+            top: isFiltersSticky ? '0' : 'auto'
+          }}
+        >
+          <StudioFilters 
+            onFilterChange={handleFilterChange} 
+            isSticky={isFiltersSticky}
+          />
+        </div>
+        
+        {/* Placeholder to prevent content jump when filters become sticky */}
+        {isFiltersSticky && (
+          <div 
+            style={{ height: `${stickyHeight}px` }} 
+            className="pointer-events-none" 
+            aria-hidden="true"
+          />
+        )}
       </div>
       
       <div className="space-y-4 mx-0 px-2">
-        {studios.map((studio, index) => (
+        {filteredStudios.length > 0 ? filteredStudios.map((studio, index) => (
           <StudioCard 
             key={studio.id} 
             id={studio.id} 
@@ -61,7 +162,11 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
             index={index} 
             promoted={studio.promoted} 
           />
-        ))}
+        )) : (
+          <div className="text-center py-10 text-gray-500">
+            No studios match the selected filter. Try another filter.
+          </div>
+        )}
       </div>
     </div>
   );

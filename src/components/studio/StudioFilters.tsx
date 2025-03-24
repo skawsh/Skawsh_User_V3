@@ -7,9 +7,15 @@ export type FilterType = 'nearby' | 'offers' | 'express' | 'rated' | 'budget' | 
 
 interface StudioFiltersProps {
   onFilterChange?: (filter: FilterType) => void;
+  isSticky?: boolean;
+  className?: string;
 }
 
-const StudioFilters: React.FC<StudioFiltersProps> = ({ onFilterChange }) => {
+const StudioFilters: React.FC<StudioFiltersProps> = ({ 
+  onFilterChange, 
+  isSticky = false,
+  className = ""
+}) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
 
   const handleFilterClick = (filter: FilterType) => {
@@ -23,7 +29,7 @@ const StudioFilters: React.FC<StudioFiltersProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px]">
+    <div className={`flex gap-3 mb-4 pb-2 overflow-x-auto no-scrollbar px-[12px] ${isSticky ? 'py-2 bg-white/95 backdrop-blur-sm shadow-sm border-b' : ''} ${className}`}>
       <FilterButton
         icon={<MapPin size={14} />}
         label="Nearby"
