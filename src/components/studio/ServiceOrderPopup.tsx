@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -55,7 +54,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       setNewItemName('');
       setIsAddingItem(false);
       
-      // Set the unit based on the service unit
       if (service.unit && service.unit.includes('per sft')) {
         setUnit('sft');
       } else {
@@ -90,29 +88,24 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     setNewItemName(e.target.value);
   };
 
-  // Calculate price based on weight and express status
   const totalPrice = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     if (isNaN(numWeight)) return 0;
-    // Apply 1.5x price multiplier for express service
     const basePrice = service.price * numWeight;
     return Math.round(isExpress ? basePrice * 1.5 : basePrice);
   };
 
   const handleAddToCart = () => {
-    // Convert weight to number for cart
     let numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     
-    // Only proceed if weight is a valid number and greater than 0
     if (!isNaN(numWeight) && numWeight > 0) {
-      // Format the weight to have only one decimal place
       numWeight = formatDecimal(numWeight);
       
       const orderDetails = {
         serviceId: service.id,
         serviceName: service.name,
         weight: numWeight, 
-        price: service.price, // Store base price, not total
+        price: service.price,
         items: clothingItems.filter(item => item.quantity > 0),
         isExpress: isExpress,
         studioId: studioId
@@ -122,13 +115,11 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     }
   };
 
-  // Determine if Add to Cart button should be enabled
   const isAddToCartEnabled = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     return !isNaN(numWeight) && numWeight > 0;
   };
 
-  // Check if weight is valid for enabling clothing items
   const isWeightValid = () => {
     const numWeight = typeof weight === 'string' ? parseFloat(weight) : weight;
     return !isNaN(numWeight) && numWeight > 0;
@@ -146,9 +137,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
               </span>
             )}
           </DialogTitle>
-          <button className="rounded-full h-6 w-6 flex items-center justify-center" onClick={onClose}>
-            <X size={18} />
-          </button>
         </div>
         
         <div className="p-4 space-y-4">
