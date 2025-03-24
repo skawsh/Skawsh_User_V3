@@ -2,10 +2,11 @@
 import React from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ClothingItem } from '../ClothingItemsList';
 import ClothingItemsList from '../ClothingItemsList';
 import AddClothingItemForm from '../AddClothingItemForm';
+import { motion } from "framer-motion";
 
 interface ClothingItemsSectionProps {
   weight: number | string;
@@ -41,7 +42,12 @@ const ClothingItemsSection: React.FC<ClothingItemsSectionProps> = ({
   }
 
   return (
-    <div className="border rounded-lg p-5 bg-gray-50/80 shadow-sm backdrop-blur-sm transition-all duration-300 border-gray-200">
+    <motion.div 
+      className="border rounded-lg p-5 bg-gray-50/80 shadow-sm backdrop-blur-sm transition-all duration-300 border-gray-200"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex items-center justify-between mb-3">
         <label className="text-sm font-medium text-gray-700">
           Add clothing items within {weight}{unit} (Optional)
@@ -53,36 +59,61 @@ const ClothingItemsSection: React.FC<ClothingItemsSectionProps> = ({
           onClick={() => setIsClothingItemsOpen(!isClothingItemsOpen)}
         >
           {isClothingItemsOpen ? (
-            <span className="flex items-center gap-1">
+            <motion.span 
+              className="flex items-center gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
               Hide <ChevronUp className="h-4 w-4" />
-            </span>
+            </motion.span>
           ) : (
-            <span className="flex items-center gap-1">
+            <motion.span 
+              className="flex items-center gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
               Show <ChevronDown className="h-4 w-4" />
-            </span>
+            </motion.span>
           )}
         </Button>
       </div>
       
       <Collapsible open={isClothingItemsOpen} onOpenChange={setIsClothingItemsOpen}>
-        <CollapsibleContent className="space-y-4 pt-2 animate-in slide-in-from-top duration-200">
-          <AddClothingItemForm 
-            isAddingItem={isAddingItem}
-            newItemName={newItemName}
-            onNewItemNameChange={onNewItemNameChange}
-            onAddItem={onAddItem}
-            onToggleAddingItem={onToggleAddingItem}
-            isDisabled={!isWeightValid()}
-          />
-          
-          <ClothingItemsList 
-            clothingItems={clothingItems} 
-            onQuantityChange={onQuantityChange}
-            isDisabled={!isWeightValid()}
-          />
+        <CollapsibleContent className="space-y-4 overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ 
+              opacity: isClothingItemsOpen ? 1 : 0,
+              height: isClothingItemsOpen ? "auto" : 0
+            }}
+            transition={{ 
+              duration: 0.5, 
+              ease: [0.04, 0.62, 0.23, 0.98] 
+            }}
+            className="pt-2"
+          >
+            <AddClothingItemForm 
+              isAddingItem={isAddingItem}
+              newItemName={newItemName}
+              onNewItemNameChange={onNewItemNameChange}
+              onAddItem={onAddItem}
+              onToggleAddingItem={onToggleAddingItem}
+              isDisabled={!isWeightValid()}
+            />
+            
+            <ClothingItemsList 
+              clothingItems={clothingItems} 
+              onQuantityChange={onQuantityChange}
+              isDisabled={!isWeightValid()}
+            />
+          </motion.div>
         </CollapsibleContent>
       </Collapsible>
-    </div>
+    </motion.div>
   );
 };
 
