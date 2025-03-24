@@ -41,12 +41,12 @@ const StudioDetails: React.FC<StudioDetailsProps> = ({
         )}
         
         {rating && (
-          <div className="flex items-center">
-            <div className="bg-green-500 text-white px-2 py-0.5 rounded-full flex items-center">
-              <span className="text-xs mr-1">★</span>
+          <div className="flex flex-col items-end">
+            <div className="bg-green-500 text-white px-2.5 py-0.5 rounded-md flex items-center">
+              <Star size={14} className="mr-1 fill-white" />
               <span className="text-xs font-bold">{rating}</span>
             </div>
-            <span className="text-xs text-blue-500 underline ml-1">Reviews</span>
+            <span className="text-xs text-blue-500 mt-1">See all reviews</span>
           </div>
         )}
       </div>
