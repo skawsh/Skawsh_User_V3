@@ -84,12 +84,13 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
     const servicesHeight = servicesRow.offsetHeight;
 
     const handleScroll = () => {
-      // Stick once we scroll beyond the bottom of the services row
-      const scrolledPastServices = window.scrollY >= (servicesOffsetTop + servicesHeight);
-
-      // Update state only if there's a change
-      if (scrolledPastServices !== isFiltersSticky) {
-        setIsFiltersSticky(scrolledPastServices);
+      // Stick only when scrolling beyond the services row, unstick when scrolling back up
+      const scrollPosition = window.scrollY;
+      const shouldBeSticky = scrollPosition >= (servicesOffsetTop + servicesHeight);
+      
+      // Only update state if the sticky status changes to avoid unnecessary renders
+      if (shouldBeSticky !== isFiltersSticky) {
+        setIsFiltersSticky(shouldBeSticky);
       }
     };
 
