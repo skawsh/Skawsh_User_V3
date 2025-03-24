@@ -15,15 +15,30 @@ import {
   Phone, 
   Mail,
   User,
-  Heart
+  Heart,
+  Check,
+  X
 } from 'lucide-react';
 import ProfilePhotoEditor from './ProfilePhotoEditor';
+import { toast } from "sonner";
+
+interface ProfileData {
+  name: string;
+  phone: string;
+  email: string;
+}
 
 const ProfileInfo: React.FC = () => {
   const navigate = useNavigate();
   // Use a stable photo URL to avoid auto-switching
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>('/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png');
   const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileData>({
+    name: "Raksha sha",
+    phone: "9876123540",
+    email: "kavyasri@gmail.com"
+  });
+  const [editedData, setEditedData] = useState<ProfileData>({...profileData});
 
   const handleMenuItem = (path: string) => {
     // Navigate to the respective path
@@ -36,7 +51,25 @@ const ProfileInfo: React.FC = () => {
   };
 
   const handleEditProfile = () => {
+    if (isEditing) {
+      // Save changes
+      setProfileData({...editedData});
+      toast("Profile updated successfully");
+    }
     setIsEditing(!isEditing);
+  };
+
+  const handleCancelEdit = () => {
+    setEditedData({...profileData});
+    setIsEditing(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditedData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handlePhotoChange = (newPhotoUrl: string) => {
@@ -66,23 +99,77 @@ const ProfileInfo: React.FC = () => {
                 </Avatar>
               )}
               <div>
-                <h1 className="text-xl font-semibold text-gray-800">Raksha sha</h1>
-                <div className="flex items-center gap-2 text-gray-600 mt-1">
-                  <Phone size={14} className="text-primary-500" />
-                  <span className="text-sm">9876123540</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600 mt-1">
-                  <Mail size={14} className="text-primary-500" />
-                  <span className="text-sm">kavyasri@gmail.com</span>
-                </div>
+                {isEditing ? (
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      name="name"
+                      value={editedData.name}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-1 text-lg font-semibold border rounded bg-white/80"
+                    />
+                    <div className="flex items-center gap-2">
+                      <Phone size={14} className="text-primary-500" />
+                      <input
+                        type="text"
+                        name="phone"
+                        value={editedData.phone}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-1 text-sm border rounded bg-white/80"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail size={14} className="text-primary-500" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={editedData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-1 text-sm border rounded bg-white/80"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h1 className="text-xl font-semibold text-gray-800">{profileData.name}</h1>
+                    <div className="flex items-center gap-2 text-gray-600 mt-1">
+                      <Phone size={14} className="text-primary-500" />
+                      <span className="text-sm">{profileData.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600 mt-1">
+                      <Mail size={14} className="text-primary-500" />
+                      <span className="text-sm">{profileData.email}</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-            <button 
-              className="text-primary-500 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-white/50"
-              onClick={handleEditProfile}
-            >
-              <Pencil size={20} />
-            </button>
+            {isEditing ? (
+              <div className="flex gap-2">
+                <button 
+                  className="text-green-500 hover:text-green-600 transition-colors p-2 rounded-full hover:bg-white/50"
+                  onClick={handleEditProfile}
+                  aria-label="Save changes"
+                >
+                  <Check size={20} />
+                </button>
+                <button 
+                  className="text-red-500 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-white/50"
+                  onClick={handleCancelEdit}
+                  aria-label="Cancel edit"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="text-primary-500 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-white/50"
+                onClick={handleEditProfile}
+                aria-label="Edit profile"
+              >
+                <Pencil size={20} />
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>
