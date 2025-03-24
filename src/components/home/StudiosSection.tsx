@@ -74,7 +74,7 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
   useEffect(() => {
     // Get the services section element for detecting when to make filters sticky
     const servicesRow = document.getElementById('services-row');
-    const servicesHeight = servicesRow ? servicesRow.offsetHeight : 0;
+    if (!servicesRow) return;
     
     const handleScroll = () => {
       if (servicesRow) {
