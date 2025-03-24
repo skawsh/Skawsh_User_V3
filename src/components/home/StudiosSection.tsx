@@ -121,7 +121,8 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
       style={{
         position: 'relative',
         zIndex: 0,
-        marginTop: '15px'
+        marginTop: '15px',
+        backgroundColor: '#ECF5FA' // Changed background color here
       }}
     >
       <Card className="border-none shadow-none bg-transparent mb-2">
@@ -140,7 +141,8 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
             top: isFiltersSticky ? 
               (document.getElementById('services-row')?.offsetHeight || 0) + 'px' : 
               'auto',
-            transition: 'all 0.2s ease-in-out'
+            transition: 'all 0.2s ease-in-out',
+            backgroundColor: '#ECF5FA' // Added background color to filters when sticky
           }}
         >
           <StudioFilters 
