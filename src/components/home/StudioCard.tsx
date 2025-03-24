@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Star, Clock, MapPin, ChevronDown } from 'lucide-react';
+import { Heart, Star, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -162,6 +162,20 @@ const StudioCard: React.FC<StudioCardProps> = ({
     }, 600); // Animation duration
   };
 
+  // Generate location names based on studio name for demonstration
+  const getLocationName = () => {
+    const locationMap: Record<string, string> = {
+      'Busy Bee': 'Manikonda',
+      'U clean': 'Madhapur',
+      'Tumble Dry': 'Gachibowli',
+      'Fabrico': 'Hitech City',
+      'Eco Clean': 'Kondapur',
+      'Mycloth': 'Jubilee Hills'
+    };
+    
+    return locationMap[name] || 'Hyderabad';
+  };
+
   return (
     <Link 
       to={`/studio/${id}`} 
@@ -206,8 +220,8 @@ const StudioCard: React.FC<StudioCardProps> = ({
           <div className="flex justify-between items-center mt-2">
             {distance && (
               <div className="flex items-center text-blue-500 text-sm">
-                <span>{distance}</span>
-                <ChevronDown size={16} className="ml-1" />
+                <MapPin size={14} className="mr-1" />
+                <span>{getLocationName()}, {distance}</span>
               </div>
             )}
             
