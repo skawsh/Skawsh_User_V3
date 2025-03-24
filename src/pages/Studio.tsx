@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -15,7 +14,6 @@ const Studio: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Profile data (this could be fetched from a user context/state in a real app)
   const profileData = {
     name: "Raksha sha",
     phone: "9876123540",
@@ -23,13 +21,11 @@ const Studio: React.FC = () => {
     photoUrl: '/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png'
   };
   
-  // Form state
   const [studioData, setStudioData] = useState({
     name: "",
     address: ""
   });
   
-  // Form validation
   const [errors, setErrors] = useState({
     name: false,
     address: false
@@ -42,7 +38,6 @@ const Studio: React.FC = () => {
       [name]: value
     }));
     
-    // Clear error when user types
     if (errors[name as keyof typeof errors]) {
       setErrors(prev => ({
         ...prev,
@@ -54,7 +49,6 @@ const Studio: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     const newErrors = {
       name: !studioData.name.trim(),
       address: !studioData.address.trim()
@@ -62,19 +56,15 @@ const Studio: React.FC = () => {
     
     setErrors(newErrors);
     
-    // If there are any errors, don't submit
     if (newErrors.name || newErrors.address) {
       return;
     }
     
-    // Submit form
     setIsSubmitting(true);
     
-    // Mock API call
     setTimeout(() => {
       toast.success("Studio registration submitted successfully!");
       setIsSubmitting(false);
-      // Redirect to home after successful submission
       navigate('/');
     }, 1500);
   };
@@ -100,7 +90,6 @@ const Studio: React.FC = () => {
         </div>
         
         <div className="py-6 space-y-6 animate-fade-in">
-          {/* Profile Info Card */}
           <Card className="overflow-hidden shadow-md border-none">
             <CardContent className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
               <div className="flex items-center gap-5">
@@ -125,7 +114,6 @@ const Studio: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Studio Registration Form */}
           <div className="space-y-2">
             <h3 className="text-lg font-medium text-gray-700 px-1">Studio Details</h3>
             <Card className="border-none shadow-sm">
@@ -176,7 +164,7 @@ const Studio: React.FC = () => {
                     className="w-full bg-primary-500 hover:bg-primary-600"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Register Studio'}
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                   </Button>
                 </form>
               </CardContent>
