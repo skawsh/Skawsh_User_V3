@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -15,7 +16,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       <button onClick={onClick} className={cn("h-14 w-14 rounded-full shadow-lg text-white flex items-center justify-center transition-all duration-300 bg-black")}>
         <Menu size={24} />
       </button>
-      <span className="mt-1 text-xs font-medium bg-white/80 px-2 py-0.5 rounded-full backdrop-blur-sm text-white">Services</span>
+      <span className="mt-1 text-xs font-medium bg-black px-2 py-0.5 rounded-full backdrop-blur-sm text-white">Services</span>
     </div>;
 };
 export default CategoryButton;
