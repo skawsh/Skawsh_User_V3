@@ -72,17 +72,17 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
   };
 
   useEffect(() => {
+    // Get the services section element for detecting when to make filters sticky
     const servicesRow = document.getElementById('services-row');
     
     const handleScroll = () => {
       if (servicesRow) {
         const servicesBottom = servicesRow.getBoundingClientRect().bottom;
+        // Make filters sticky when services section scrolls out of view
         const shouldStick = servicesBottom <= 0;
         
+        // Only update state if the sticky status changes to avoid unnecessary renders
         if (shouldStick !== isFiltersSticky) {
-          if (filtersRef.current && !stickyHeight) {
-            setStickyHeight(filtersRef.current.offsetHeight);
-          }
           setIsFiltersSticky(shouldStick);
         }
       }
@@ -90,24 +90,24 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isFiltersSticky, stickyHeight]);
+  }, [isFiltersSticky]);
 
-  // Set initial height for the sticky placeholder
+  // Measure the filters height for the placeholder
   useEffect(() => {
-    if (filtersRef.current && stickyHeight === 0) {
+    if (filtersRef.current) {
       setStickyHeight(filtersRef.current.offsetHeight);
     }
-  }, [stickyHeight]);
+  }, []); // Only run once on mount
 
   return (
     <div 
       ref={studiosRef} 
+      className="mb-10 my-[14px] -mx-4 px-[5px]"
       style={{
         position: 'relative',
         zIndex: 0,
         marginTop: '15px'
-      }} 
-      className="mb-10 my-[14px] -mx-4 px-[5px]"
+      }}
     >
       <Card className="border-none shadow-none bg-transparent mb-2">
         <CardContent className="p-0 px-[15px]">
@@ -119,10 +119,7 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
         {/* Filters container */}
         <div 
           ref={filtersRef}
-          className={`${isFiltersSticky ? 'fixed left-0 right-0 z-30' : 'relative'}`}
-          style={{
-            top: isFiltersSticky ? '0' : 'auto'
-          }}
+          className={isFiltersSticky ? 'fixed left-0 right-0 top-0 z-30' : 'relative'}
         >
           <StudioFilters 
             onFilterChange={handleFilterChange} 
@@ -134,7 +131,7 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
         {isFiltersSticky && (
           <div 
             style={{ height: `${stickyHeight}px` }} 
-            className="pointer-events-none" 
+            className="w-full pointer-events-none" 
             aria-hidden="true"
           />
         )}

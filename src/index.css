@@ -114,6 +114,13 @@
     font-weight: 500 !important;
     letter-spacing: 0.01em !important;
   }
+  
+  /* Sticky filters styles */
+  .sticky-filters {
+    position: sticky;
+    top: 0;
+    transition: all 0.2s ease;
+  }
 }
 
 @layer base {
