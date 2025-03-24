@@ -29,6 +29,11 @@ const Profile: React.FC = () => {
     navigate('/settings');
   };
 
+  const handleLogout = () => {
+    // For now, just redirect to home
+    navigate('/');
+  };
+
   return (
     <Layout hideFooter={true}>
       <div className="section-container bg-gradient-to-b from-primary-50 to-white min-h-screen">
@@ -71,7 +76,10 @@ const Profile: React.FC = () => {
             >
               <Settings size={20} className="text-primary-500" />
             </button>
-            <button className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors"
+            >
               <span className="text-sm font-medium">Logout</span>
             </button>
           </div>

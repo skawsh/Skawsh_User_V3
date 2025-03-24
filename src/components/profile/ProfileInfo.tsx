@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,9 +17,12 @@ import {
   User,
   Heart
 } from 'lucide-react';
+import ProfilePhotoEditor from './ProfilePhotoEditor';
 
 const ProfileInfo: React.FC = () => {
   const navigate = useNavigate();
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string>('/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png');
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleMenuItem = (path: string) => {
     // Navigate to the respective path
@@ -31,18 +34,33 @@ const ProfileInfo: React.FC = () => {
     navigate('/');
   };
 
+  const handleEditProfile = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handlePhotoChange = (newPhotoUrl: string) => {
+    setProfilePhotoUrl(newPhotoUrl);
+  };
+
   return (
     <div className="animate-fade-in space-y-6">
       <Card className="overflow-hidden shadow-md border-none">
         <CardContent className="p-6 bg-gradient-to-r from-primary-100 to-primary-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
-              <Avatar className="h-20 w-20 border-2 border-white shadow-md">
-                <AvatarImage src="/lovable-uploads/b78ac98e-5efb-4027-998b-c7528d5e2f90.png" alt="Raksha sha" />
-                <AvatarFallback className="bg-primary-100 text-primary-500">
-                  <User size={32} />
-                </AvatarFallback>
-              </Avatar>
+              {isEditing ? (
+                <ProfilePhotoEditor 
+                  currentPhotoUrl={profilePhotoUrl} 
+                  onPhotoChange={handlePhotoChange} 
+                />
+              ) : (
+                <Avatar className="h-20 w-20 border-2 border-white shadow-md">
+                  <AvatarImage src={profilePhotoUrl} alt="Raksha sha" />
+                  <AvatarFallback className="bg-blue-50 text-blue-500">
+                    <User size={32} />
+                  </AvatarFallback>
+                </Avatar>
+              )}
               <div>
                 <h1 className="text-xl font-semibold text-gray-800">Raksha sha</h1>
                 <div className="flex items-center gap-2 text-gray-600 mt-1">
@@ -55,7 +73,10 @@ const ProfileInfo: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button className="text-primary-500 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-white/50">
+            <button 
+              className="text-primary-500 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-white/50"
+              onClick={handleEditProfile}
+            >
               <Pencil size={20} />
             </button>
           </div>
