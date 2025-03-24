@@ -15,7 +15,7 @@ const WeightInput: React.FC<WeightInputProps> = ({
   unit, 
   price, 
   onChange,
-  placeholder = "Enter weight" 
+  placeholder = "Please enter the estimated weight" 
 }) => {
   return (
     <div className="relative">

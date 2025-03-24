@@ -154,14 +154,14 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         <div className="p-4 space-y-4">
           <div>
             <label htmlFor="weight" className="text-sm font-medium block mb-2">
-              {unit === 'sft' ? 'Area (SFT)' : 'Weight (KG)'}
+              {unit === 'sft' ? 'Estimated Area (SFT)' : 'Estimated Weight (KG)'}
             </label>
             <WeightInput 
               weight={weight} 
               unit={unit} 
               price={totalPrice()} 
               onChange={handleWeightChange} 
-              placeholder="Please enter the weight"
+              placeholder="Please enter the estimated weight"
             />
           </div>
           
