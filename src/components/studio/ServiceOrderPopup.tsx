@@ -132,23 +132,22 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent 
-        className="max-w-md p-0 gap-0 rounded-xl shadow-lg animate-in duration-300 slide-in-from-bottom"
-        style={{ transform: 'translate(-50%, -50%)' }}
+        className="max-w-md p-0 gap-0 rounded-xl overflow-hidden shadow-xl animate-in zoom-in-95 slide-in-from-bottom-10 duration-300"
       >
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="flex items-center justify-between p-5 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
             {service.name}
             {isExpress && (
-              <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">
-                Express
+              <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Clock className="h-3 w-3" /> Express
               </span>
             )}
           </DialogTitle>
         </div>
         
-        <div className="p-6 space-y-5">
+        <div className="p-6 space-y-5 bg-white">
           <div>
-            <label htmlFor="weight" className="text-sm font-medium block mb-2">
+            <label htmlFor="weight" className="text-sm font-medium block mb-2 text-gray-700">
               {unit === 'sft' ? 'Estimated Area (SFT)' : 'Estimated Weight (KG)'}
             </label>
             <WeightInput 
@@ -161,7 +160,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           </div>
           
           {unit === 'kg' && isWeightValid() && (
-            <div className="border rounded-lg p-4 bg-gray-50 shadow-sm">
+            <div className="border rounded-lg p-5 bg-gray-50/80 shadow-sm backdrop-blur-sm transition-all duration-300 border-gray-200">
               <div className="flex items-center justify-between mb-3">
                 <label className="text-sm font-medium text-gray-700">
                   Add clothing items within {weight}{unit} (Optional)
@@ -169,7 +168,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-8 text-sm text-blue-600 hover:bg-blue-50"
+                  className="h-8 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
                   onClick={() => setIsClothingItemsOpen(!isClothingItemsOpen)}
                 >
                   {isClothingItemsOpen ? (
@@ -206,13 +205,13 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           )}
         </div>
         
-        <div className="p-6 pt-0">
+        <div className="p-6 pt-0 bg-white">
           <Button 
             className={cn(
               "w-full h-12 rounded-lg text-white shadow-md transition-all", 
               isAddToCartEnabled() 
-                ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700" 
-                : "bg-gray-300 hover:bg-gray-400 text-gray-600"
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transform hover:translate-y-[-2px]" 
+                : "bg-gray-300 text-gray-600"
             )} 
             onClick={handleAddToCart} 
             disabled={!isAddToCartEnabled()}
