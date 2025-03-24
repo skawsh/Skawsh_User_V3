@@ -128,8 +128,10 @@ const StudiosSection: React.FC<StudiosSectionProps> = ({ studios }) => {
           ref={filtersRef}
           className={isFiltersSticky ? 'fixed left-0 right-0 z-30' : 'relative'}
           style={{
-            // If sticky, pin to the very top (adjust if you have a fixed header)
-            top: isFiltersSticky ? '0px' : 'auto',
+            // If sticky, position it right below the services row
+            top: isFiltersSticky ? 
+              (document.getElementById('services-row')?.offsetHeight || 0) + 'px' : 
+              'auto',
             transition: 'all 0.2s ease-in-out'
           }}
         >
