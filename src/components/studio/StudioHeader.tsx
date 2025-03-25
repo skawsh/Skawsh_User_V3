@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronLeft, Star } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,6 +15,7 @@ interface StudioHeaderProps {
   backButtonRef?: React.RefObject<HTMLButtonElement>;
   description?: string;
   onBackClick?: () => void;
+  onReportClick?: () => void;
 }
 
 interface LocationOption {
@@ -44,13 +44,13 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   deliveryTime,
   backButtonRef,
   description,
-  onBackClick
+  onBackClick,
+  onReportClick
 }) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Mock data for locations and services
   const currentLocation: LocationOption = {
     name: "Tolichowki",
     area: "Hyderabad",
@@ -175,7 +175,11 @@ const StudioHeader: React.FC<StudioHeaderProps> = ({
   };
 
   const handleReportStudio = () => {
-    alert(`Thank you for your feedback. ${name} has been reported.`);
+    if (onReportClick) {
+      onReportClick();
+    } else {
+      alert(`Thank you for your feedback. ${name} has been reported.`);
+    }
   };
 
   const handleLocationSelect = (location: LocationOption) => {
