@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import LocationBar from './LocationBar';
 import SearchBar from './SearchBar';
 import PromotionSlider from './PromotionSlider';
-import { Heart } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 import { startBubblesAnimation, stopBubblesAnimation } from '@/utils/animationUtils';
 
 interface Banner {
@@ -51,6 +51,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ banners }) => {
         <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
           <span className="font-bold text-xs">Welcome to Skawsh</span>
           <Heart size={14} className="ml-1 text-white" fill="white" />
+          <Sparkles size={14} className="ml-1 text-white animate-pulse" />
         </div>
       </div>
     </div>
