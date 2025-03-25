@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useIsMobile } from './use-mobile';
 
@@ -30,6 +31,12 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
       
       if (isKeyboardOpen) {
         // Keyboard is open - adjust content to be visible above keyboard
+        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
+        if (parent) {
+          parent.style.height = `${viewportHeight}px`;
+          parent.style.maxHeight = `${viewportHeight}px`;
+        }
+        
         drawerContent.style.height = `${viewportHeight}px`;
         drawerContent.style.maxHeight = `${viewportHeight}px`;
         
@@ -46,6 +53,12 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
         }
       } else {
         // Keyboard is closed - restore original layout
+        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
+        if (parent) {
+          parent.style.height = '';
+          parent.style.maxHeight = '';
+        }
+        
         drawerContent.style.height = '';
         drawerContent.style.maxHeight = '';
         drawerContent.style.overflow = '';
@@ -81,6 +94,12 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
       
       const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
       if (drawerContent) {
+        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
+        if (parent) {
+          parent.style.height = '';
+          parent.style.maxHeight = '';
+        }
+        
         drawerContent.style.height = '';
         drawerContent.style.maxHeight = '';
         drawerContent.style.overflow = '';

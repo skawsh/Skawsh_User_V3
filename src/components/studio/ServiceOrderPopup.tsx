@@ -62,12 +62,29 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   // Handle mobile keyboard
   useMobileKeyboard({ isOpen, contentRef: popupContentRef });
 
-  // Calculate adaptive height based on device and content state
-  const maxHeight = isMobile 
-    ? isClothingItemsOpen && isWeightValid() && unit === 'kg' 
-      ? '94dvh' 
-      : '90dvh' 
-    : '85vh';
+  // Determine adaptive height based on content state
+  const getAdaptiveHeight = () => {
+    if (!isMobile) return '85vh';
+    
+    // When clothing items section is expanded
+    if (isClothingItemsOpen && isWeightValid() && unit === 'kg') {
+      return 'auto';
+    }
+    
+    // When just entering weight
+    return isWeightValid() ? '75dvh' : '60dvh';
+  };
+
+  // Get appropriate maxHeight
+  const getMaxHeight = () => {
+    if (!isMobile) return '85vh';
+    
+    if (isClothingItemsOpen && isWeightValid() && unit === 'kg') {
+      return '96dvh'; 
+    }
+    
+    return '85dvh';
+  };
 
   return (
     <Drawer 
@@ -76,10 +93,11 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       dismissible
     >
       <DrawerContent 
-        className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 mobile-adaptive-height ${isClothingItemsOpen ? 'mobile-expanded' : ''}`}
+        className={`rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 ${isClothingItemsOpen ? 'mobile-expanded' : ''}`}
         style={{ 
-          height: isMobile && isClothingItemsOpen ? 'auto' : undefined,
-          maxHeight: maxHeight
+          height: getAdaptiveHeight(),
+          maxHeight: getMaxHeight(),
+          overflowY: isClothingItemsOpen ? 'auto' : 'hidden'
         }}
       >
         <ServiceOrderContent 

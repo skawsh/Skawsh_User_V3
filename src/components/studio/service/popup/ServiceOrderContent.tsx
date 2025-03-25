@@ -52,11 +52,18 @@ const ServiceOrderContent: React.FC<ServiceOrderContentProps> = ({
 }) => {
   const isMobile = useIsMobile();
   
+  const contentStyle = isMobile ? {
+    height: isClothingItemsOpen ? 'auto' : '100%',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    transition: 'all 0.3s ease-in-out'
+  } : {};
+  
   return (
     <div 
       className={`relative flex flex-col service-order-popup-content ${isClothingItemsOpen ? 'items-expanded' : ''}`}
       ref={contentRef}
-      style={{ height: isMobile && isClothingItemsOpen ? 'auto' : 'auto' }}
+      style={contentStyle}
     >
       {/* Bubble animation */}
       <BubbleAnimation isOpen={isOpen} />
