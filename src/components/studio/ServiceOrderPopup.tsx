@@ -1,13 +1,10 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import ServiceOrderHeader from './service/popup/ServiceOrderHeader';
-import WeightInputSection from './service/popup/WeightInputSection';
-import ClothingItemsSection from './service/popup/ClothingItemsSection';
+import ServiceOrderContent from './service/popup/ServiceOrderContent';
 import ServiceOrderFooter from './service/popup/ServiceOrderFooter';
 import { useServiceOrder } from './service/popup/useServiceOrder';
 import { useIsMobile } from "@/hooks/use-mobile";
-import BubbleAnimation from './service/popup/BubbleAnimation';
 import { useMobileKeyboard } from '@/hooks/useMobileKeyboard';
 
 interface ServiceOrderPopupProps {
@@ -35,7 +32,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const popupContentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState<string>("auto");
   
   const {
     weight,
@@ -66,21 +62,6 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   // Handle mobile keyboard
   useMobileKeyboard({ isOpen, contentRef: popupContentRef });
 
-  // Adjust content height when clothing items section is toggled
-  useEffect(() => {
-    if (isMobile && isWeightValid() && unit === 'kg') {
-      // When clothing items are shown, expand the content area
-      if (isClothingItemsOpen) {
-        setContentHeight("auto");
-      } else {
-        // When hidden, use a more compact height
-        setContentHeight("auto");
-      }
-    } else {
-      setContentHeight("auto");
-    }
-  }, [isClothingItemsOpen, isMobile, isWeightValid, unit]);
-
   // Calculate adaptive height based on device and content state
   const maxHeight = isMobile 
     ? isClothingItemsOpen && isWeightValid() && unit === 'kg' 
@@ -101,53 +82,32 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
           maxHeight: maxHeight
         }}
       >
-        <div 
-          className={`relative flex flex-col service-order-popup-content ${isClothingItemsOpen ? 'items-expanded' : ''}`}
-          ref={popupContentRef}
-          style={{ height: contentHeight }}
-        >
-          {/* Bubble animation */}
-          <BubbleAnimation isOpen={isOpen} />
-
-          <div className={`flex-1 overflow-auto relative z-10 ${isClothingItemsOpen ? 'expanded-content' : ''}`}>
-            <ServiceOrderHeader 
-              serviceName={service.name}
-              isExpress={isExpress}
-              onClose={onClose}
-            />
-            
-            <div className="px-4 sm:px-6 py-5 space-y-5 bg-white/90 backdrop-blur-sm">
-              <WeightInputSection
-                weight={weight}
-                unit={unit}
-                price={totalPrice()}
-                onChange={handleWeightChange}
-              />
-              
-              {unit === 'kg' && isWeightValid() && (
-                <ClothingItemsSection
-                  weight={weight}
-                  unit={unit}
-                  clothingItems={clothingItems}
-                  newItemName={newItemName}
-                  isAddingItem={isAddingItem}
-                  isClothingItemsOpen={isClothingItemsOpen}
-                  onNewItemNameChange={handleNewItemNameChange}
-                  onAddItem={handleAddItem}
-                  onToggleAddingItem={setIsAddingItem}
-                  onQuantityChange={handleQuantityChange}
-                  setIsClothingItemsOpen={setIsClothingItemsOpen}
-                  isWeightValid={isWeightValid}
-                />
-              )}
-            </div>
-          </div>
-          
-          <ServiceOrderFooter
-            isEnabled={isAddToCartEnabled()}
-            onAddToCart={handleAddToCart}
-          />
-        </div>
+        <ServiceOrderContent 
+          serviceName={service.name}
+          isExpress={isExpress}
+          onClose={onClose}
+          weight={weight}
+          unit={unit}
+          clothingItems={clothingItems}
+          newItemName={newItemName}
+          isAddingItem={isAddingItem}
+          isClothingItemsOpen={isClothingItemsOpen}
+          totalPrice={totalPrice}
+          handleWeightChange={handleWeightChange}
+          handleQuantityChange={handleQuantityChange}
+          handleAddItem={handleAddItem}
+          handleNewItemNameChange={handleNewItemNameChange}
+          setIsAddingItem={setIsAddingItem}
+          setIsClothingItemsOpen={setIsClothingItemsOpen}
+          isWeightValid={isWeightValid}
+          isOpen={isOpen}
+          contentRef={popupContentRef}
+        />
+        
+        <ServiceOrderFooter
+          isEnabled={isAddToCartEnabled()}
+          onAddToCart={handleAddToCart}
+        />
       </DrawerContent>
     </Drawer>
   );
