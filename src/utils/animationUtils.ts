@@ -40,7 +40,9 @@ export const createBubble = (): HTMLDivElement => {
   
   // Make some bubbles more three-dimensional with gradients
   if (Math.random() > 0.6) {
-    bubble.style.background = `radial-gradient(circle at 30% 30%, ${randomColor.replace(opacity, String(opacity + 0.2))}, ${randomColor})`;
+    // Fix: Convert opacity + 0.2 to string before using replace
+    const increasedOpacity = (opacity + 0.2).toString();
+    bubble.style.background = `radial-gradient(circle at 30% 30%, ${randomColor.replace(opacity.toString(), increasedOpacity)}, ${randomColor})`;
   }
   
   // Add random path variation with randomized animation duration
