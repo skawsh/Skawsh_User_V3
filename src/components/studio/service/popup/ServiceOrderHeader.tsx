@@ -25,8 +25,8 @@ const ServiceOrderHeader: React.FC<ServiceOrderHeaderProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex items-center justify-between p-3 sm:p-5 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold flex items-center gap-2`}>
+      <div className="flex items-center justify-between p-2 sm:p-5 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <h2 className={`${isMobile ? 'text-sm' : 'text-lg'} font-semibold flex items-center gap-2`}>
           {serviceName}
           {isExpress && (
             <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -37,10 +37,10 @@ const ServiceOrderHeader: React.FC<ServiceOrderHeaderProps> = ({
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-full h-8 w-8 bg-white/80 hover:bg-white" 
+          className="rounded-full h-7 w-7 sm:h-8 sm:w-8 bg-white/80 hover:bg-white shrink-0" 
           onClick={onClose}
         >
-          <X className="h-4 w-4" />
+          <X className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       </div>
     </motion.div>

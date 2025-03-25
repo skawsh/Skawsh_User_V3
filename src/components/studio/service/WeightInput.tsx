@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WeightInputProps {
   weight: string | number;
@@ -19,6 +20,7 @@ const WeightInput: React.FC<WeightInputProps> = ({
   onChange,
   placeholder = "Please enter the estimated weight" 
 }) => {
+  const isMobile = useIsMobile();
   const isWeightValid = typeof weight === 'number' || (typeof weight === 'string' && weight !== '' && !isNaN(parseFloat(weight)));
   
   return (
@@ -32,15 +34,16 @@ const WeightInput: React.FC<WeightInputProps> = ({
       >
         <Input
           type="number"
+          inputMode="decimal"
           value={weight}
           onChange={onChange}
-          className="border-0 h-14 flex-grow focus-visible:ring-0 focus-visible:ring-offset-0 text-base font-medium"
+          className="border-0 h-12 sm:h-14 flex-grow focus-visible:ring-0 focus-visible:ring-offset-0 text-base font-medium"
           placeholder={placeholder}
           step="0.1"
           min="0.1"
           aria-label={unit === 'sft' ? 'Estimated Area' : 'Estimated Weight'}
         />
-        <div className="bg-gray-50 px-4 py-3 text-gray-600 h-full flex items-center font-medium border-l border-gray-200">
+        <div className="bg-gray-50 px-3 sm:px-4 py-3 text-gray-600 h-full flex items-center font-medium border-l border-gray-200">
           {unit}
         </div>
       </motion.div>

@@ -138,6 +138,23 @@
       opacity: 0;
     }
   }
+  
+  /* Mobile keyboard adaptations */
+  .mobile-adaptive-height {
+    max-height: 100dvh !important;
+  }
+  
+  @supports (height: 100dvh) {
+    .mobile-adaptive-height {
+      height: auto;
+      max-height: 100dvh;
+    }
+  }
+  
+  /* Prevent content from being hidden under keyboard */
+  .keyboard-aware:focus {
+    @apply scroll-mt-20;
+  }
 }
 
 @layer base {
@@ -267,5 +284,33 @@
   button,
   .collapsible-trigger {
     touch-action: manipulation;
+  }
+  
+  /* Better handling for mobile keyboard */
+  input[type="number"],
+  input[type="text"] {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Fix for iOS viewport issues with keyboard */
+  .service-order-popup-content {
+    position: relative;
+    min-height: 100%;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  /* Ensure footer stays visible */
+  .service-order-popup-content > div:last-child {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 10;
+  }
+}
+
+/* Handle iOS keyboard appearance better */
+@supports (-webkit-touch-callout: none) {
+  .service-order-popup-content {
+    padding-bottom: max(env(safe-area-inset-bottom), 44px);
   }
 }

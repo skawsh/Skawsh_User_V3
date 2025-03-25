@@ -93,7 +93,54 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     };
   }, [isOpen]);
 
-  const maxHeight = isMobile ? '90vh' : '85vh';
+  // Handle mobile keyboard appearance
+  useEffect(() => {
+    if (!isMobile || !isOpen) return;
+    
+    // Function to adjust the visual viewport
+    const handleVisualViewportResize = () => {
+      const viewport = window.visualViewport;
+      if (!viewport) return;
+      
+      const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
+      if (!drawerContent) return;
+      
+      // When keyboard appears, adjust the height to prevent content clipping
+      if (viewport.height < window.innerHeight * 0.8) {
+        // Keyboard is open
+        drawerContent.style.height = `${viewport.height}px`;
+        drawerContent.style.maxHeight = `${viewport.height}px`;
+        drawerContent.style.overflow = 'auto';
+      } else {
+        // Keyboard is closed
+        drawerContent.style.height = '';
+        drawerContent.style.maxHeight = '';
+        drawerContent.style.overflow = '';
+      }
+    };
+    
+    // Add event listeners
+    window.visualViewport?.addEventListener('resize', handleVisualViewportResize);
+    window.visualViewport?.addEventListener('scroll', handleVisualViewportResize);
+    
+    // Initial adjustment
+    handleVisualViewportResize();
+    
+    // Cleanup
+    return () => {
+      window.visualViewport?.removeEventListener('resize', handleVisualViewportResize);
+      window.visualViewport?.removeEventListener('scroll', handleVisualViewportResize);
+      
+      const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
+      if (drawerContent) {
+        drawerContent.style.height = '';
+        drawerContent.style.maxHeight = '';
+        drawerContent.style.overflow = '';
+      }
+    };
+  }, [isMobile, isOpen]);
+
+  const maxHeight = isMobile ? '90dvh' : '85vh';
 
   return (
     <Drawer 
@@ -102,9 +149,9 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       dismissible
     >
       <DrawerContent 
-        className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300`}
+        className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 mobile-adaptive-height`}
       >
-        <div className="h-full flex flex-col service-order-popup-content relative">
+        <div className="relative flex flex-col service-order-popup-content">
           <div className="flex-1 overflow-auto relative z-10">
             <ServiceOrderHeader 
               serviceName={service.name}
