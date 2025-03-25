@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -39,6 +39,20 @@ const ClothingItemsSection: React.FC<ClothingItemsSectionProps> = ({
   isWeightValid
 }) => {
   const isMobile = useIsMobile();
+  const sectionRef = useRef<HTMLDivElement>(null);
+  
+  // Scroll into view when clothing items are opened on mobile
+  useEffect(() => {
+    if (isClothingItemsOpen && isMobile && sectionRef.current) {
+      // Add a small delay to allow animation to start
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start'
+        });
+      }, 100);
+    }
+  }, [isClothingItemsOpen, isMobile]);
   
   if (unit !== 'kg' || !isWeightValid()) {
     return null;
@@ -50,6 +64,7 @@ const ClothingItemsSection: React.FC<ClothingItemsSectionProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.2 }}
+      ref={sectionRef}
     >
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <label className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-gray-700`}>

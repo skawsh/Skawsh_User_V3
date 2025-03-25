@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+
+import React, { useEffect, useRef, useState } from 'react';
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import ServiceOrderHeader from './service/popup/ServiceOrderHeader';
 import WeightInputSection from './service/popup/WeightInputSection';
@@ -33,6 +34,8 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const popupContentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<string>("auto");
+  
   const {
     weight,
     unit,
@@ -58,6 +61,21 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     onAddToCart,
     onClose
   });
+
+  // Adjust content height when clothing items section is toggled
+  useEffect(() => {
+    if (isMobile && isWeightValid() && unit === 'kg') {
+      // When clothing items are shown, expand the content area
+      if (isClothingItemsOpen) {
+        setContentHeight("auto");
+      } else {
+        // When hidden, use a more compact height
+        setContentHeight("auto");
+      }
+    } else {
+      setContentHeight("auto");
+    }
+  }, [isClothingItemsOpen, isMobile, isWeightValid, unit]);
 
   // Setup bubble animations when popup opens
   useEffect(() => {
@@ -173,8 +191,12 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     };
   }, [isMobile, isOpen]);
 
-  // Calculate adaptive height based on device
-  const maxHeight = isMobile ? '90dvh' : '85vh';
+  // Calculate adaptive height based on device and content state
+  const maxHeight = isMobile 
+    ? isClothingItemsOpen && isWeightValid() && unit === 'kg' 
+      ? '94dvh' 
+      : '90dvh' 
+    : '85vh';
 
   return (
     <Drawer 
@@ -183,13 +205,18 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       dismissible
     >
       <DrawerContent 
-        className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 mobile-adaptive-height`}
+        className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 mobile-adaptive-height ${isClothingItemsOpen ? 'mobile-expanded' : ''}`}
+        style={{ 
+          height: isMobile && isClothingItemsOpen ? 'auto' : undefined,
+          maxHeight: maxHeight
+        }}
       >
         <div 
-          className="relative flex flex-col service-order-popup-content"
+          className={`relative flex flex-col service-order-popup-content ${isClothingItemsOpen ? 'items-expanded' : ''}`}
           ref={popupContentRef}
+          style={{ height: contentHeight }}
         >
-          <div className="flex-1 overflow-auto relative z-10">
+          <div className={`flex-1 overflow-auto relative z-10 ${isClothingItemsOpen ? 'expanded-content' : ''}`}>
             <ServiceOrderHeader 
               serviceName={service.name}
               isExpress={isExpress}
