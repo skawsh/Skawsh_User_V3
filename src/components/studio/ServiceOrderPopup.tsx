@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import ServiceOrderHeader from './service/popup/ServiceOrderHeader';
 import WeightInputSection from './service/popup/WeightInputSection';
@@ -33,6 +32,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   studioId = ''
 }) => {
   const isMobile = useIsMobile();
+  const popupContentRef = useRef<HTMLDivElement>(null);
   const {
     weight,
     unit,
@@ -97,7 +97,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
   useEffect(() => {
     if (!isMobile || !isOpen) return;
     
-    // Function to adjust the visual viewport
+    // Function to handle visual viewport changes (keyboard appearance)
     const handleVisualViewportResize = () => {
       const viewport = window.visualViewport;
       if (!viewport) return;
@@ -105,23 +105,55 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
       if (!drawerContent) return;
       
-      // When keyboard appears, adjust the height to prevent content clipping
-      if (viewport.height < window.innerHeight * 0.8) {
-        // Keyboard is open
-        drawerContent.style.height = `${viewport.height}px`;
-        drawerContent.style.maxHeight = `${viewport.height}px`;
+      // Get the current viewport height
+      const viewportHeight = viewport.height;
+      const windowHeight = window.innerHeight;
+      
+      // If the viewport is significantly smaller than the window height, 
+      // the keyboard is likely open
+      const isKeyboardOpen = viewportHeight < windowHeight * 0.8;
+      
+      if (isKeyboardOpen) {
+        // Keyboard is open - adjust content to be visible above keyboard
+        drawerContent.style.height = `${viewportHeight}px`;
+        drawerContent.style.maxHeight = `${viewportHeight}px`;
+        
+        // Make the content scrollable
         drawerContent.style.overflow = 'auto';
+        
+        // Keep the input in view when keyboard appears
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+          // Scroll the active element into view with some spacing
+          setTimeout(() => {
+            activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
       } else {
-        // Keyboard is closed
+        // Keyboard is closed - restore original layout
         drawerContent.style.height = '';
         drawerContent.style.maxHeight = '';
         drawerContent.style.overflow = '';
       }
     };
     
-    // Add event listeners
+    // Add event listeners for viewport changes
     window.visualViewport?.addEventListener('resize', handleVisualViewportResize);
     window.visualViewport?.addEventListener('scroll', handleVisualViewportResize);
+    
+    // Focus event listener to handle scrolling when an input gets focus
+    const handleFocusInput = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        // Small delay to let the keyboard appear
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    };
+    
+    // Add focus event listener to document
+    document.addEventListener('focus', handleFocusInput, true);
     
     // Initial adjustment
     handleVisualViewportResize();
@@ -130,6 +162,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     return () => {
       window.visualViewport?.removeEventListener('resize', handleVisualViewportResize);
       window.visualViewport?.removeEventListener('scroll', handleVisualViewportResize);
+      document.removeEventListener('focus', handleFocusInput, true);
       
       const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
       if (drawerContent) {
@@ -140,6 +173,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
     };
   }, [isMobile, isOpen]);
 
+  // Calculate adaptive height based on device
   const maxHeight = isMobile ? '90dvh' : '85vh';
 
   return (
@@ -151,7 +185,10 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
       <DrawerContent 
         className={`max-h-[${maxHeight}] rounded-t-xl p-0 focus:outline-none overflow-hidden animate-slide-in-up transition-all duration-300 mobile-adaptive-height`}
       >
-        <div className="relative flex flex-col service-order-popup-content">
+        <div 
+          className="relative flex flex-col service-order-popup-content"
+          ref={popupContentRef}
+        >
           <div className="flex-1 overflow-auto relative z-10">
             <ServiceOrderHeader 
               serviceName={service.name}

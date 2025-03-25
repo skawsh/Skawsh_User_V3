@@ -19,7 +19,7 @@ const ServiceOrderFooter: React.FC<ServiceOrderFooterProps> = ({
   
   return (
     <motion.div 
-      className="py-2 sm:py-4 px-4 sm:px-6 bg-white border-t shadow-[0_-1px_3px_rgba(0,0,0,0.05)] relative z-10 sticky bottom-0"
+      className="py-2 sm:py-4 px-4 sm:px-6 bg-white border-t shadow-[0_-1px_3px_rgba(0,0,0,0.05)] relative z-10 sticky bottom-0 footer-safe-area"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}

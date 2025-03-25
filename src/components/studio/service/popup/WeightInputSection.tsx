@@ -22,7 +22,7 @@ const WeightInputSection: React.FC<WeightInputSectionProps> = ({
   
   return (
     <motion.div 
-      className="space-y-2 sm:space-y-3"
+      className="space-y-2 sm:space-y-3 keyboard-aware"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
