@@ -234,3 +234,38 @@
 .glass {
   @apply backdrop-blur-lg bg-white/80;
 }
+
+/* Custom animations for service order popup */
+@keyframes slide-in-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.3s ease-out forwards;
+}
+
+/* Bubble animation overlay styles */
+.bubble-container {
+  opacity: 0.6;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .service-order-popup-content {
+    overscroll-behavior: contain;
+  }
+  
+  /* Improve touch interactions */
+  input, 
+  button,
+  .collapsible-trigger {
+    touch-action: manipulation;
+  }
+}

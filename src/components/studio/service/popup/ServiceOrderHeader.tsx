@@ -2,6 +2,8 @@
 import React from 'react';
 import { Clock, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ServiceOrderHeaderProps {
   serviceName: string;
@@ -14,10 +16,17 @@ const ServiceOrderHeader: React.FC<ServiceOrderHeaderProps> = ({
   isExpress,
   onClose
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="bg-white border-b sticky top-0 z-10">
-      <div className="flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-indigo-50">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
+    <motion.div 
+      className="bg-white border-b sticky top-0 z-10"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex items-center justify-between p-3 sm:p-5 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <h2 className={`${isMobile ? 'text-base' : 'text-lg'} font-semibold flex items-center gap-2`}>
           {serviceName}
           {isExpress && (
             <span className="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -34,7 +43,7 @@ const ServiceOrderHeader: React.FC<ServiceOrderHeaderProps> = ({
           <X className="h-4 w-4" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
