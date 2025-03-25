@@ -50,7 +50,12 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ banners }) => {
         <PromotionSlider banners={banners} />
         <div className="flex items-center justify-center text-white text-sm mt-0 pb-1">
           <span className="font-bold text-xs">Welcome to Skawsh</span>
-          <Heart size={14} className="ml-1 text-white" fill="white" />
+          <Heart 
+            size={14} 
+            className="ml-1 text-white" 
+            fill="white" 
+            style={{ animation: 'pulse-heart 1.5s infinite ease-in-out' }}
+          />
           <Sparkles size={14} className="ml-1 text-white animate-pulse" />
         </div>
       </div>

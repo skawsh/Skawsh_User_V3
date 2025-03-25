@@ -90,6 +90,34 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
     document.head.appendChild(keyframes);
   }
   
+  // Create sink animation (bubbles going down)
+  if (!document.querySelector('#bubble-sink-keyframes')) {
+    const sinkKeyframes = document.createElement('style');
+    sinkKeyframes.id = 'bubble-sink-keyframes';
+    sinkKeyframes.innerHTML = `
+      @keyframes sink {
+        0% {
+          transform: translate(0, 0) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        50% {
+          transform: translate(${container.offsetWidth * 0.2}px, ${container.offsetHeight * 0.4}px) scale(1);
+        }
+        90% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translate(${container.offsetWidth * 0.5}px, ${container.offsetHeight}px) scale(1.2);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(sinkKeyframes);
+  }
+  
   // Create random path variations keyframes
   if (!document.querySelector('#bubble-random-paths')) {
     const randomPaths = document.createElement('style');
@@ -159,7 +187,7 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
         }
       }
       
-      /* New swirl and zigzag paths for more eye-catching motion */
+      /* Swirl and zigzag paths for more eye-catching motion */
       @keyframes rise-swirl {
         0% {
           transform: translate(0, 0) scale(0.5) rotate(0deg);
@@ -209,43 +237,68 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
           opacity: 0;
         }
       }
-    `;
-    document.head.appendChild(randomPaths);
-  }
-  
-  // Add floating sparkles style
-  if (!document.querySelector('#floating-sparkles')) {
-    const sparklesStyle = document.createElement('style');
-    sparklesStyle.id = 'floating-sparkles';
-    sparklesStyle.innerHTML = `
-      @keyframes float-sparkle {
+      
+      /* Sinking animations (bubbles going down) */
+      @keyframes sink-path1 {
         0% {
-          transform: translate(0, 0) rotate(0deg);
+          transform: translate(0, 0) scale(0.5);
           opacity: 0;
         }
         10% {
-          opacity: 0.8;
+          opacity: 1;
         }
-        50% {
-          transform: translate(${container.offsetWidth * 0.1}px, -${container.offsetHeight * 0.2}px) rotate(180deg);
+        40% {
+          transform: translate(${container.offsetWidth * 0.3}px, ${container.offsetHeight * 0.4}px) scale(0.8);
         }
         90% {
-          opacity: 0.8;
+          opacity: 0.7;
         }
         100% {
-          transform: translate(${container.offsetWidth * 0.2}px, -${container.offsetHeight * 0.4}px) rotate(360deg);
+          transform: translate(${container.offsetWidth * 0.7}px, ${container.offsetHeight}px) scale(1.2);
           opacity: 0;
         }
       }
       
-      .floating-sparkle {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        pointer-events: none;
+      @keyframes sink-zigzag {
+        0% {
+          transform: translate(0, 0) scale(0.5);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        25% {
+          transform: translate(${container.offsetWidth * 0.2}px, ${container.offsetHeight * 0.2}px) scale(0.7);
+        }
+        50% {
+          transform: translate(${container.offsetWidth * -0.1}px, ${container.offsetHeight * 0.5}px) scale(0.9);
+        }
+        75% {
+          transform: translate(${container.offsetWidth * 0.2}px, ${container.offsetHeight * 0.7}px) scale(1.1);
+        }
+        90% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translate(${container.offsetWidth * 0.3}px, ${container.offsetHeight}px) scale(1.2);
+          opacity: 0;
+        }
+      }
+      
+      /* Heart animation */
+      @keyframes pulse-heart {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.15);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
     `;
-    document.head.appendChild(sparklesStyle);
+    document.head.appendChild(randomPaths);
   }
   
   // Clear existing bubble interval if any
@@ -254,51 +307,42 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
     clearInterval(existingInterval);
   }
   
-  // Create sparkles at random intervals
-  const createSparkles = () => {
-    // Only add sparkles occasionally
-    if (Math.random() > 0.7) {
-      const sparkleContainer = document.createElement('div');
-      sparkleContainer.className = 'floating-sparkle';
-      sparkleContainer.style.top = '50%';
-      sparkleContainer.style.left = `${Math.random() * 80 + 10}%`;
-      sparkleContainer.style.color = Math.random() > 0.5 ? '#FFD700' : '#E5DEFF';
-      sparkleContainer.style.animation = `float-sparkle ${4 + Math.random() * 3}s linear`;
-      sparkleContainer.innerHTML = '✨';
-      
-      container.appendChild(sparkleContainer);
-      
-      // Remove sparkle after animation completes
-      setTimeout(() => {
-        if (sparkleContainer.parentNode === container) {
-          container.removeChild(sparkleContainer);
-        }
-      }, 7000);
-    }
-  };
-  
   // Create bubbles at random intervals (more frequently)
   const interval = setInterval(() => {
     const bubble = createBubble();
     
-    // Randomly assign one of the different path animations
-    const pathNumber = Math.floor(Math.random() * 6); // 0-5 for more variety
-    if (pathNumber === 1) {
-      bubble.style.animation = `rise-path1 ${4 + Math.random() * 6}s ease-out`;
-    } else if (pathNumber === 2) {
-      bubble.style.animation = `rise-path2 ${4 + Math.random() * 6}s ease-out`;
-    } else if (pathNumber === 3) {
-      bubble.style.animation = `rise-path3 ${4 + Math.random() * 6}s ease-out`;
-    } else if (pathNumber === 4) {
-      bubble.style.animation = `rise-swirl ${5 + Math.random() * 5}s ease-in-out`;
-    } else if (pathNumber === 5) {
-      bubble.style.animation = `rise-zigzag ${4 + Math.random() * 6}s ease-in-out`;
+    // Determine if this bubble should go up or down (80% up, 20% down)
+    const goingUp = Math.random() > 0.2;
+    
+    if (goingUp) {
+      // Upward bubbles
+      const pathNumber = Math.floor(Math.random() * 5); // 0-4 for variety
+      if (pathNumber === 0) {
+        bubble.style.animation = `rise-path1 ${4 + Math.random() * 6}s ease-out`;
+      } else if (pathNumber === 1) {
+        bubble.style.animation = `rise-path2 ${4 + Math.random() * 6}s ease-out`;
+      } else if (pathNumber === 2) {
+        bubble.style.animation = `rise-path3 ${4 + Math.random() * 6}s ease-out`;
+      } else if (pathNumber === 3) {
+        bubble.style.animation = `rise-swirl ${5 + Math.random() * 5}s ease-in-out`;
+      } else {
+        bubble.style.animation = `rise-zigzag ${4 + Math.random() * 6}s ease-in-out`;
+      }
+    } else {
+      // Downward bubbles
+      const pathNumber = Math.floor(Math.random() * 2); // 0-1 for less variety in downward paths
+      if (pathNumber === 0) {
+        bubble.style.animation = `sink ${5 + Math.random() * 5}s ease-in-out`;
+      } else {
+        bubble.style.animation = `sink-zigzag ${5 + Math.random() * 5}s ease-in-out`;
+      }
+      // Make sinking bubbles a bit smaller for visual variety
+      const currentSize = parseInt(bubble.style.width);
+      bubble.style.width = `${currentSize * 0.8}px`;
+      bubble.style.height = `${currentSize * 0.8}px`;
     }
     
     container.appendChild(bubble);
-    
-    // Create sparkles
-    createSparkles();
     
     // Remove bubble after animation completes
     setTimeout(() => {

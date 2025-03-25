@@ -63,6 +63,20 @@
     }
   }
   
+  /* Heart pulse animation */
+  @keyframes pulse-heart {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+      filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
   /* Hide scrollbars but maintain scrolling functionality */
   .no-scrollbar {
     -ms-overflow-style: none !important;  /* IE and Edge */
