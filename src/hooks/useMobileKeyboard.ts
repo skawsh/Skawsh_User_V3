@@ -30,20 +30,13 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
       const isKeyboardOpen = viewportHeight < windowHeight * 0.8;
       
       if (isKeyboardOpen) {
-        // Keyboard is open - adjust content to be visible above keyboard
-        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
-        if (parent) {
-          parent.style.height = `${viewportHeight}px`;
-          parent.style.maxHeight = `${viewportHeight}px`;
+        // Keyboard is open - adjust scrollable areas for keyboard visibility
+        const scrollArea = drawerContent.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        if (scrollArea) {
+          scrollArea.style.maxHeight = `${viewportHeight - 120}px`; // Account for header and footer
         }
         
-        drawerContent.style.height = `${viewportHeight}px`;
-        drawerContent.style.maxHeight = `${viewportHeight}px`;
-        
-        // Make the content scrollable
-        drawerContent.style.overflow = 'auto';
-        
-        // Keep the input in view when keyboard appears
+        // Make sure the active input is visible
         const activeElement = document.activeElement as HTMLElement;
         if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
           // Scroll the active element into view with some spacing
@@ -53,15 +46,10 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
         }
       } else {
         // Keyboard is closed - restore original layout
-        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
-        if (parent) {
-          parent.style.height = '';
-          parent.style.maxHeight = '';
+        const scrollArea = drawerContent.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        if (scrollArea) {
+          scrollArea.style.maxHeight = '';
         }
-        
-        drawerContent.style.height = '';
-        drawerContent.style.maxHeight = '';
-        drawerContent.style.overflow = '';
       }
     };
     
@@ -94,15 +82,10 @@ export const useMobileKeyboard = ({ isOpen, contentRef }: UseMobileKeyboardProps
       
       const drawerContent = document.querySelector('.service-order-popup-content') as HTMLElement;
       if (drawerContent) {
-        const parent = drawerContent.closest('.mobile-expanded') as HTMLElement;
-        if (parent) {
-          parent.style.height = '';
-          parent.style.maxHeight = '';
+        const scrollArea = drawerContent.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+        if (scrollArea) {
+          scrollArea.style.maxHeight = '';
         }
-        
-        drawerContent.style.height = '';
-        drawerContent.style.maxHeight = '';
-        drawerContent.style.overflow = '';
       }
     };
   }, [isMobile, isOpen]);

@@ -6,6 +6,7 @@ import ClothingItemsSection from './ClothingItemsSection';
 import { ClothingItem } from '../ClothingItemsList';
 import BubbleAnimation from './BubbleAnimation';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ServiceOrderContentProps {
   serviceName: string;
@@ -53,7 +54,7 @@ const ServiceOrderContent: React.FC<ServiceOrderContentProps> = ({
   const isMobile = useIsMobile();
   
   const contentStyle = isMobile ? {
-    height: isClothingItemsOpen ? 'auto' : '100%',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column' as const,
     transition: 'all 0.3s ease-in-out'
@@ -61,20 +62,22 @@ const ServiceOrderContent: React.FC<ServiceOrderContentProps> = ({
   
   return (
     <div 
-      className={`relative flex flex-col service-order-popup-content ${isClothingItemsOpen ? 'items-expanded' : ''}`}
+      className="relative flex flex-col service-order-popup-content h-full"
       ref={contentRef}
       style={contentStyle}
     >
       {/* Bubble animation */}
       <BubbleAnimation isOpen={isOpen} />
 
-      <div className={`flex-1 overflow-auto relative z-10 ${isClothingItemsOpen ? 'expanded-content' : ''}`}>
-        <ServiceOrderHeader 
-          serviceName={serviceName}
-          isExpress={isExpress}
-          onClose={onClose}
-        />
-        
+      {/* Service Order Header - Always visible and not scrollable */}
+      <ServiceOrderHeader 
+        serviceName={serviceName}
+        isExpress={isExpress}
+        onClose={onClose}
+      />
+      
+      {/* Scrollable content area */}
+      <ScrollArea className="flex-1 relative z-10">
         <div className="px-4 sm:px-6 py-5 space-y-5 bg-white/90 backdrop-blur-sm">
           <WeightInputSection
             weight={weight}
@@ -100,7 +103,7 @@ const ServiceOrderContent: React.FC<ServiceOrderContentProps> = ({
             />
           )}
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

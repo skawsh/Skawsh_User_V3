@@ -6,6 +6,7 @@ import ServiceOrderFooter from './service/popup/ServiceOrderFooter';
 import { useServiceOrder } from './service/popup/useServiceOrder';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMobileKeyboard } from '@/hooks/useMobileKeyboard';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ServiceOrderPopupProps {
   service: {
@@ -97,7 +98,7 @@ const ServiceOrderPopup: React.FC<ServiceOrderPopupProps> = ({
         style={{ 
           height: getAdaptiveHeight(),
           maxHeight: getMaxHeight(),
-          overflowY: isClothingItemsOpen ? 'auto' : 'hidden'
+          overflowY: 'hidden' // Prevent the container from scrolling
         }}
       >
         <ServiceOrderContent 

@@ -8,6 +8,7 @@ import ClothingItemsList from '../ClothingItemsList';
 import AddClothingItemForm from '../AddClothingItemForm';
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ClothingItemsSectionProps {
   weight: number | string;
@@ -40,19 +41,6 @@ const ClothingItemsSection: React.FC<ClothingItemsSectionProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLDivElement>(null);
-  
-  // Scroll into view when clothing items are opened on mobile
-  useEffect(() => {
-    if (isClothingItemsOpen && isMobile && sectionRef.current) {
-      // Add a small delay to allow animation to start
-      setTimeout(() => {
-        sectionRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start'
-        });
-      }, 100);
-    }
-  }, [isClothingItemsOpen, isMobile]);
   
   if (unit !== 'kg' || !isWeightValid()) {
     return null;
