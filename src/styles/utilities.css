@@ -1,0 +1,82 @@
+
+@layer utilities {
+  /* Hide scrollbars but maintain scrolling functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none !important;  /* IE and Edge */
+    scrollbar-width: none !important;  /* Firefox */
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important;  /* Chrome, Safari and Opera */
+    width: 0 !important;
+    height: 0 !important;
+  }
+  
+  /* Apply this to html and body to hide all default scrollbars */
+  html, body {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  
+  html::-webkit-scrollbar, body::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  
+  /* Custom scrollbar for specific components */
+  .custom-scrollbar::-webkit-scrollbar {
+    display: block !important;
+    width: 3px !important;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 10px !important;
+  }
+  
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Styles for the nearest outlet tag */
+  .nearest-outlet-tag {
+    background-color: #e2f7e2 !important;
+    color: #166534 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
+  }
+  
+  /* Sticky filters styles */
+  .sticky-filters {
+    position: sticky;
+    transition: all 0.2s ease;
+  }
+
+  /* Bubble animation overlay styles */
+  .bubble-container {
+    opacity: 0.6;
+  }
+  
+  /* Mobile keyboard adaptations */
+  .mobile-adaptive-height {
+    max-height: 100dvh !important;
+  }
+  
+  @supports (height: 100dvh) {
+    .mobile-adaptive-height {
+      height: auto;
+      max-height: 100dvh;
+    }
+  }
+  
+  /* Prevent content from being hidden under keyboard */
+  .keyboard-aware:focus {
+    @apply scroll-mt-20;
+  }
+}

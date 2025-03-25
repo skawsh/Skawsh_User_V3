@@ -1,0 +1,50 @@
+
+.section-container {
+  @apply px-4 py-6 w-full max-w-5xl mx-auto;
+}
+
+.glass {
+  @apply backdrop-blur-lg bg-white/80;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .service-order-popup-content {
+    overscroll-behavior: contain;
+  }
+  
+  /* Improve touch interactions */
+  input, 
+  button,
+  .collapsible-trigger {
+    touch-action: manipulation;
+  }
+  
+  /* Better handling for mobile keyboard */
+  input[type="number"],
+  input[type="text"] {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Fix for iOS viewport issues with keyboard */
+  .service-order-popup-content {
+    position: relative;
+    min-height: 100%;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  /* Ensure footer stays visible */
+  .service-order-popup-content > div:last-child {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    z-index: 10;
+  }
+}
+
+/* Handle iOS keyboard appearance better */
+@supports (-webkit-touch-callout: none) {
+  .service-order-popup-content {
+    padding-bottom: max(env(safe-area-inset-bottom), 44px);
+  }
+}
