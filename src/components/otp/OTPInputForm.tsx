@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,6 +27,8 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
   onSubmit, 
   isSubmitting 
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   // Initialize form
   const form = useForm<OTPFormValues>({
     resolver: zodResolver(otpSchema),
@@ -35,17 +37,22 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
     },
   });
 
-  // Set focus to the first OTP field when component mounts
+  // Set focus to the OTP field when component mounts
   useEffect(() => {
-    const firstInput = document.querySelector('input[data-input-idx="0"]');
-    if (firstInput) {
-      (firstInput as HTMLInputElement).focus();
-    }
+    // Short timeout to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      const firstInput = document.querySelector('input[data-input-idx="0"]');
+      if (firstInput) {
+        (firstInput as HTMLInputElement).focus();
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <FormField
           control={form.control}
           name="otp"
@@ -56,7 +63,7 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
                   maxLength={4} 
                   value={field.value}
                   onChange={field.onChange}
-                  containerClassName="justify-center"
+                  containerClassName="justify-center gap-3"
                   render={({ slots }) => (
                     <InputOTPGroup className="gap-4 justify-center">
                       {slots.map((slot, i) => (

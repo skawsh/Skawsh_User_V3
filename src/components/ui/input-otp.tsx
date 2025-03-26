@@ -29,11 +29,11 @@ const InputOTPGroup = React.forwardRef<
 ))
 InputOTPGroup.displayName = "InputOTPGroup"
 
-// Define interface for slot type
-interface SlotType {
-  char?: string;
-  hasFakeCaret?: boolean;
-  isActive?: boolean;
+type SlotProps = {
+  char: string | null;
+  hasFakeCaret: boolean;
+  isActive: boolean;
+  className?: string;
 }
 
 const InputOTPSlot = React.forwardRef<
@@ -41,12 +41,10 @@ const InputOTPSlot = React.forwardRef<
   React.ComponentPropsWithoutRef<"div"> & { index: number }
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
-  
-  // Safely access slots with proper typing
-  const slot: SlotType = inputOTPContext?.slots?.[index] || {}
-  const char = slot.char || ''
-  const hasFakeCaret = Boolean(slot.hasFakeCaret)
-  const isActive = Boolean(slot.isActive)
+  const slot = inputOTPContext?.slots?.[index] || {}
+  const char = (slot as any).char || ''
+  const hasFakeCaret = Boolean((slot as any).hasFakeCaret)
+  const isActive = Boolean((slot as any).isActive)
 
   return (
     <div
