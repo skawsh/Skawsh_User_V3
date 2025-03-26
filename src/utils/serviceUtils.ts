@@ -1,5 +1,6 @@
 
 import { Service } from '@/types/serviceTypes';
+import { getServiceImage, getServiceCategoryImage } from './serviceImageUtils';
 
 // Helper function to get a price for a service
 export const getServiceBasePrice = (service: Service): string => {
@@ -32,17 +33,6 @@ export const getServiceBasePrice = (service: Service): string => {
 };
 
 export const getSubserviceImage = (serviceId: string, subserviceId: string): string => {
-  if (serviceId === 'core-laundry') {
-    if (subserviceId === 'wash-fold') {
-      return '/lovable-uploads/03679588-3192-460b-ae06-1c4541039aa2.png';
-    } else {
-      return 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
-    }
-  } else if (serviceId === 'dry-cleaning') {
-    return 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
-  } else if (serviceId === 'shoe-laundry') {
-    return 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
-  } else {
-    return 'https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80';
-  }
+  // Use our new utility function to get better images
+  return getServiceImage(subserviceId);
 };

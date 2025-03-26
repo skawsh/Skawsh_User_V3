@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getServiceImage } from '@/utils/serviceImageUtils';
 
 interface ServiceCardProps {
   icon: React.ReactNode;
@@ -37,6 +38,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     return `₹${amount.toFixed(0)}`;
   };
 
+  // Get the service image based on ID
+  const serviceImage = id ? getServiceImage(id) : image;
+
   const handleServiceClick = () => {
     // Convert title to a URL-friendly string for the serviceId
     const serviceId = title.toLowerCase().replace(/\s+/g, '-');
@@ -56,8 +60,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     }}>
       <div className="relative">
         <Avatar className={`w-14 h-14 mb-1.5 transition-all duration-500 ease-in-out ${isSticky ? 'border border-white/20' : 'shadow-sm'}`}>
-          {image ? (
-            <AvatarImage src={image} alt={title} className="object-cover" />
+          {serviceImage ? (
+            <AvatarImage src={serviceImage} alt={title} className="object-cover" />
           ) : (
             <AvatarFallback className={`${isSticky ? 'bg-white/10 text-white' : 'bg-primary-100 text-primary-500'}`}>
               {icon}

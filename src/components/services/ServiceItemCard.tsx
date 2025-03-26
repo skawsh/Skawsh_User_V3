@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Service } from '@/types/serviceTypes';
 import { cn } from "@/lib/utils";
+import { getServiceImage } from '@/utils/serviceImageUtils';
 
 interface ServiceItemCardProps {
   subService: Service;
@@ -25,6 +26,9 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
   onClick,
   onFavoriteToggle
 }) => {
+  // Get a better image based on the service ID
+  const serviceImage = getServiceImage(subService.id);
+  
   return (
     <Card 
       key={subService.id} 
@@ -36,7 +40,7 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
           <div className="w-full h-24 overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10"></div>
             <img 
-              src={imageSrc} 
+              src={serviceImage} 
               alt={subService.name} 
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
