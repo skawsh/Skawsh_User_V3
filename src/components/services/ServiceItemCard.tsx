@@ -43,7 +43,7 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = memo(({
             <img 
               src={serviceImage} 
               alt={subService.name} 
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               loading="lazy"
             />
             <button

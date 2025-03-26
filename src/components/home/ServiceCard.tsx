@@ -65,11 +65,11 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
             <AvatarImage 
               src={serviceImage} 
               alt={title} 
-              className="object-cover grayscale" 
+              className="object-cover" 
               loading="lazy"
             />
           ) : (
-            <AvatarFallback className={`${isSticky ? 'bg-gray-800 text-white' : 'bg-black text-white'} rounded-full`}>
+            <AvatarFallback className={`${isSticky ? 'bg-gray-800 text-white' : 'bg-gradient-to-br from-indigo-400 to-purple-500 text-white'} rounded-full`}>
               {icon}
             </AvatarFallback>
           )}
