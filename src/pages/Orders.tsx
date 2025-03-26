@@ -22,9 +22,9 @@ const Orders = () => {
   } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
-    refetchOnWindowFocus: false, // Prevent automatic refetch on window focus which can disrupt user
-    staleTime: 5000, // 5 seconds
-    refetchInterval: false, // Disable automatic refetching at intervals
+    refetchOnWindowFocus: false,
+    staleTime: 5000,
+    refetchInterval: false,
   });
 
   const ongoingOrders = orders.filter(order => 

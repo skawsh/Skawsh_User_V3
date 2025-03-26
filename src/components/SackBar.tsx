@@ -6,6 +6,13 @@ import { useCartItems, clearCart, getWashTypeBackground } from '@/utils/sackBarU
 import SackAnimation from './sack/SackAnimation';
 import SackContent from './sack/SackContent';
 import ClearSackDialog from './sack/ClearSackDialog';
+import { InfoIcon } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SackBarProps {
   className?: string;
@@ -100,6 +107,23 @@ const SackBar: React.FC<SackBarProps> = ({ className, isVisible = true }) => {
               />
               
               <div className="flex items-center gap-2 relative z-10">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="text-gray-500 hover:text-gray-700">
+                        <InfoIcon size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="p-2">
+                        <p className="text-sm font-medium">Tax Breakdown:</p>
+                        <p className="text-xs">GST: 18% of subtotal</p>
+                        <p className="text-xs">Delivery Tax: 5% of delivery fee</p>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
                 <button
                   onClick={handleViewSack}
                   className="bg-[#92E3A9] text-black font-semibold px-4 py-1.5 rounded-full flex items-center hover:bg-[#83d699] transition-colors"

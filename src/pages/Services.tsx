@@ -80,7 +80,7 @@ const Services: React.FC = () => {
 
   return (
     <Layout>
-      <div className="section-container pb-10 min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+      <div className="section-container pb-10 min-h-screen bg-gradient-to-b from-gray-50 to-white">
         <h1 className="text-2xl font-bold mb-4 pt-4 animate-fade-in text-gray-800">Our Services</h1>
         
         <ServiceSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />

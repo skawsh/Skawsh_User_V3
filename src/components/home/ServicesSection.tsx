@@ -57,7 +57,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
   }, []);
 
   return (
-    <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-primary-50 to-white">
+    <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-gray-50 to-white">
       <Card className="border-none shadow-none bg-transparent mb-2">
         <CardContent className="p-0 pt-2 px-[15px]">
           <h2 className="section-title mb-2 font-bold text-lg">Explore Laundry Services</h2>
@@ -69,7 +69,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
       <div 
         id="services-row" 
         ref={servicesRowRef} 
-        className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-gradient-to-r from-[#020024] via-[#090979] to-[#00d4ff] backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} 
+        className={`${isSticky ? 'fixed top-0 left-0 right-0 bg-black backdrop-blur-sm shadow-md z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} 
         style={{
           transition: 'transform 0.2s ease, opacity 0.2s ease'
         }}

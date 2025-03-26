@@ -24,12 +24,12 @@ const renderIcon = (icon: React.ReactNode | IconConfig): React.ReactNode => {
   if (typeof icon === 'object' && 'icon' in icon && 'color' in icon) {
     const iconConfig = icon as IconConfig;
     if (iconConfig.icon === 'Shirt') {
-      return <Shirt size={16} className={iconConfig.color} />;
+      return <Shirt size={16} className="text-black" />;
     } else if (iconConfig.icon === 'Footprints') {
-      return <Footprints size={16} className={iconConfig.color} />;
+      return <Footprints size={16} className="text-black" />;
     } else {
       // Default icon
-      return <Shirt size={16} className={iconConfig.color} />;
+      return <Shirt size={16} className="text-black" />;
     }
   }
   return icon;

@@ -28,7 +28,6 @@ const ServiceDetails: React.FC<ServiceDetailsProps> = ({
           <span className="text-xs text-gray-500">4.8</span>
         </div>
       </div>
-      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 interface OrderCardMenuProps {
   isHistory: boolean;
@@ -25,14 +25,6 @@ const OrderCardMenu: React.FC<OrderCardMenuProps> = ({
   
   return (
     <DropdownMenuContent align="end" className="bg-white">
-      <DropdownMenuItem 
-        onClick={onEdit}
-        disabled={!editOrderEnabled} 
-        className="text-blue-500 focus:text-blue-500"
-      >
-        <Edit className="mr-2 h-4 w-4" />
-        Edit Order
-      </DropdownMenuItem>
       <DropdownMenuItem 
         onClick={onCancel} 
         disabled={!isOngoing} 

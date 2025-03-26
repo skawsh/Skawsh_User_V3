@@ -27,12 +27,12 @@ export const useServiceData = (services: Service[]) => {
       let iconComponent;
       
       if (iconConfig.icon === 'Shirt') {
-        iconComponent = <Shirt size={16} className={iconConfig.color} />;
+        iconComponent = <Shirt size={16} className="text-white" />;
       } else if (iconConfig.icon === 'Footprints') {
-        iconComponent = <Footprints size={16} className={iconConfig.color} />;
+        iconComponent = <Footprints size={16} className="text-white" />;
       } else {
         // Default to Shirt if icon not recognized
-        iconComponent = <Shirt size={16} className={iconConfig.color} />;
+        iconComponent = <Shirt size={16} className="text-white" />;
       }
 
       return {
@@ -51,7 +51,7 @@ export const useServiceData = (services: Service[]) => {
       id: 'core-laundry',
       name: 'Core Laundry Services',
       title: "Core Laundry Services",
-      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
+      icon: <ShoppingBag size={16} className="text-white bg-black rounded-full" />,
       services: updatedCoreServices,
       count: updatedCoreServices.length,
       description: 'Essential laundry services for everyday needs',
@@ -72,7 +72,7 @@ export const useServiceData = (services: Service[]) => {
       id: 'shoe-laundry',
       name: 'Shoe Laundry Services',
       title: "Shoe Laundry Services",
-      icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
+      icon: <Footprints size={16} className="text-white bg-black rounded-3xl" />,
       services: shoeServices,
       count: 11,
       description: 'Professional cleaning for all types of footwear',
@@ -86,7 +86,7 @@ export const useServiceData = (services: Service[]) => {
       id: 'express-laundry',
       name: 'Express Laundry Services',
       title: "Core Laundry Services",
-      icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
+      icon: <ShoppingBag size={16} className="text-white bg-black rounded-full" />,
       services: expressWashServices,
       count: expressWashServices.length,
       description: 'Quick turnaround laundry services',
@@ -96,7 +96,7 @@ export const useServiceData = (services: Service[]) => {
       id: 'accessories',
       name: 'Accessories',
       title: "Accessories",
-      icon: <Bookmark size={16} className="text-white bg-purple-700 rounded-full" />,
+      icon: <Bookmark size={16} className="text-white bg-black rounded-full" />,
       services: accessoriesServices,
       count: accessoriesServices.length,
       description: 'Cleaning services for accessories',

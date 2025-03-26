@@ -43,8 +43,8 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = memo(({
             <img 
               src={serviceImage} 
               alt={subService.name} 
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              loading="lazy" // Add lazy loading for images
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale"
+              loading="lazy"
             />
             <button
               onClick={onFavoriteToggle}
@@ -52,7 +52,7 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = memo(({
                 "absolute top-2 right-2 p-1.5 rounded-full bg-white/80 shadow-sm hover:bg-white transition-all duration-200 z-20",
                 isFavorite ? 'animate-bounce-once' : ''
               )}
-              aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
+              aria-label={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             >
               <Heart 
                 size={14} 
@@ -62,7 +62,6 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = memo(({
           </div>
           <div className="w-full p-3">
             <h4 className="font-medium text-gray-800 text-sm mb-1">{subService.name}</h4>
-            <p className="text-xs text-gray-500 line-clamp-2 mb-2">{subService.description}</p>
             <div className="flex items-center justify-between">
               <Badge variant="outline" className="text-xs font-medium text-indigo-600 bg-indigo-50 border-indigo-100">
                 ₹{basePrice}

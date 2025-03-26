@@ -9,14 +9,18 @@ interface ServiceIconProps {
 const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
   if (serviceName.includes('Fold')) {
     return (
-      <img src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" alt="Laundry" className="w-full h-full object-cover" />
+      <img 
+        src="/lovable-uploads/0ef15cb3-a69a-4edc-b3d3-cecffd98ac53.png" 
+        alt="Laundry" 
+        className="w-full h-full object-cover grayscale" 
+      />
     );
   } else if (serviceName.includes('Iron')) {
     return (
       <img 
         src="/lovable-uploads/9023929c-2175-414d-a1f2-b5e24e4b1fcb.png" 
         alt="Iron Only" 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover grayscale"
       />
     );
   } else if (
@@ -30,7 +34,7 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
   ) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <Footprints size={20} className="text-gray-500" />
+        <Footprints size={20} className="text-gray-900" />
       </div>
     );
   } else if (
@@ -40,13 +44,13 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
   ) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <Shirt size={20} className="text-gray-500" />
+        <Shirt size={20} className="text-gray-900" />
       </div>
     );
   } else if (serviceName.includes('Pant')) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <Shirt size={20} className="text-gray-500" />
+        <Shirt size={20} className="text-gray-900" />
       </div>
     );
   } else if (serviceName.includes('Stain') || serviceName.includes('stain')) {
@@ -54,13 +58,13 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
       <img 
         src="/lovable-uploads/96bfc3cc-fd94-45ef-b8cb-527f655f2f26.png" 
         alt="Stain Removal" 
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover grayscale"
       />
     );
   } else {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <ShoppingBag size={20} className="text-gray-500" />
+        <ShoppingBag size={20} className="text-gray-900" />
       </div>
     );
   }

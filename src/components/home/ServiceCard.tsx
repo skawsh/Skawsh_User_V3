@@ -60,16 +60,16 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
       animationDelay: `${150 + index * 75}ms`
     }}>
       <div className="relative">
-        <Avatar className={`w-14 h-14 mb-1.5 transition-all duration-500 ease-in-out ${isSticky ? 'border border-white/20' : 'shadow-sm'}`}>
+        <Avatar className={`w-16 h-16 mb-1.5 transition-all duration-500 ease-in-out ${isSticky ? 'border-2 border-white' : 'shadow-md'}`}>
           {serviceImage ? (
             <AvatarImage 
               src={serviceImage} 
               alt={title} 
-              className="object-cover" 
-              loading="lazy" // Add lazy loading for images
+              className="object-cover grayscale" 
+              loading="lazy"
             />
           ) : (
-            <AvatarFallback className={`${isSticky ? 'bg-white/10 text-white' : 'bg-primary-100 text-primary-500'}`}>
+            <AvatarFallback className={`${isSticky ? 'bg-gray-800 text-white' : 'bg-black text-white'} rounded-full`}>
               {icon}
             </AvatarFallback>
           )}
@@ -84,7 +84,7 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
           </button>
         )}
       </div>
-      {showTitle && <h3 className={`text-xs font-bold mt-1 ${isSticky ? 'text-white' : 'text-gray-800'} transition-colors duration-300`}>{title}</h3>}
+      {showTitle && <h3 className={`text-xs font-bold mt-2 ${isSticky ? 'text-white' : 'text-gray-800'} transition-colors duration-300`}>{title}</h3>}
       {showPrice && price && <span className="text-xs text-primary-500 font-medium mt-0.5">{formatIndianRupee(price)}</span>}
     </div>
   );

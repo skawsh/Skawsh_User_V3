@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { Button } from '../components/ui/button';
 import { Textarea } from '../components/ui/textarea';
-import { toast } from '../components/ui/use-toast';
+import { toast } from 'sonner';
 
 const Feedback: React.FC = () => {
   const navigate = useNavigate();
@@ -33,13 +33,7 @@ const Feedback: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!message.trim()) {
-      toast("Error: Feedback required. Please enter your feedback before submitting.");
-      return;
-    }
-    
-    if (rating === 0) {
-      toast("Error: Please select a rating before submitting.");
+    if (!message.trim() || rating === 0) {
       return;
     }
     
@@ -47,7 +41,7 @@ const Feedback: React.FC = () => {
     
     // Simulate API call
     setTimeout(() => {
-      toast("Thank you for your feedback! We appreciate your input and will use it to improve our services.");
+      toast.success("Thank you for your feedback!");
       setIsSubmitting(false);
       setMessage('');
       navigate('/profile');

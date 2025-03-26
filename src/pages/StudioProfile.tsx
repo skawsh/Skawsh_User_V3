@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -5,7 +6,7 @@ import StudioHeader from '../components/studio/StudioHeader';
 import ServiceList from '../components/studio/ServiceList';
 import SackFooter from '../components/studio/SackFooter';
 import SackBar from '../components/SackBar';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from 'sonner';
 import StudioProfileHeader from '../components/studio/StudioProfileHeader';
 import { useStudioData } from '@/hooks/useStudioData';
 import { useCartItems } from '@/utils/sackBarUtils';
@@ -70,9 +71,6 @@ const StudioProfile: React.FC = () => {
         
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
         document.dispatchEvent(new Event('cartUpdated'));
-        
-        // Show toast to inform user they're editing an order
-        toast(`Editing Order: You're now editing order #${orderId.substring(0, 8)}`);
       }
     }
   }, [orderId, id]);
