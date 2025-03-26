@@ -13,6 +13,10 @@ export interface ServiceCategory {
   icon: React.ReactNode;
   description: string;
   subServices: SubService[];
+  title?: string;
+  services?: Service[];
+  count?: number;
+  subCategories?: SubCategory[];
 }
 
 export interface FavoriteService {
@@ -29,4 +33,32 @@ export interface Service {
   description?: string;
   price?: number;
   unit?: string;
+}
+
+export interface CartItem {
+  serviceId: string;
+  serviceName: string;
+  weight?: number;
+  price: number;
+  quantity: number; 
+  studioId?: string;
+  studioName?: string;
+  items: {
+    name: string;
+    quantity: number;
+  }[];
+  washType?: string;
+  serviceCategory?: string;
+  serviceSubCategory?: string;
+}
+
+export interface IconConfig {
+  icon: string;
+  color: string;
+}
+
+export interface SubCategory {
+  title: string;
+  icon: React.ReactNode | IconConfig;
+  services: Service[];
 }
