@@ -69,12 +69,14 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
       <div 
         id="services-row" 
         ref={servicesRowRef} 
-        className={`${isSticky ? 'fixed top-0 left-0 right-0 z-40 px-4 py-2 border-b' : 'bg-transparent'} will-change-transform`} 
+        className={`${isSticky ? 'fixed top-0 left-0 right-0 z-40 py-2 border-b' : 'bg-transparent'} will-change-transform`} 
         style={{
           background: isSticky 
             ? 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)' 
             : 'transparent',
-          transition: 'transform 0.2s ease, opacity 0.2s ease'
+          transition: 'transform 0.2s ease, opacity 0.2s ease',
+          paddingLeft: isSticky ? '5px' : undefined,
+          paddingRight: isSticky ? '5px' : undefined
         }}
       >
         <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
