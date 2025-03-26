@@ -57,16 +57,10 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
   }, []);
 
   return (
-    <div 
-      ref={servicesRef} 
-      className="pb-1 -mx-4 px-[5px]" 
-      style={{
-        backgroundImage: 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)'
-      }}
-    >
+    <div ref={servicesRef} className="pb-1 -mx-4 px-[5px] bg-gradient-to-r from-gray-50 to-white">
       <Card className="border-none shadow-none bg-transparent mb-2">
         <CardContent className="p-0 pt-2 px-[15px]">
-          <h2 className="section-title mb-2 font-bold text-lg text-white">Explore Laundry Services</h2>
+          <h2 className="section-title mb-2 font-bold text-lg">Explore Laundry Services</h2>
         </CardContent>
       </Card>
       
