@@ -45,9 +45,9 @@ const ServiceCategorySection: React.FC<ServiceCategorySectionProps> = ({
         onToggle={() => toggleCategory(category.id)}
       />
       
-      {isExpanded && category.services && (
+      {isExpanded && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-          {category.services.map((subService) => {
+          {category.services && category.services.map((subService) => {
             const isFavorite = isServiceFavorite(category.id, subService.id);
             
             return (

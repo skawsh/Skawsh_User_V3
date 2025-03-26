@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ServiceSearch from '../components/services/ServiceSearch';
 import ServiceCategorySection from '../components/services/ServiceCategorySection';
 import { serviceCategories } from '../data/serviceCategories';
-import { ServiceCategory, SubService } from '@/types/serviceTypes';
+import { ServiceCategory, Service } from '@/types/serviceTypes';
 import { useFavoriteServices } from '../hooks/useFavoriteServices';
 import { getServiceBasePrice, getSubserviceImage } from '../utils/serviceUtils';
 import FooterSignature from '../components/FooterSignature';
@@ -27,7 +27,7 @@ const Services: React.FC = () => {
     );
   };
 
-  const handleSubserviceClick = (categoryName: string, subService: SubService) => {
+  const handleSubserviceClick = (categoryName: string, subService: Service) => {
     navigate(`/services/${subService.id}`, {
       state: {
         serviceName: `${subService.name}`,
@@ -62,9 +62,21 @@ const Services: React.FC = () => {
   useEffect(() => {
     setFilteredServices(serviceCategories);
     if (serviceCategories.length > 0) {
-      setExpandedCategories([serviceCategories[0].id]);
+      // Expand all categories by default
+      setExpandedCategories(serviceCategories.map(category => category.id));
     }
   }, []);
+
+  // Transform subServices to match the Service interface
+  const prepareCategoryForDisplay = (category: ServiceCategory): ServiceCategory => {
+    return {
+      ...category,
+      services: category.subServices.map(subService => ({
+        ...subService,
+        price: parseInt(getServiceBasePrice(subService)) || 199,
+      }))
+    };
+  };
 
   return (
     <Layout>
@@ -84,7 +96,7 @@ const Services: React.FC = () => {
             filteredServices.map((category, index) => (
               <ServiceCategorySection
                 key={category.id}
-                category={category}
+                category={prepareCategoryForDisplay(category)}
                 index={index}
                 isExpanded={expandedCategories.includes(category.id)}
                 toggleCategory={toggleCategory}

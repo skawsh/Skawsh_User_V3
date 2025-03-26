@@ -43,8 +43,8 @@ export const getSubserviceImage = (serviceId: string, subserviceId: string): str
   }
   
   // If not in cache, get the image and store it
+  // Try to get a specific image for the subservice first
   const image = getServiceImage(subserviceId);
   subserviceImageCache[cacheKey] = image;
   return image;
 };
-
