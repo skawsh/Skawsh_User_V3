@@ -30,6 +30,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Studio from './pages/Studio';
 import { useState, useEffect } from "react";
 import RateExperiencePopup from "./components/RateExperiencePopup";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import VerifyOTP from "./pages/VerifyOTP";
+import CompleteProfile from "./pages/CompleteProfile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -99,6 +103,13 @@ function App() {
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/register-studio" element={<Studio />} />
+            
+            {/* Authentication Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-otp" element={<VerifyOTP />} />
+            <Route path="/complete-profile" element={<CompleteProfile />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
           
