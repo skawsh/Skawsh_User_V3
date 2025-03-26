@@ -47,7 +47,7 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
                 <InputOTP 
                   maxLength={4} 
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(value) => field.onChange(value)}
                   render={({ slots }) => (
                     <InputOTPGroup className="gap-3 justify-center">
                       {slots.map((slot, i) => (
@@ -55,7 +55,7 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
                           key={i} 
                           {...slot} 
                           index={i} 
-                          className="w-14 h-14 text-lg border-2 rounded-xl border-gray-300 focus:border-primary-500"
+                          className="w-14 h-14 text-lg font-semibold border-2 rounded-xl border-gray-300 focus:border-primary-500 focus-within:border-primary-500"
                         />
                       ))}
                     </InputOTPGroup>
@@ -69,7 +69,7 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
 
         <Button 
           type="submit" 
-          className="w-full bg-primary-500 hover:bg-primary-600 py-6 rounded-xl font-medium text-lg mt-6" 
+          className="w-full bg-primary-500 hover:bg-primary-600 py-5 rounded-xl font-medium text-lg" 
           disabled={isSubmitting}
         >
           {isSubmitting ? "Verifying..." : "Verify OTP"}

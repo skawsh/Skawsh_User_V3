@@ -13,8 +13,8 @@ const ResendOTPSection: React.FC<ResendOTPSectionProps> = ({
   onResend
 }) => {
   return (
-    <div className="mt-6 text-center">
-      <p className="text-gray-600 text-sm mb-2">Didn't receive the code?</p>
+    <div className="mt-4 text-center">
+      <p className="text-gray-600 text-sm mb-1">Didn't receive the code?</p>
       <button
         onClick={onResend}
         disabled={!canResend}

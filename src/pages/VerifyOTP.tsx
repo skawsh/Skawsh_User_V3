@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import { ArrowLeft } from 'lucide-react';
@@ -37,20 +37,20 @@ const VerifyOTP: React.FC = () => {
           </button>
         </div>
         
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="mb-10 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-2 max-h-[calc(100vh-100px)]">
+          <div className="mb-6 text-center">
             <img 
               src="/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
               alt="Skawsh Logo" 
-              className="w-44 h-auto mx-auto"
+              className="w-36 h-auto mx-auto"
             />
-            <h1 className="mt-6 text-2xl font-bold text-primary-500">Verify Your Number</h1>
-            <p className="mt-3 text-gray-600 max-w-sm mx-auto">
+            <h1 className="mt-4 text-2xl font-bold text-primary-500">Verify Your Number</h1>
+            <p className="mt-2 text-gray-600 max-w-sm mx-auto">
               We've sent a 4-digit verification code to <span className="font-semibold text-black">{mobile}</span>
             </p>
           </div>
           
-          <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="w-full max-w-md bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-4">
             <OTPInputForm 
               onSubmit={onSubmit}
               isSubmitting={isSubmitting}

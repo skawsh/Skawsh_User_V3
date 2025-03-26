@@ -43,7 +43,7 @@ const InputOTPSlot = React.forwardRef<
   const inputOTPContext = React.useContext(OTPInputContext)
   
   // Safely access slots with proper typing
-  const slot: SlotType = inputOTPContext?.slots?.[index] || {} as SlotType
+  const slot: SlotType = inputOTPContext?.slots?.[index] || {}
   const char = slot.char || ''
   const hasFakeCaret = Boolean(slot.hasFakeCaret)
   const isActive = Boolean(slot.isActive)
