@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -10,6 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 import StudioProfileHeader from '../components/studio/StudioProfileHeader';
 import { useStudioData } from '@/hooks/useStudioData';
 import { useCartItems } from '@/utils/sackBarUtils';
+import FooterSignature from '../components/FooterSignature';
 
 // Helper function to format currency in Indian Rupee format
 export const formatIndianRupee = (amount: number): string => {
@@ -168,6 +168,9 @@ const StudioProfile: React.FC = () => {
             onCartUpdate={handleCartUpdate} 
             studioId={studio.id}
           />
+          
+          {/* Only show the footer signature when there are no items in cart */}
+          {cartCount === 0 && <FooterSignature />}
         </div>
 
         {/* Show SackBar when there are items in the cart but no current services selected in this studio */}

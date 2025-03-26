@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import HeaderSection from '../components/home/HeaderSection';
 import ServicesSection from '../components/home/ServicesSection';
 import StudiosSection from '../components/home/StudiosSection';
+import FooterSignature from '../components/FooterSignature';
 import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase } from 'lucide-react';
 
 const Home: React.FC = () => {
@@ -145,6 +146,7 @@ const Home: React.FC = () => {
         <HeaderSection banners={banners} />
         <ServicesSection services={services} />
         <StudiosSection studios={studios} />
+        <FooterSignature />
       </div>
     </Layout>
   );
