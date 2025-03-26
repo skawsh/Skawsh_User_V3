@@ -18,30 +18,29 @@ const OrderCardMenu: React.FC<OrderCardMenuProps> = ({
   onEdit,
   onCancel
 }) => {
+  // For history orders, return empty content - no options will be shown
+  if (isHistory) {
+    return null;
+  }
+  
   return (
     <DropdownMenuContent align="end" className="bg-white">
-      {isHistory ? (
-        <></>
-      ) : (
-        <>
-          <DropdownMenuItem 
-            onClick={onEdit}
-            disabled={!editOrderEnabled} 
-            className="text-blue-500 focus:text-blue-500"
-          >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit Order
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={onCancel} 
-            disabled={!isOngoing} 
-            className="text-red-500 focus:text-red-500"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Cancel Order
-          </DropdownMenuItem>
-        </>
-      )}
+      <DropdownMenuItem 
+        onClick={onEdit}
+        disabled={!editOrderEnabled} 
+        className="text-blue-500 focus:text-blue-500"
+      >
+        <Edit className="mr-2 h-4 w-4" />
+        Edit Order
+      </DropdownMenuItem>
+      <DropdownMenuItem 
+        onClick={onCancel} 
+        disabled={!isOngoing} 
+        className="text-red-500 focus:text-red-500"
+      >
+        <Trash2 className="mr-2 h-4 w-4" />
+        Cancel Order
+      </DropdownMenuItem>
     </DropdownMenuContent>
   );
 };

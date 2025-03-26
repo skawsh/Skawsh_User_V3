@@ -48,7 +48,7 @@ const AddClothingItemForm: React.FC<AddClothingItemFormProps> = ({
             className="text-blue-600 p-0 h-auto"
             disabled={isDisabled}
           >
-            Select clothing items
+            Add unlisted clothing items
           </Button>
           <Button 
             onClick={() => onToggleAddingItem(true)} 

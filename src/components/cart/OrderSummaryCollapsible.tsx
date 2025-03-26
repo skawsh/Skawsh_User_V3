@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getTaxBreakdown } from '@/utils/cartCalculationUtils';
 
 interface OrderSummaryProps {
   subtotal: number;
@@ -29,6 +31,9 @@ const OrderSummaryCollapsible: React.FC<OrderSummaryProps> = ({
     return `₹${amount.toFixed(0)}`;
   };
   
+  // Get tax breakdown
+  const taxBreakdown = getTaxBreakdown(subtotal, deliveryFee);
+  
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm animate-fade-in" style={{animationDelay: "450ms"}}>
       <Collapsible open={showDetails} onOpenChange={setShowDetails}>
@@ -52,8 +57,26 @@ const OrderSummaryCollapsible: React.FC<OrderSummaryProps> = ({
               <span className="text-gray-600">Delivery Fee</span>
               <span>{formatIndianRupee(deliveryFee)}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Tax</span>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1">
+                <span className="text-gray-600">Tax</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info size={14} className="text-gray-400 hover:text-gray-600 transition-colors" />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white shadow-md border p-2 text-xs">
+                      <div className="space-y-1">
+                        <p>GST (18% of subtotal): {formatIndianRupee(taxBreakdown.gst)}</p>
+                        <p>Delivery Tax (5% of delivery fee): {formatIndianRupee(taxBreakdown.deliveryTax)}</p>
+                        <div className="pt-1 font-medium">
+                          <p>Total Tax: {formatIndianRupee(taxBreakdown.total)}</p>
+                        </div>
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <span>{formatIndianRupee(tax)}</span>
             </div>
             {discountApplied && (

@@ -178,7 +178,7 @@ const ProfileInfo: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <ProfileMenuItem 
             icon={<Heart size={18} className="text-primary-500" />} 
-            title="Washlist" 
+            title="Favourites" 
             description="Your favorite studios and services"
             onClick={() => handleMenuItem('/favorites')} 
           />

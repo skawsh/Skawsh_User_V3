@@ -23,10 +23,40 @@ export const calculateDeliveryFee = (subtotal: number): number => {
 };
 
 /**
- * Calculate the tax amount (5% of subtotal)
+ * Calculate the GST (18% of subtotal)
  */
-export const calculateTax = (subtotal: number): number => {
-  return Math.round(subtotal * 0.05); // Assuming 5% tax
+export const calculateGST = (subtotal: number): number => {
+  return Math.round(subtotal * 0.18); // 18% GST
+};
+
+/**
+ * Calculate the delivery tax (5% of delivery fee)
+ */
+export const calculateDeliveryTax = (deliveryFee: number): number => {
+  return Math.round(deliveryFee * 0.05); // 5% delivery tax
+};
+
+/**
+ * Calculate the tax amount (combination of GST and delivery tax)
+ */
+export const calculateTax = (subtotal: number, deliveryFee: number): number => {
+  const gst = calculateGST(subtotal);
+  const deliveryTax = calculateDeliveryTax(deliveryFee);
+  return gst + deliveryTax;
+};
+
+/**
+ * Get tax breakdown details
+ */
+export const getTaxBreakdown = (subtotal: number, deliveryFee: number) => {
+  const gst = calculateGST(subtotal);
+  const deliveryTax = calculateDeliveryTax(deliveryFee);
+  
+  return {
+    gst,
+    deliveryTax,
+    total: gst + deliveryTax
+  };
 };
 
 /**

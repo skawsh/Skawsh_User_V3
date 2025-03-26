@@ -111,7 +111,7 @@ export const useCart = (studioId: string | null, navigate: any): UseCartReturn =
   // Calculate order totals using utility functions
   const subtotal = calculateSubtotal(cartItems);
   const deliveryFee = calculateDeliveryFee(subtotal);
-  const tax = calculateTax(subtotal);
+  const tax = calculateTax(subtotal, deliveryFee);
   const discount = calculateDiscount(subtotal, discountApplied, discountPercentage);
   const total = calculateTotal(subtotal, deliveryFee, tax, discount);
 

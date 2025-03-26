@@ -90,7 +90,7 @@ const Favorites: React.FC = () => {
             >
               <ArrowLeft size={20} className="text-gray-700" />
             </button>
-            <span className="font-medium text-gray-800">Washlist</span>
+            <span className="font-medium text-gray-800">Favourites</span>
           </div>
         )}
         
@@ -102,14 +102,14 @@ const Favorites: React.FC = () => {
             >
               <ArrowLeft size={20} className="text-gray-700" />
             </button>
-            <h1 className="text-xl font-semibold">Washlist</h1>
+            <h1 className="text-xl font-semibold">Favourites</h1>
           </div>
         </div>
         
         {favoriteStudios.length === 0 && favoriteServices.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center animate-fade-in">
             <Heart size={48} className="text-gray-300 mb-4" />
-            <h2 className="text-lg font-medium text-gray-700 mb-2">Your Washlist is Empty</h2>
+            <h2 className="text-lg font-medium text-gray-700 mb-2">Your Favourites List is Empty</h2>
             <p className="text-gray-500 mb-4">Save your favorite laundry studios and services here.</p>
             <Link 
               to="/" 

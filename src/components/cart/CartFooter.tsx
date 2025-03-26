@@ -10,10 +10,6 @@ interface CartFooterProps {
 }
 
 const CartFooter: React.FC<CartFooterProps> = ({ total, onPlaceOrder }) => {
-  const formatIndianRupee = (amount: number): string => {
-    return `₹${amount.toFixed(0)}`;
-  };
-  
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg animate-slide-in" style={{animationDelay: "500ms"}}>
       <div className="max-w-3xl mx-auto">
@@ -23,7 +19,7 @@ const CartFooter: React.FC<CartFooterProps> = ({ total, onPlaceOrder }) => {
           icon={<Package size={18} />}
           fullWidth
         >
-          Place Order {formatIndianRupee(total)}
+          Place Order
         </Button>
       </div>
     </div>
