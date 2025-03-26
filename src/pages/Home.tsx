@@ -1,11 +1,10 @@
-
 import React from 'react';
 import Layout from '../components/Layout';
 import HeaderSection from '../components/home/HeaderSection';
 import ServicesSection from '../components/home/ServicesSection';
 import StudiosSection from '../components/home/StudiosSection';
 import FooterSignature from '../components/FooterSignature';
-import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, WashingMachine, Shirt, Iron } from 'lucide-react';
+import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, WashingMachine, Shirt } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [{
@@ -19,7 +18,7 @@ const Home: React.FC = () => {
   }, {
     id: 'iron-only',
     title: 'Iron Only',
-    icon: <Iron size={24} />,
+    icon: <Clock size={24} />,
     image: 'https://images.unsplash.com/photo-1591643485762-b49e9f823bba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'
   }, {
     id: 'shoe-laundry',

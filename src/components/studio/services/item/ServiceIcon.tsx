@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShoppingBag, Clock, Footprints, Shirt, Iron } from 'lucide-react';
+import { ShoppingBag, Clock, Footprints, Shirt } from 'lucide-react';
 
 interface ServiceIconProps {
   serviceName: string;
@@ -14,7 +14,7 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
   } else if (serviceName.includes('Iron')) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <Iron size={20} className="text-gray-500" />
+        <Clock size={20} className="text-gray-500" />
       </div>
     );
   } else if (
