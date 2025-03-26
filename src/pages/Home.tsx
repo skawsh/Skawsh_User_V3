@@ -19,7 +19,7 @@ const Home: React.FC = () => {
     id: 'iron-only',
     title: 'Iron Only',
     icon: <Clock size={24} />,
-    image: 'https://images.unsplash.com/photo-1591643485762-b49e9f823bba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'
+    image: '/lovable-uploads/9023929c-2175-414d-a1f2-b5e24e4b1fcb.png'
   }, {
     id: 'shoe-laundry',
     title: 'Shoe Laundry',

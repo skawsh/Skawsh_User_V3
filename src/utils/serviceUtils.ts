@@ -7,6 +7,7 @@ export const getServiceBasePrice = (service: Service | SubService): string => {
   // This would be replaced with real pricing logic in a production app
   const priceMap: Record<string, string> = {
     'wash-fold': '199',
+    'iron-only': '149',
     'wash-iron': '249',
     'daily-wear': '299',
     'ethnic-wear': '399',
