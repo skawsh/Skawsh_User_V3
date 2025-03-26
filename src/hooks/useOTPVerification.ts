@@ -90,7 +90,10 @@ export const useOTPVerification = () => {
         toast.success("OTP verified. Please complete your profile.");
       } else {
         // If existing user, consider them logged in
-        // In a real app, we'd set authentication state/token here
+        // Set authentication state
+        sessionStorage.setItem('isLoggedIn', 'true');
+        
+        // Redirect to home
         navigate('/');
         toast.success("Login successful! Welcome back.");
       }
@@ -115,4 +118,3 @@ export const useOTPVerification = () => {
     verifyOTP
   };
 };
-

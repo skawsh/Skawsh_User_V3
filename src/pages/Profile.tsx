@@ -31,8 +31,13 @@ const Profile: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // For now, just redirect to home
-    navigate('/');
+    // Clear any user session data from storage
+    sessionStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('userProfile');
+    localStorage.removeItem('authToken');
+    
+    // Redirect to the index page which has signup/login options
+    navigate('/index');
   };
 
   return (

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -45,8 +46,13 @@ const ProfileInfo: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // For now, just redirect to home
-    navigate('/');
+    // Clear any user session data
+    sessionStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('userProfile');
+    localStorage.removeItem('authToken');
+    
+    // Redirect to the index page
+    navigate('/index');
   };
 
   const handleEditProfile = () => {
