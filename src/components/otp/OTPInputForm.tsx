@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,6 +35,14 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
     },
   });
 
+  // Set focus to the first OTP field when component mounts
+  useEffect(() => {
+    const firstInput = document.querySelector('input[data-input-idx="0"]');
+    if (firstInput) {
+      (firstInput as HTMLInputElement).focus();
+    }
+  }, []);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -47,15 +55,16 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
                 <InputOTP 
                   maxLength={4} 
                   value={field.value}
-                  onChange={(value) => field.onChange(value)}
+                  onChange={field.onChange}
+                  containerClassName="justify-center"
                   render={({ slots }) => (
-                    <InputOTPGroup className="gap-3 justify-center">
+                    <InputOTPGroup className="gap-4 justify-center">
                       {slots.map((slot, i) => (
                         <InputOTPSlot 
                           key={i} 
                           {...slot} 
                           index={i} 
-                          className="w-14 h-14 text-lg font-semibold border-2 rounded-xl border-gray-300 focus:border-primary-500 focus-within:border-primary-500"
+                          className="w-14 h-14 text-lg font-semibold border-2 rounded-lg border-gray-300 focus:border-primary-500 focus-within:border-primary-500 focus:ring-1 focus:ring-primary-400"
                         />
                       ))}
                     </InputOTPGroup>
