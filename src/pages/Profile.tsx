@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import ProfileInfo from '../components/profile/ProfileInfo';
 import { ArrowLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import FooterSignature from '../components/FooterSignature';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -85,6 +86,11 @@ const Profile: React.FC = () => {
           </div>
         </div>
         <ProfileInfo />
+        
+        {/* Added FooterSignature at the bottom of the profile page */}
+        <div className="mt-8">
+          <FooterSignature />
+        </div>
       </div>
     </Layout>
   );
