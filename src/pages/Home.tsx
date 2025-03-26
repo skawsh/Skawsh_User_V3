@@ -5,7 +5,7 @@ import HeaderSection from '../components/home/HeaderSection';
 import ServicesSection from '../components/home/ServicesSection';
 import StudiosSection from '../components/home/StudiosSection';
 import FooterSignature from '../components/FooterSignature';
-import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, WashingMachine, Shirt, Umbrella } from 'lucide-react';
+import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, WashingMachine, Shirt, Iron } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [{
@@ -19,7 +19,8 @@ const Home: React.FC = () => {
   }, {
     id: 'iron-only',
     title: 'Iron Only',
-    icon: <Umbrella size={24} />
+    icon: <Iron size={24} />,
+    image: 'https://images.unsplash.com/photo-1591643485762-b49e9f823bba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'
   }, {
     id: 'shoe-laundry',
     title: 'Shoe Laundry',
@@ -27,7 +28,8 @@ const Home: React.FC = () => {
   }, {
     id: 'stain-removal',
     title: 'Stain Removal',
-    icon: <Palette size={24} />
+    icon: <Palette size={24} />,
+    image: 'https://images.unsplash.com/photo-1585421514284-efb74320a966?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'
   }, {
     id: 'express-service',
     title: 'Express Service',

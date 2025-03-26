@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShoppingBag, Clock, Footprints, Shirt } from 'lucide-react';
+import { ShoppingBag, Clock, Footprints, Shirt, Iron } from 'lucide-react';
 
 interface ServiceIconProps {
   serviceName: string;
@@ -14,7 +14,7 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
   } else if (serviceName.includes('Iron')) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-        <Clock size={20} className="text-gray-500" />
+        <Iron size={20} className="text-gray-500" />
       </div>
     );
   } else if (
@@ -46,6 +46,14 @@ const ServiceIcon: React.FC<ServiceIconProps> = ({ serviceName }) => {
       <div className="w-full h-full flex items-center justify-center bg-gray-100">
         <Shirt size={20} className="text-gray-500" />
       </div>
+    );
+  } else if (serviceName.includes('Stain') || serviceName.includes('stain')) {
+    return (
+      <img 
+        src="https://images.unsplash.com/photo-1585421514284-efb74320a966?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+        alt="Stain Removal" 
+        className="w-full h-full object-cover"
+      />
     );
   } else {
     return (
