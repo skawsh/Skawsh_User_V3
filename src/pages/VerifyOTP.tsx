@@ -26,7 +26,7 @@ const VerifyOTP: React.FC = () => {
   return (
     <Layout hideFooter={true}>
       <div className="flex min-h-screen flex-col bg-white">
-        <div className="flex items-center p-3">
+        <div className="flex items-center p-2">
           <button
             onClick={() => navigate(isNewUser ? '/signup' : '/login')}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -41,7 +41,7 @@ const VerifyOTP: React.FC = () => {
             <img 
               src="/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
               alt="Skawsh Logo" 
-              className="w-32 h-auto mx-auto"
+              className="w-28 h-auto mx-auto"
             />
             <h1 className="mt-2 text-2xl font-bold text-primary-500">Verify Your Number</h1>
             <p className="mt-1 text-gray-600 max-w-sm mx-auto text-sm">
