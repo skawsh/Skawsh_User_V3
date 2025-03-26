@@ -35,8 +35,15 @@ const InputOTPSlot = React.forwardRef<
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
   
-  // Safely access slots with proper null checking and default values
-  const slot = inputOTPContext?.slots?.[index] || {}
+  // Define type explicitly for defaultSlot to avoid TypeScript errors
+  type SlotType = {
+    char?: string;
+    hasFakeCaret?: boolean;
+    isActive?: boolean;
+  }
+  
+  // Safely access slots with proper null checking and default values using a typed default object
+  const slot: SlotType = inputOTPContext?.slots?.[index] || {} as SlotType
   const char = slot.char || ''
   const hasFakeCaret = Boolean(slot.hasFakeCaret)
   const isActive = Boolean(slot.isActive)
