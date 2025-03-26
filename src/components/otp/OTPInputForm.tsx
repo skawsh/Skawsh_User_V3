@@ -74,4 +74,3 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
 };
 
 export default OTPInputForm;
-
