@@ -40,7 +40,7 @@ const VerifyOTP: React.FC = () => {
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
           <div className="mb-10 text-center">
             <img 
-              src="/public/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
+              src="/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
               alt="Skawsh Logo" 
               className="w-44 h-auto mx-auto"
             />
@@ -69,4 +69,3 @@ const VerifyOTP: React.FC = () => {
 };
 
 export default VerifyOTP;
-

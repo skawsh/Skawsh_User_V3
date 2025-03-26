@@ -29,11 +29,11 @@ const Index = () => {
   };
 
   return (
-    <Layout>
+    <Layout hideFooter={true}>
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
         <div className="mb-12 text-center">
           <img 
-            src="/public/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
+            src="/lovable-uploads/f9c8201e-220e-43f1-b1c4-b0fbbdd0fc7a.png" 
             alt="Skawsh Logo" 
             className="w-52 h-auto mx-auto"
           />
