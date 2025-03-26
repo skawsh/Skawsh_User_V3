@@ -32,7 +32,19 @@ export const getServiceBasePrice = (service: Service): string => {
   return priceMap[service.id] || '199';
 };
 
+// Cache for subservice images to prevent redundant lookups
+const subserviceImageCache: Record<string, string> = {};
+
 export const getSubserviceImage = (serviceId: string, subserviceId: string): string => {
-  // Use our new utility function to get better images
-  return getServiceImage(subserviceId);
+  // Check if image is in cache first
+  const cacheKey = `${serviceId}-${subserviceId}`;
+  if (subserviceImageCache[cacheKey]) {
+    return subserviceImageCache[cacheKey];
+  }
+  
+  // If not in cache, get the image and store it
+  const image = getServiceImage(subserviceId);
+  subserviceImageCache[cacheKey] = image;
+  return image;
 };
+

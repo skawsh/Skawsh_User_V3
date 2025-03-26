@@ -1,5 +1,5 @@
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import ServiceCard from './ServiceCard';
 
@@ -21,33 +21,34 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
   const dividerRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const servicesRow = servicesRowRef.current;
-      const invisibleDivider = dividerRef.current;
-      if (invisibleDivider && servicesRow) {
-        const dividerPosition = invisibleDivider.getBoundingClientRect().top;
-        const shouldStick = dividerPosition <= 0;
+  // Memoize the scroll handler to prevent unnecessary renders
+  const handleScroll = useCallback(() => {
+    const servicesRow = servicesRowRef.current;
+    const invisibleDivider = dividerRef.current;
+    if (invisibleDivider && servicesRow) {
+      const dividerPosition = invisibleDivider.getBoundingClientRect().top;
+      const shouldStick = dividerPosition <= 0;
 
-        if (shouldStick && !isSticky) {
-          setStickyHeight(servicesRow.offsetHeight);
-          requestAnimationFrame(() => {
-            setIsSticky(true);
-          });
-        } else if (!shouldStick && isSticky) {
-          requestAnimationFrame(() => {
-            setIsSticky(false);
-          });
-        }
+      if (shouldStick && !isSticky) {
+        setStickyHeight(servicesRow.offsetHeight);
+        requestAnimationFrame(() => {
+          setIsSticky(true);
+        });
+      } else if (!shouldStick && isSticky) {
+        requestAnimationFrame(() => {
+          setIsSticky(false);
+        });
       }
-    };
+    }
+  }, [isSticky]);
 
+  useEffect(() => {
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isSticky]);
+  }, [handleScroll]);
 
   useEffect(() => {
     if (servicesRowRef.current && stickyHeight === 0) {

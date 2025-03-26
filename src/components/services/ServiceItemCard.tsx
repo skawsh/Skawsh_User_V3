@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Heart } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,8 @@ interface ServiceItemCardProps {
   onFavoriteToggle: (e: React.MouseEvent) => void;
 }
 
-const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
+// Using memo to prevent unnecessary re-renders
+const ServiceItemCard: React.FC<ServiceItemCardProps> = memo(({
   subService,
   categoryId,
   imageSrc,
@@ -26,7 +27,7 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
   onClick,
   onFavoriteToggle
 }) => {
-  // Get a better image based on the service ID
+  // Get a better image based on the service ID - only computed when props change
   const serviceImage = getServiceImage(subService.id);
   
   return (
@@ -43,6 +44,7 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
               src={serviceImage} 
               alt={subService.name} 
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy" // Add lazy loading for images
             />
             <button
               onClick={onFavoriteToggle}
@@ -72,6 +74,9 @@ const ServiceItemCard: React.FC<ServiceItemCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
+
+// Display name for React DevTools
+ServiceItemCard.displayName = 'ServiceItemCard';
 
 export default ServiceItemCard;

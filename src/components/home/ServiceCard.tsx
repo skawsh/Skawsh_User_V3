@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +19,8 @@ interface ServiceCardProps {
   id?: string;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({
+// Using memo to prevent unnecessary re-renders
+const ServiceCard: React.FC<ServiceCardProps> = memo(({
   icon,
   title,
   description,
@@ -38,7 +39,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     return `₹${amount.toFixed(0)}`;
   };
 
-  // Get the service image based on ID
+  // Get the service image based on ID - only computed when props change
   const serviceImage = id ? getServiceImage(id) : image;
 
   const handleServiceClick = () => {
@@ -61,7 +62,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <div className="relative">
         <Avatar className={`w-14 h-14 mb-1.5 transition-all duration-500 ease-in-out ${isSticky ? 'border border-white/20' : 'shadow-sm'}`}>
           {serviceImage ? (
-            <AvatarImage src={serviceImage} alt={title} className="object-cover" />
+            <AvatarImage 
+              src={serviceImage} 
+              alt={title} 
+              className="object-cover" 
+              loading="lazy" // Add lazy loading for images
+            />
           ) : (
             <AvatarFallback className={`${isSticky ? 'bg-white/10 text-white' : 'bg-primary-100 text-primary-500'}`}>
               {icon}
@@ -95,6 +101,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       {content}
     </div>
   );
-};
+});
+
+// Display name for React DevTools
+ServiceCard.displayName = 'ServiceCard';
 
 export default ServiceCard;
