@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ServiceSearch from '../components/services/ServiceSearch';
 import ServiceCategorySection from '../components/services/ServiceCategorySection';
 import { serviceCategories } from '../data/serviceCategories';
-import { ServiceCategory, Service } from '@/types/serviceTypes';
+import { ServiceCategory, Service, SubService } from '@/types/serviceTypes';
 import { useFavoriteServices } from '../hooks/useFavoriteServices';
 import { getServiceBasePrice, getSubserviceImage } from '../utils/serviceUtils';
 import FooterSignature from '../components/FooterSignature';
@@ -71,9 +71,9 @@ const Services: React.FC = () => {
   const prepareCategoryForDisplay = (category: ServiceCategory): ServiceCategory => {
     return {
       ...category,
-      services: category.subServices.map(subService => ({
+      services: category.subServices.map((subService: SubService): Service => ({
         ...subService,
-        price: parseInt(getServiceBasePrice(subService)) || 199,
+        price: parseInt(getServiceBasePrice(subService as unknown as Service)) || 199,
       }))
     };
   };

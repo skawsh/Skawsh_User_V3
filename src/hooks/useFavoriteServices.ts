@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { FavoriteService, SubService } from '@/types/serviceTypes';
+import { FavoriteService, Service, SubService } from '@/types/serviceTypes';
 
 export const useFavoriteServices = () => {
   const [favorites, setFavorites] = useState<FavoriteService[]>([]);
@@ -23,7 +23,7 @@ export const useFavoriteServices = () => {
     return favorites.some(fav => fav.id === serviceId);
   };
 
-  const toggleFavorite = (e: React.MouseEvent, subService: SubService, categoryName: string, basePrice: string) => {
+  const toggleFavorite = (e: React.MouseEvent, subService: Service | SubService, categoryName: string, basePrice: string) => {
     e.stopPropagation();
     
     try {
