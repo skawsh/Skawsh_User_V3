@@ -7,14 +7,10 @@ import { useServiceOrder } from './service/popup/useServiceOrder';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMobileKeyboard } from '@/hooks/useMobileKeyboard';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Service } from "@/types/serviceTypes";
 
 interface ServiceOrderPopupProps {
-  service: {
-    id: string;
-    name: string;
-    price: number;
-    unit?: string;
-  };
+  service: Service;
   isOpen: boolean;
   onClose: () => void;
   onAddToCart: (order: any) => void;

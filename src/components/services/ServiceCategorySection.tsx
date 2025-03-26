@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ServiceCategory, SubService } from '@/types/serviceTypes';
+import { ServiceCategory, Service } from '@/types/serviceTypes';
 import ServiceCategoryHeader from './ServiceCategoryHeader';
 import ServiceItemCard from './ServiceItemCard';
 import { cn } from "@/lib/utils";
@@ -10,10 +10,10 @@ interface ServiceCategorySectionProps {
   index: number;
   isExpanded: boolean;
   toggleCategory: (categoryId: string) => void;
-  handleSubserviceClick: (categoryName: string, subService: SubService) => void;
-  toggleFavorite: (e: React.MouseEvent, subService: SubService, categoryName: string) => void;
+  handleSubserviceClick: (categoryName: string, subService: Service) => void;
+  toggleFavorite: (e: React.MouseEvent, subService: Service, categoryName: string) => void;
   isServiceFavorite: (categoryName: string, subServiceId: string) => boolean;
-  getServiceBasePrice: (service: SubService) => string;
+  getServiceBasePrice: (service: Service) => string;
   getSubserviceImage: (serviceId: string, subserviceId: string) => string;
 }
 
@@ -45,9 +45,9 @@ const ServiceCategorySection: React.FC<ServiceCategorySectionProps> = ({
         onToggle={() => toggleCategory(category.id)}
       />
       
-      {isExpanded && (
+      {isExpanded && category.services && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
-          {category.subServices.map((subService) => {
+          {category.services.map((subService) => {
             const isFavorite = isServiceFavorite(category.id, subService.id);
             
             return (

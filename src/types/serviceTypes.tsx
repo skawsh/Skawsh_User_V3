@@ -30,8 +30,8 @@ export interface FavoriteService {
 export interface Service {
   id: string;
   name: string;
-  description?: string;
-  price?: number;
+  description: string;
+  price: number;
   unit?: string;
 }
 

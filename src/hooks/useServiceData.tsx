@@ -48,39 +48,59 @@ export const useServiceData = (services: Service[]) => {
   // Main categories
   const categories: ServiceCategory[] = [
     {
+      id: 'core-laundry',
+      name: 'Core Laundry Services',
       title: "Core Laundry Services",
       icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
       services: updatedCoreServices,
-      count: updatedCoreServices.length
+      count: updatedCoreServices.length,
+      description: 'Essential laundry services for everyday needs',
+      subServices: []
     }, 
     {
+      id: 'dry-cleaning',
+      name: 'Dry Cleaning Services',
       title: "Dry Cleaning Services",
       icon: <Shirt size={16} className="text-white bg-black rounded-full" />,
       services: [],
       count: 5,
-      subCategories: dryCleaningSubCategories
+      subCategories: dryCleaningSubCategories,
+      description: 'Professional cleaning for all types of garments',
+      subServices: []
     }, 
     {
+      id: 'shoe-laundry',
+      name: 'Shoe Laundry Services',
       title: "Shoe Laundry Services",
       icon: <Footprints size={16} className="text-white bg-slate-950 rounded-3xl" />,
       services: shoeServices,
-      count: 11
+      count: 11,
+      description: 'Professional cleaning for all types of footwear',
+      subServices: []
     }
   ];
 
   // Express categories
   const expressCategories: ServiceCategory[] = [
     {
+      id: 'express-laundry',
+      name: 'Express Laundry Services',
       title: "Core Laundry Services",
       icon: <ShoppingBag size={16} className="text-white bg-stone-800 rounded-full" />,
       services: expressWashServices,
-      count: expressWashServices.length
+      count: expressWashServices.length,
+      description: 'Quick turnaround laundry services',
+      subServices: []
     },
     {
+      id: 'accessories',
+      name: 'Accessories',
       title: "Accessories",
       icon: <Bookmark size={16} className="text-white bg-purple-700 rounded-full" />,
       services: accessoriesServices,
-      count: accessoriesServices.length
+      count: accessoriesServices.length,
+      description: 'Cleaning services for accessories',
+      subServices: []
     }
   ];
 

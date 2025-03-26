@@ -1,8 +1,8 @@
 
-import { SubService } from '@/types/serviceTypes';
+import { Service } from '@/types/serviceTypes';
 
 // Helper function to get a price for a service
-export const getServiceBasePrice = (service: SubService): string => {
+export const getServiceBasePrice = (service: Service): string => {
   // This would be replaced with real pricing logic in a production app
   const priceMap: Record<string, string> = {
     'wash-fold': '199',

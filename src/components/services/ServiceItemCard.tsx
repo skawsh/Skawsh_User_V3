@@ -3,11 +3,11 @@ import React from 'react';
 import { Heart } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { SubService } from '@/types/serviceTypes';
+import { Service } from '@/types/serviceTypes';
 import { cn } from "@/lib/utils";
 
 interface ServiceItemCardProps {
-  subService: SubService;
+  subService: Service;
   categoryId: string;
   imageSrc: string;
   isFavorite: boolean;
