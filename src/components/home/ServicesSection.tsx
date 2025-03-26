@@ -21,7 +21,6 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
   const servicesRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
-  const bubbleContainerRef = useRef<HTMLDivElement>(null);
   const bubblesIntervalRef = useRef<number | null>(null);
 
   // Memoize the scroll handler to prevent unnecessary renders
@@ -61,9 +60,9 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
 
   // Start and stop bubbles animation based on sticky state
   useEffect(() => {
-    if (isSticky && bubbleContainerRef.current) {
+    if (isSticky && servicesRowRef.current) {
       // Start bubbles animation when sticky
-      bubblesIntervalRef.current = startBubblesAnimation(bubbleContainerRef.current) as unknown as number;
+      bubblesIntervalRef.current = startBubblesAnimation(servicesRowRef.current) as unknown as number;
     } else if (!isSticky && bubblesIntervalRef.current) {
       // Stop bubbles animation when no longer sticky
       stopBubblesAnimation();
@@ -92,7 +91,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
       <div 
         id="services-row" 
         ref={servicesRowRef} 
-        className={`${isSticky ? 'fixed top-0 left-0 right-0 z-40 py-2 border-b overflow-hidden' : 'bg-transparent'} will-change-transform relative`} 
+        className={`${isSticky ? 'fixed top-0 left-0 right-0 z-40 py-2 border-b overflow-hidden' : 'bg-transparent'} will-change-transform`} 
         style={{
           background: isSticky 
             ? 'linear-gradient(90.1deg, rgba(8,81,98,1) 14.5%, rgba(198,231,249,1) 135.4%)' 
@@ -102,16 +101,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
           paddingRight: isSticky ? '5px' : undefined
         }}
       >
-        {/* Bubble container positioned behind the services */}
-        {isSticky && (
-          <div 
-            ref={bubbleContainerRef} 
-            className="absolute inset-0 overflow-hidden" 
-            style={{ zIndex: 1 }}
-          ></div>
-        )}
-        
-        <div className="overflow-x-auto overflow-y-hidden no-scrollbar relative" style={{ zIndex: 5 }}>
+        <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
           <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-transparent">
             {services.map((service, index) => (
               <ServiceCard 

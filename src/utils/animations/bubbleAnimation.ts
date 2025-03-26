@@ -24,7 +24,7 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
     clearInterval(existingInterval);
   }
   
-  // Create bubbles at random intervals (less frequently)
+  // Create bubbles at random intervals (more frequently)
   const interval = setInterval(() => {
     const bubble = createBubble();
     
@@ -59,9 +59,6 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
       bubble.style.height = `${currentSize * 0.8}px`;
     }
     
-    // Position the bubble container behind the services
-    bubble.style.zIndex = "1"; 
-    
     container.appendChild(bubble);
     
     // Remove bubble after animation completes
@@ -70,7 +67,7 @@ export const startBubblesAnimation = (container: HTMLDivElement) => {
         container.removeChild(bubble);
       }
     }, 10000); // Increased to account for longer animations
-  }, 1000); // Increased interval for fewer bubbles (from 400ms to 1000ms)
+  }, 400); // Reduced interval for more bubbles
   
   // Store interval ID for cleanup
   (window as any).__bubblesInterval = interval;

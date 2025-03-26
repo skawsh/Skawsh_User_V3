@@ -10,8 +10,8 @@
 export const createBubble = (): HTMLDivElement => {
   const bubble = document.createElement('div');
   
-  // Increased size between 10px and 40px (larger bubbles)
-  const size = Math.floor(Math.random() * 30) + 10;
+  // Random size between 5px and 30px (increased max size)
+  const size = Math.floor(Math.random() * 26) + 5;
   
   // Random opacity between 0.1 and 0.6
   const opacity = (Math.random() * 0.5) + 0.1;
