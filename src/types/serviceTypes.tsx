@@ -22,3 +22,11 @@ export interface FavoriteService {
   name: string;
   price: string;
 }
+
+export interface Service {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+  unit?: string;
+}
