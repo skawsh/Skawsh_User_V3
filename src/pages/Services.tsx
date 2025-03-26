@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import FooterSignature from '../components/FooterSignature';
 
 const Services: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -329,12 +330,12 @@ const Services: React.FC = () => {
 
   return (
     <Layout>
-      <div className="section-container pb-10 min-h-screen bg-gradient-to-b from-purple-50 to-white">
-        <h1 className="text-3xl font-bold mb-6 pt-6 animate-fade-in text-gray-800">Our Services</h1>
+      <div className="section-container pb-10 min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+        <h1 className="text-2xl font-bold mb-4 pt-4 animate-fade-in text-gray-800">Our Services</h1>
         
-        <div className="mb-8 relative animate-fade-in">
+        <div className="mb-6 relative animate-fade-in">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-gray-400" />
+            <Search size={16} className="text-gray-400" />
           </div>
           <Input 
             type="text"
@@ -345,9 +346,9 @@ const Services: React.FC = () => {
           />
         </div>
         
-        <div className="space-y-8 animate-fade-in">
+        <div className="space-y-5 animate-fade-in">
           {filteredServices.length === 0 ? (
-            <Card className="text-center py-10 text-gray-500 border-none shadow-sm">
+            <Card className="text-center py-8 text-gray-500 border-none shadow-sm">
               <CardContent>
                 No services found matching "{searchQuery}"
               </CardContent>
@@ -362,21 +363,21 @@ const Services: React.FC = () => {
                 )}
                 style={{ animationDelay: `${index * 75}ms` }}
               >
-                <Card className="mb-4 overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow">
+                <Card className="mb-3 overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow">
                   <div 
-                    className="bg-gradient-to-r from-purple-100 to-indigo-50 p-5 rounded-lg flex items-center justify-between cursor-pointer"
+                    className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg flex items-center justify-between cursor-pointer"
                     onClick={() => toggleCategory(category.id)}
                   >
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-14 w-14 bg-gradient-to-br from-indigo-400 to-purple-500 text-white border-none flex items-center justify-center shadow-md">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 bg-gradient-to-br from-indigo-400 to-purple-500 text-white border-none flex items-center justify-center shadow-sm">
                         <AvatarFallback className="flex items-center justify-center bg-gradient-to-br from-indigo-400 to-purple-500">
                           {category.icon}
                         </AvatarFallback>
                       </Avatar>
-                      <h3 className="font-bold text-gray-800 text-xl">{category.name}</h3>
+                      <h3 className="font-semibold text-gray-800 text-base">{category.name}</h3>
                     </div>
                     <ChevronDown 
-                      size={24} 
+                      size={20} 
                       className={cn(
                         "text-indigo-500 transition-transform duration-300",
                         expandedCategories.includes(category.id) ? "transform rotate-180" : ""
@@ -386,19 +387,19 @@ const Services: React.FC = () => {
                 </Card>
                 
                 {expandedCategories.includes(category.id) && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-3">
                     {category.subServices.map((subService) => {
                       const isFavorite = isServiceFavorite(category.id, subService.id);
                       
                       return (
                         <Card 
                           key={subService.id} 
-                          className="group overflow-hidden border-none shadow-sm hover:shadow-lg transition-all cursor-pointer bg-white hover:translate-y-[-2px]"
+                          className="group overflow-hidden border-none shadow-sm hover:shadow-md transition-all cursor-pointer bg-white hover:translate-y-[-2px]"
                           onClick={() => handleSubserviceClick(category.name, subService)}
                         >
                           <CardContent className="p-0">
                             <div className="flex flex-col items-center">
-                              <div className="w-full h-28 overflow-hidden relative">
+                              <div className="w-full h-24 overflow-hidden relative">
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10"></div>
                                 <img 
                                   src={getSubserviceImage(category.id, subService.id)} 
@@ -411,16 +412,16 @@ const Services: React.FC = () => {
                                   aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
                                 >
                                   <Heart 
-                                    size={16} 
+                                    size={14} 
                                     className={`transition-all duration-300 transform ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
                                   />
                                 </button>
                               </div>
                               <div className="w-full p-3">
-                                <h4 className="font-semibold text-gray-800 mb-1">{subService.name}</h4>
+                                <h4 className="font-medium text-gray-800 text-sm mb-1">{subService.name}</h4>
                                 <p className="text-xs text-gray-500 line-clamp-2 mb-2">{subService.description}</p>
                                 <div className="flex items-center justify-between">
-                                  <Badge variant="outline" className="font-medium text-indigo-600 bg-indigo-50 border-indigo-100">
+                                  <Badge variant="outline" className="text-xs font-medium text-indigo-600 bg-indigo-50 border-indigo-100">
                                     ₹{getServiceBasePrice(subService)}
                                   </Badge>
                                   <span className="text-xs text-gray-400">2.5k+ orders</span>
@@ -436,6 +437,9 @@ const Services: React.FC = () => {
               </div>
             ))
           )}
+        </div>
+        <div className="mt-10">
+          <FooterSignature />
         </div>
       </div>
     </Layout>

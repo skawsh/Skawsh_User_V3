@@ -5,21 +5,21 @@ import HeaderSection from '../components/home/HeaderSection';
 import ServicesSection from '../components/home/ServicesSection';
 import StudiosSection from '../components/home/StudiosSection';
 import FooterSignature from '../components/FooterSignature';
-import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase } from 'lucide-react';
+import { Footprints, Clock, Palette, Medal, HomeIcon, Briefcase, WashingMachine, Shirt, Umbrella } from 'lucide-react';
 
 const Home: React.FC = () => {
   const services = [{
     id: 'wash-fold',
     title: 'Wash & Fold',
-    image: 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    icon: <WashingMachine size={24} />
   }, {
     id: 'dry-clean',
     title: 'Dry Clean',
-    image: 'https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    icon: <Shirt size={24} />
   }, {
     id: 'iron-only',
     title: 'Iron Only',
-    image: 'https://images.unsplash.com/photo-1545173168-9f1947eebb7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'
+    icon: <Umbrella size={24} />
   }, {
     id: 'shoe-laundry',
     title: 'Shoe Laundry',
