@@ -5,16 +5,13 @@
 
 /**
  * Creates a water bubble element with random properties
- * @param smallerSize - Optional parameter to create smaller bubbles
  * @returns HTMLDivElement representing a bubble
  */
-export const createBubble = (smallerSize: boolean = false): HTMLDivElement => {
+export const createBubble = (): HTMLDivElement => {
   const bubble = document.createElement('div');
   
-  // Random size between 5px and 30px (or smaller if smallerSize is true)
-  const sizeMin = smallerSize ? 3 : 5;
-  const sizeMax = smallerSize ? 15 : 30;
-  const size = Math.floor(Math.random() * (sizeMax - sizeMin + 1)) + sizeMin;
+  // Random size between 5px and 30px (increased max size)
+  const size = Math.floor(Math.random() * 26) + 5;
   
   // Random opacity between 0.1 and 0.6
   const opacity = (Math.random() * 0.5) + 0.1;

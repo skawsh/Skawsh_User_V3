@@ -21,7 +21,6 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
   const servicesRef = useRef<HTMLDivElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
   const servicesRowRef = useRef<HTMLDivElement>(null);
-  const bubbleContainerRef = useRef<HTMLDivElement>(null);
   const bubblesIntervalRef = useRef<number | null>(null);
 
   // Memoize the scroll handler to prevent unnecessary renders
@@ -61,12 +60,9 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
 
   // Start and stop bubbles animation based on sticky state
   useEffect(() => {
-    if (isSticky && bubbleContainerRef.current) {
-      // Start bubbles animation when sticky, using the dedicated container
-      bubblesIntervalRef.current = startBubblesAnimation(bubbleContainerRef.current, {
-        interval: 1000, // Reduced frequency - bubbles appear every 1 second
-        smallerBubbles: true // Use smaller bubbles
-      }) as unknown as number;
+    if (isSticky && servicesRowRef.current) {
+      // Start bubbles animation when sticky
+      bubblesIntervalRef.current = startBubblesAnimation(servicesRowRef.current) as unknown as number;
     } else if (!isSticky && bubblesIntervalRef.current) {
       // Stop bubbles animation when no longer sticky
       stopBubblesAnimation();
@@ -102,20 +98,10 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
             : 'transparent',
           transition: 'transform 0.2s ease, opacity 0.2s ease',
           paddingLeft: isSticky ? '5px' : undefined,
-          paddingRight: isSticky ? '5px' : undefined,
-          position: 'relative'
+          paddingRight: isSticky ? '5px' : undefined
         }}
       >
-        {/* Bubble container positioned behind the service cards */}
-        {isSticky && (
-          <div 
-            ref={bubbleContainerRef}
-            className="absolute inset-0 overflow-hidden z-0"
-            style={{ pointerEvents: 'none' }}
-          />
-        )}
-        
-        <div className="overflow-x-auto overflow-y-hidden no-scrollbar relative z-10">
+        <div className="overflow-x-auto overflow-y-hidden no-scrollbar">
           <div className="flex gap-3 pb-1.5 min-w-max px-[10px] bg-transparent">
             {services.map((service, index) => (
               <ServiceCard 

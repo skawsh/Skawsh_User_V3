@@ -9,15 +9,8 @@ import {
 /**
  * Creates and adds bubbles to the container element
  * @param container - The element to add bubbles to
- * @param options - Optional configuration options
  */
-export const startBubblesAnimation = (
-  container: HTMLDivElement, 
-  options?: { 
-    interval?: number; 
-    smallerBubbles?: boolean;
-  }
-) => {
+export const startBubblesAnimation = (container: HTMLDivElement) => {
   if (!container) return;
   
   // Create all necessary keyframes
@@ -31,12 +24,9 @@ export const startBubblesAnimation = (
     clearInterval(existingInterval);
   }
   
-  // Use provided interval or default to 400ms
-  const animationInterval = options?.interval || 400;
-  
-  // Create bubbles at specified intervals
+  // Create bubbles at random intervals (more frequently)
   const interval = setInterval(() => {
-    const bubble = createBubble(options?.smallerBubbles);
+    const bubble = createBubble();
     
     // Determine if this bubble should go up or down (80% up, 20% down)
     const goingUp = Math.random() > 0.2;
@@ -77,7 +67,7 @@ export const startBubblesAnimation = (
         container.removeChild(bubble);
       }
     }, 10000); // Increased to account for longer animations
-  }, animationInterval);
+  }, 400); // Reduced interval for more bubbles
   
   // Store interval ID for cleanup
   (window as any).__bubblesInterval = interval;
