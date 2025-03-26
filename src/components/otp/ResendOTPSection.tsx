@@ -14,15 +14,16 @@ const ResendOTPSection: React.FC<ResendOTPSectionProps> = ({
 }) => {
   return (
     <div className="mt-6 text-center">
-      <p className="text-gray-500 text-sm mb-2">Didn't receive the code?</p>
+      <p className="text-gray-600 text-sm mb-2">Didn't receive the code?</p>
       <button
         onClick={onResend}
         disabled={!canResend}
-        className={`text-sm font-medium ${
+        className={`text-sm font-medium transition-colors ${
           canResend 
-            ? "text-primary-500 hover:underline" 
+            ? "text-primary-500 hover:text-primary-600 hover:underline" 
             : "text-gray-400"
         }`}
+        type="button"
       >
         {canResend ? "Resend OTP" : `Resend OTP in ${countdown}s`}
       </button>
@@ -31,4 +32,3 @@ const ResendOTPSection: React.FC<ResendOTPSectionProps> = ({
 };
 
 export default ResendOTPSection;
-

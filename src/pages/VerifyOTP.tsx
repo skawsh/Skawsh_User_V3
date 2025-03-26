@@ -26,7 +26,7 @@ const VerifyOTP: React.FC = () => {
 
   return (
     <Layout hideFooter={true}>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-white">
         <div className="flex items-center p-4">
           <button
             onClick={() => navigate(isNewUser ? '/signup' : '/login')}
@@ -44,13 +44,13 @@ const VerifyOTP: React.FC = () => {
               alt="Skawsh Logo" 
               className="w-44 h-auto mx-auto"
             />
-            <h1 className="mt-6 text-2xl font-bold text-primary-500">Verify OTP</h1>
-            <p className="mt-2 text-gray-500">
-              We've sent a 4-digit code to <span className="font-medium">{mobile}</span>
+            <h1 className="mt-6 text-2xl font-bold text-primary-500">Verify Your Number</h1>
+            <p className="mt-3 text-gray-600 max-w-sm mx-auto">
+              We've sent a 4-digit verification code to <span className="font-semibold text-black">{mobile}</span>
             </p>
           </div>
           
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <OTPInputForm 
               onSubmit={onSubmit}
               isSubmitting={isSubmitting}

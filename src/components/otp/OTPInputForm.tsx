@@ -13,7 +13,7 @@ import {
 
 // OTP validation schema
 const otpSchema = z.object({
-  otp: z.string().length(4, { message: "OTP must be 4 digits" }),
+  otp: z.string().min(4, { message: "Please enter a valid 4-digit OTP" }),
 });
 
 export type OTPFormValues = z.infer<typeof otpSchema>;
@@ -46,24 +46,30 @@ const OTPInputForm: React.FC<OTPInputFormProps> = ({
               <FormControl>
                 <InputOTP 
                   maxLength={4} 
-                  {...field}
+                  value={field.value}
+                  onChange={field.onChange}
                   render={({ slots }) => (
-                    <InputOTPGroup>
+                    <InputOTPGroup className="gap-3 justify-center">
                       {slots.map((slot, i) => (
-                        <InputOTPSlot key={i} {...slot} index={i} />
+                        <InputOTPSlot 
+                          key={i} 
+                          {...slot} 
+                          index={i} 
+                          className="w-14 h-14 text-lg border-2 rounded-xl border-gray-300 focus:border-primary-500"
+                        />
                       ))}
                     </InputOTPGroup>
                   )}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="mt-2" />
             </FormItem>
           )}
         />
 
         <Button 
           type="submit" 
-          className="w-full bg-primary-500 hover:bg-primary-600" 
+          className="w-full bg-primary-500 hover:bg-primary-600 py-6 rounded-xl font-medium text-lg mt-6" 
           disabled={isSubmitting}
         >
           {isSubmitting ? "Verifying..." : "Verify OTP"}
