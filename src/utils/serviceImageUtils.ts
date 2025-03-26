@@ -25,8 +25,8 @@ export const getServiceImage = (serviceId: string): string => {
     'leather-formal': 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     
     // Specialty services
-    'iron-only': 'https://images.unsplash.com/photo-1591643485762-b49e9f823bba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-    'stain-removal': 'https://images.unsplash.com/photo-1585421514284-efb74320a966?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+    'iron-only': '/lovable-uploads/9023929c-2175-414d-a1f2-b5e24e4b1fcb.png',
+    'stain-removal': '/lovable-uploads/96bfc3cc-fd94-45ef-b8cb-527f655f2f26.png',
     'odor-removal': 'https://images.unsplash.com/photo-1600099386580-e421a1f5e52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     
     // Express services
