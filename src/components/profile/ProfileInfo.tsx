@@ -74,7 +74,7 @@ const ProfileInfo: React.FC = () => {
       description: 'Manage your saved addresses'
     },
     { 
-      title: 'Wishlist', 
+      title: 'Favorites', 
       icon: <Heart size={20} className="text-primary-500" />, 
       route: '/favorites',
       description: 'View your favorite services'
