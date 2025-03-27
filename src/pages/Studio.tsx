@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { ArrowLeft } from 'lucide-react';
@@ -13,6 +14,18 @@ import { toast } from "sonner";
 const Studio: React.FC = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  // Track scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const profileData = {
     name: "Raksha sha",
@@ -76,7 +89,8 @@ const Studio: React.FC = () => {
   return (
     <Layout>
       <div className="section-container min-h-screen bg-gradient-to-b from-primary-50 to-white">
-        <div className="sticky top-0 z-10 bg-primary-50/90 backdrop-blur-sm py-2">
+        {/* Sticky header that shows all the time */}
+        <div className={`sticky top-0 z-10 ${isScrolled ? 'bg-white/90 shadow-sm' : 'bg-primary-50/90'} backdrop-blur-sm py-2 transition-all duration-200`}>
           <div className="flex items-center gap-2">
             <button 
               onClick={handleBack}
@@ -85,7 +99,7 @@ const Studio: React.FC = () => {
             >
               <ArrowLeft size={20} className="text-gray-700" />
             </button>
-            <h1 className="text-xl font-semibold text-gray-800">Register Your Studio</h1>
+            <h1 className="text-xl font-semibold text-gray-800">Register your studio</h1>
           </div>
         </div>
         

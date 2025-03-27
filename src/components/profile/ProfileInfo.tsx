@@ -79,12 +79,6 @@ const ProfileInfo: React.FC = () => {
       route: '/favorites',
       description: 'View your favorite services'
     },
-    {
-      title: 'Register Studio',
-      icon: <Building size={20} className="text-primary-500" />,
-      route: '/register-studio',
-      description: 'Register your own laundry studio'
-    },
     { 
       title: 'Refer Friends', 
       icon: <Share2 size={20} className="text-primary-500" />, 
@@ -102,6 +96,12 @@ const ProfileInfo: React.FC = () => {
       icon: <MessageSquare size={20} className="text-primary-500" />, 
       route: '/feedback',
       description: 'Share your thoughts with us'
+    },
+    {
+      title: 'Register your studio',
+      icon: <Building size={20} className="text-primary-500" />,
+      route: '/register-studio',
+      description: 'Register your own laundry studio'
     }
   ];
 
