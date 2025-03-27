@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Phone, Mail, Ticket, Heart, MapPin, ShoppingBag, MessageSquare, Share2, HelpCircle, UserRound } from 'lucide-react';
+import { Phone, Mail, Ticket, Heart, MapPin, ShoppingBag, MessageSquare, Share2, HelpCircle, UserRound, Building } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProfilePhotoEditor from './ProfilePhotoEditor';
 
@@ -78,6 +78,12 @@ const ProfileInfo: React.FC = () => {
       icon: <Heart size={20} className="text-primary-500" />, 
       route: '/favorites',
       description: 'View your favorite services'
+    },
+    {
+      title: 'Register Studio',
+      icon: <Building size={20} className="text-primary-500" />,
+      route: '/register-studio',
+      description: 'Register your own laundry studio'
     },
     { 
       title: 'Refer Friends', 
