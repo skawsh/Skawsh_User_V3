@@ -60,6 +60,16 @@ const CompleteProfile: React.FC = () => {
         ...values,
       });
       
+      // Store user data in localStorage for profile display
+      const userData = {
+        name: values.name,
+        mobile: mobile,
+        email: values.email || '',
+        referralCode: values.referralCode || '',
+      };
+      
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
       // Simulate server delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       

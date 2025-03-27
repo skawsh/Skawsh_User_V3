@@ -51,6 +51,7 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 relative"
       onClick={() => onClick(service)}
     >
+      {/* Moved favorite button to top-left instead of top-right to prevent overlap */}
       <FavoriteButton 
         serviceId={service.id}
         studioId={studioId}
