@@ -51,17 +51,19 @@ const ServiceItem: React.FC<ServiceItemProps> = ({
       className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-200 relative"
       onClick={() => onClick(service)}
     >
-      {/* Moved favorite button to top-left instead of top-right to prevent overlap */}
-      <FavoriteButton 
-        serviceId={service.id}
-        studioId={studioId}
-        studioName={studioName}
-        serviceName={service.name}
-        servicePrice={price}
-        serviceUnit={service.unit}
-      />
+      {/* Repositioned favorite button to the top-right corner with proper spacing */}
+      <div className="absolute top-2 right-2 z-20">
+        <FavoriteButton 
+          serviceId={service.id}
+          studioId={studioId}
+          studioName={studioName}
+          serviceName={service.name}
+          servicePrice={price}
+          serviceUnit={service.unit}
+        />
+      </div>
       
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4">
         <div className="flex gap-3">
           <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden shadow-sm">
             <ServiceIcon serviceName={service.name} />

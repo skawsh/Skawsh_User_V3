@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ProfileInfo from '../components/profile/ProfileInfo';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FooterSignature from '../components/FooterSignature';
 
@@ -56,17 +56,26 @@ const Profile: React.FC = () => {
               </button>
               <span className="font-medium text-gray-800">Your Profile</span>
             </div>
-            <button 
-              onClick={handleSettings}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label="Settings"
-            >
-              <Settings size={20} className="text-gray-700" />
-            </button>
+            <div className="flex items-center space-x-1">
+              <button 
+                onClick={handleSettings}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Settings"
+              >
+                <Settings size={20} className="text-gray-700" />
+              </button>
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors flex items-center"
+                aria-label="Logout"
+              >
+                <LogOut size={20} className="text-gray-700" />
+              </button>
+            </div>
           </div>
         )}
         
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-4 pt-2">
           <button 
             onClick={handleBack}
             className="p-2 rounded-full hover:bg-white/80 transition-colors"
@@ -74,7 +83,7 @@ const Profile: React.FC = () => {
           >
             <ArrowLeft size={20} className="text-gray-700" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex items-center space-x-2">
             <button 
               onClick={handleSettings}
               className="p-2 rounded-full hover:bg-white/80 transition-colors"
@@ -84,17 +93,15 @@ const Profile: React.FC = () => {
             </button>
             <button 
               onClick={handleLogout}
-              className="flex items-center gap-1 text-primary-500 hover:text-primary-600 transition-colors"
+              className="text-primary-500 hover:text-primary-600 transition-colors font-medium"
             >
-              <span className="text-sm font-medium">Logout</span>
+              Logout
             </button>
           </div>
         </div>
-        <ProfileInfo />
         
-        {/* Added FooterSignature at the bottom of the profile page */}
-        <div className="mt-8">
-          <FooterSignature />
+        <div className="pb-12">
+          <ProfileInfo />
         </div>
       </div>
     </Layout>
