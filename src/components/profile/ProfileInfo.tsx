@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, Mail, Ticket, Heart, MapPin, ShoppingBag, MessageSquare, Share2, HelpCircle } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Phone, Mail, Ticket, Heart, MapPin, ShoppingBag, MessageSquare, Share2, HelpCircle, UserRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProfilePhotoEditor from './ProfilePhotoEditor';
 
@@ -103,10 +104,17 @@ const ProfileInfo: React.FC = () => {
       <Card className="border border-gray-100 shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-start space-x-4">
-            <ProfilePhotoEditor 
-              currentPhotoUrl={userInfo.photoUrl || ''} 
-              onPhotoChange={handleProfilePhotoChange} 
-            />
+            <div className="flex-shrink-0">
+              <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
+                {userInfo.photoUrl ? (
+                  <AvatarImage src={userInfo.photoUrl} alt={userInfo.name || 'User'} />
+                ) : (
+                  <AvatarFallback className="bg-primary-50">
+                    <UserRound size={32} className="text-primary-500" />
+                  </AvatarFallback>
+                )}
+              </Avatar>
+            </div>
             <div className="flex flex-col space-y-1">
               <h3 className="text-lg font-semibold">{userInfo.name || 'User'}</h3>
               

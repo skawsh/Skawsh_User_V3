@@ -77,7 +77,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     <button
       className={`p-1.5 rounded-full bg-white shadow-sm hover:bg-gray-100 transition-colors duration-200 ${isAnimating ? 'animate-bounce-once' : ''}`}
       onClick={toggleFavorite}
-      aria-label={isFavorite ? "Remove from Washlist" : "Add to Washlist"}
+      aria-label={isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
     >
       <Heart 
         size={16} 
